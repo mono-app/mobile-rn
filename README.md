@@ -9,3 +9,6 @@ Since this is a React Native application, you need to follow this [link](https:/
 
 ## Issue Tracker
 It is highly appreciated if you can start a new issue and assign the issue with correct label. For a question, you can use `question` label.
+
+## Submitting Issue to Pull Request
+To submit an `issue` to a `pull request` you need to set your comment title using the issue number. For example `pull request to fix issue #7`. In here, `#7` is the issue number.
