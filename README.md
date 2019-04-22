@@ -8,7 +8,7 @@ Since this is a React Native application, you need to follow this [link](https:/
 - Go to the cloned directory and run `npm install` to install any other depedencies.
 
 ## Contribution Guideline
-Of course, you need to have a basic understanding of `GitHub`.
+Of course, you need to have a basic understanding of `GitHub`. I personally use `GitKraken` to perform the `commit` and `pull request`. 
 
 ### How to Submit a `pull request`
 To submit a `pull request`, you need to create a new branch and create a `pull request` from that branch. For example, you want to merge `modify-readme` branch to `master`. You can create `pull request` from the `modify-readme` branch to `master`.
