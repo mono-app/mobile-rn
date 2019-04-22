@@ -25,6 +25,13 @@ modules/
 ```
 If you happen that the modules do not have that folder structure, please proceed to create.
 
+### Styling Guide
+Please use 16 as the baseline, and the increment or decrement will be 4. For example, the next size will be 32 or 8.
+
+Please also follow the primary color in the button.
+
+Please also use `<Text>` component from `react-native-paper`
+
 Please refer to `issue` if you want to make ` pull request`
 
 ## Issue Tracker
