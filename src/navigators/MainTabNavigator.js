@@ -7,15 +7,16 @@ import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import HomeTabNavigator from "./HomeTabNavigator.js";
 import ContactTabNavigator from "./ContactTabNavigator";
 import SettingTabNavigator from "./SettingTabNavigator.js";
+import AppTabNavigator from "./AppTabNavigator";
 
 export default MainTabNavigator = createBottomTabNavigator({
   HomeTab: HomeTabNavigator,
   ContactTab: ContactTabNavigator,
-  NewsTab: HomeTabNavigator,
+  AppTab: AppTabNavigator,
   MomentsTab: HomeTabNavigator,
   SettingsTab: SettingTabNavigator
 }, {
-  initialRouteName: "ContactTab",
+  initialRouteName: "AppTab",
   tabBarOptions: { 
     activeTintColor: "#0EAD69",
     style: { borderTopWidth: 0, elevation: 8, height: 60, padding: 8 }
@@ -27,7 +28,7 @@ export default MainTabNavigator = createBottomTabNavigator({
       switch(routeName){
         case "HomeTab": icon = (<MaterialIcons name="home" size={24} color={tintColor}/>); break;
         case "ContactTab": icon = (<MaterialIcons name="contacts" size={24} color={tintColor}/>); break;
-        case "NewsTab": icon = (<MaterialIcons name="speaker-notes" size={24} color={tintColor}/>); break;
+        case "AppTab": icon = (<MaterialIcons name="apps" size={24} color={tintColor}/>); break;
         case "MomentsTab": icon = (<FontAwesome name="circle-o-notch" size={24} color={tintColor}/>); break;
         case "SettingsTab": icon = (<MaterialIcons name="settings" size={24} color={tintColor}/>); break;
       }
@@ -39,7 +40,7 @@ export default MainTabNavigator = createBottomTabNavigator({
       switch(routeName){
         case "HomeTab": label = "Home"; break;
         case "ContactTab": label = "Contact"; break;
-        case "NewsTab": label = "News"; break;
+        case "AppTab": label = "App"; break;
         case "MomentsTab": label = "Moments"; break;
         case "SettingsTab": label = "Settings"; break;
       }
