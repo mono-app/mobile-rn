@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "131251702136",
+    "firebase_url": "https://chat-app-fdf76.firebaseio.com",
+    "project_id": "chat-app-fdf76",
+    "storage_bucket": "chat-app-fdf76.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131251702136:android:877ea1778e15e787",
+        "android_client_info": {
+          "package_name": "com.zannete.monoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131251702136-rkvglnqlsc64vgvhd8riitql5tpsf2nh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqAuydxeXq91vGvvNv393p5KfMHJOELfY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
