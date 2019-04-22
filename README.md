@@ -14,7 +14,15 @@ Of course, you need to have a basic understanding of `GitHub`. I personally use 
 To submit a `pull request`, you need to create a new branch and create a `pull request` from that branch. For example, you want to merge `modify-readme` branch to `master`. You can create `pull request` from the `modify-readme` branch to `master`.
 
 ### How to Code on Modules
-Modules is a small application that lives inside the Mono App. There is a `modules` folder. If you are working a certain module, you need to place your code inside the `modules` folder.
+Modules is a small application that lives inside the Mono App. There is a `modules` folder. If you are working a certain module, you need to place your code inside the `modules` folder. Folder stucture for Modules is
+```
+modules/
+  Classroom/
+    api/
+    components/
+    navigators/
+    screens/
+```
 
 Please refer to `issue` if you want to make ` pull request`
 
@@ -23,3 +31,8 @@ It is highly appreciated if you can start a new issue and assign the issue with 
   
 ## Submitting Issue to Pull Request
 To submit an `issue` to a `pull request` you need to set your comment description using the issue number. For example `pull request to fix issue #7`. In here, `#7` is the issue number.
+
+## Common Issue
+
+### How to Start?
+If you are not changing any native code, you can just simply run `react-native start` to start the project. However, for the first time you must run `react-native run-android`.
