@@ -10,7 +10,6 @@ import { UserCollection } from "../../api/database/collection";
 import { Document } from "../../api/database/document";
 
 export default class SplashScreen extends React.Component{
-
   handleScreenDidFocus = () => {
     const firebaseUser = firebase.auth().currentUser;
     const navigator = new Navigator(this.props.navigation);

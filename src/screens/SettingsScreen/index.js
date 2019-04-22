@@ -1,17 +1,17 @@
 import React from "react";
 import { 
-  Text, View, Image, FlatList,
-  StyleSheet, TouchableOpacity
+  Text, View, Image, FlatList, StyleSheet
 } from "react-native";
 import { NavigationEvents } from "react-navigation";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
-import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import SInfo from "react-native-sensitive-info";
 
 import { UserCollection } from "../../api/database/collection";
 import { Document } from "../../api/database/document";
 import { GetDocument } from "../../api/database/query";
+
+import MenuListItemWithIcon from "../../components/MenuListItemWithIcon";
 
 const INITIAL_STATE = { nickName: "" }
 
@@ -62,15 +62,11 @@ export default class SettingsScreen extends React.Component {
             ]}
             renderItem={({ item, index }) => {
               return (
-                <TouchableOpacity onPress={() => this.props.navigation.navigate(item.navigateTo)}>
-                  <View key={index} style={styles.listItemContainer}>
-                    {item.icon}
-                    <View style={styles.listDescriptionContainer}>
-                      <Text style={{ marginLeft: 16 }}>{item.title}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </TouchableOpacity>
+                <MenuListItemWithIcon
+                  key={index}
+                  onPress={() => this.props.navigation.navigate(item.navigateTo)}
+                  icon={item.icon}
+                  title={item.title}/>
             )}}/>
           </View>
       </View>
