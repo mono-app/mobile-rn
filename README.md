@@ -44,3 +44,12 @@ To submit an `issue` to a `pull request` you need to set your comment descriptio
 
 ### How to Start?
 If you are not changing any native code, you can just simply run `react-native start` to start the project. However, for the first time you must run `react-native run-android`.
+
+### What are Libraries that you are Using?
+I am using a lot of libraries. 
+
+- For navigation, please refer to `react-navigation` documentation.
+- For Sensitive Information, please refer to `react-native-sensitive-information` documentation.
+- For UI/UX, please refer to `react-native-paper` documentation. 
+- For icons, please refer to `react-native-vector-icons` documentation.
+- For Firebase integartion, please refer to `react-native-firebase` documentation and [Firebase](https://firebase.google.com) documentation.
