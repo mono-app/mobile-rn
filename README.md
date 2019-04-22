@@ -23,6 +23,7 @@ modules/
     navigators/
     screens/
 ```
+If you happen that the modules do not have that folder structure, please proceed to create.
 
 Please refer to `issue` if you want to make ` pull request`
 
