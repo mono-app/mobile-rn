@@ -87,3 +87,32 @@ export class RemoveDocumentField extends Query{
                         .update(removeObject);
   }
 }
+
+export class SearchDocumentByField extends Query{
+  /**
+   * 
+   * @param {String} fieldName 
+   * @param {String} operator - Firebase operator, refer to [https://firebase.google.com/docs/firestore/query-data/queries?authuser=0#simple_queries](Firebase Documentation)
+   * @param {String} searchValue 
+   */
+  constructor(fieldName, operator, searchValue){
+    super();
+    this.fieldName = fieldName;
+    this.operator = operator
+    this.searchValue = searchValue;
+  }
+
+  /**
+   * 
+   * @param {Collection} collection 
+   * @returns {Promise} Firebase Firestore `get` function. This function will return null if you are not providing `fieldName`, `operator` and `searchValue`.
+   */
+  executeQuery(collection){
+    if(this.fieldName && this.operator && this.searchValue){
+      return this.database.getDatabase()
+                          .collection(collection.getName())
+                          .where(this.fieldName, this.operator, this.searchValue)
+                          .get(this.getConfiguration);
+    }else return null;
+  }
+}
