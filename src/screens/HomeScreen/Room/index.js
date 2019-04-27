@@ -1,25 +1,28 @@
 import React from "react";
-import {
-  StyleSheet, Text, View, 
-  TouchableOpacity, Image
-} from 'react-native';
-
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import moment from "moment";
 
 export default class Room extends React.Component{
   render(){
+    const { audience, lastMessage} = this.props;
+    const isToday = new moment().diff(lastMessage.sentTime, "days") === 0;
+    const dateTimeString = isToday? new moment(lastMessage.sentTime).format("HH:mmA"): new moment(lastMessage.sentTime).format("DD MMMM YYYY HH:mmA");
+
     return(
-      <View style={styles.chatContainer}>
-        <View style={styles.photoContainer}>
-          <Image 
-            style={styles.profilePicture}
-            source={{uri: "https://picsum.photos/200/200/?random"}}/>
+      <TouchableOpacity onPress={this.props.onPress}>
+        <View style={styles.chatContainer}>
+          <View style={styles.photoContainer}>
+            <Image 
+              style={styles.profilePicture}
+              source={{uri: "https://picsum.photos/200/200/?random"}}/>
+          </View>
+          <View style={styles.descriptionContainer}>
+            <Text style={{fontWeight: "500"}}>{audience.applicationInformation.nickName}</Text>
+            <Text style={{fontSize: 12}}>{lastMessage.message}</Text>
+          </View>
+          <Text style={styles.timestamp}>{dateTimeString}</Text>
         </View>
-        <View style={styles.descriptionContainer}>
-          <Text style={{fontWeight: "500"}}>{this.props.name}</Text>
-          <Text style={{fontSize: 12}}>{this.props.lastMessage}</Text>
-        </View>
-        <Text style={styles.timestamp}>11.00 AM</Text>
-      </View>
+      </TouchableOpacity>
     )
   }
 }

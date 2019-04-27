@@ -1,7 +1,5 @@
 import { RoomsCollection, MessagesCollection } from "../database/collection";
 import { Document } from "../database/document";
-import { DocumentListener } from "../database/listener";
-import { AddDocument } from "../database/query";
 import firebase from "react-native-firebase";
 
 export default class MessagesAPI{
@@ -40,15 +38,16 @@ export default class MessagesAPI{
    */
   sendMessage(roomId, senderEmail, message){
     const payload = { senderEmail, message, sentTime: firebase.firestore.FieldValue.serverTimestamp() }
+    const db = firebase.firestore();
+    const batch = db.batch();
+
     const roomsCollection = new RoomsCollection();
     const messagesCollection = new MessagesCollection();
     const roomDocument = new Document(roomId);
-    const firebaseReference = roomsCollection.getFirebaseReference();
-
-    const collectionRef = firebaseReference.doc(roomDocument.getId()).collection(messagesCollection.getName());
-    const addDocument = new AddDocument();
-    return addDocument.executeFirebaseQuery(collectionRef, null, payload).then(doc => {
-      return true;
-    })
+    const roomsRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
+    const newCollectionRef = roomsRef.collection(messagesCollection.getName()).doc();
+    batch.set(newCollectionRef, payload);
+    batch.update(roomsRef, { lastMessage: { message, sentTime: firebase.firestore.FieldValue.serverTimestamp() } });
+    return batch.commit().then(() => true);
   }
 }
