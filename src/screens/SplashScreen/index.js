@@ -14,7 +14,7 @@ export default class SplashScreen extends React.Component{
     const firebaseUser = firebase.auth().currentUser;
     const navigator = new Navigator(this.props.navigation);
     if(firebaseUser !== null){
-      console.log(firebaseUser.email);
+      console.log("SplashScreen", firebaseUser.email);
       SInfo.setItem("currentUserEmail", firebaseUser.email, {}).then(email => {
         const userCollection = new UserCollection();
         const userDocument = new Document(email);
