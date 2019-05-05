@@ -21,7 +21,10 @@ export default class AddMomentScreen extends React.Component{
     new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const content = { message: this.state.content };
       return MomentAPI.publishMoment(currentUserEmail, content);
-    }).then(() => this.setState({ content: "", isSubmitting: false }));
+    }).then(() => {
+      this.setState({ content: "", isSubmitting: false });
+      this.props.navigation.goBack();
+    });
   };
 
   constructor(props){
