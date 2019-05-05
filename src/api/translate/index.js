@@ -5,6 +5,8 @@ export default class TranslateAPI{
     words = words.replace("ago", "yang lalu");
     words = words.replace("minutes", "menit");
     words = words.replace("minute", "menit");
+    words = words.replace("days", "hari");
+    words = words.replace("day", "hari");
     return words;
   }
 }
