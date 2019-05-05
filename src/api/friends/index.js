@@ -1,11 +1,27 @@
 import firebase from "react-native-firebase";
 
-import { FriendRequestCollection, FriendListCollection } from "../database/collection";
-import { GetDocument, RemoveDocumentField, AddDocument } from "../database/query";
-import { Document } from "../database/document";
-import { DocumentListener } from "../database/listener";
+import { FriendRequestCollection, FriendListCollection } from "src/api/database/collection";
+import { GetDocument, RemoveDocumentField, AddDocument } from "src/api/database/query";
+import { Document } from "src/api/database/document";
+import { DocumentListener } from "src/api/database/listener";
 
 export default class FriendsAPI{
+
+  /**
+   * 
+   * @param {String} peopleEmail 
+   */
+  static getFriends(peopleEmail){
+    const friendListCollection = new FriendListCollection();
+    const userDocument = new Document(peopleEmail);
+    const getQuery = new GetDocument();
+
+    getQuery.setGetConfiguration("default");
+    return getQuery.executeQuery(friendListCollection, userDocument).then(documentSnapshot => {
+      if(!documentSnapshot.exists) return [];
+      else return documentSnapshot.data().friends;
+    });
+  }
 
   /**
    * Get all the friends in the list with real time update

@@ -37,3 +37,7 @@ export class MessagesCollection extends Collection{
 export class MomentsCollection extends Collection{
   constructor(){ super("moments"); }
 }
+
+export class FansCollection extends Collection{
+  constructor(){ super("fans"); }
+}
