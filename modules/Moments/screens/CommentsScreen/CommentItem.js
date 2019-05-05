@@ -1,8 +1,10 @@
 import React from "react";
 import { View } from "react-native";
 import { Text, Avatar, Caption } from "react-native-paper";
+import moment from "moment";
 
 import PeopleAPI from "src/api/people";
+import TranslateAPI from "src/api/translate";
 
 const INITIAL_STATE = { nickName: "" }
 
@@ -24,6 +26,9 @@ export default class CommentItem extends React.Component{
   componentDidMount(){ this.refreshComment(); }
 
   render(){
+    const timeFromNow = moment(this.state.timestamp.seconds * 1000).fromNow();
+    const shortTimeFromNow = TranslateAPI.shortTime(timeFromNow);
+
     return(
       <View style={{ flex: 1, flexDirection: "row", padding: 16, paddingVertical: 8 }}>
         <Avatar.Image size={50} source={{ uri: "https://picsum.photos/200/200/?random" }}/>
@@ -31,7 +36,7 @@ export default class CommentItem extends React.Component{
           <Text style={{ fontWeight: "700" }}>{this.state.nickName}</Text>
           <Text>{this.state.comment}</Text>
         </View>
-        <Caption>14h</Caption>
+        <Caption>{shortTimeFromNow}</Caption>
       </View>
     )
   }
