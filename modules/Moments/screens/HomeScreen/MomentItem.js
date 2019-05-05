@@ -11,6 +11,7 @@ import TranslateAPI from "src/api/translate";
 const INITIAL_STATE = { poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
 
 export default class MomentItem extends React.Component{
+  handleCommentPress = () => this.props.navigation.navigate("Comments",  { momentId: this.state.id });
   handleLikePress = () => {
     new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       return MomentsAPI.toggleLike(this.state.id, currentUserEmail);
@@ -36,6 +37,7 @@ export default class MomentItem extends React.Component{
     this.listener = null;
     this.refreshPosterDetail = this.refreshPosterDetail.bind(this);
     this.handleLikePress = this.handleLikePress.bind(this);
+    this.handleCommentPress = this.handleCommentPress.bind(this);
   }
 
   componentWillUnmount(){ if(this.listener) this.listener(); }
@@ -75,7 +77,7 @@ export default class MomentItem extends React.Component{
         </View> */}
         <View style={{ ...styles.leftAlignedContainerWithTopBorder, paddingVertical: 8}}>
           <Caption style={{ marginRight: 16 }}>{this.state.totalFans} Fans</Caption>
-          <Caption>0 Komentar</Caption>
+          <Caption>{this.state.totalComments} Komentar</Caption>
         </View>
         <View style={styles.leftAlignedContainerWithTopBorder}>
           <TouchableOpacity onPress={this.handleLikePress} style={{ flexDirection: "row", alignItems: "center", marginRight: 16 }}>
@@ -86,7 +88,7 @@ export default class MomentItem extends React.Component{
             )}
             <Caption>Suka</Caption>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity onPress={this.handleCommentPress} style={{ flexDirection: "row", alignItems: "center" }}>
             <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
             <Caption>Komentar</Caption>
           </TouchableOpacity>

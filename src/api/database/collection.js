@@ -41,3 +41,7 @@ export class MomentsCollection extends Collection{
 export class FansCollection extends Collection{
   constructor(){ super("fans"); }
 }
+
+export class CommentsCollection extends Collection{
+  constructor(){ super("comments"); }
+}

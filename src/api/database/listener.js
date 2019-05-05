@@ -20,4 +20,13 @@ export class DocumentListener{
                         .doc(firebaseDocument.getId())
                         .onSnapshot(callback);
   }
+
+  /**
+   * 
+   * @param {DocumentReference or CollectionReference} reference
+   * @param {function} callback 
+   */
+  listenFromReference(reference, callback){
+    return reference.onSnapshot(callback);
+  }
 }
