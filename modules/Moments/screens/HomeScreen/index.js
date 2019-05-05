@@ -14,7 +14,7 @@ export default class HomeScreen extends React.Component{
 
   handleAddMomentPress = () => this.props.navigation.navigate("AddMoment");
   handlePullToRefresh = () => this.refreshMoments();
-  handleScreenDidFocus = () => this.refreshMoments();
+  handleScreenWillFocus = () => this.refreshMoments();
 
   refreshMoments = () => {
     this.setState({ moments: [], isLoading: true });
@@ -29,7 +29,7 @@ export default class HomeScreen extends React.Component{
     this.state = INITIAL_STATE;
     this.refreshMoments = this.refreshMoments.bind(this);
     this.handleAddMomentPress = this.handleAddMomentPress.bind(this);
-    this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
+    this.handleScreenWillFocus = this.handleScreenWillFocus.bind(this);
     this.handlePullToRefresh = this.handlePullToRefresh.bind(this);
   }
 
@@ -37,7 +37,7 @@ export default class HomeScreen extends React.Component{
     
     return(
       <View style={styles.container}>
-        <NavigationEvents onDidFocus={this.handleScreenDidFocus}/>
+        <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
 
         <Surface style={{ padding: 16, elevation: 4, flexDirection: "row", justifyContent: "space-between" }}>
           <Avatar.Image size={50} source={{ uri: "https://picsum.photos/200/200/?random" }}/>
@@ -51,7 +51,7 @@ export default class HomeScreen extends React.Component{
           onRefresh={this.handlePullToRefresh}
           refreshing={this.state.isLoading}
           renderItem={({ item }) => {
-            return <MomentItem {...item}/>            
+            return <MomentItem {...item} navigation={this.props.navigation}/>
           }}/>
       </View>
     )
