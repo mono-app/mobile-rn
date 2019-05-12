@@ -1,4 +1,5 @@
 import firebase from "react-native-firebase";
+import uuid from "uuid/v4";
 
 import { MomentsCollection, FansCollection } from "src/api/database/collection";
 import { AddDocument } from "src/api/database/query";
@@ -66,10 +67,23 @@ export default class MomentAPI{
       privacy: "friends"
     }
 
+    const promises = [];
+    const storage = firebase.storage();
+    content.images.forEach((image, index) => {
+      const stringRef = `/modules/moments/${uuid()}.png`
+      const storageRef = storage.ref(stringRef);
+      const cleanImagePath = image.substring(7);
+      console.log("path: ", cleanImagePath, stringRef);
+
+      promises.push(storageRef.putFile(cleanImagePath))
+      content.images[index] = stringRef;
+    })
+
     const collection = new MomentsCollection();
     const query = new AddDocument();
-    return query.executeQuery(collection, null, payload).then(() => {
-      return true
+    promises.push(query.executeQuery(collection, null, payload));
+    return Promise.all(promises).then(() => {
+      return true  
     }).catch(err => {
       console.log(err);
       return false;
