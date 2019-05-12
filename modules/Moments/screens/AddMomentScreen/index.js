@@ -1,7 +1,6 @@
 import React from "react";
-import { View, Dimensions, Image } from "react-native";
-import { Button } from "react-native-paper";
-import { TextInput } from "react-native-gesture-handler";
+import { View, TextInput } from "react-native";
+import { Button, IconButton } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import PeopleInformation from "./ProfileInformation";
@@ -14,6 +13,7 @@ const INITIAL_STATE = { content: "", isSubmitting: false, isError: false, errorM
 export default class AddMomentScreen extends React.Component{
   static navigationOptions = { headerTitle: "Menambahkan Moment" };
 
+  handleGalleryIconPress = () => this.props.navigation.navigate("Gallery", { onComplete: this.handleGalleryComplete});
   handleContentChange = content => this.setState({ content });
   handleSubmitMoment = () => {
     this.setState({ isSubmitting: true });
@@ -27,12 +27,16 @@ export default class AddMomentScreen extends React.Component{
     });
   };
 
+  handleGalleryComplete = images => console.log(images);
+
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
     this.handleContentChange = this.handleContentChange.bind(this);
     this.handleSubmitMoment = this.handleSubmitMoment.bind(this);
+    this.handleGalleryIconPress = this.handleGalleryIconPress.bind(this);
+    this.handleGalleryComplete = this.handleGalleryComplete.bind(this);
   }
 
   render(){
@@ -51,18 +55,16 @@ export default class AddMomentScreen extends React.Component{
             fontSize={24}
             value={this.state.content}
             onChangeText={this.handleContentChange}/>
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <View style={{ flexDirection: "row" }}>
-              {/* <IconButton size={24} icon="photo-library" color="rgba(0, 0, 0, .54)"/>
-              <IconButton size={24} icon="photo-camera" color="rgba(0, 0, 0, .54)"/> */}
+              <IconButton size={24} icon="photo-library" color="rgba(0, 0, 0, .54)" onPress={this.handleGalleryIconPress}/>
+              <IconButton size={24} icon="photo-camera" color="rgba(0, 0, 0, .54)"/>
             </View>
             <Button 
               loading={this.state.isSubmitting} 
               disabled={this.state.isSubmitting} 
               mode="contained" 
-              onPress={this.handleSubmitMoment}>
-              Publikasi
-            </Button>
+              onPress={this.handleSubmitMoment}>Publikasi</Button>
           </View>
         </View>
 
