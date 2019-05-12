@@ -18,7 +18,9 @@ export default class TranslateAPI{
     words = words.replace("minute", "m");
     words = words.replace("days", "h");
     words = words.replace("day", "h");
+    words = words.replace("a few seconds", "~1d")
     words = words.replace(/ /g,'');
+    words = words.replace("in", "");
     return words;
   }
 }
