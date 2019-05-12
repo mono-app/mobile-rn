@@ -17,6 +17,7 @@
     "react-native-camera": "1.13.1",
     "react-native-camera-kit": "8.0.0",
     "react-native-firebase": "^5.3.1",
+    "react-native-fs": "^2.13.3",
     "react-native-gesture-handler": "1.1.0",
     "react-native-keyboard-aware-scroll-view": "0.8.0",
     "react-native-material-menu": "0.4.2",
