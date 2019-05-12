@@ -18,7 +18,7 @@ export class DocumentListener{
     return this.database.getDatabase()
                         .collection(collection.getName())
                         .doc(firebaseDocument.getId())
-                        .onSnapshot(callback);
+                        .onSnapshot(this.listenerOptions, callback);
   }
 
   /**
@@ -27,6 +27,6 @@ export class DocumentListener{
    * @param {function} callback 
    */
   listenFromReference(reference, callback){
-    return reference.onSnapshot(callback);
+    return reference.onSnapshot(this.listenerOptions, callback);
   }
 }
