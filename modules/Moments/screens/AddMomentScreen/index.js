@@ -4,35 +4,39 @@ import { Button, IconButton } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import PeopleInformation from "./ProfileInformation";
+import PhotoGrid from "modules/Moments/components/PhotoGrid";
 
 import MomentAPI from "../../api/moment";
 import PeopleAPI from "src/api/people";
 
-const INITIAL_STATE = { content: "", isSubmitting: false, isError: false, errorMessage: null };
+const INITIAL_STATE = { content: "", images: [], isSubmitting: false, isError: false, errorMessage: null };
 
 export default class AddMomentScreen extends React.Component{
   static navigationOptions = { headerTitle: "Menambahkan Moment" };
 
+  handleGalleryComplete = images => this.setState({ images });
   handleGalleryIconPress = () => this.props.navigation.navigate("Gallery", { onComplete: this.handleGalleryComplete});
   handleContentChange = content => this.setState({ content });
   handleSubmitMoment = () => {
     this.setState({ isSubmitting: true });
 
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
-      const content = { message: this.state.content };
-      return MomentAPI.publishMoment(currentUserEmail, content);
-    }).then(() => {
-      this.setState({ content: "", isSubmitting: false });
-      this.props.navigation.goBack();
-    });
+    if(this.photoGrid !== null){
+      const imagesPath = this.photoGrid.getImagesPath();
+      new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+        const content = { message: this.state.content, images: imagesPath };
+        return MomentAPI.publishMoment(currentUserEmail, content);
+      }).then(() => {
+        this.setState({ content: "", images: [], isSubmitting: false });
+        this.props.navigation.goBack();
+      })
+    }
   };
-
-  handleGalleryComplete = images => console.log(images);
 
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
+    this.photoGrid = null;
     this.handleContentChange = this.handleContentChange.bind(this);
     this.handleSubmitMoment = this.handleSubmitMoment.bind(this);
     this.handleGalleryIconPress = this.handleGalleryIconPress.bind(this);
@@ -40,8 +44,6 @@ export default class AddMomentScreen extends React.Component{
   }
 
   render(){
-    // const window = Dimensions.get("window");
-
     return(
       <KeyboardAwareScrollView>
         <PeopleInformation/>
@@ -68,20 +70,9 @@ export default class AddMomentScreen extends React.Component{
           </View>
         </View>
 
-        {/* <View style={{ backgroundColor: "gray", flex: 1 }}>
-          <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: 200, alignItems: "stretch", resizeMode: "cover" }}/>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-evenly" }}>
-            <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: (window.width/4), alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-            <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: (window.width/4), alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-            <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: (window.width/4), alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-            <View style={{ alignSelf: "stretch", flex: 1, height: (window.width/4) }}>
-              <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-              <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, .7)", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "white" }}>+7</Text>
-              </View>
-            </View>
-          </View>
-        </View> */}
+        <View style={{ marginBottom: 16 }}>
+          <PhotoGrid ref={i => this.photoGrid = i} images={this.state.images}/>
+        </View>
       </KeyboardAwareScrollView>
     )
   }
