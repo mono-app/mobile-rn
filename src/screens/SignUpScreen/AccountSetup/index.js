@@ -19,7 +19,6 @@ export default class AccountSetup extends React.Component{
   static navigationOptions = { title: "Account Setup" }
 
   handleCompleteClick = () => {
-    console.log("testing");
     SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
       console.log(currentUserEmail);
       const applicationInformation = this.applicationInformationCard.getState();

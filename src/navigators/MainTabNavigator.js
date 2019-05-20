@@ -9,14 +9,16 @@ import ContactTabNavigator from "./ContactTabNavigator";
 import SettingTabNavigator from "./SettingTabNavigator.js";
 import AppTabNavigator from "./AppTabNavigator";
 
+import { default as MomentTabNavigator } from "../../modules/Moments/navigators/MainNavigator";
+
 export default MainTabNavigator = createBottomTabNavigator({
   HomeTab: HomeTabNavigator,
   ContactTab: ContactTabNavigator,
   AppTab: AppTabNavigator,
-  MomentsTab: HomeTabNavigator,
+  MomentsTab: MomentTabNavigator,
   SettingsTab: SettingTabNavigator
 }, {
-  initialRouteName: "HomeTab",
+  initialRouteName: "MomentsTab",
   tabBarOptions: { 
     activeTintColor: "#0EAD69",
     style: { borderTopWidth: 0, elevation: 8, height: 60, padding: 8 }

@@ -33,3 +33,15 @@ export class RoomsCollection extends Collection{
 export class MessagesCollection extends Collection{ 
   constructor(){ super("messages"); }
 }
+
+export class MomentsCollection extends Collection{
+  constructor(){ super("moments"); }
+}
+
+export class FansCollection extends Collection{
+  constructor(){ super("fans"); }
+}
+
+export class CommentsCollection extends Collection{
+  constructor(){ super("comments"); }
+}

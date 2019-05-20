@@ -1,6 +1,6 @@
 import React from 'react';
 import { createAppContainer } from 'react-navigation';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 import AppNavigator from "./src/navigators/AppNavigator";
 import firebase from 'react-native-firebase';
@@ -14,8 +14,16 @@ export default class App extends React.Component{
   }
   
   render(){
+    const theme = {
+      ...DefaultTheme,
+      colors: {
+        ...DefaultTheme.colors,
+        primary: '#0EAD69'
+      }
+    };
+
     return(
-      <PaperProvider>
+      <PaperProvider theme={theme}>
         <AppContainer/>
       </PaperProvider>
     )

@@ -108,6 +108,8 @@ export default class ChatScreen extends React.Component{
             if(item.type === "peopleBubble") return <PeopleBubble {...item}/>
             if(item.type === "myBubble") return <MyBubble {...item}/>
           }}/>
+
+          {/* TODO: Change below to ButtomTextInput */}
           <Surface style={styles.inputBoxContainer}>
             <View style={{ flexDirection: "row" }}>
               <TextInput 
@@ -123,33 +125,6 @@ export default class ChatScreen extends React.Component{
     )
   }
 }
-
-// const PeopleBubble = props => {
-//   return (
-//     <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 8 }}>
-//       <Avatar.Text size={32} label="FH"/>
-//       <View style={{ width: 0, flexGrow: 1, marginLeft: 8, marginRight: 40,  alignItems: "flex-start"}}>
-//         <View style={{ borderRadius: 8, padding: 8, borderWidth: 1, borderColor:"#D3D9D3", backgroundColor: "white" }}>
-//           <Text style={{ fontSize: 12, color: "#161616" }}>{props.message}</Text>
-//         </View>
-//         <Text style={{ fontWeight: "500", color: "#B9BBBA", fontSize: 10, padding: 8, paddingTop: 4, paddingBottom: 4 }}>1:23PM</Text>
-//       </View>
-//     </View>
-//   )
-// }
-
-// const PeopleBubbleNoAvatar = props => {
-//   return (
-//     <View style={{ flex: 1, flexDirection: "row", marginBottom: 8, marginTop: 8 }}>
-//       <View style={{ width: 0, flexGrow: 1, marginLeft: 40, marginRight: 40,  alignItems: "flex-start" }}>
-//         <View style={{ borderRadius: 8, padding: 8, borderWidth: 1, borderColor:"#D3D9D3", backgroundColor: "white" }}>
-//           <Text style={{ fontSize: 12, color: "#161616" }}>{props.message}</Text>
-//         </View>
-//         <Text style={{ fontWeight: "500", color: "#B9BBBA", fontSize: 10, padding: 8, paddingTop: 4, paddingBottom: 4 }}>1:23PM</Text>
-//       </View>
-//     </View>
-//   )
-// }
 
 const DateDividerListItem = props => {
   return (

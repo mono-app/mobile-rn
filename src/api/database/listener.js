@@ -18,6 +18,15 @@ export class DocumentListener{
     return this.database.getDatabase()
                         .collection(collection.getName())
                         .doc(firebaseDocument.getId())
-                        .onSnapshot(callback);
+                        .onSnapshot(this.listenerOptions, callback);
+  }
+
+  /**
+   * 
+   * @param {DocumentReference or CollectionReference} reference
+   * @param {function} callback 
+   */
+  listenFromReference(reference, callback){
+    return reference.onSnapshot(this.listenerOptions, callback);
   }
 }
