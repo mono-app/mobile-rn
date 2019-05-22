@@ -1,8 +1,11 @@
 import React from "react";
+import firebase from "react-native-firebase";
+import moment from "moment";
+
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Surface, Avatar, Caption, Paragraph } from "react-native-paper";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
-import moment from "moment";
+import PhotoGrid from "modules/Moments/components/PhotoGrid";
 
 import MomentsAPI from "modules/Moments/api/moment";
 import PeopleAPI from "src/api/people";
@@ -22,6 +25,21 @@ export default class MomentItem extends React.Component{
     const { posterEmail } = this.state;
     new PeopleAPI().getDetail(posterEmail).then(poster => this.setState({ poster }));
     this.listener = MomentsAPI.getDetailWithRealTimeUpdate(this.state.id, momentItem => {
+      const { content } = momentItem;
+      const storage = firebase.storage();
+      if(content.images !== undefined){
+        const promises = [];
+        momentItem.content.images.map(stringRef => {
+          promises.push(storage.ref(stringRef).getDownloadURL());  
+        });
+        Promise.all(promises).then(results => {
+          content.images = results.map(result => {
+            return { image: {uri: result} }
+          });
+          this.setState({ content })
+        });
+      }
+
       this.setState({ ...momentItem });
       new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
         const { fanEmails } = momentItem;
@@ -46,6 +64,7 @@ export default class MomentItem extends React.Component{
   render(){
     let timeFromNow = moment(this.state.postTime.seconds * 1000).fromNow();
     timeFromNow = TranslateAPI.translate(timeFromNow, "ID");
+    console.log(this.state.content);
 
     return(
       <Surface style={{ elevation: 1, marginTop: 8, marginBottom: 8 }}>
@@ -61,6 +80,9 @@ export default class MomentItem extends React.Component{
         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
           <Paragraph>{this.state.content.message}</Paragraph>
         </View>
+        {this.state.content.images !== undefined? this.state.content.images[0].image !== undefined?(
+          <PhotoGrid images={this.state.content.images}/>
+        ):<View/>:<View/>}
         {/* <View style={{ backgroundColor: "gray", flex: 1 }}>
           <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: 200, alignItems: "stretch", resizeMode: "cover" }}/>
           <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-evenly" }}>

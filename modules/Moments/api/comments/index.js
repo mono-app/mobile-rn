@@ -19,6 +19,7 @@ export default class CommentsAPI{
     const momentRef = db.collection(momentsCollection.getName()).doc(momentDocument.getId());
     const commentsRef = momentRef.collection(commentsCollection.getName()).orderBy("timestamp", "asc");
 
+    listener.setListenerOptions({ includeMetadataChanges: true })
     return listener.listenFromReference(commentsRef, querySnapshot => {
       const comments = [];
       querySnapshot.forEach(documentSnapshot => comments.push(documentSnapshot.data()));
