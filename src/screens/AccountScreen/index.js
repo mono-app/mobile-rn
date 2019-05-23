@@ -1,17 +1,17 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { NavigationEvents, NavigationActions, StackActions } from 'react-navigation';
-import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
+import moment from "moment";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { NavigationEvents } from 'react-navigation';
+import { Text } from "react-native-paper";
+import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-import { GetDocument } from "../../api/database/query";
-import { UserCollection } from "../../api/database/collection";
-import { Document } from "../../api/database/document";
-import SignOutDialog from "./dialogs/SignOutDialog";
-import Navigator, { StackNavigator } from "../../api/navigator";
+import PeopleAPI from "src/api/people";
+import Navigator, { StackNavigator } from "src/api/navigator";
+import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 
-const INITIAL_STATE = { nickName: "", monoId: "", isSignOutVisible: false }
+const INITIAL_STATE = { nickName: "", monoId: "", dateOfBirth: "", gender: "" }
 
 export default class AccountScreen extends React.Component{
   static navigationOptions = { 
@@ -19,6 +19,7 @@ export default class AccountScreen extends React.Component{
     headerStyle: { backgroundColor: "#E8EEE8", elevation: 0 }
   };
 
+  handleBeforeDateOfBirthDave = value => moment(value, "DD/MM/YYYY").isValid();
   handleSignOutPress = e => this.signOutDialog.toggleShow();
   handleProceedSignOutPress = e => {
     firebase.auth().signOut().then(() => {
@@ -30,7 +31,7 @@ export default class AccountScreen extends React.Component{
   }
 
   handleNickNamePress = e => {
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
@@ -45,7 +46,7 @@ export default class AccountScreen extends React.Component{
   }
 
   handleMonoIdPress = e => {
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
@@ -59,20 +60,32 @@ export default class AccountScreen extends React.Component{
     })
   }
 
-  handleScreenDidFocus = () => {
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
-      const userCollection = new UserCollection();
-      const userDocument = new Document(currentUserEmail);
-      const getDocumentQuery = new GetDocument();
-      getDocumentQuery.setGetConfiguration("default");
-      return getDocumentQuery.executeQuery(userCollection, userDocument);
-    }).then(doc => {
-      if(doc.exists){
-        const userData = doc.data();
-        const { id, nickName } = userData.applicationInformation;
-        this.setState({ nickName, monoId: id });
+  handleDateOfBirthPress = e => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+      const payload = {
+        databaseCollection: "users",
+        databaseDocumentId: currentUserEmail,
+        databaseFieldName: "personalInformation.dateOfBirth",
+        caption: "Format tanggal lahir: 22/12/2007",
+        placeholder: "DD/MM/YYYY",
+        fieldValue: this.state.dateOfBirth,
+        fieldTitle: "Tanggal Lahir",
+        beforeSave: this.handleBeforeDateOfBirthDave
       }
-    }).catch(err => console.error(err));
+      const navigator = new Navigator(this.props.navigation);
+      navigator.navigateTo("EditSingleField", payload);
+    })
+  }
+
+  handleScreenDidFocus = () => {
+    const peopleAPI = new PeopleAPI();
+    peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
+      return peopleAPI.getDetail(currentUserEmail);
+    }).then(userData => {
+      const { id, nickName } = userData.applicationInformation;
+      const { dateOfBirth, gender } = userData.personalInformation;
+      this.setState({ nickName, monoId: id, dateOfBirth, gender });
+    })
   }
 
   constructor(props){
@@ -80,11 +93,14 @@ export default class AccountScreen extends React.Component{
 
     this.state = INITIAL_STATE;
     this.signOutDialog = null;
+    this.stringMapping = { male: "Pria", female: "Wanita" }
     this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
     this.handleNickNamePress = this.handleNickNamePress.bind(this);
     this.handleMonoIdPress = this.handleMonoIdPress.bind(this);
     this.handleSignOutPress = this.handleSignOutPress.bind(this);
+    this.handleDateOfBirthPress = this.handleDateOfBirthPress.bind(this);
     this.handleProceedSignOutPress = this.handleProceedSignOutPress.bind(this);
+    this.handleBeforeDateOfBirthDave = this.handleBeforeDateOfBirthDave.bind(this);
   }
 
   render(){
@@ -111,6 +127,31 @@ export default class AccountScreen extends React.Component{
               <Text style={{ fontWeight: "500" }}>Mono ID</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 <Text>{this.state.monoId}</Text>
+                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.groupContainer}>
+          <TouchableOpacity onPress={() => {}}>
+            <View style={styles.menu}>
+              <Text style={{ fontWeight: "500" }}>Gender</Text>
+              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                {this.state.gender?(
+                  <Text>{this.stringMapping[this.state.gender]}</Text>
+                ):null}
+                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.handleDateOfBirthPress}>
+            <View style={styles.menu}>
+              <Text style={{ fontWeight: "500" }}>Tanggal Lahir</Text>
+              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                {this.state.dateOfBirth?(
+                  <Text>{moment(this.state.dateOfBirth, "DD/MM/YYYY").format("DD MMM YYYY")}</Text>
+                ):null}
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>
             </View>

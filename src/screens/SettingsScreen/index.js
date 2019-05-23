@@ -7,11 +7,12 @@ import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import SInfo from "react-native-sensitive-info";
 
-import { UserCollection } from "../../api/database/collection";
-import { Document } from "../../api/database/document";
-import { GetDocument } from "../../api/database/query";
-
-import MenuListItemWithIcon from "../../components/MenuListItemWithIcon";
+import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
+import BirthdaySetupBanner from "src/screens/SettingsScreen/banners/BirthdaySetupBanner";
+import { UserCollection } from "src/api/database/collection";
+import { Document } from "src/api/database/document";
+import { GetDocument } from "src/api/database/query";
+import { ScrollView } from "react-native-gesture-handler";
 
 const INITIAL_STATE = { nickName: "" }
 
@@ -44,31 +45,35 @@ export default class SettingsScreen extends React.Component {
     return (
       <View style={{ flex: 1 }}>
         <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
-        <View style={styles.profileContainer}>
-          <Image style={styles.profilePicture} source={{uri: "https://picsum.photos/200/200/?random"}}/>
-          <View style={styles.profileDescriptionContainer}>
-            <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.state.nickName}</Text>
-            <Text style={{ fontSize: 12}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+        <BirthdaySetupBanner {...this.props}/>
+        
+        <ScrollView>
+          <View style={styles.profileContainer}>
+            <Image style={styles.profilePicture} source={{uri: "https://picsum.photos/200/200/?random"}}/>
+            <View style={styles.profileDescriptionContainer}>
+              <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.state.nickName}</Text>
+              <Text style={{ fontSize: 12}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+            </View>
           </View>
-        </View>
-        <View>
-          <FlatList
-            data={[
-              {title: "Show my QR Code", icon: <FontAwesome name="qrcode" size={24}/>, navigateTo: "MyQR"},
-              {title: "Account", icon: <MaterialIcons name="vpn-key" size={24}/>, navigateTo: "Account"},
-              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "Chats"},
-              {title: "Privacy", icon: <MaterialIcons name="lock" size={24}/>, navigateTo: "Privacy"},
-              {title: "Help", icon: <FontAwesome name="question-circle" size={24}/>, navigateTo: "Help"}
-            ]}
-            renderItem={({ item, index }) => {
-              return (
-                <MenuListItemWithIcon
-                  key={index}
-                  onPress={() => this.props.navigation.navigate(item.navigateTo)}
-                  icon={item.icon}
-                  title={item.title}/>
-            )}}/>
-          </View>
+          <View>
+            <FlatList
+              data={[
+                {title: "Show my QR Code", icon: <FontAwesome name="qrcode" size={24}/>, navigateTo: "MyQR"},
+                {title: "Account", icon: <MaterialIcons name="vpn-key" size={24}/>, navigateTo: "Account"},
+                {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "Chats"},
+                {title: "Privacy", icon: <MaterialIcons name="lock" size={24}/>, navigateTo: "Privacy"},
+                {title: "Help", icon: <FontAwesome name="question-circle" size={24}/>, navigateTo: "Help"}
+              ]}
+              renderItem={({ item, index }) => {
+                return (
+                  <MenuListItemWithIcon
+                    key={index}
+                    onPress={() => this.props.navigation.navigate(item.navigateTo)}
+                    icon={item.icon}
+                    title={item.title}/>
+              )}}/>
+            </View>
+          </ScrollView>
       </View>
     )
   }
