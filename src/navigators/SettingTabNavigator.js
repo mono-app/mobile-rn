@@ -9,6 +9,7 @@ export default SettingTabNavigator = createStackNavigator({
   Home: { screen: SettingsScreen },
   Account: { screen: AccountScreen },
   MyQR: { screen: MyQRScreen },
+  EditSingleField: { screen: EditSingleFieldScreen },
   SettingEditSingleFieldScreen: { screen: EditSingleFieldScreen }
 }, {
   initialRouteName: "Home",
