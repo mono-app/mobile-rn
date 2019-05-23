@@ -64,7 +64,13 @@ export default class MomentItem extends React.Component{
   render(){
     let timeFromNow = moment(this.state.postTime.seconds * 1000).fromNow();
     timeFromNow = TranslateAPI.translate(timeFromNow, "ID");
-    console.log(this.state.content);
+    
+    let hasImage = false;
+    if(this.state.content.images !== undefined){
+      if(this.state.content.images.length > 0) {
+        if(this.state.content.images[0].image !== undefined) hasImage = true;
+      }
+    }
 
     return(
       <Surface style={{ elevation: 1, marginTop: 8, marginBottom: 8 }}>
@@ -80,23 +86,9 @@ export default class MomentItem extends React.Component{
         <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
           <Paragraph>{this.state.content.message}</Paragraph>
         </View>
-        {this.state.content.images !== undefined? this.state.content.images[0].image !== undefined?(
+        {hasImage?(
           <PhotoGrid images={this.state.content.images}/>
-        ):<View/>:<View/>}
-        {/* <View style={{ backgroundColor: "gray", flex: 1 }}>
-          <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: 200, alignItems: "stretch", resizeMode: "cover" }}/>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-evenly" }}>
-            <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: (window.width/4), alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-            <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: (window.width/4), alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-            <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ height: (window.width/4), alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-            <View style={{ alignSelf: "stretch", flex: 1, height: (window.width/4) }}>
-              <Image source={{ uri: "https://picsum.photos/1080/720/?random" }} style={{ alignSelf: "stretch", flex: 1, resizeMode: "cover" }}/>
-              <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, .7)", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ color: "white" }}>+7</Text>
-              </View>
-            </View>
-          </View>
-        </View> */}
+        ):<View/>}
         <View style={{ ...styles.leftAlignedContainerWithTopBorder, paddingVertical: 8}}>
           <Caption style={{ marginRight: 16 }}>{this.state.totalFans} Fans</Caption>
           <Caption>{this.state.totalComments} Komentar</Caption>
