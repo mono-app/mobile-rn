@@ -35,7 +35,8 @@ export default class BirthdaySetupBanner extends React.Component{
     peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
       return peopleAPI.getDetail(currentUserEmail);
     }).then(people => {
-      if(people.personalInformation.dateOfBirth === undefined) this.toggleVisible();
+      if(people.personalInformation.dateOfBirth === undefined) this.setState({ isVisible: true });
+      else this.setState({ isVisible: false });
     })
   }
 
