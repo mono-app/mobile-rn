@@ -18,7 +18,6 @@ export default class CommentsScreen extends React.Component{
   handleScreenDidFocus = () => {
     if(this.keyboardAwareScrollView !== null) this.keyboardAwareScrollView.scrollToEnd(true);
     this.listener = CommentsAPI.getCommentsWithRealTimeUpdate(this.momentId, comments => {
-      console.log(comments);
       this.setState({ comments })
     })
   }

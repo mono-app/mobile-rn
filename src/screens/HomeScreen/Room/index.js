@@ -4,9 +4,10 @@ import moment from "moment";
 
 export default class Room extends React.Component{
   render(){
-    const { audience, lastMessage} = this.props;
-    const isToday = new moment().diff(lastMessage.sentTime, "days") === 0;
-    const dateTimeString = isToday? new moment(lastMessage.sentTime).format("HH:mmA"): new moment(lastMessage.sentTime).format("DD MMMM YYYY HH:mmA");
+    const { audience, lastMessage } = this.props;
+    const sentTime = lastMessage.sentTime.seconds * 1000;
+    const isToday = new moment().diff(sentTime, "days") === 0;
+    const dateTimeString = isToday? new moment(sentTime).format("HH:mmA"): new moment(sentTime).format("DD MMMM YYYY HH:mmA");
 
     return(
       <TouchableOpacity onPress={this.props.onPress}>
