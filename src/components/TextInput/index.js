@@ -3,8 +3,12 @@ import { TextInput as InputBox, StyleSheet } from "react-native";
 
 export default class TextInput extends React.Component{
   render(){
+    const finalStyle = { ...styles.textInput, ...this.props.style }
+    const newProps = Object.assign({}, this.props);
+    delete newProps.style;
+
     return(
-      <InputBox style={styles.textInput} {...this.props}/>
+      <InputBox style={finalStyle} {...newProps}/>
     )
   }
 }
