@@ -45,3 +45,7 @@ export class FansCollection extends Collection{
 export class CommentsCollection extends Collection{
   constructor(){ super("comments"); }
 }
+
+export class StatusCollection extends Collection{
+  constructor(){ super("status"); }
+}
