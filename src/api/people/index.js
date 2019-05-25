@@ -1,6 +1,7 @@
 import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
 
+import StorageAPI from "src/api/storage";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { GetDocument } from "src/api/database/query";
@@ -8,6 +9,26 @@ import { GetDocument } from "src/api/database/query";
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
     this.currentUserEmail = currentUserEmail;
+  }
+
+  /**
+   * 
+   * @param {String} peopleEmail 
+   * @param {String} storagePath - Firebase Storage Path
+   */
+  changeProfilePicture(peopleEmail=null, storagePath){
+    const selectedPeopleEmail = (peopleEmail === null)? this.currentUserEmail: peopleEmail;
+    if(selectedPeopleEmail){
+      const db = firebase.firestore();
+      const batch = db.batch();
+
+      const userCollection = new UserCollection();
+      const userDocument = new Document(selectedPeopleEmail);
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      batch.update(userRef, { "applicationInformation.profilePicture": storagePath})
+      batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
+      return batch.commit();
+    }
   }
 
   /**
@@ -45,12 +66,20 @@ export default class PeopleAPI{
       const userCollection = new UserCollection();
       const userDocument = new Document(selectedPeopleEmail);
       const getDocumentQuery = new GetDocument();
+
       getDocumentQuery.setGetConfiguration(source);
+      let userData = null;
       return getDocumentQuery.executeQuery(userCollection, userDocument).then(doc => {
-        if(doc.exists) return doc.data();
-        else return null;
+        if(doc.exists) {
+          userData = doc.data();
+          if(userData.applicationInformation.profilePicture) return StorageAPI.getDownloadURL(userData.applicationInformation.profilePicture);
+          else return null;
+        }else return null;
+      }).then(profilePicture => {
+        if(profilePicture) userData.applicationInformation.profilePicture = profilePicture;
+        return userData;
       })
-    }else return new Promise((resolve, reject) => resolve(null));
+    }else return null;
   }
 
   /**
@@ -97,5 +126,4 @@ export default class PeopleAPI{
     })
   }
 
-  
 }
