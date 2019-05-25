@@ -1,6 +1,8 @@
-import { RoomsCollection, MessagesCollection } from "../database/collection";
-import { Document } from "../database/document";
 import firebase from "react-native-firebase";
+
+import PeopleAPI from "src/api/people";
+import { RoomsCollection, MessagesCollection } from "src/api/database/collection";
+import { Document } from "src/api/database/document";
 
 export default class MessagesAPI{
   /**
@@ -20,12 +22,18 @@ export default class MessagesAPI{
       let messages = [];
       snapshot.forEach(doc => {
         let payload = doc.data();
-        payload = Object.assign({ 
-          isSent: !doc.metadata.hasPendingWrites
-        }, payload)
+        payload = Object.assign({ isSent: !doc.metadata.hasPendingWrites}, payload)
         messages.push(payload);
       })
-      callback(messages)
+
+      const promises = messages.map(message => new PeopleAPI().getDetail(message.senderEmail, "cache"));
+      Promise.all(promises).then(results => {
+        const newMessages = messages.map((message, index) => {
+          message.sender = results[index]
+          return message;
+        });
+        callback(newMessages);
+      })
     }, err => console.error(err));
   }
 

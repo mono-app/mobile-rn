@@ -6,8 +6,8 @@ import {
 import { NavigationEvents } from "react-navigation";
 import SInfo from "react-native-sensitive-info";
 
-import FriendsAPI from "../../api/friends";
-import PeopleListItem from "../../components/PeopleListItem";
+import FriendsAPI from "src/api/friends";
+import PeopleListItem from "src/components/PeopleListItem";
 
 const INITIAL_STATE = { isLoading: true, peopleList: [] }
 

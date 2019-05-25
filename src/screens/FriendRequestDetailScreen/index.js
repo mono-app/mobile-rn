@@ -1,58 +1,52 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { NavigationEvents } from "react-navigation";
-import SInfo from "react-native-sensitive-info";
 
-import Button from "../../components/Button";
-import PeopleProfileHeader from "../../components/PeopleProfile/Header";
-import PeopleInformationContainer from "../../components/PeopleProfile/InformationContainer";
+import Button from "src/components/Button";
+import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 
-import PeopleAPI from "../../api/people";
-import FriendsAPI from "../../api/friends";
+import PeopleAPI from "src/api/people";
+import FriendsAPI from "src/api/friends";
 
 const INITIAL_STATE = { 
-  people: {nickName: "", status: "", id: "" } 
+  people: { nickName: "", status: "", id: "", profilePicture: "" } 
 }
 
 export default class FriendRequestDetailScreen extends React.Component{
   handleScreenDidFocus = () => { 
     const peopleEmail = this.props.navigation.getParam("peopleEmail");
     const api = new PeopleAPI();
-    api.getDetail(peopleEmail).then(people => {
-      this.setState({people: {
-        nickName: people.applicationInformation.nickName,
-        id: people.applicationInformation.id,
-        status: ""
-      }});
+    const promises = [ api.getDetail(peopleEmail), api.getLatestStatus(peopleEmail) ];
+    Promise.all(promises).then(results => {
+      const people = results[0];
+      const status = results[1]? results[1]: "";
+
+      const { nickName, id, profilePicture } = people.applicationInformation;
+      this.setState({ people: {nickName, id, status, profilePicture} })
     })
   }
 
   handleRejectFriendRequest = () => {
     const peopleEmail = this.props.navigation.getParam("peopleEmail");  
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const api = new FriendsAPI();
       return api.rejectRequest(currentUserEmail, peopleEmail);
     }).then(success => {
       if(!success) throw "Terjadi kesalahan. Silahkan Coba Lagi";
       this.props.navigation.pop();
-    }).catch(err => {
-      console.log(err);
-      alert(err);
-    })
+    }).catch(err => alert(err))
   }
 
   handleAcceptFriendRequest = () => {
     const peopleEmail = this.props.navigation.getParam("peopleEmail");
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const api = new FriendsAPI();
       return api.acceptRequest(currentUserEmail, peopleEmail);
     }).then(success => {
       if(!success) throw "Terjadi kesalahan. Silahkan Coba Lagi";
       this.props.navigation.pop();
-    }).catch(err => {
-      console.log(err);
-      alert(err);
-    })
+    }).catch(err => alert(err))
   }
 
   constructor(props){

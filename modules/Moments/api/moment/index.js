@@ -73,8 +73,6 @@ export default class MomentAPI{
       const stringRef = `/modules/moments/${uuid()}.png`
       const storageRef = storage.ref(stringRef);
       const cleanImagePath = image.substring(7);
-      console.log("path: ", cleanImagePath, stringRef);
-
       promises.push(storageRef.putFile(cleanImagePath))
       content.images[index] = stringRef;
     })

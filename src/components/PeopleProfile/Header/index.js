@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 
-import SquareAvatar from "../../Avatar/Square";
+import SquareAvatar from "src/components/Avatar/Square";
 
 /**
  * @param {string} nickName
@@ -12,7 +12,7 @@ export default class PeopleProfileHeader extends React.Component{
   render(){
     return(
       <View style={styles.profileContainer}>
-        <SquareAvatar source={{uri: "https://picsum.photos/200/200/?random"}} />
+        <SquareAvatar source={{uri: this.props.profilePicture }} />
         <View style={styles.profileDescriptionContainer}>
           <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.props.nickName}</Text>
           <Text style={{ fontSize: 12}}>{this.props.status}</Text>

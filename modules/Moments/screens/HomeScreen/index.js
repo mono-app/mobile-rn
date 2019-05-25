@@ -7,7 +7,7 @@ import MomentItem from "./MomentItem";
 import PeopleAPI from "src/api/people";
 import MomentsAPI from "modules/Moments/api/moment";
 
-const INITIAL_STATE = { moments: [], isLoading: false }
+const INITIAL_STATE = { moments: [], isLoading: false, profilePicture: "https://picsum.photos/200/200/?random" }
 
 export default class HomeScreen extends React.Component{
   static navigationOptions = { headerTitle: "Moments" }
@@ -18,9 +18,15 @@ export default class HomeScreen extends React.Component{
 
   refreshMoments = () => {
     this.setState({ moments: [], isLoading: true });
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail =>{
-      return MomentsAPI.getMoments(currentUserEmail)
-    }).then(moments => this.setState({ isLoading: false, moments }));
+    const peopleAPI = new PeopleAPI();
+    peopleAPI.getCurrentUserEmail().then(currentUserEmail =>{
+      const promises = [ MomentsAPI.getMoments(currentUserEmail), peopleAPI.getDetail() ]
+      return Promise.all(promises);
+    }).then(results => {
+      const moments = results[0];
+      const userData = results[1];
+      this.setState({ isLoading: false, moments, profilePicture: userData.applicationInformation.profilePicture })
+    });
   }
 
   constructor(props){
@@ -40,7 +46,7 @@ export default class HomeScreen extends React.Component{
         <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
 
         <Surface style={{ padding: 16, elevation: 4, flexDirection: "row", justifyContent: "space-between" }}>
-          <Avatar.Image size={50} source={{ uri: "https://picsum.photos/200/200/?random" }}/>
+          <Avatar.Image size={50} source={{ uri: this.state.profilePicture }}/>
           <TouchableOpacity style={styles.addToMomentContainer} onPress={this.handleAddMomentPress}>
             <Text>Tambahkan moment</Text>
           </TouchableOpacity>

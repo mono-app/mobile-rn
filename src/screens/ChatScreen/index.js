@@ -2,14 +2,14 @@ import React from "react";
 import { 
   View, FlatList, StyleSheet, TextInput, KeyboardAvoidingView
 } from "react-native";
-import { Text, Avatar, Surface, IconButton } from "react-native-paper";
+import { Text, Surface, IconButton } from "react-native-paper";
 import { Header, NavigationEvents } from "react-navigation";
 
-import MyBubble from "./MyBubble";
-import PeopleBubble from "./PeopleBubble";
+import MyBubble from "src/screens/ChatScreen/MyBubble";
+import PeopleBubble from "src/screens/ChatScreen/PeopleBubble";
 
-import MessagesAPI from "../../api/messages";
-import PeopleAPI from "../../api/people";
+import MessagesAPI from "src/api/messages";
+import PeopleAPI from "src/api/people";
 
 const INITIAL_STATE = { 
   messages: [], message: "", isChatRoomReady: false, 
@@ -60,7 +60,6 @@ export default class ChatScreen extends React.Component{
       // parse message information
       const { currentUserEmail } = this.state;
       messages.reverse();
-      console.log("messages", messages);
 
       let withAvatar = true;
       let lastSender = null;
@@ -71,7 +70,6 @@ export default class ChatScreen extends React.Component{
         return { ...message, type, withAvatar }
       })
       newMessages.reverse();
-      console.log("newMessages", newMessages);
       this.setState({ messages: newMessages });
     })
   }

@@ -1,13 +1,20 @@
 import React from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import moment from "moment";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+
+import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default class Room extends React.Component{
   render(){
     const { audience, lastMessage } = this.props;
-    const sentTime = lastMessage.sentTime.seconds * 1000;
-    const isToday = new moment().diff(sentTime, "days") === 0;
-    const dateTimeString = isToday? new moment(sentTime).format("HH:mmA"): new moment(sentTime).format("DD MMMM YYYY HH:mmA");
+    const sentTime = lastMessage.sentTime? lastMessage.sentTime.seconds * 1000: null;
+
+    let dateTimeString = <MaterialCommunityIcons name="progress-clock" size={24} style={{ color: "#5E8864" }}/>;
+    if(sentTime){
+      const isToday = new moment().diff(sentTime, "days") === 0;
+      if(isToday) dateTimeString = new moment(sentTime).format("HH:mmA");
+      else new moment(sentTime).format("DD MMMM YYYY");
+    }
 
     return(
       <TouchableOpacity onPress={this.props.onPress}>
@@ -15,7 +22,7 @@ export default class Room extends React.Component{
           <View style={styles.photoContainer}>
             <Image 
               style={styles.profilePicture}
-              source={{uri: "https://picsum.photos/200/200/?random"}}/>
+              source={{uri: audience.applicationInformation.profilePicture }}/>
           </View>
           <View style={styles.descriptionContainer}>
             <Text style={{fontWeight: "500"}}>{audience.applicationInformation.nickName}</Text>
