@@ -1,14 +1,35 @@
 import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
-import moment from "moment";
 
-import { UserCollection, RoomsCollection } from "../database/collection";
-import { Document } from "../database/document";
-import { GetDocument, SearchDocumentByField } from "../database/query";
+import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
+import { Document } from "src/api/database/document";
+import { GetDocument } from "src/api/database/query";
 
 export default class PeopleAPI{
-  constructor(){
-    this.currentUserEmail = null;
+  constructor(currentUserEmail=null){
+    this.currentUserEmail = currentUserEmail;
+  }
+
+  /**
+   * 
+   * @param {String} peopleEmail 
+   * @returns {Promise} - `null` if status is not found.
+   */
+  getLatestStatus(peopleEmail=null){
+    const selectedPeopleEmail = (peopleEmail === null)? this.currentUserEmail: peopleEmail;
+    if(selectedPeopleEmail){
+      const db = firebase.firestore();
+      const userCollection = new UserCollection();
+      const userDocument = new Document(selectedPeopleEmail);
+      const statusCollection = new StatusCollection();
+
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      const statusRef = userRef.collection(statusCollection.getName());
+      return statusRef.orderBy("timestamp", "desc").limit(1).get().then(querySnapshot => {
+        if(querySnapshot.empty) return null;
+        else return querySnapshot.docs[0].data()
+      })
+    }else return new Promise((resolve, reject) => resolve(null));
   }
 
   /**
@@ -17,15 +38,19 @@ export default class PeopleAPI{
    * @param {String} source - default value `default`, available value `cache`, `server`, `default`
    * @returns {Promise} - object of user in firebase, or null if cannot find
    */
-  getDetail(email, source="default"){
-    const userCollection = new UserCollection();
-    const userDocument = new Document(email);
-    const getDocumentQuery = new GetDocument();
-    getDocumentQuery.setGetConfiguration(source);
-    return getDocumentQuery.executeQuery(userCollection, userDocument).then(doc => {
-      if(doc.exists) return doc.data();
-      else return null;
-    })
+  getDetail(email=null, source="default"){
+    const selectedPeopleEmail = (email === null)? this.currentUserEmail: email;
+
+    if(selectedPeopleEmail){
+      const userCollection = new UserCollection();
+      const userDocument = new Document(selectedPeopleEmail);
+      const getDocumentQuery = new GetDocument();
+      getDocumentQuery.setGetConfiguration(source);
+      return getDocumentQuery.executeQuery(userCollection, userDocument).then(doc => {
+        if(doc.exists) return doc.data();
+        else return null;
+      })
+    }else return new Promise((resolve, reject) => resolve(null));
   }
 
   /**
@@ -71,4 +96,6 @@ export default class PeopleAPI{
       callback(rooms);
     })
   }
+
+  
 }

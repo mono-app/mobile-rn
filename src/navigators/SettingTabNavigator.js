@@ -14,6 +14,6 @@ export default SettingTabNavigator = createStackNavigator({
   SettingEditSingleFieldScreen: { screen: EditSingleFieldScreen },
   StatusChange: { screen: StatusChangeScreen }
 }, {
-  initialRouteName: "StatusChange",
+  initialRouteName: "Home",
   defaultNavigationOptions: { headerStyle: { elevation: 0 } }
 })

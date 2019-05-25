@@ -5,32 +5,28 @@ import {
 import { NavigationEvents } from "react-navigation";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
-import SInfo from "react-native-sensitive-info";
 
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import BirthdaySetupBanner from "src/screens/SettingsScreen/banners/BirthdaySetupBanner";
-import { UserCollection } from "src/api/database/collection";
-import { Document } from "src/api/database/document";
-import { GetDocument } from "src/api/database/query";
-import { ScrollView } from "react-native-gesture-handler";
+import PeopleAPI from "src/api/people";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-const INITIAL_STATE = { nickName: "" }
+const INITIAL_STATE = { nickName: "", status: "Tulis statusmu disini..." }
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = { title: "Settings" }
 
+  handleStatusPress = () => this.props.navigation.navigate("StatusChange");
   handleScreenWillFocus = () => {
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
-      const userCollection = new UserCollection();
-      const userDocument = new Document(currentUserEmail);
-      const getDocumentQuery = new GetDocument();
-      getDocumentQuery.setGetConfiguration("default");
-      return getDocumentQuery.executeQuery(userCollection, userDocument);
-    }).then(doc => {
-      if(doc.exists){
-        const userData = doc.data();
-        this.setState({ nickName: userData.applicationInformation.nickName });
-      }
+    const peopleAPI = new PeopleAPI();
+    peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
+      const promises = [ peopleAPI.getDetail(), peopleAPI.getLatestStatus() ]
+      return Promise.all(promises);
+    }).then(results => {
+      const userData = results[0];
+      const status = results[1];
+      this.setState({ nickName: userData.applicationInformation.nickName, status: status.content });
     }).catch(err => console.error(err));
   }
 
@@ -39,6 +35,7 @@ export default class SettingsScreen extends React.Component {
 
     this.state = INITIAL_STATE;
     this.handleScreenWillFocus = this.handleScreenWillFocus.bind(this);
+    this.handleStatusPress = this.handleStatusPress.bind(this);
   }
   
   render(){
@@ -52,7 +49,10 @@ export default class SettingsScreen extends React.Component {
             <Image style={styles.profilePicture} source={{uri: "https://picsum.photos/200/200/?random"}}/>
             <View style={styles.profileDescriptionContainer}>
               <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.state.nickName}</Text>
-              <Text style={{ fontSize: 12}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+              <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }} onPress={this.handleStatusPress}>
+                <Text style={{ fontSize: 12, marginRight: 16 }}>{this.state.status}</Text>
+                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+              </TouchableOpacity>
             </View>
           </View>
           <View>
