@@ -25,7 +25,7 @@ export default class SettingsScreen extends React.Component {
       return Promise.all(promises);
     }).then(results => {
       const userData = results[0];
-      const status = results[1] !== null? status: {content: "Tulis statusmu disini..."}
+      const status = results[1]? results[1]: {content: "Tulis statusmu disini..."}
       this.setState({ nickName: userData.applicationInformation.nickName, status: status.content });
     }).catch(err => console.error(err));
   }

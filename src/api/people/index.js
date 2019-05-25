@@ -29,7 +29,7 @@ export default class PeopleAPI{
         if(querySnapshot.empty) return null;
         else return querySnapshot.docs[0].data()
       })
-    }else return new Promise((resolve, reject) => resolve(null));
+    }else return null;
   }
 
   /**
