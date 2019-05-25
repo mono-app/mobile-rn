@@ -36,6 +36,7 @@ export class AddDocument extends Query{
   /**
    * 
    * @param {CollectionReference} firebaseReference 
+   * @param {Document} firebaseDocument - set is as `null` to automatically create document id 
    * @param {Object} defaultValue 
    * @param {Object} setOptions 
    */
