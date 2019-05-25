@@ -28,7 +28,7 @@ export default class StatusChangeScreen extends React.Component{
             const statusDate = moment(status.timestamp.seconds * 1000);
             if(!statusDate.isSame(currentDateSection, "date")){
               currentDateSection = moment(statusDate);
-              statusItems.push({ timestamp: currentDateSection.unix(), type: "dateSeparator" })
+              statusItems.push({ timestamp: moment(currentDateSection), type: "dateSeparator" })
             }
             statusItems.push({ ...status, type: "item" })
           }else statusItems.push({ ...status, type: "itemPendingServer" });
@@ -61,7 +61,7 @@ export default class StatusChangeScreen extends React.Component{
             if(item.type === "dateSeparator"){
               return (
                 <View style={{ ...styles.statusContainer, justifyContent: "center" }}>
-                  <Text style={{ color: "#5E8864" }}>01 January 2019</Text>
+                  <Text style={{ color: "#5E8864" }}>{item.timestamp.format("DD MMMM YYYY")}</Text>
                 </View>
               )
             }else if(item.type === "item") {
