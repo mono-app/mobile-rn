@@ -75,7 +75,9 @@ export default class MomentItem extends React.Component{
     return(
       <Surface style={{ elevation: 1, marginTop: 8, marginBottom: 8 }}>
         <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-          <Avatar.Image size={50} source={{ uri: "https://picsum.photos/200/200/?random" }}/>
+          {this.state.poster?(
+            <Avatar.Image size={50} source={{ uri: this.state.poster.applicationInformation.profilePicture }}/>
+          ):null}
           <View style={{ marginLeft: 16 }}>
             {this.state.poster !== null?(
               <Text style={{ fontWeight: "700" }}>{this.state.poster.applicationInformation.nickName}</Text>

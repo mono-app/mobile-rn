@@ -1,5 +1,6 @@
 import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
+import moment from "moment";
 
 import StorageAPI from "src/api/storage";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
@@ -77,6 +78,7 @@ export default class PeopleAPI{
         }else return null;
       }).then(profilePicture => {
         if(profilePicture) userData.applicationInformation.profilePicture = profilePicture;
+        else userData.applicationInformation.profilePicture = "https://picsum.photos/200/200/?random";
         return userData;
       })
     }else return null;
@@ -115,10 +117,10 @@ export default class PeopleAPI{
 
       // Sort based on lastMessage.sentTime
       rooms.sort((a, b) => {
-        const firstSentItem = a.lastMessage.sentTime.seconds;
-        const secondSentItem = b.lastMessage.sentTime.seconds;
+        const firstSentItem = a.lastMessage.sentTime? a.lastMessage.sentTime.seconds: moment().unix();
+        const secondSentItem = b.lastMessage.sentTime? b.lastMessage.sentTime.seconds: moment().unix();
 
-        if(firstSentItem> secondSentItem) return -1
+        if(firstSentItem > secondSentItem) return -1
         else if(firstSentItem < secondSentItem) return 1
         else return 0;
       });

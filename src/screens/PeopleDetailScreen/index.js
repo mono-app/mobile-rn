@@ -4,12 +4,12 @@ import { NavigationEvents, StackActions, NavigationActions } from "react-navigat
 import moment from "moment";
 import SInfo from "react-native-sensitive-info";
 
-import PeopleProfileHeader from "../../components/PeopleProfile/Header";
-import PeopleInformationContainer from "../../components/PeopleProfile/InformationContainer";
-import Button from "../../components/Button";
+import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
+import Button from "src/components/Button";
 
-import PeopleAPI from "../../api/people";
-import { PersonalRoomsAPI } from "../../api/rooms";
+import PeopleAPI from "src/api/people";
+import { PersonalRoomsAPI } from "src/api/rooms";
 
 const INITIAL_STATE = { creationTime: null, nickName: "", status: "", monoId: "" }
 
@@ -33,22 +33,21 @@ export default class PeopleDetailScreen extends React.Component{
   handleScreenWillFocus = () => {
     const peopleEmail = this.props.navigation.getParam("peopleEmail");
     const api = new PeopleAPI();
-    api.getDetail(peopleEmail).then(people => {
-      const { nickName, id } = people.applicationInformation;
+    const promises = [ api.getDetail(peopleEmail), api.getLatestStatus(peopleEmail) ];
+    Promise.all(promises).then(results => {
+      const people = results[0];
+      const status = results[1]? results[1].content: "";
+      const { nickName, id, profilePicture } = people.applicationInformation;
       const { gender } = people.personalInformation;
       const { creationTime } = people;
-
-      this.setState({ 
-        nickName, creationTime, gender,
-        status: null, monoId: id, 
-      });
+      this.setState({ profilePicture, nickName, creationTime, gender, status, monoId: id });
       this.props.navigation.setParams({ title: nickName })
-    });
+    })
   }
 
   handleStartChattingPress = () => {
     const peopleEmail = this.props.navigation.getParam("peopleEmail");
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const audiences = [ peopleEmail, currentUserEmail ];
       const personalRoomAPI = new PersonalRoomsAPI();
       return personalRoomAPI.createRoomIfNotExists(audiences);
@@ -79,7 +78,8 @@ export default class PeopleDetailScreen extends React.Component{
 
         <PeopleProfileHeader 
           nickName={this.state.nickName}
-          status={this.state.status || "No Status"}/>
+          status={this.state.status || "No Status" }
+          profilePicture={this.state.profilePicture}/>
         <View style={{ marginTop: 16, marginBottom: 16 }}>
           <PeopleInformationContainer fieldName="Jenis Kelamin" fieldValue={genderString}/>
           <PeopleInformationContainer fieldName="Mono ID" fieldValue={this.state.monoId}/>
