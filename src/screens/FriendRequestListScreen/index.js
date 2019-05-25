@@ -1,10 +1,10 @@
 import React from "react";
 import { View, FlatList } from "react-native";
 import { NavigationEvents } from "react-navigation";
-import SInfo from "react-native-sensitive-info";
 
-import FriendsAPI from "../../api/friends";
-import PeopleListItem from "../../components/PeopleListItem";
+import FriendsAPI from "src/api/friends";
+import PeopleAPI from "src/api/people";
+import PeopleListItem from "src/components/PeopleListItem";
 
 const INITIAL_STATE = { people: [] }
 
@@ -13,7 +13,7 @@ export default class FriendRequestListScreen extends React.Component{
 
   handlePeoplePress = email => this.props.navigation.navigate("FriendRequestDetail", { peopleEmail: email });
   handleScreenWillFocus = () => {
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const api = new FriendsAPI();
       return api.getRequestList(currentUserEmail)
     }).then(people => {
@@ -30,7 +30,6 @@ export default class FriendRequestListScreen extends React.Component{
   }
 
   render(){
-    console.log(this.state, this.props);
     return(
       <View>
         <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
