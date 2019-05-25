@@ -61,8 +61,8 @@ export default class PeopleAPI{
 
       // Sort based on lastMessage.sentTime
       rooms.sort((a, b) => {
-        const firstSentItem = parseInt(new moment(a.lastMessage.sentTime).format("x"));
-        const secondSentItem = parseInt(new moment(b.lastMessage.sentTime).format("x"));
+        const firstSentItem = a.lastMessage.sentTime.seconds;
+        const secondSentItem = b.lastMessage.sentTime.seconds;
 
         if(firstSentItem> secondSentItem) return -1
         else if(firstSentItem < secondSentItem) return 1
