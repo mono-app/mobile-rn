@@ -1,5 +1,4 @@
 import React from "react";
-import uuid from "uuid/v4";
 import { View, Image, FlatList, StyleSheet } from "react-native";
 import { Text, Portal, Dialog, Paragraph, ActivityIndicator } from "react-native-paper";
 import { NavigationEvents } from "react-navigation";
@@ -7,7 +6,6 @@ import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 import PeopleAPI from "src/api/people";
-import StorageAPI from "src/api/storage";
 
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import BirthdaySetupBanner from "src/screens/SettingsScreen/banners/BirthdaySetupBanner";
@@ -44,19 +42,14 @@ export default class SettingsScreen extends React.Component {
 
   handleProfilePictureSave = selectedImage => {
     this.setState({ isLoading: true });
-    const imagePath = selectedImage.image.uri;
-    const storagePath = `/main/profilePicture/${uuid()}.png`;
     const peopleAPI = new PeopleAPI();
-
-    let downloadUrl = null;
-    StorageAPI.uploadFile(storagePath, imagePath).then(url => {
-      downloadUrl = url;
-      return peopleAPI.getCurrentUserEmail();
-    }).then(currentUserEmail => {
-      return peopleAPI.changeProfilePicture(null, storagePath);
-    }).then(() => {
-      this.setState({ isLoading: false, profilePicture: downloadUrl });
-    });
+    peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
+      const imagePath = selectedImage.image.uri;
+      return peopleAPI.changeProfilePicture(null, imagePath);
+    }).then(profilePictureUrl => {
+      console.log(profilePictureUrl);
+      this.setState({ isLoading: false, profilePicture: profilePictureUrl })
+    })
   }
 
   constructor(props){
@@ -91,7 +84,7 @@ export default class SettingsScreen extends React.Component {
         <ScrollView>
           <View style={styles.profileContainer}>
             <TouchableOpacity onPress={this.handleProfilePicturePress}>
-              <Image style={styles.profilePicture} source={{uri: this.state.profilePicture}}/>
+              <Image style={styles.profilePicture} source={ {uri: this.state.profilePicture, cache: "force-cache" }}/>
             </TouchableOpacity>
             <View style={styles.profileDescriptionContainer}>
               <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.state.nickName}</Text>

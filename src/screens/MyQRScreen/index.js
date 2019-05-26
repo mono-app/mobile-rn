@@ -46,7 +46,7 @@ export default class MyQRScreen extends React.Component{
         <Card>
           <Card.Content>
             <View style={styles.profileContainer}>
-              <Image style={styles.profilePicture} source={{uri: "https://picsum.photos/200/200/?random"}}/>
+              <Image style={styles.profilePicture} source={{uri: "https://picsum.photos/200/200/?random", cache: "force-cache" }}/>
               <View style={styles.profileDescriptionContainer}>
                 <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.state.nickName}</Text>
                 <Text style={{ fontSize: 12}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>

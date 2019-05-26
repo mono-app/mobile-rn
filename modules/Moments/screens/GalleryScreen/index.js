@@ -93,7 +93,7 @@ class GalleryScreen extends React.Component{
             if(item.empty !== undefined) return <View style={{ flex: 1, height, padding: 2 }}/>
             return(              
               <TouchableOpacity onPress={() => this.handleToggleImageSelect(index, item)} style={{ position: "relative", flex: 1, height, padding: 2 }}>
-                <Image resizeMode="cover" style={{ height: "100%" }}  source={{ uri: item.image.uri }}/>
+                <Image resizeMode="cover" style={{ height: "100%" }}  source={{ uri: item.image.uri, cache: "force-cache" }}/>
                 {(item.selected === true)?(
                     <View style={{ position: "absolute", top: 2, left: 2, width: "100%", height: "100%", backgroundColor: "rgba(0, 0, 0, .52)"}}>
                       <MaterialIcons style={{ position: "absolute", right: 4, top: 6 }} name="check-circle" size={24} color={colors.primary}/>

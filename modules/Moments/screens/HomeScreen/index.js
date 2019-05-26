@@ -46,7 +46,7 @@ export default class HomeScreen extends React.Component{
         <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
 
         <Surface style={{ padding: 16, elevation: 4, flexDirection: "row", justifyContent: "space-between" }}>
-          <Avatar.Image size={50} source={{ uri: this.state.profilePicture }}/>
+          <Avatar.Image size={50} source={{ uri: this.state.profilePicture, cache: "force-cache" }}/>
           <TouchableOpacity style={styles.addToMomentContainer} onPress={this.handleAddMomentPress}>
             <Text>Tambahkan moment</Text>
           </TouchableOpacity>

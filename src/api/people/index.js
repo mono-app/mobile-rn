@@ -1,6 +1,7 @@
 import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
 import moment from "moment";
+import uuid from "uuid/v4";
 
 import StorageAPI from "src/api/storage";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
@@ -17,18 +18,23 @@ export default class PeopleAPI{
    * @param {String} peopleEmail 
    * @param {String} storagePath - Firebase Storage Path
    */
-  changeProfilePicture(peopleEmail=null, storagePath){
+  changeProfilePicture(peopleEmail=null, imagePath){
     const selectedPeopleEmail = (peopleEmail === null)? this.currentUserEmail: peopleEmail;
     if(selectedPeopleEmail){
-      const db = firebase.firestore();
-      const batch = db.batch();
+      let profilePictureUrl = null;
+      const storagePath = `/main/profilePicture/${uuid()}.png`;
+      return StorageAPI.uploadFile(storagePath, imagePath).then(downloadUrl => {
+        profilePictureUrl = `${downloadUrl}`;
+        const db = firebase.firestore();
+        const batch = db.batch();
 
-      const userCollection = new UserCollection();
-      const userDocument = new Document(selectedPeopleEmail);
-      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      batch.update(userRef, { "applicationInformation.profilePicture": storagePath})
-      batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
-      return batch.commit();
+        const userCollection = new UserCollection();
+        const userDocument = new Document(selectedPeopleEmail);
+        const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+        batch.update(userRef, { "applicationInformation.profilePicture": {storagePath, downloadUrl} })
+        batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
+        return batch.commit();
+      }).then(() => profilePictureUrl);
     }
   }
 
@@ -69,18 +75,26 @@ export default class PeopleAPI{
       const getDocumentQuery = new GetDocument();
 
       getDocumentQuery.setGetConfiguration(source);
-      let userData = null;
-      return getDocumentQuery.executeQuery(userCollection, userDocument).then(doc => {
-        if(doc.exists) {
-          userData = doc.data();
-          if(userData.applicationInformation.profilePicture) return StorageAPI.getDownloadURL(userData.applicationInformation.profilePicture);
-          else return null;
+      return getDocumentQuery.executeQuery(userCollection, userDocument).then(documentSnapshot => {
+        if(documentSnapshot.exists){
+          const userData = documentSnapshot.data();
+          const { applicationInformation } = userData;
+          const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture.downloadUrl: "https://picsum.photos/200/200/?random";
+          userData.applicationInformation.profilePicture = profilePicture;
+          return userData;
         }else return null;
-      }).then(profilePicture => {
-        if(profilePicture) userData.applicationInformation.profilePicture = profilePicture;
-        else userData.applicationInformation.profilePicture = "https://picsum.photos/200/200/?random";
-        return userData;
       })
+      // return getDocumentQuery.executeQuery(userCollection, userDocument).then(doc => {
+      //   if(doc.exists) {
+      //     userData = doc.data();
+      //     if(userData.applicationInformation.profilePicture) return 
+      //     else return null;
+      //   }else return null;
+      // }).then(profilePicture => {
+      //   if(profilePicture) userData.applicationInformation.profilePicture = profilePicture;
+      //   else userData.applicationInformation.profilePicture = "https://picsum.photos/200/200/?random";
+      //   return userData;
+      // })
     }else return null;
   }
 

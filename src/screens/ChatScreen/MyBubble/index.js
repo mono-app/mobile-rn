@@ -12,7 +12,7 @@ export default class MyBubble extends React.Component{
     return(
       <View style={{ flex: 1, flexDirection: "row-reverse", marginBottom: 8, marginTop: 8 }}>
         {this.props.withAvatar?(
-          <Avatar.Image size={32} source={{ uri: this.props.sender.applicationInformation.profilePicture }}/>
+          <Avatar.Image size={32} source={{ uri: this.props.sender.applicationInformation.profilePicture, cache: "force-cache" }}/>
         ):<View/>}
 
         <View style={{ marginRight: this.props.withAvatar? 8: 40, marginLeft: 40 }}>
