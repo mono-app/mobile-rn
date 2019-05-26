@@ -12,7 +12,7 @@ export default class PeopleProfileHeader extends React.Component{
   render(){
     return(
       <View style={styles.profileContainer}>
-        <SquareAvatar source={{uri: this.props.profilePicture }} />
+        <SquareAvatar source={{uri: this.props.profilePicture, cache:"force-cahce" }} />
         <View style={styles.profileDescriptionContainer}>
           <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.props.nickName}</Text>
           <Text style={{ fontSize: 12}}>{this.props.status}</Text>

@@ -11,36 +11,29 @@ import MomentsAPI from "modules/Moments/api/moment";
 import PeopleAPI from "src/api/people";
 import TranslateAPI from "src/api/translate";
 
-const INITIAL_STATE = { poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
+const INITIAL_STATE = { isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
 
 export default class MomentItem extends React.Component{
   handleCommentPress = () => this.props.navigation.navigate("Comments",  { momentId: this.state.id });
   handleLikePress = () => {
     new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       return MomentsAPI.toggleLike(this.state.id, currentUserEmail);
-    }).then(() => console.log(`Succes to like ${this.state.id} moment`))
+    })
   }
 
   refreshPosterDetail = () => {
+    this.setState({ isLoading: true });
     const { posterEmail } = this.state;
     new PeopleAPI().getDetail(posterEmail).then(poster => this.setState({ poster }));
     this.listener = MomentsAPI.getDetailWithRealTimeUpdate(this.state.id, momentItem => {
-      const { content } = momentItem;
-      const storage = firebase.storage();
-      if(content.images !== undefined){
-        const promises = [];
-        momentItem.content.images.map(stringRef => {
-          promises.push(storage.ref(stringRef).getDownloadURL());  
-        });
-        Promise.all(promises).then(results => {
-          content.images = results.map(result => {
-            return { image: {uri: result} }
-          });
-          this.setState({ content })
-        });
-      }
+      const { images } = momentItem.content;
+      const newImages = images.map(image => {
+        return { image: {uri: image.downloadUrl }}
+      })
+      momentItem.content.images = newImages;
 
-      this.setState({ ...momentItem });
+      this.setState({ ...momentItem, isLoading: false });
+      
       new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
         const { fanEmails } = momentItem;
         if(fanEmails !== undefined) this.setState({ isLiked: momentItem.fanEmails.includes(currentUserEmail) });
@@ -62,21 +55,17 @@ export default class MomentItem extends React.Component{
   componentDidMount(){ this.refreshPosterDetail(); }
 
   render(){
+    if(this.state.isLoading) return <View/>
+
+    const hasImage = this.state.content.images.length > 0;
     let timeFromNow = moment(this.state.postTime.seconds * 1000).fromNow();
     timeFromNow = TranslateAPI.translate(timeFromNow, "ID");
-    
-    let hasImage = false;
-    if(this.state.content.images !== undefined){
-      if(this.state.content.images.length > 0) {
-        if(this.state.content.images[0].image !== undefined) hasImage = true;
-      }
-    }
 
     return(
       <Surface style={{ elevation: 1, marginTop: 8, marginBottom: 8 }}>
         <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
           {this.state.poster?(
-            <Avatar.Image size={50} source={{ uri: this.state.poster.applicationInformation.profilePicture }}/>
+            <Avatar.Image size={50} source={{ uri: this.state.poster.applicationInformation.profilePicture, cache: "force-cache" }}/>
           ):null}
           <View style={{ marginLeft: 16 }}>
             {this.state.poster !== null?(

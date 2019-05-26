@@ -27,7 +27,7 @@ export default class ProfileInformation extends React.Component{
   render(){
     return(
       <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-        <Avatar.Image size={50} source={{ uri: this.state.profilePicture }} style={{ marginRight: 16 }}/>
+        <Avatar.Image size={50} source={{ uri: this.state.profilePicture, cache: "force-cache" }} style={{ marginRight: 16 }}/>
         <View style={{ justifyContent: "center" }}>
           <Text style={{ fontWeight: "700" }}>{this.state.nickName}</Text>
           <Caption><MaterialIcons size={12} name="lock"/> Hanya teman</Caption>

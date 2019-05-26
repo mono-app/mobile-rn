@@ -1,12 +1,13 @@
 import firebase from "react-native-firebase";
 import uuid from "uuid/v4";
 
+import FriendsAPI from "src/api/friends";
+import StorageAPI from "src/api/storage";
+
 import { MomentsCollection, FansCollection } from "src/api/database/collection";
 import { AddDocument } from "src/api/database/query";
 import { Document } from "src/api/database/document";
 import { DocumentListener } from "src/api/database/listener";
-import FriendsAPI from "src/api/friends";
-
 
 export default class MomentAPI{
   /**
@@ -61,31 +62,29 @@ export default class MomentAPI{
    * @param {Object} content 
    */
   static publishMoment(posterEmail, content){
-    const payload = {
-      posterEmail, content,
-      postTime: firebase.firestore.FieldValue.serverTimestamp(),
-      privacy: "friends"
-    }
-
     const promises = [];
-    const storage = firebase.storage();
     content.images.forEach((image, index) => {
-      const stringRef = `/modules/moments/${uuid()}.png`
-      const storageRef = storage.ref(stringRef);
-      const cleanImagePath = image.substring(7);
-      promises.push(storageRef.putFile(cleanImagePath))
-      content.images[index] = stringRef;
+      const stringRef = `/modules/moments/${uuid()}.png`;
+      promises.push(StorageAPI.uploadFile(stringRef, image));
+      content.images[index] = { storagePath: stringRef, downloadUrl: null }
     })
 
-    const collection = new MomentsCollection();
-    const query = new AddDocument();
-    promises.push(query.executeQuery(collection, null, payload));
-    return Promise.all(promises).then(() => {
-      return true  
-    }).catch(err => {
-      console.log(err);
+    Promise.all(promises).then(results => {
+      results.forEach((result, index) => {
+        content.images[index].downloadUrl = result;
+      })
+
+      const collection = new MomentsCollection();
+      const query = new AddDocument();
+      const payload = {
+        posterEmail, content, privacy: "friends",
+        postTime: firebase.firestore.FieldValue.serverTimestamp(),
+      }
+      return query.executeQuery(collection, null, payload);
+    }).then(() => ture).catch(err => {
+      console.log(err); 
       return false;
-    });
+    })
   }
 
   /**

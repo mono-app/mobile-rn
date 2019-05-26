@@ -35,7 +35,7 @@ export default class CommentItem extends React.Component{
 
     return(
       <View style={{ flex: 1, flexDirection: "row", padding: 16, paddingVertical: 8 }}>
-        <Avatar.Image size={50} source={{ uri: "https://picsum.photos/200/200/?random" }}/>
+        <Avatar.Image size={50} source={{ uri: "https://picsum.photos/200/200/?random", cache: "force-cache" }}/>
         <View style={{ paddingHorizontal: 8, flex: 1 }}>
           <Text style={{ fontWeight: "700" }}>{this.state.nickName}</Text>
           <Text>{this.props.comment}</Text>

@@ -22,7 +22,7 @@ export default class Room extends React.Component{
           <View style={styles.photoContainer}>
             <Image 
               style={styles.profilePicture}
-              source={{uri: audience.applicationInformation.profilePicture }}/>
+              source={{uri: audience.applicationInformation.profilePicture, cache: "force-cache" }}/>
           </View>
           <View style={styles.descriptionContainer}>
             <Text style={{fontWeight: "500"}}>{audience.applicationInformation.nickName}</Text>

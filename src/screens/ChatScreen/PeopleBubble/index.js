@@ -9,7 +9,7 @@ export default class PeopleBubble extends React.Component{
     return(
       <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 8 }}>
         {this.props.withAvatar?(
-          <Avatar.Image size={32} source={{ uri: this.props.sender.applicationInformation.profilePicture }}/>
+          <Avatar.Image size={32} source={{ uri: this.props.sender.applicationInformation.profilePicture, cache: "force-cache" }}/>
         ):<View/>}
 
         <View style={{ width: 0, flexGrow: 1, marginLeft: this.props.withAvatar? 8: 40, marginRight: 40,  alignItems: "flex-start"}}>

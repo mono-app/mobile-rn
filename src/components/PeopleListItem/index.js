@@ -44,7 +44,7 @@ export default class PeopleListItem extends React.Component{
     return(
       <TouchableOpacity onPress={this.props.onPress}>
         <View style={styles.userContainer}>
-          <Avatar.Image size={48} source={{ uri: profilePicture }} style={{ marginRight: 16 }}/>
+          <Avatar.Image size={48} source={{ uri: profilePicture, cache: "force-cache" }} style={{ marginRight: 16 }}/>
           <View>
             <Text style={{ fontWeight: "700" }}>{name}</Text>
             <Paragraph style={{ color: "#5E8864" }}>{status}</Paragraph>
