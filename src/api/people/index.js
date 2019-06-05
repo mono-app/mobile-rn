@@ -84,17 +84,6 @@ export default class PeopleAPI{
           return userData;
         }else return null;
       })
-      // return getDocumentQuery.executeQuery(userCollection, userDocument).then(doc => {
-      //   if(doc.exists) {
-      //     userData = doc.data();
-      //     if(userData.applicationInformation.profilePicture) return 
-      //     else return null;
-      //   }else return null;
-      // }).then(profilePicture => {
-      //   if(profilePicture) userData.applicationInformation.profilePicture = profilePicture;
-      //   else userData.applicationInformation.profilePicture = "https://picsum.photos/200/200/?random";
-      //   return userData;
-      // })
     }else return null;
   }
 
