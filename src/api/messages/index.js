@@ -15,26 +15,19 @@ export default class MessagesAPI{
     const roomsCollection = new RoomsCollection();
     const messagesCollection = new MessagesCollection();
     const roomDocument = new Document(roomId);
-    const firebaseReference = roomsCollection.getFirebaseReference();
-
-    const collectionRef = firebaseReference.doc(roomDocument.getId()).collection(messagesCollection.getName())
-    return collectionRef.orderBy("sentTime", "desc").onSnapshot({ includeMetadataChanges: true }, snapshot => {
-      let messages = [];
-      snapshot.forEach(doc => {
-        let payload = doc.data();
-        payload = Object.assign({ isSent: !doc.metadata.hasPendingWrites}, payload)
+    
+    const db = firebase.firestore ();
+    const roomsRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
+    const messagesRef = roomsRef.collection(messagesCollection.getName())
+    const filteredMessagesRef = messagesRef.orderBy("sentTime", "desc").limit(25);
+    filteredMessagesRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+      const messages = [];
+      snapshot.forEach(documentSnapshot => {
+        const payload = Object.assign({ isSent: !documentSnapshot.metadata.hasPendingWrites }, documentSnapshot.data());
         messages.push(payload);
       })
-
-      const promises = messages.map(message => new PeopleAPI().getDetail(message.senderEmail, "cache"));
-      Promise.all(promises).then(results => {
-        const newMessages = messages.map((message, index) => {
-          message.sender = results[index]
-          return message;
-        });
-        callback(newMessages);
-      })
-    }, err => console.error(err));
+      callback(messages);
+    })
   }
 
   /**

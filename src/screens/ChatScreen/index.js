@@ -26,9 +26,7 @@ const INITIAL_STATE = {
  */
 export default class ChatScreen extends React.Component{
   static navigationOptions = ({ navigation }) => {
-    return {
-      headerTitle: navigation.getParam("peopleName", "Chat"),
-    }
+    return { headerTitle: navigation.getParam("peopleName", "Chat") }
   }
 
   handleScreenWillBlur = () => this.messageListener();
@@ -57,7 +55,6 @@ export default class ChatScreen extends React.Component{
   listenMessageRealTimeUpdate = () => {
     const roomId = this.props.navigation.getParam("roomId");
     this.messageListener = new MessagesAPI().getMessagesWithRealTimeUpdate(roomId, messages => {
-      // parse message information
       const { currentUserEmail } = this.state;
       messages.reverse();
 
@@ -67,10 +64,24 @@ export default class ChatScreen extends React.Component{
         withAvatar = (lastSender !== message.senderEmail);
         type = (message.senderEmail === currentUserEmail)? "myBubble": "peopleBubble";
         lastSender = message.senderEmail;
-        return { ...message, type, withAvatar }
+        return JSON.parse(JSON.stringify({ ...message, type, withAvatar }));
       })
       newMessages.reverse();
       this.setState({ messages: newMessages });
+      // parse message information
+      // const { currentUserEmail } = this.state;
+      // messages.reverse();
+
+      // let withAvatar = true;
+      // let lastSender = null;
+      // const newMessages = messages.map(message => {
+      //   withAvatar = (lastSender !== message.senderEmail);
+      //   type = (message.senderEmail === currentUserEmail)? "myBubble": "peopleBubble";
+      //   lastSender = message.senderEmail;
+      //   return { ...message, type, withAvatar }
+      // })
+      // newMessages.reverse();
+      // this.setState({ messages: newMessages });
     })
   }
 
