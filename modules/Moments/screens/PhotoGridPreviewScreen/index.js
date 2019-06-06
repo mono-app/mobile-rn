@@ -26,7 +26,7 @@ export default class PhotoGridPreviewScreen extends React.PureComponent{
                 background={true}
                 height={Dimensions.get("window").height}
                 width={Dimensions.get("window").width}
-                source={{ uri: item, cache: "only-if-cached" }}
+                source={{ uri: item, cache: "force-cache" }}
                 style={{ alignSelf: "center" }}/>
             </View>
           )

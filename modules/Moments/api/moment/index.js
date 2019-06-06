@@ -69,7 +69,7 @@ export default class MomentAPI{
       content.images[index] = { storagePath: stringRef, downloadUrl: null }
     })
 
-    Promise.all(promises).then(results => {
+    return Promise.all(promises).then(results => {
       results.forEach((result, index) => {
         content.images[index].downloadUrl = result;
       })
@@ -81,7 +81,7 @@ export default class MomentAPI{
         postTime: firebase.firestore.FieldValue.serverTimestamp(),
       }
       return query.executeQuery(collection, null, payload);
-    }).then(() => ture).catch(err => {
+    }).then(() => true).catch(err => {
       console.log(err); 
       return false;
     })
