@@ -1,5 +1,4 @@
 import React from "react";
-import { NavigationEvents } from "react-navigation";
 import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { Text, Surface, Avatar, IconButton } from "react-native-paper";
 
