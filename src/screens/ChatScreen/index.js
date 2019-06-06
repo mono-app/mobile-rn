@@ -12,8 +12,8 @@ import MessagesAPI from "src/api/messages";
 import PeopleAPI from "src/api/people";
 
 const INITIAL_STATE = { 
-  messages: [], message: "", isChatRoomReady: false, 
-  currentUserEmail: null
+  messages: [], message: "", isChatRoomReady: false,
+  currentUserEmail: null, bubbleListHeight: 0, isLoadingNewData: false
 }
 
 // NOTE: Assuming this `ChatScreen` is a private room
@@ -24,15 +24,37 @@ const INITIAL_STATE = {
  * @params {string} peopleName
  * @params {string} roomId
  */
-export default class ChatScreen extends React.Component{
+export default class ChatScreen extends React.PureComponent{
   static navigationOptions = ({ navigation }) => {
-    return {
-      headerTitle: navigation.getParam("peopleName", "Chat"),
-    }
+    return { headerTitle: navigation.getParam("peopleName", "Chat") }
+  }
+
+  processRawMessages = messages => {
+    const { currentUserEmail } = this.state;
+    messages.reverse();
+
+    let withAvatar = true;
+    let lastSender = null;
+    const newMessages = messages.map(message => {
+      withAvatar = (lastSender !== message.senderEmail);
+      type = (message.senderEmail === currentUserEmail)? "myBubble": "peopleBubble";
+      lastSender = message.senderEmail;
+      return JSON.parse(JSON.stringify({ ...message, type, withAvatar }));
+    })
+    newMessages.reverse();
+    return newMessages;
+  }
+
+  listenMessageRealTimeUpdate = () => {
+    const roomId = this.props.navigation.getParam("roomId");
+    this.messagesApi = new MessagesAPI(roomId);
+    this.messageListener = this.messagesApi.getMessagesWithRealTimeUpdate(roomId, messages => {
+      const newMessages = this.processRawMessages(messages);
+      this.setState({ messages: newMessages });
+    })
   }
 
   handleScreenWillBlur = () => this.messageListener();
-  handleScreenDidFocus = () => {}
   handleMessageChange = message => this.setState({ message })
   handleSendPress = () => {
     const { message } = this.state;
@@ -54,24 +76,26 @@ export default class ChatScreen extends React.Component{
     })
   }
 
-  listenMessageRealTimeUpdate = () => {
-    const roomId = this.props.navigation.getParam("roomId");
-    this.messageListener = new MessagesAPI().getMessagesWithRealTimeUpdate(roomId, messages => {
-      // parse message information
-      const { currentUserEmail } = this.state;
-      messages.reverse();
+  handleBubbleListContentSizeChange = (contentWidth, contentHeight) => {
+    if(this.state.bubbleListHeight < contentHeight){
+      this.setState({ bubbleListHeight: contentHeight });
+    }
+  }
 
-      let withAvatar = true;
-      let lastSender = null;
-      const newMessages = messages.map(message => {
-        withAvatar = (lastSender !== message.senderEmail);
-        type = (message.senderEmail === currentUserEmail)? "myBubble": "peopleBubble";
-        lastSender = message.senderEmail;
-        return { ...message, type, withAvatar }
+  handleBubbleListScroll = e => {
+    const currentPosition = e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
+    const threshold = 100;
+    const { isLoadingNewData } = this.state;
+    
+    if(currentPosition >= (this.state.bubbleListHeight - threshold) && !isLoadingNewData){
+      this.setState({ isLoadingNewData: true });
+      this.messagesApi.getNext().then(messages => {
+        const newMessages = this.processRawMessages(messages);
+        const oldMessages = JSON.parse(JSON.stringify(this.state.messages));
+        const combinedMessages = oldMessages.concat(newMessages);
+        this.setState({ messages: combinedMessages, isLoadingNewData: false });
       })
-      newMessages.reverse();
-      this.setState({ messages: newMessages });
-    })
+    }
   }
 
   constructor(props){
@@ -80,13 +104,18 @@ export default class ChatScreen extends React.Component{
     this.state = INITIAL_STATE;
     this.txtMessage = null;
     this.messageListener = null;
+    this.messagesApi = null;
+    this.processRawMessages = this.processRawMessages.bind(this);
     this.listenMessageRealTimeUpdate = this.listenMessageRealTimeUpdate.bind(this);
-    this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
     this.handleScreenWillFocus = this.handleScreenWillFocus.bind(this);
     this.handleScreenWillBlur = this.handleScreenWillBlur.bind(this);
     this.handleSendPress = this.handleSendPress.bind(this);
     this.handleMessageChange = this.handleMessageChange.bind(this);
+    this.handleBubbleListContentSizeChange = this.handleBubbleListContentSizeChange.bind(this);
+    this.handleBubbleListScroll = this.handleBubbleListScroll.bind(this);
   }
+
+  
 
   render(){
     return(
@@ -98,7 +127,10 @@ export default class ChatScreen extends React.Component{
           onWillFocus={this.handleScreenWillFocus}/>
 
         <FlatList
-          inverted
+          inverted={true}
+          ref={i => this.flatList = i}
+          onScroll={this.handleBubbleListScroll}
+          onContentSizeChange={this.handleBubbleListContentSizeChange}          
           style={styles.chatListContainer}
           data={this.state.messages}
           renderItem={({ item, index }) => {

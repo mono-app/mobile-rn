@@ -4,7 +4,28 @@ import { View } from "react-native";
 import { Text, Avatar } from "react-native-paper";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
+import PeopleAPI from "src/api/people";
+
+const INITIAL_STATE = { profilePicture: "" }
+
 export default class MyBubble extends React.Component{
+  loadProfilePicture = () => {
+    if(this.props.withAvatar && this.props.senderEmail) {
+      new PeopleAPI().getDetail(this.props.senderEmail).then(people => {
+        this.setState({ profilePicture: people.applicationInformation.profilePicture });
+      })
+    }
+  }
+
+  constructor(props){
+    super(props);
+
+    this.state = INITIAL_STATE;
+    this.loadProfilePicture = this.loadProfilePicture.bind(this);
+  }
+
+  componentDidMount(){ this.loadProfilePicture(); }
+
   render(){
     const sentIcon = this.props.isSent? "done-all": "done";
     const sentTimeString = this.props.isSent? moment(this.props.sentTime.seconds * 1000).format("HH:mmA"):"";
@@ -12,7 +33,7 @@ export default class MyBubble extends React.Component{
     return(
       <View style={{ flex: 1, flexDirection: "row-reverse", marginBottom: 8, marginTop: 8 }}>
         {this.props.withAvatar?(
-          <Avatar.Image size={32} source={{ uri: this.props.sender.applicationInformation.profilePicture, cache: "force-cache" }}/>
+          <Avatar.Image size={32} source={{ uri: this.state.profilePicture, cache: "force-cache" }}/>
         ):<View/>}
 
         <View style={{ marginRight: this.props.withAvatar? 8: 40, marginLeft: 40 }}>
@@ -28,6 +49,7 @@ export default class MyBubble extends React.Component{
     )
   }
 }
+
 MyBubble.defaultProps = {
-  withAvatar: false, isSent: false, message: "", sentTime: null
+  withAvatar: false, isSent: false, message: "", sentTime: null, senderEmail: null
 }

@@ -3,13 +3,34 @@ import moment from "moment";
 import { View } from "react-native";
 import { Text, Avatar } from "react-native-paper";
 
+import PeopleAPI from "src/api/people";
+
+const INITIAL_STATE = { profilePicture: "" }
+
 export default class PeopleBubble extends React.Component{
+  loadProfilePicture = () => {
+    if(this.props.withAvatar && this.props.senderEmail) {
+      new PeopleAPI().getDetail(this.props.senderEmail).then(people => {
+        this.setState({ profilePicture: people.applicationInformation.profilePicture });
+      })
+    }
+  }
+
+  constructor(props){
+    super(props);
+
+    this.state = INITIAL_STATE;
+    this.loadProfilePicture = this.loadProfilePicture.bind(this);
+  }
+
+  componentDidMount(){ this.loadProfilePicture(); }
+
   render(){
     const sentTimeString = this.props.isSent? moment(this.props.sentTime.seconds * 1000).format("HH:mmA"):"";
     return(
       <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 8 }}>
         {this.props.withAvatar?(
-          <Avatar.Image size={32} source={{ uri: this.props.sender.applicationInformation.profilePicture, cache: "force-cache" }}/>
+          <Avatar.Image size={32} source={{ uri: this.state.profilePicture, cache: "force-cache" }}/>
         ):<View/>}
 
         <View style={{ width: 0, flexGrow: 1, marginLeft: this.props.withAvatar? 8: 40, marginRight: 40,  alignItems: "flex-start"}}>
