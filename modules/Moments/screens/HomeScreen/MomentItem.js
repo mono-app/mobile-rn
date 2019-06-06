@@ -1,5 +1,4 @@
 import React from "react";
-import firebase from "react-native-firebase";
 import moment from "moment";
 
 import { View, StyleSheet, TouchableOpacity } from "react-native";
