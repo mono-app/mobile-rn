@@ -14,7 +14,6 @@ export default class HomeScreen extends React.Component{
 
   handleAddMomentPress = () => this.props.navigation.navigate("AddMoment");
   handlePullToRefresh = () => this.refreshMoments();
-  handleScreenWillFocus = () => this.refreshMoments();
 
   refreshMoments = () => {
     this.setState({ moments: [], isLoading: true });
@@ -35,16 +34,14 @@ export default class HomeScreen extends React.Component{
     this.state = INITIAL_STATE;
     this.refreshMoments = this.refreshMoments.bind(this);
     this.handleAddMomentPress = this.handleAddMomentPress.bind(this);
-    this.handleScreenWillFocus = this.handleScreenWillFocus.bind(this);
     this.handlePullToRefresh = this.handlePullToRefresh.bind(this);
   }
 
+  componentDidMount(){ this.refreshMoments(); }
+
   render(){
-    
     return(
       <View style={styles.container}>
-        <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
-
         <Surface style={{ padding: 16, elevation: 4, flexDirection: "row", justifyContent: "space-between" }}>
           <Avatar.Image size={50} source={{ uri: this.state.profilePicture, cache: "force-cache" }}/>
           <TouchableOpacity style={styles.addToMomentContainer} onPress={this.handleAddMomentPress}>
