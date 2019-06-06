@@ -13,13 +13,6 @@ import TranslateAPI from "src/api/translate";
 const INITIAL_STATE = { isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
 
 export default class MomentItem extends React.Component{
-  handleCommentPress = () => this.props.navigation.navigate("Comments",  { momentId: this.state.id });
-  handleLikePress = () => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
-      return MomentsAPI.toggleLike(this.state.id, currentUserEmail);
-    })
-  }
-
   refreshPosterDetail = () => {
     this.setState({ isLoading: true });
     const { posterEmail } = this.state;
@@ -37,6 +30,13 @@ export default class MomentItem extends React.Component{
         const { fanEmails } = momentItem;
         if(fanEmails !== undefined) this.setState({ isLiked: momentItem.fanEmails.includes(currentUserEmail) });
       })
+    })
+  }
+
+  handleCommentPress = () => this.props.navigation.navigate("Comments",  { momentId: this.state.id });
+  handleLikePress = () => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+      return MomentsAPI.toggleLike(this.state.id, currentUserEmail);
     })
   }
 
@@ -77,7 +77,7 @@ export default class MomentItem extends React.Component{
           <Paragraph>{this.state.content.message}</Paragraph>
         </View>
         {hasImage?(
-          <PhotoGrid images={this.state.content.images}/>
+          <PhotoGrid navigation={this.props.navigation} images={this.state.content.images}/>
         ):<View/>}
         <View style={{ ...styles.leftAlignedContainerWithTopBorder, paddingVertical: 8}}>
           <Caption style={{ marginRight: 16 }}>{this.state.totalFans} Fans</Caption>

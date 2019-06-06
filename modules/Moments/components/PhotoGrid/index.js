@@ -1,6 +1,6 @@
 import React from "react";
 import RNFS from "react-native-fs";
-import { View, Image, Dimensions, StyleSheet } from "react-native";
+import { View, Image, Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 
 export default class PhotoGrid extends React.Component{
@@ -15,11 +15,14 @@ export default class PhotoGrid extends React.Component{
     return item.image.uri;
   })
 
+  handleContainerPress = () => this.props.navigation.navigate("PhotoGridPreview", { images: this.getImagesPath() });
+
   constructor(props){
     super(props);
 
     this.getImagesBase64 = this.getImagesBase64.bind(this);
     this.getImagesPath = this.getImagesPath.bind(this);
+    this.handleContainerPress = this.handleContainerPress.bind(this);
   }
   
   render(){
@@ -28,7 +31,7 @@ export default class PhotoGrid extends React.Component{
     const remainingImageCount = this.props.images.length - 5;
 
     return(
-      <View style={{ backgroundColor: "white", flex: 1 }}>
+      <TouchableOpacity onPress={this.handleContainerPress} style={{ backgroundColor: "white", flex: 1 }}> 
         {this.props.images.length !== 0?(
           <Image source={{ uri: firstImage.image.uri, cache: "force-cache" }} style={{height: 200, ...styles.singleImage}}/>
         ):<View/>}
@@ -46,7 +49,7 @@ export default class PhotoGrid extends React.Component{
             );
           })}
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
 }
