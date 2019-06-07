@@ -77,7 +77,7 @@ export default class PeopleAPI{
       getDocumentQuery.setGetConfiguration(source);
       return getDocumentQuery.executeQuery(userCollection, userDocument).then(documentSnapshot => {
         if(documentSnapshot.exists){
-          const userData = documentSnapshot.data();
+          const userData = { id: documentSnapshot.id, ...documentSnapshot.data() };
           const { applicationInformation } = userData;
           const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture.downloadUrl: "https://picsum.photos/200/200/?random";
           userData.applicationInformation.profilePicture = profilePicture;

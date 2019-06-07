@@ -1,10 +1,10 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Text, Portal, Dialog, Paragraph, ActivityIndicator } from "react-native-paper";
-import { NavigationEvents } from "react-navigation";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
 
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
@@ -20,20 +20,16 @@ const INITIAL_STATE = {
 export default class SettingsScreen extends React.Component {
   static navigationOptions = { title: "Settings" }
 
-  handleStatusPress = () => this.props.navigation.navigate("StatusChange");
-  handleScreenWillFocus = () => {
-    const peopleAPI = new PeopleAPI();
-    peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
-      const promises = [ peopleAPI.getDetail(), peopleAPI.getLatestStatus() ]
-      return Promise.all(promises);
-    }).then(results => {
-      const userData = results[0];
-      const status = results[1]? results[1]: {content: "Tulis statusmu disini..."}
-      const profilePicture = userData.applicationInformation.profilePicture? userData.applicationInformation.profilePicture: "https://picsum.photos/200/200/?random" ;
-      this.setState({ nickName: userData.applicationInformation.nickName, status: status.content, profilePicture });
-    }).catch(err => console.error(err));
+  loadProfileInformation = async () => {
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const results = await Promise.all([ CurrentUserAPI.getApplicationInformation(), new PeopleAPI().getLatestStatus(currentUserEmail) ]);
+    const applicationInformation = results[0];
+    const status = results[1]? results[1]: {content: "Tulis statusmu disini..."}
+    const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture: "https://picsum.photos/200/200/?random";
+    this.setState({ nickName: applicationInformation.nickName, status: status.content, profilePicture });
   }
 
+  handleStatusPress = () => this.props.navigation.navigate("StatusChange");
   handleProfilePicturePress = () => {
     this.props.navigation.navigate("Gallery", {
       multiple: false,
@@ -57,17 +53,17 @@ export default class SettingsScreen extends React.Component {
     super(props);
 
     this.state = INITIAL_STATE;
-    this.handleScreenWillFocus = this.handleScreenWillFocus.bind(this);
+    this.loadProfileInformation = this.loadProfileInformation.bind(this);
     this.handleStatusPress = this.handleStatusPress.bind(this);
     this.handleProfilePicturePress = this.handleProfilePicturePress.bind(this);
     this.handleProfilePictureSave = this.handleProfilePictureSave.bind(this);
   }
+
+  componentDidMount(){ this.loadProfileInformation(); }
   
   render(){
     return (
       <View style={{ flex: 1 }}>
-        <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
-
         <BirthdaySetupBanner {...this.props}/>
 
         <Portal>

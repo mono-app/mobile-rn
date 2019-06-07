@@ -9,7 +9,7 @@ import ContactTabNavigator from "./ContactTabNavigator";
 import SettingTabNavigator from "./SettingTabNavigator.js";
 import AppTabNavigator from "./AppTabNavigator";
 
-import { default as MomentTabNavigator } from "../../modules/Moments/navigators/MainNavigator";
+import { default as MomentTabNavigator } from "modules/Moments/navigators/MainNavigator";
 
 export default MainTabNavigator = createBottomTabNavigator({
   HomeTab: HomeTabNavigator,
