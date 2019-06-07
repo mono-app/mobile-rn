@@ -7,6 +7,7 @@ import { NavigationEvents } from 'react-navigation';
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
 import Navigator, { StackNavigator } from "src/api/navigator";
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
@@ -19,11 +20,19 @@ export default class AccountScreen extends React.Component{
     headerStyle: { backgroundColor: "#E8EEE8", elevation: 0 }
   };
 
+  loadData = async () => {
+    const applicationInformation = await CurrentUserAPI.getApplicationInformation();
+    const personalInformation = await CurrentUserAPI.getPersonalInformation();
+    const { id, nickName } = applicationInformation;
+    const { dateOfBirth, gender } = personalInformation;
+    this.setState({ nickName, monoId: id, dateOfBirth, gender });
+  }
+
   handleBeforeDateOfBirthDave = value => moment(value, "DD/MM/YYYY").isValid();
   handleSignOutPress = e => this.signOutDialog.toggleShow();
   handleProceedSignOutPress = e => {
     firebase.auth().signOut().then(() => {
-      return SInfo.deleteItem("currentUserEmail", {})
+      return CurrentUserAPI.clear();
     }).then(() => {
       const navigator = new StackNavigator(this.props.navigation);
       navigator.resetTo("Splash", { key: null });
@@ -77,24 +86,13 @@ export default class AccountScreen extends React.Component{
     })
   }
 
-  handleScreenDidFocus = () => {
-    const peopleAPI = new PeopleAPI();
-    peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
-      return peopleAPI.getDetail(currentUserEmail);
-    }).then(userData => {
-      const { id, nickName } = userData.applicationInformation;
-      const { dateOfBirth, gender } = userData.personalInformation;
-      this.setState({ nickName, monoId: id, dateOfBirth, gender });
-    })
-  }
-
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
     this.signOutDialog = null;
     this.stringMapping = { male: "Pria", female: "Wanita" }
-    this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
+    this.loadData = this.loadData.bind(this);
     this.handleNickNamePress = this.handleNickNamePress.bind(this);
     this.handleMonoIdPress = this.handleMonoIdPress.bind(this);
     this.handleSignOutPress = this.handleSignOutPress.bind(this);
@@ -103,10 +101,11 @@ export default class AccountScreen extends React.Component{
     this.handleBeforeDateOfBirthDave = this.handleBeforeDateOfBirthDave.bind(this);
   }
 
+  componentDidMount(){ this.loadData(); }
+
   render(){
     return (
       <View style={styles.container}>
-        <NavigationEvents onDidFocus={this.handleScreenDidFocus}/>
         <SignOutDialog 
           ref={i => this.signOutDialog = i}
           onSignOutPress={this.handleProceedSignOutPress}/>

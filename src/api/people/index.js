@@ -2,8 +2,10 @@ import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
 import moment from "moment";
 import uuid from "uuid/v4";
+import { StackActions } from "react-navigation";
 
 import StorageAPI from "src/api/storage";
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { GetDocument } from "src/api/database/query";
@@ -11,6 +13,22 @@ import { GetDocument } from "src/api/database/query";
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
     this.currentUserEmail = currentUserEmail;
+  }
+
+  /**
+   * 
+   * @param {String} email 
+   * @param {Navigator} navigator 
+   */
+  async handleSignedIn(email, navigator){
+    const userData = await this.getDetail(email);
+    if(userData){
+      await CurrentUserAPI.storeBasicInformation(userData);
+      CurrentUserAPI.listenChanges();
+
+      const routeNameForReset = (userData.isCompleteSetup)? "MainTabNavigator": "AccountSetup";
+      navigator.resetTo(routeNameForReset, StackActions);
+    }else throw "Cannot find user in the database. Application error.";
   }
 
   /**

@@ -2,12 +2,14 @@ import React from 'react';
 import {
   StyleSheet, Text, View, TouchableOpacity
 } from 'react-native';
-import { NavigationEvents, StackActions } from 'react-navigation';
+import { NavigationEvents } from 'react-navigation';
 import firebase from 'react-native-firebase';
 
-import Button from "../../components/Button";
-import TextInput from "../../components/TextInput";
-import Navigator from "../../api/navigator";
+import Navigator from "src/api/navigator";
+import PeopleAPI from 'src/api/people';
+
+import Button from "src/components/Button";
+import TextInput from "src/components/TextInput";
 
 const INITIAL_STATE = { email: "", password: "", isLoading: false }
 
@@ -20,7 +22,7 @@ export default class SignInScreen extends React.Component {
     this.authListener = firebase.auth().onAuthStateChanged(user => {
       if(user){
         const navigator = new Navigator(this.props.navigation);
-        navigator.resetTo("MainTabNavigator", StackActions);
+        new PeopleAPI().handleSignedIn(user.email, navigator);
       }
     })
   }
