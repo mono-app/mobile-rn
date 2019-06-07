@@ -2,6 +2,7 @@ package com.zannete.monoapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.dylanvann.fastimage.FastImageViewPackage;
 
 import com.wix.RNCameraKit.RNCameraKitPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -36,6 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new FastImageViewPackage(),
           new RNFSPackage(),
           new RNCameraPackage(),
           new RNSensitiveInfoPackage(),

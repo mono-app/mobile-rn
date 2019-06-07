@@ -6,6 +6,8 @@ import MomentItem from "./MomentItem";
 import PeopleAPI from "src/api/people";
 import MomentsAPI from "modules/Moments/api/moment";
 
+import CircleAvatar from "src/components/Avatar/Circle";
+
 const INITIAL_STATE = { moments: [], isLoading: false, profilePicture: "https://picsum.photos/200/200/?random" }
 
 export default class HomeScreen extends React.Component{
@@ -43,7 +45,7 @@ export default class HomeScreen extends React.Component{
     return(
       <View style={styles.container}>
         <Surface style={{ padding: 16, elevation: 4, flexDirection: "row", justifyContent: "space-between" }}>
-          <Avatar.Image size={50} source={{ uri: this.state.profilePicture, cache: "force-cache" }}/>
+          <CircleAvatar size={50} uri={this.state.profilePicture}/>
           <TouchableOpacity style={styles.addToMomentContainer} onPress={this.handleAddMomentPress}>
             <Text>Tambahkan moment</Text>
           </TouchableOpacity>

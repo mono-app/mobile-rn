@@ -6,7 +6,7 @@ import { Text } from "react-native-paper";
  * @param {string} fieldName
  * @param {string} fieldValue
  */
-export default class PeopleInformationContainer extends React.Component{
+export default class PeopleInformationContainer extends React.PureComponent{
   render(){
     return(
       <View style={styles.additionalInformationContainer}>

@@ -1,7 +1,8 @@
 import React from "react";
 import moment from "moment";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
+import CircleAvatar from "src/components/Avatar/Circle";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default class Room extends React.Component{
@@ -20,9 +21,7 @@ export default class Room extends React.Component{
       <TouchableOpacity onPress={this.props.onPress}>
         <View style={styles.chatContainer}>
           <View style={styles.photoContainer}>
-            <Image 
-              style={styles.profilePicture}
-              source={{uri: audience.applicationInformation.profilePicture, cache: "force-cache" }}/>
+            <CircleAvatar size={50} uri={audience.applicationInformation.profilePicture}/>
           </View>
           <View style={styles.descriptionContainer}>
             <Text style={{fontWeight: "500"}}>{audience.applicationInformation.nickName}</Text>
@@ -44,11 +43,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   },
   photoContainer: { marginRight: 16 },
-  profilePicture: {
-    width: 50,
-    height: 50,
-    borderRadius: 50
-  },
   descriptionContainer: { 
     width:0, 
     flexGrow: 1

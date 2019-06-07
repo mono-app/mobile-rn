@@ -4,7 +4,7 @@ import {
 } from "react-native-paper";
 import { StackActions } from "react-navigation";
 
-export default class AddedFriendRequestDialog extends React.Component{
+export default class AddedFriendRequestDialog extends React.PureComponent{
   handlePress = () => this.props.navigation.dispatch(StackActions.popToTop())
 
   constructor(props){

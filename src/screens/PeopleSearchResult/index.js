@@ -37,10 +37,12 @@ export default class PeopleSearchResult extends React.Component{
           data={this.state.users}
           renderItem={ ({ item }) => {
             const user = item.data();
-            return <ResultItem
-              onPress={() => this.handleResultItemPress(item.id)}
-              name={user.applicationInformation.nickName}
-              status={user.applicationInformation.status}/>
+            return (
+              <ResultItem
+                onPress={() => this.handleResultItemPress(item.id)}
+                name={user.applicationInformation.nickName}
+                status={user.applicationInformation.status}/>
+            )
           }}/>
       </View>
     )

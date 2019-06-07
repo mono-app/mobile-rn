@@ -8,11 +8,11 @@ import SquareAvatar from "src/components/Avatar/Square";
  * @param {string} nickName
  * @param {string} status
  */
-export default class PeopleProfileHeader extends React.Component{
+export default class PeopleProfileHeader extends React.PureComponent{
   render(){
     return(
       <View style={styles.profileContainer}>
-        <SquareAvatar source={{uri: this.props.profilePicture, cache:"force-cahce" }} />
+        <SquareAvatar uri={this.props.profilePicture} style={{ marginRight: 16 }}/>
         <View style={styles.profileDescriptionContainer}>
           <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.props.nickName}</Text>
           <Text style={{ fontSize: 12}}>{this.props.status}</Text>
