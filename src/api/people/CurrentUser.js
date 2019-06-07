@@ -21,7 +21,7 @@ export default class CurrentUser{
   static getPersonalInformation(){
     const promises = [
       SInfo.getItem("personalInformation.dateOfBirth", {}), SInfo.getItem("personalInformation.familyName", {}),
-      SInfo.getItem("personalInformation.givenName", {}), SInfo.getItem("personalInformation.gender")
+      SInfo.getItem("personalInformation.givenName", {}), SInfo.getItem("personalInformation.gender", {})
     ]
     return Promise.all(promises).then(results => {
       return { dateOfBirth: results[0], familyName: results[1], givenName: results[2], gender: resizeBy[3] }
