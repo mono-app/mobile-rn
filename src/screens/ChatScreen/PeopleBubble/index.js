@@ -4,10 +4,11 @@ import { View } from "react-native";
 import { Text, Avatar } from "react-native-paper";
 
 import PeopleAPI from "src/api/people";
+import CircleAvatar from "src/components/Avatar/Circle";
 
 const INITIAL_STATE = { profilePicture: "" }
 
-export default class PeopleBubble extends React.Component{
+export default class PeopleBubble extends React.PureComponent{
   loadProfilePicture = () => {
     if(this.props.withAvatar && this.props.senderEmail) {
       new PeopleAPI().getDetail(this.props.senderEmail).then(people => {
@@ -30,7 +31,7 @@ export default class PeopleBubble extends React.Component{
     return(
       <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 8 }}>
         {this.props.withAvatar?(
-          <Avatar.Image size={32} source={{ uri: this.state.profilePicture, cache: "force-cache" }}/>
+          <CircleAvatar size={32} uri={this.state.profilePicture}/>
         ):<View/>}
 
         <View style={{ width: 0, flexGrow: 1, marginLeft: this.props.withAvatar? 8: 40, marginRight: 40,  alignItems: "flex-start"}}>

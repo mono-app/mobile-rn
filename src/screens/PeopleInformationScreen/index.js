@@ -1,20 +1,21 @@
 import React from "react";
+import moment from "moment";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { StackActions, NavigationEvents } from "react-navigation";
-import moment from "moment";
+import { NavigationEvents } from "react-navigation";
 import SInfo from "react-native-sensitive-info";
 
-import Button from "../../components/Button";
-import PeopleProfileHeader from "../../components/PeopleProfile/Header";
-import PeopleInformationContainer from "../../components/PeopleProfile/InformationContainer";
+import Button from "src/components/Button";
+import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import CancelledFriendRequestDialog from "./CancelledFriendRequestDialog";
 import AddedFriendRequestDialog from "./AddedFriendRequestDialog";
 
-import { GetDocument } from "../../api/database/query";
+import FriendsAPI from "src/api/friends";
+import PeopleAPI from "src/api/people";
+import { GetDocument } from "src/api/database/query";
 import { UserCollection, FriendListCollection, FriendRequestCollection } from "../../api/database/collection";
-import { Document } from "../../api/database/document";
-import FriendsAPI from "../../api/friends";
+import { Document } from "src/api/database/document";
 
 const INITIAL_STATE = { 
   isLoading: true,
@@ -59,7 +60,7 @@ export default class PeopleInformationScreen extends React.Component {
 
         // search inside friendRequest, if peopleId is in the friendRequest of this currentUserEmail document, you cannot request again
         // search inside friendList, if peopleId is in the friendList of the currentUserEmail document, the button will be "Chat Now"
-        return SInfo.getItem("currentUserEmail", {})
+        return new PeopleAPI().getCurrentUserEmail();
       }
     }).then(email => {
       if(email){
@@ -90,7 +91,7 @@ export default class PeopleInformationScreen extends React.Component {
 
   handleAddContactPress = () => {
     this.setState({ isAdding: true });
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const peopleId = this.props.navigation.getParam("peopleId", "test.kedua@gmail.com");
       const api = new FriendsAPI();
       return api.sendRequest(currentUserEmail, peopleId);
@@ -105,7 +106,7 @@ export default class PeopleInformationScreen extends React.Component {
 
   handleCancelFriendRequestPress = () => {
     this.setState({ isCancelling: true });
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
       const peopleId = this.props.navigation.getParam("peopleId", "test.kedua@gmail.com");
       const api = new FriendsAPI();
       return api.cancelRequest(currentUserEmail, peopleId);
@@ -117,17 +118,7 @@ export default class PeopleInformationScreen extends React.Component {
       alert(err);
     })
   }
-
-  handleStartChattingPress = () => {
-    // this.props.navigation.dispatch(StackActions.reset({
-    //   index: 1,
-    //   actions: [
-    //     NavigationActions.navigate({ routeName: "ContactHome" }),
-    //     NavigationActions.navigete({ routeName: "Chat" })
-    //   ]
-    // }))
-  }
-
+  
   constructor(props){
     super(props);
 

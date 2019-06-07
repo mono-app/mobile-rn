@@ -1,14 +1,11 @@
 import React from "react";
-import { Image, StyleSheet } from "react-native";
+import FastImage from "react-native-fast-image";
 
-export default class SquareAvatar extends React.Component{
+export default class SquareAvatar extends React.PureComponent{
   render(){
-    return(
-      <Image style={styles.profilePicture} source={this.props.source}/>
-    )
+    const size = this.props.size? this.props.size: 70;
+    const radius = this.props.radius? this.props.radius: 8;
+    const style = { width: size, height: size, borderRadius: radius, ...this.props.style }
+    return <FastImage style={style} source={{ uri: this.props.uri }}/>
   }
 }
-
-const styles = StyleSheet.create({
-  profilePicture: { width: 70,  height: 70, borderRadius: 8, marginRight: 16 },
-})

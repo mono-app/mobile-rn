@@ -1,10 +1,11 @@
 import React from "react";
 import moment from "moment";
 
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Surface, Avatar, Caption, Paragraph } from "react-native-paper";
-import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
+import CircleAvatar from "src/components/Avatar/Circle";
 import PhotoGrid from "modules/Moments/components/PhotoGrid";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, Surface, Caption, Paragraph } from "react-native-paper";
+import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
 import MomentsAPI from "modules/Moments/api/moment";
 import PeopleAPI from "src/api/people";
@@ -64,7 +65,7 @@ export default class MomentItem extends React.Component{
       <Surface style={{ elevation: 1, marginTop: 8, marginBottom: 8 }}>
         <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
           {this.state.poster?(
-            <Avatar.Image size={50} source={{ uri: this.state.poster.applicationInformation.profilePicture, cache: "force-cache" }}/>
+            <CircleAvatar size={50} uri={this.state.poster.applicationInformation.profilePicture}/>
           ):null}
           <View style={{ marginLeft: 16 }}>
             {this.state.poster !== null?(

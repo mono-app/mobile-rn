@@ -1,15 +1,14 @@
 import React from "react";
+import moment from "moment";
 import { View, StyleSheet } from "react-native";
 import { NavigationEvents, StackActions, NavigationActions } from "react-navigation";
-import moment from "moment";
-import SInfo from "react-native-sensitive-info";
+
+import PeopleAPI from "src/api/people";
+import { PersonalRoomsAPI } from "src/api/rooms";
 
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import Button from "src/components/Button";
-
-import PeopleAPI from "src/api/people";
-import { PersonalRoomsAPI } from "src/api/rooms";
 
 const INITIAL_STATE = { creationTime: null, nickName: "", status: "", monoId: "" }
 

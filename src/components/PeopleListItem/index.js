@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Avatar, Text, Paragraph } from "react-native-paper";
 
 import PeopleAPI from "src/api/people";
+import CircleAvatar from "src/components/Avatar/Circle";
 
 const INITIAL_STATE = { name: "", status: null, profilePicture: "" }
 
@@ -44,7 +45,7 @@ export default class PeopleListItem extends React.Component{
     return(
       <TouchableOpacity onPress={this.props.onPress}>
         <View style={styles.userContainer}>
-          <Avatar.Image size={48} source={{ uri: profilePicture, cache: "force-cache" }} style={{ marginRight: 16 }}/>
+          <CircleAvatar size={48} uri={profilePicture} style={{ marginRight: 16 }}/>
           <View>
             <Text style={{ fontWeight: "700" }}>{name}</Text>
             <Paragraph style={{ color: "#5E8864" }}>{status}</Paragraph>

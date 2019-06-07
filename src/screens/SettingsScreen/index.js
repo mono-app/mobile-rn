@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import { Text, Portal, Dialog, Paragraph, ActivityIndicator } from "react-native-paper";
 import { NavigationEvents } from "react-navigation";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
@@ -9,6 +9,7 @@ import PeopleAPI from "src/api/people";
 
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import BirthdaySetupBanner from "src/screens/SettingsScreen/banners/BirthdaySetupBanner";
+import SquareAvatar from "src/components/Avatar/Square";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
@@ -84,7 +85,7 @@ export default class SettingsScreen extends React.Component {
         <ScrollView>
           <View style={styles.profileContainer}>
             <TouchableOpacity onPress={this.handleProfilePicturePress}>
-              <Image style={styles.profilePicture} source={ {uri: this.state.profilePicture, cache: "force-cache" }}/>
+              <SquareAvatar size={70} style={{ marginRight: 16 }} uri={this.state.profilePicture}/>
             </TouchableOpacity>
             <View style={styles.profileDescriptionContainer}>
               <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.state.nickName}</Text>
