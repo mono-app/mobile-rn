@@ -18,7 +18,7 @@ export default MainTabNavigator = createBottomTabNavigator({
   MomentsTab: MomentTabNavigator,
   SettingsTab: SettingTabNavigator
 }, {
-  initialRouteName: "SettingsTab",
+  initialRouteName: "HomeTab",
   tabBarOptions: { 
     activeTintColor: "#0EAD69",
     style: { borderTopWidth: 0, elevation: 8, height: 60, padding: 8 }

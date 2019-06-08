@@ -11,7 +11,7 @@ import ChatScreen from "../screens/ChatScreen";
 
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
-  HomeAddContact: { screen: AddContactScreen },
+  AddContact: { screen: AddContactScreen },
   PeopleSearchResult: { screen: PeopleSearchResult },
   PeopleInformation: { screen: PeopleInformationScreen },
   FriendRequestList: { screen: FriendRequestListScreen },
