@@ -10,23 +10,6 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import ActionButton from "src/screens/PeopleInformationScreen/ActionButton";
-import CancelledFriendRequestDialog from "src/screens/PeopleInformationScreen/CancelledFriendRequestDialog";
-import AddedFriendRequestDialog from "src/screens/PeopleInformationScreen/AddedFriendRequestDialog";
-
-// const INITIAL_STATE = { 
-//   isLoadingProfile: true,
-//   isAdding: false,
-//   isCancelling: false,
-//   isAdded: null,
-//   isRequested: null,
-//   isInFriendList: null, 
-//   people: { 
-//     nickName: "", 
-//     joinedFrom: "",
-//     status: "",
-//     source: { id: "", value: "" } 
-//   }
-// }
 
 const INITIAL_STATE = { isLoadingProfile: true, people: null, peopleFriendStatus: null }
 
@@ -57,20 +40,6 @@ export default class PeopleInformationScreen extends React.PureComponent {
   }
 
   handleActionButtonComplete = () => this.loadPeopleFriendStatus();
-  handleCancelFriendRequestPress = () => {
-    this.setState({ isCancelling: true });
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
-      const peopleId = this.props.navigation.getParam("peopleId", "test.kedua@gmail.com");
-      const api = new FriendsAPI();
-      return api.cancelRequest(currentUserEmail, peopleId);
-    }).then(success => {
-      if(!success) throw "Terjadi kesalahan. Silahkan coba lagi.";
-      this.setState({ isCancelling: false, isCancelled: true });
-    }).catch(err => {
-      console.log(err);
-      alert(err);
-    })
-  }
   
   constructor(props){
     super(props);
@@ -80,7 +49,6 @@ export default class PeopleInformationScreen extends React.PureComponent {
     this.source = this.props.navigation.getParam("source", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.loadPeopleFriendStatus = this.loadPeopleFriendStatus.bind(this);
-    this.handleCancelFriendRequestPress = this.handleCancelFriendRequestPress.bind(this);
     this.handleActionButtonComplete = this.handleActionButtonComplete.bind(this);
   }
 
@@ -90,6 +58,7 @@ export default class PeopleInformationScreen extends React.PureComponent {
   }
 
   render(){
+    console.log(this.state);
     if(this.state.isLoadingProfile){
       return (
         <Dialog visible={true}>
@@ -104,9 +73,6 @@ export default class PeopleInformationScreen extends React.PureComponent {
       )
     }else return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <AddedFriendRequestDialog {...this.props} visible={this.state.isAdded}/>
-        <CancelledFriendRequestDialog {...this.props} visible={this.state.isCancelled}/>
-
         <PeopleProfileHeader
           profilePicture={this.state.people.profilePicture}
           nickName={this.state.people.nickName}

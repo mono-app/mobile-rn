@@ -35,8 +35,8 @@ export default class FriendsAPI{
         const peopleDocumentSnapshot = await peopleRef.get();
 
         // I am geeting the friend request from user, so my friend status is pedingAccept
-        if(peopleDocumentSnapshot.exists) Promise.resolve("pendingAccept");
-        else Promise.resolve("stranger");
+        if(peopleDocumentSnapshot.exists) return Promise.resolve("pendingAccept");
+        else return Promise.resolve("stranger");
       }
     }
   }
