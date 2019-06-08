@@ -6,6 +6,8 @@ import { Text, Card, ActivityIndicator, withTheme } from "react-native-paper";
 
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
+
+import AppHeader from "src/components/AppHeader";
 import SquareAvatar from "src/components/Avatar/Square";
 
 const INITIAL_STATE = { 
@@ -14,7 +16,9 @@ const INITIAL_STATE = {
 }
 
 class MyQRScreen extends React.Component{
-  static navigationOptions = { headerTitle: "My QR Code" }
+  static navigationOptions = ({ navigation }) => { return {
+    header: <AppHeader title="QR Code Saya" navigation={navigation} style={{ backgroundColor: "transparent" }}/>
+  }}
 
   loadPeopleInformation = () => {
     this.setState({ isLoading: true });

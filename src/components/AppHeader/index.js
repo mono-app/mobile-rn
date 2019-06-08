@@ -18,3 +18,5 @@ export default class AppHeader extends React.PureComponent{
     )
   }
 }
+
+AppHeader.defaultProps = { navigation: null, title: null, style: null }
