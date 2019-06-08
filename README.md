@@ -30,9 +30,9 @@ Please use 16 as the baseline, and the increment or decrement will be 4. For exa
 
 Please also follow the primary color in the button.
 
-Please also use `<Text>` component from `react-native-paper`
+Please also use `<Text>` component from `react-native-paper`.
 
-Please refer to `issue` if you want to make ` pull request`
+Please refer to `issue` if you want to make ` pull request`.
 
 ## Issue Tracker
 It is highly appreciated if you can start a new issue and assign the issue with correct label. For a question, you can use `question` label.
