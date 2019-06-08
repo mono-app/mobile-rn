@@ -76,19 +76,37 @@ export default class FriendsAPI{
 
   /**
    * 
-   * @param {string} peopleEmail - email address of the people. 
-   * @returns {Promise} - return a list of friends in the `peopleEmail` friend requests list.
+   * @param {String} peopleEmail 
+   * @param {function} callback - return QuerySnapshot
+   * @returns {function} - use the return value to unsubscribe.
    */
-  getRequestList(peopleEmail){
+  static getFriendRequestWithRealTimeUpdate(peopleEmail, callback){
+    const db = firebase.firestore();
     const friendRequestCollection = new FriendRequestCollection();
+    const peopleCollection = new PeopleCollection();
     const userDocument = new Document(peopleEmail);
-    const getFriendRequestQuery = new GetDocument();
-    getFriendRequestQuery.setGetConfiguration("default");
-    return getFriendRequestQuery.executeQuery(friendRequestCollection, userDocument).then(doc => {
-      if(doc.exists) return doc.data().friends;
-      return [];
-    });
+    const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendRequestRef.collection(peopleCollection.getName());
+    return peopleRef.onSnapshot({ includeMetadataChanges: true }, querySnapshot => {
+      callback(querySnapshot);
+    })
   }
+
+  // /**
+  //  * 
+  //  * @param {string} peopleEmail - email address of the people. 
+  //  * @returns {Promise} - return a list of friends in the `peopleEmail` friend requests list.
+  //  */
+  // getRequestList(peopleEmail){
+  //   const friendRequestCollection = new FriendRequestCollection();
+  //   const userDocument = new Document(peopleEmail);
+  //   const getFriendRequestQuery = new GetDocument();
+  //   getFriendRequestQuery.setGetConfiguration("default");
+  //   return getFriendRequestQuery.executeQuery(friendRequestCollection, userDocument).then(doc => {
+  //     if(doc.exists) return doc.data().friends;
+  //     return [];
+  //   });
+  // }
 
   /**
    * 
@@ -124,7 +142,7 @@ export default class FriendsAPI{
       batch.update(userFriendListRef, { totalFriends: firebase.firestore.FieldValue.increment(1) });
       batch.update(peopleFriendListRef, { totalFriends: firebase.firestore.FieldValue.increment(1) });
 
-      await Promise.all(batch.commit(), this.cancelRequest(peopleEmail, friendEmail));
+      await Promise.all(batch.commit(), this.cancelRequest(friendEmail, peopleEmail));
       return Promise.resolve(true);
     }catch(err){
       console.log(err);

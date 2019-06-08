@@ -58,7 +58,6 @@ export default class PeopleInformationScreen extends React.PureComponent {
   }
 
   render(){
-    console.log(this.state);
     if(this.state.isLoadingProfile){
       return (
         <Dialog visible={true}>

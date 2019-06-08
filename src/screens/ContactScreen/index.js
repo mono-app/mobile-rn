@@ -50,19 +50,18 @@ export default class ContactScreen extends React.Component{
             <ActivityIndicator size="large" color="#0EAD69"/>
           </View>
         ):(
-          <View style={{ flex: 1, backgroundColor: "white" }}>
-            <FlatList
-              data={this.state.peopleList}
-              renderItem={({ item, index }) => {
-                return (
-                  <PeopleListItem 
-                    onPress={() => this.handleContactPress(item)}
-                    key={index} 
-                    autoFetch={true} 
-                    email={item}/>
-                )
-              }}/>
-          </View>
+          <FlatList
+            style={{ backgroundColor: "white" }}
+            data={this.state.peopleList}
+            renderItem={({ item, index }) => {
+              return (
+                <PeopleListItem 
+                  onPress={() => this.handleContactPress(item)}
+                  key={index} 
+                  autoFetch={true} 
+                  email={item}/>
+              )
+            }}/>
         )}
       </View>
     )

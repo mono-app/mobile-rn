@@ -37,8 +37,7 @@ export default class HomeScreen extends React.PureComponent {
   render() {
     return (
       <View style={styles.container}>
-
-        <FriendRequestNotification {...this.props}/>
+        <FriendRequestNotification navigation={this.props.navigation}/>
         <FlatList
           data={this.state.rooms}
           renderItem={({item}) => {
