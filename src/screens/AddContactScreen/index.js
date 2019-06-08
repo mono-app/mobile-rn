@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
@@ -25,11 +25,14 @@ export default class AddContactScreen extends React.PureComponent{
     })
   }
 
+  handleScanQRCodePress = () => { this.props.navigation.navigate("ScanQRCode"); }
+
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
     this.loadUserInformation = this.loadUserInformation.bind(this);
+    this.handleScanQRCodePress = this.handleScanQRCodePress.bind(this);
   }
 
   componentDidMount(){ this.loadUserInformation(); }
@@ -42,7 +45,7 @@ export default class AddContactScreen extends React.PureComponent{
           <Text style={{ color: "#5E8864" }}>Mono ID: {this.state.monoId}</Text>
         </View>
         <View>
-          <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.menuContainer} onPress={this.handleScanQRCodePress}>
             <MaterialCommunityIcons name="qrcode-scan" size={36} style={{ marginRight: 16 }}/>
             <View style={{ display: "flex", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
               <View style={{ display: "flex", flexDirection: "column" }}>
@@ -51,7 +54,7 @@ export default class AddContactScreen extends React.PureComponent{
               </View>
               <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
     )

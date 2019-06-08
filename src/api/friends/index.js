@@ -104,8 +104,9 @@ export default class FriendsAPI{
    * 
    * @param {string} peopleEmail - the one that accepting
    * @param {string} friendEmail - the one that being accepted
+   * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
-  async acceptRequest(peopleEmail, friendEmail){
+  async acceptRequest(peopleEmail, friendEmail, source){
     try{
       const db = firebase.firestore();
       const batch = db.batch();
@@ -118,8 +119,8 @@ export default class FriendsAPI{
       const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
       const peoplePeopleRef = peopleFriendListRef.collection(peopleCollection.getName()).doc(userDocument.getId());
       
-      batch.set(userPeopleRef, { creationTime: firebase.firestore.FieldValue.serverTimestamp() });
-      batch.set(peoplePeopleRef, { creationTime: firebase.firestore.FieldValue.serverTimestamp() });
+      batch.set(userPeopleRef, { creationTime: firebase.firestore.FieldValue.serverTimestamp(), source });
+      batch.set(peoplePeopleRef, { creationTime: firebase.firestore.FieldValue.serverTimestamp(), source });
       batch.update(userFriendListRef, { totalFriends: firebase.firestore.FieldValue.increment(1) });
       batch.update(peopleFriendListRef, { totalFriends: firebase.firestore.FieldValue.increment(1) });
 
@@ -157,18 +158,18 @@ export default class FriendsAPI{
    * 
    * @param {string} peopleEmail - the one that adding
    * @param {string} friendEmail - the one that being added
+   * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
-  async sendRequest(peopleEmail, friendEmail){
+  async sendRequest(peopleEmail, friendEmail, source){
     try{
       const db = firebase.firestore();
       const friendRequestCollection = new FriendRequestCollection();
       const peopleCollection = new PeopleCollection();
       const friendDocument = new Document(friendEmail);
       const userDocument = new Document(peopleEmail);
-      console.log(friendDocument.getId(), userDocument.getId());
       const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(friendDocument.getId());
       const peopleRef = friendRequestRef.collection(peopleCollection.getName()).doc(userDocument.getId());
-      await peopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() });
+      await peopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source });
       return Promise.resolve(true);
     }catch(err){ 
       console.log(err);

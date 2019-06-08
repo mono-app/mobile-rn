@@ -86,7 +86,8 @@ export default class PeopleInformationScreen extends React.PureComponent {
             fieldValue={moment(this.state.people.joinedFrom).format("DD MMMM YYYY")}/>
         </View>
         <ActionButton 
-          peopleEmail={this.peopleEmail} 
+          peopleEmail={this.peopleEmail}
+          source={this.source}
           peopleFriendStatus={this.state.peopleFriendStatus}
           onComplete={this.handleActionButtonComplete}/>
       </View>

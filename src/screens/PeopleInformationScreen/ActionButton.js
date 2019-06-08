@@ -13,7 +13,7 @@ export default class ActionButton extends React.PureComponent{
   handleAddFriendPress = async () => {
     this.setState({ isLoading: true });
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    await new FriendsAPI().sendRequest(currentUserEmail, this.props.peopleEmail);
+    await new FriendsAPI().sendRequest(currentUserEmail, this.props.peopleEmail, this.props.source);
     if(this.props.onComplete) await this.props.onComplete();
     this.setState({ isLoading: false });
   }
