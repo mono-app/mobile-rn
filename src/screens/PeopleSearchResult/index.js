@@ -8,9 +8,9 @@ const INITIAL_STATE = { users: [] };
 export default class PeopleSearchResult extends React.Component{
   static navigationOptions = { headerTitle: "Hasil Pencarian Pengguna" }
 
-  handleResultItemPress = (userId) => {
+  handleResultItemPress = (peopleEmail) => {
     this.props.navigation.navigate("PeopleInformation", { 
-      peopleId: userId, source: { id: "MonoID", value: "Mono ID" } 
+      peopleEmail, source: { id: "MonoID", value: "Mono ID" }
     });
   }
 

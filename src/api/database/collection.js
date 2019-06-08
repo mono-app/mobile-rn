@@ -26,6 +26,10 @@ export class FriendListCollection extends Collection{
   constructor(){ super("friendList"); }
 }
 
+export class PeopleCollection extends Collection{
+  constructor(){ super("people"); }
+}
+
 export class RoomsCollection extends Collection{
   constructor(){ super("rooms"); }
 }
