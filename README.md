@@ -8,7 +8,7 @@ Since this is a React Native application, you need to follow this [link](https:/
 - Go to the cloned directory and run `npm install` to install any other depedencies.
 
 ## Contribution Guideline
-Of course, you need to have a basic understanding of `GitHub`. I personally use `GitKraken` to perform the `commit` and `pull request`. 
+Of course, you need to have a basic understanding of `GitHub`. I personally use `GitKraken` to perform the `commit` and `pull request`. For the features branch, please use `features`. For example `features/add-friend-from-qr-code` is for a new adding friend from QR code feature. 
 
 ### How to Submit a `pull request`
 To submit a `pull request`, you need to create a new branch and create a `pull request` from that branch. For example, you want to merge `modify-readme` branch to `master`. You can create `pull request` from the `modify-readme` branch to `master`.
@@ -38,7 +38,7 @@ Please refer to `issue` if you want to make ` pull request`
 It is highly appreciated if you can start a new issue and assign the issue with correct label. For a question, you can use `question` label.
   
 ## Submitting Issue to Pull Request
-To submit an `issue` to a `pull request` you need to set your comment description using the issue number. For example `pull request to fix issue #7`. In here, `#7` is the issue number.
+To submit an `issue` to a `pull request` you need to set your comment description using the issue number. For example `pull request to fixes #7`. In here, `#7` is the issue number.
 
 ## Common Issue
 
@@ -48,6 +48,7 @@ If you are not changing any native code, you can just simply run `react-native s
 ### What are Libraries that you are Using?
 I am using a lot of libraries. 
 
+- For some of the spinners, please refer to `react-native-spinkit` documentation.
 - For navigation, please refer to `react-navigation` documentation.
 - For Sensitive Information, please refer to `react-native-sensitive-information` documentation.
 - For UI/UX, please refer to `react-native-paper` documentation. 
