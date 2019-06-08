@@ -21,12 +21,18 @@ export default class SettingsScreen extends React.Component {
   static navigationOptions = { title: "Settings" }
 
   loadProfileInformation = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const results = await Promise.all([ CurrentUserAPI.getApplicationInformation(), new PeopleAPI().getLatestStatus(currentUserEmail) ]);
-    const applicationInformation = results[0];
-    const status = results[1]? results[1]: {content: "Tulis statusmu disini..."}
+    const applicationInformation = await CurrentUserAPI.getApplicationInformation();
     const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture: "https://picsum.photos/200/200/?random";
-    this.setState({ nickName: applicationInformation.nickName, status: status.content, profilePicture });
+    this.setState({ nickName: applicationInformation.nickName, profilePicture });
+  }
+
+  loadStatus = () => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
+      return new PeopleAPI().getLatestStatus(currentUserEmail);
+    }).then(status => {
+      if(!status) status = { content: "Tulis statusmu disini..." };
+      this.setState({ status: status.content });
+    })
   }
 
   handleStatusPress = () => this.props.navigation.navigate("StatusChange");
@@ -53,13 +59,24 @@ export default class SettingsScreen extends React.Component {
     super(props);
 
     this.state = INITIAL_STATE;
+    this.dataChangedTrigger = null;
     this.loadProfileInformation = this.loadProfileInformation.bind(this);
     this.handleStatusPress = this.handleStatusPress.bind(this);
     this.handleProfilePicturePress = this.handleProfilePicturePress.bind(this);
     this.handleProfilePictureSave = this.handleProfilePictureSave.bind(this);
   }
 
-  componentDidMount(){ this.loadProfileInformation(); }
+  componentDidMount(){
+    this.dataChangedTrigger = CurrentUserAPI.addDataChangedTrigger(this.loadProfileInformation);
+    this.loadProfileInformation(); 
+    this.loadStatus();
+  }
+
+  componentWillUnmount(){
+    if(this.dataChangedTrigger){
+      CurrentUserAPI.removeDataChangedTrigger(this.dataChangedTrigger);
+    }
+  }
   
   render(){
     return (

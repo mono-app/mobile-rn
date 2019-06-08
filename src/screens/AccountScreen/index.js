@@ -1,14 +1,11 @@
 import React from "react";
-import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
 import moment from "moment";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { NavigationEvents } from 'react-navigation';
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 import CurrentUserAPI from "src/api/people/CurrentUser";
-import PeopleAPI from "src/api/people";
 import Navigator, { StackNavigator } from "src/api/navigator";
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 
@@ -40,7 +37,7 @@ export default class AccountScreen extends React.Component{
   }
 
   handleNickNamePress = e => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
@@ -50,27 +47,26 @@ export default class AccountScreen extends React.Component{
         sourceTabName: "Setting"
       }
       const navigator = new Navigator(this.props.navigation);
-      navigator.navigateTo(`${payload.sourceTabName}EditSingleFieldScreen`, payload);
+      navigator.navigateTo(`EditSingleField`, payload);
     })
   }
 
   handleMonoIdPress = e => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
         databaseFieldName: "applicationInformation.id", 
         fieldValue: this.state.monoId,
-        fieldTitle: "Mono ID",
-        sourceTabName: "Setting"
+        fieldTitle: "Mono ID"
       }
       const navigator = new Navigator(this.props.navigation);
-      navigator.navigateTo(`${payload.sourceTabName}EditSingleFieldScreen`, payload);
+      navigator.navigateTo(`EditSingleField`, payload);
     })
   }
 
   handleDateOfBirthPress = e => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
@@ -91,6 +87,7 @@ export default class AccountScreen extends React.Component{
 
     this.state = INITIAL_STATE;
     this.signOutDialog = null;
+    this.dataChangedTrigger = null;
     this.stringMapping = { male: "Pria", female: "Wanita" }
     this.loadData = this.loadData.bind(this);
     this.handleNickNamePress = this.handleNickNamePress.bind(this);
@@ -101,7 +98,16 @@ export default class AccountScreen extends React.Component{
     this.handleBeforeDateOfBirthDave = this.handleBeforeDateOfBirthDave.bind(this);
   }
 
-  componentDidMount(){ this.loadData(); }
+  componentDidMount(){ 
+    this.dataChangedTrigger = CurrentUserAPI.addDataChangedTrigger(this.loadData);
+    this.loadData(); 
+  }
+
+  componentWillUnmount(){ 
+    if(this.dataChangedTrigger) {
+      CurrentUserAPI.removeDataChangedTrigger(this.dataChangedTrigger)
+    }
+  }
 
   render(){
     return (

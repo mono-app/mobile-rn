@@ -1,15 +1,23 @@
 import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
 import moment from "moment";
+import uuid from "uuid/v4";
 
 import { Document } from "src/api/database/document";
 import { UserCollection } from "Src/api/database/collection";
 
-export default class CurrentUser{
+export default class CurrentUserAPI{
   static changeListener = null;
+  static triggers = {};
 
   static getCreationTime(){ return SInfo.getItem("creationTime", {}).then(creationTime => Promise.resolve(moment(creationTime * 1000))); }
   static getCurrentUserEmail(){ return SInfo.getItem("currentUserEmail", {}) }
+  static removeDataChangedTrigger(triggerId){ delete CurrentUserAPI.triggers[triggerId] }
+  static addDataChangedTrigger(triggerFunction){
+    const triggerId = uuid();
+    CurrentUserAPI.triggers[triggerId] = { triggerFunction };
+    return triggerId;
+  }
 
   static getApplicationInformation(){
     return SInfo.getItem("applicationInformation", {}).then(jsonData => {
@@ -29,10 +37,10 @@ export default class CurrentUser{
   }
 
   static async getDetail(){
-    const applicationInformation = await CurrentUser.getApplicationInformation();
-    const personalInformation = await CurrentUser.getPersonalInformation();
-    const currentUserEmail = await CurrentUser.getCurrentUserEmail();
-    const creationTime = await CurrentUser.getCreationTime();
+    const applicationInformation = await CurrentUserAPI.getApplicationInformation();
+    const personalInformation = await CurrentUserAPI.getPersonalInformation();
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const creationTime = await CurrentUserAPI.getCreationTime();
     return Promise.resolve({ id: currentUserEmail, applicationInformation, personalInformation, creationTime });
   }
 
@@ -63,18 +71,23 @@ export default class CurrentUser{
   }
 
   static async listenChanges(){
-    if(CurrentUser.changeListener !== null){
+    if(CurrentUserAPI.changeListener === null){
       const db = firebase.firestore();
-      const currentUserEmail = await CurrentUser.getCurrentUserEmail();
+      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
       const userCollection = new UserCollection();
       const userDocument = new Document(currentUserEmail);
       const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      CurrentUseAPI.changeListener = userRef.onSnapshot({ includeMetadataChanges: true }, documentSnapshot => {
+      CurrentUserAPI.changeListener = userRef.onSnapshot({ includeMetadataChanges: true }, documentSnapshot => {
         const userData = documentSnapshot.data();
         if(userData.applicationInformation.profilePicture){
           userData.applicationInformation.profilePicture = userData.applicationInformation.profilePicture.downloadUrl;
         }
-        CurrentUser.storeBasicInformation(userData);
+        CurrentUserAPI.storeBasicInformation(userData);
+
+        // trigger to the listeners
+        Object.keys(CurrentUserAPI.triggers).map(triggerId => {
+          CurrentUserAPI.triggers[triggerId].triggerFunction();
+        })
       })
     }
   }
