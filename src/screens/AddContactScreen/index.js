@@ -5,20 +5,41 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
+import CurrentUserAPI from "src/api/people/CurrentUser";
+
+import AppHeader from "src/components/AppHeader";
 import MonoIDSearch from "./MonoIDSearch";
 
-export default class AddContactScreen extends React.Component{
-  static navigationOptions = {
-    headerTitle: "Add Contact",
-    headerStyle: { backgroundColor: "#E8EEE8", elevation: 0 }
-  };
+const INITIAL_STATE = { monoId: null }
+
+export default class AddContactScreen extends React.PureComponent{
+  static navigationOptions = ({ navigation }) => {
+    return { header: (
+      <AppHeader style={{ backgroundColor: "#E8EEE8" }} title="Tambah Kontak" navigation={navigation}/> 
+    )}
+  }
+
+  loadUserInformation = () => {
+    CurrentUserAPI.getApplicationInformation().then(applicationInformation => {
+      this.setState({ monoId: applicationInformation.id });
+    })
+  }
+
+  constructor(props){
+    super(props);
+
+    this.state = INITIAL_STATE;
+    this.loadUserInformation = this.loadUserInformation.bind(this);
+  }
+
+  componentDidMount(){ this.loadUserInformation(); }
 
   render(){
     return (
       <KeyboardAwareScrollView style={styles.container}>
         <MonoIDSearch {...this.props}/>
         <View style={{ marginBottom: 16, flex: 1, alignItems: "center" }}>
-          <Text style={{ color: "#5E8864" }}>Mono ID: franziz</Text>
+          <Text style={{ color: "#5E8864" }}>Mono ID: {this.state.monoId}</Text>
         </View>
         <View>
           <View style={styles.menuContainer}>

@@ -1,39 +1,21 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
-import SInfo from "react-native-sensitive-info";
 
-import { UserCollection } from "../../api/database/collection";
-import { GetDocument } from "../../api/database/query";
-import TextInput from "../../components/TextInput";
+import PeopleAPI from "src/api/people";
 
-const INITIAL_STATE = { id: "" };
+import TextInput from "src/components/TextInput";
+
+const INITIAL_STATE = { id: "", isCannotFindPeopleDialogVisible: false };
 
 export default class MonoIDSearch extends React.Component{
   handleIdChange = id => this.setState({ id });
-  handleEndEdit = () => {
-    const searchId = this.state.id;
-    let currentUserEmail = null;
-
-    SInfo.getItem("currentUserEmail", {}).then(email => {
-      currentUserEmail = email;
-      const collection = new UserCollection();
-      const firebaseQuery = collection.getFirebaseReference().where("applicationInformation.id" , "==", searchId)
-      const query = new GetDocument();
-      query.setGetConfiguration("default");
-      return query.executeFirebaseQuery(firebaseQuery)
-    }).then(queryDocuments => {
-        let users = [];
-        queryDocuments.forEach(doc => {
-          if(doc.id !== currentUserEmail) users = [...users, doc];
-        }, this)
-        console.log(queryDocuments.size);
-        if(queryDocuments.size === 0){
-          alert(`Tidak dapat menenemukan pengguna dengan Mono ID: ${searchId}`)
-        }else{
-          this.props.navigation.navigate("PeopleSearchResult", { users });
-        }
-    })
+  handleSubmit = async () => {
+    const { id } = this.state;
+    const foundPeople = await new PeopleAPI().getByMonoId(id);
+    if(foundPeople.length > 0){
+      this.props.navigation.navigate("PeopleSearchResult", { people: foundPeople });
+    }else this.setState({ isCannotFindPeopleDialogVisible: true });
   }
 
   constructor(props){
@@ -41,7 +23,7 @@ export default class MonoIDSearch extends React.Component{
 
     this.state = INITIAL_STATE;
     this.handleIdChange = this.handleIdChange.bind(this);
-    this.handleEndEdit = this.handleEndEdit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   render(){
@@ -50,10 +32,11 @@ export default class MonoIDSearch extends React.Component{
         <MaterialIcons name="search" size={24} color="#E8EEE8" style={{ marginRight: 8 }}/>
         <TextInput 
           placeholder="Mono ID" 
-          style={{ borderWidth: 0, flex: 1 }}
+          returnKeyType="search"
+          style={{ borderWidth: 0, flex: 1, marginBottom: 0 }}
           value={this.state.id}
           onChangeText={this.handleIdChange}
-          onEndEditing={this.handleEndEdit}/>
+          onSubmitEditing={this.handleSubmit}/>
       </View>
     )
   }
@@ -64,6 +47,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-evenly",
     padding: 16, 
     paddingTop: 8, 
     paddingBottom: 8,
