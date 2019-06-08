@@ -1,29 +1,35 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar, ActivityIndicator } from "react-native-paper";
-import SInfo from "react-native-sensitive-info";
+import { Searchbar } from "react-native-paper";
 
 import FriendsAPI from "src/api/friends";
-import PeopleAPI from "src/api/people";
+import CurrentUserAPI from "src/api/people/CurrentUser";
+
+import AppHeader from "src/components/AppHeader";
 import PeopleListItem from "src/components/PeopleListItem";
 
 const INITIAL_STATE = { isLoading: true, peopleList: [] }
 
-export default class ContactScreen extends React.Component{
-  static navigationOptions = { headerTitle: "Kontak-ku" };
+export default class ContactScreen extends React.PureComponent{
+  static navigationOptions = ({ navigation }) => { return {
+    header: <AppHeader title="Kontak-ku" style={{ backgroundColor: "transparent" }}/>
+  }}
   
   loadFriends = async () => {
-    this.setState({ isLoading: true });
-
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
-      const api = new FriendsAPI();
-      this.friendListListener = api.getFriendsWithRealTimeUpdate(currentUserEmail, friends => {
-        this.setState({ isLoading: false, peopleList: friends })
-      })
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    this.friendListListener = new FriendsAPI().getFriendsWithRealTimeUpdate(currentUserEmail, friends => {
+      const people = friends.map(friend => {
+        return { id: friend.id, ...friend.data() }
+      });
+      this.setState({ peopleList: people });
     })
   }
 
-  handleContactPress = peopleEmail => this.props.navigation.navigate("PeopleDetail", { peopleEmail });
+  handleContactPress = people => {
+    const peopleEmail = people.id;
+    const source = people.source;
+    this.props.navigation.navigate("PeopleInformation", { peopleEmail, source });
+  }
 
   constructor(props){
     super(props);
@@ -40,29 +46,19 @@ export default class ContactScreen extends React.Component{
   render(){
     return(
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-
         <View style={{ padding: 16 }}>
           <Searchbar placeholder="Cari kontak"/>
         </View>
-        {this.state.isLoading
-        ?(
-          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "white" }}>
-            <ActivityIndicator size="large" color="#0EAD69"/>
-          </View>
-        ):(
-          <FlatList
-            style={{ backgroundColor: "white" }}
-            data={this.state.peopleList}
-            renderItem={({ item, index }) => {
-              return (
-                <PeopleListItem 
-                  onPress={() => this.handleContactPress(item)}
-                  key={index} 
-                  autoFetch={true} 
-                  email={item}/>
-              )
-            }}/>
-        )}
+        <FlatList
+          style={{ backgroundColor: "white" }}
+          data={this.state.peopleList}
+          renderItem={({ item, index }) => {
+            return (
+              <PeopleListItem 
+                onPress={() => this.handleContactPress(item)}
+                key={index} autoFetch={true} email={item.id}/>
+            )
+          }}/>
       </View>
     )
   }
