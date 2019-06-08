@@ -1,13 +1,11 @@
 import React from "react";
-import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
 import moment from "moment";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { NavigationEvents } from 'react-navigation';
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-import PeopleAPI from "src/api/people";
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import Navigator, { StackNavigator } from "src/api/navigator";
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 
@@ -19,11 +17,19 @@ export default class AccountScreen extends React.Component{
     headerStyle: { backgroundColor: "#E8EEE8", elevation: 0 }
   };
 
+  loadData = async () => {
+    const applicationInformation = await CurrentUserAPI.getApplicationInformation();
+    const personalInformation = await CurrentUserAPI.getPersonalInformation();
+    const { id, nickName } = applicationInformation;
+    const { dateOfBirth, gender } = personalInformation;
+    this.setState({ nickName, monoId: id, dateOfBirth, gender });
+  }
+
   handleBeforeDateOfBirthDave = value => moment(value, "DD/MM/YYYY").isValid();
   handleSignOutPress = e => this.signOutDialog.toggleShow();
   handleProceedSignOutPress = e => {
     firebase.auth().signOut().then(() => {
-      return SInfo.deleteItem("currentUserEmail", {})
+      return CurrentUserAPI.clear();
     }).then(() => {
       const navigator = new StackNavigator(this.props.navigation);
       navigator.resetTo("Splash", { key: null });
@@ -31,7 +37,7 @@ export default class AccountScreen extends React.Component{
   }
 
   handleNickNamePress = e => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
@@ -41,27 +47,26 @@ export default class AccountScreen extends React.Component{
         sourceTabName: "Setting"
       }
       const navigator = new Navigator(this.props.navigation);
-      navigator.navigateTo(`${payload.sourceTabName}EditSingleFieldScreen`, payload);
+      navigator.navigateTo(`EditSingleField`, payload);
     })
   }
 
   handleMonoIdPress = e => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
         databaseFieldName: "applicationInformation.id", 
         fieldValue: this.state.monoId,
-        fieldTitle: "Mono ID",
-        sourceTabName: "Setting"
+        fieldTitle: "Mono ID"
       }
       const navigator = new Navigator(this.props.navigation);
-      navigator.navigateTo(`${payload.sourceTabName}EditSingleFieldScreen`, payload);
+      navigator.navigateTo(`EditSingleField`, payload);
     })
   }
 
   handleDateOfBirthPress = e => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
       const payload = {
         databaseCollection: "users",
         databaseDocumentId: currentUserEmail,
@@ -77,24 +82,14 @@ export default class AccountScreen extends React.Component{
     })
   }
 
-  handleScreenDidFocus = () => {
-    const peopleAPI = new PeopleAPI();
-    peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
-      return peopleAPI.getDetail(currentUserEmail);
-    }).then(userData => {
-      const { id, nickName } = userData.applicationInformation;
-      const { dateOfBirth, gender } = userData.personalInformation;
-      this.setState({ nickName, monoId: id, dateOfBirth, gender });
-    })
-  }
-
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
     this.signOutDialog = null;
+    this.dataChangedTrigger = null;
     this.stringMapping = { male: "Pria", female: "Wanita" }
-    this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
+    this.loadData = this.loadData.bind(this);
     this.handleNickNamePress = this.handleNickNamePress.bind(this);
     this.handleMonoIdPress = this.handleMonoIdPress.bind(this);
     this.handleSignOutPress = this.handleSignOutPress.bind(this);
@@ -103,10 +98,20 @@ export default class AccountScreen extends React.Component{
     this.handleBeforeDateOfBirthDave = this.handleBeforeDateOfBirthDave.bind(this);
   }
 
+  componentDidMount(){ 
+    this.dataChangedTrigger = CurrentUserAPI.addDataChangedTrigger(this.loadData);
+    this.loadData(); 
+  }
+
+  componentWillUnmount(){ 
+    if(this.dataChangedTrigger) {
+      CurrentUserAPI.removeDataChangedTrigger(this.dataChangedTrigger)
+    }
+  }
+
   render(){
     return (
       <View style={styles.container}>
-        <NavigationEvents onDidFocus={this.handleScreenDidFocus}/>
         <SignOutDialog 
           ref={i => this.signOutDialog = i}
           onSignOutPress={this.handleProceedSignOutPress}/>
@@ -122,15 +127,12 @@ export default class AccountScreen extends React.Component{
             </View>
           </TouchableOpacity>
           
-          <TouchableOpacity onPress={this.handleMonoIdPress}>
-            <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>Mono ID</Text>
-              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                <Text>{this.state.monoId}</Text>
-                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-              </View>
+          <View style={styles.menu}>
+            <Text style={{ fontWeight: "500" }}>Mono ID</Text>
+            <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+              <Text>{this.state.monoId}</Text>
             </View>
-          </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.groupContainer}>

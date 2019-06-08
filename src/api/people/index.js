@@ -2,8 +2,10 @@ import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
 import moment from "moment";
 import uuid from "uuid/v4";
+import { StackActions } from "react-navigation";
 
 import StorageAPI from "src/api/storage";
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { GetDocument } from "src/api/database/query";
@@ -11,6 +13,42 @@ import { GetDocument } from "src/api/database/query";
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
     this.currentUserEmail = currentUserEmail;
+  }
+
+  /**
+   * 
+   * @param {String} monoId 
+   * @param {boolean} includeSelf
+   */
+  async getByMonoId(monoId, includeSelf=false){
+    const db = firebase.firestore();
+    const userCollection = new UserCollection();
+    const collectionRef = db.collection(userCollection.getName());
+    const queryPath = new firebase.firestore.FieldPath("applicationInformation", "id");
+    const userQuery = collectionRef.where(queryPath, "==", monoId);
+    const querySnapshot = await userQuery.get();
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const foundPeople = querySnapshot.docs.filter(documentSnapshot => documentSnapshot.id !== currentUserEmail)
+                                          .map(documentSnapshot => { 
+                                            return { id: documentSnapshot.id, ...documentSnapshot.data() }
+                                          });
+    return Promise.resolve(foundPeople);
+  }
+
+  /**
+   * 
+   * @param {String} email 
+   * @param {Navigator} navigator 
+   */
+  async handleSignedIn(email, navigator){
+    const userData = await this.getDetail(email);
+    if(userData){
+      await CurrentUserAPI.storeBasicInformation(userData);
+      CurrentUserAPI.listenChanges();
+
+      const routeNameForReset = (userData.isCompleteSetup)? "MainTabNavigator": "AccountSetup";
+      navigator.resetTo(routeNameForReset, StackActions);
+    }else throw "Cannot find user in the database. Application error.";
   }
 
   /**
@@ -77,7 +115,7 @@ export default class PeopleAPI{
       getDocumentQuery.setGetConfiguration(source);
       return getDocumentQuery.executeQuery(userCollection, userDocument).then(documentSnapshot => {
         if(documentSnapshot.exists){
-          const userData = documentSnapshot.data();
+          const userData = { id: documentSnapshot.id, ...documentSnapshot.data() };
           const { applicationInformation } = userData;
           const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture.downloadUrl: "https://picsum.photos/200/200/?random";
           userData.applicationInformation.profilePicture = profilePicture;

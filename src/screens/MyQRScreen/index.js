@@ -1,61 +1,82 @@
 import React from "react";
-import { View, Image, StyleSheet } from "react-native";
-import { Text, Card, ActivityIndicator } from "react-native-paper";
-import { NavigationEvents } from "react-navigation";
 import QRCode from "react-native-qrcode-svg"
-import SInfo from "react-native-sensitive-info";
+import Spinners from "react-native-spinkit";
+import { View, StyleSheet } from "react-native";
+import { Text, Card, ActivityIndicator, withTheme } from "react-native-paper";
 
-import { GetDocument } from "../../api/database/query";
-import { UserCollection } from "../../api/database/collection";
-import { Document } from "../../api/database/document";
+import CurrentUserAPI from "src/api/people/CurrentUser";
+import PeopleAPI from "src/api/people";
 
-const INITIAL_STATE = { isLoading: true, userId: "", nickName: "" }
+import AppHeader from "src/components/AppHeader";
+import SquareAvatar from "src/components/Avatar/Square";
 
-export default class MyQRScreen extends React.Component{
-  static navigationOptions = { headerTitle: "My QR Code" }
+const INITIAL_STATE = { 
+  isLoading: true, userId: "", nickName: "", profilePicture: null,
+  isLoadingStatus: true, status: null
+}
 
-  handleScreenWillFocus = () => {
-    this.setState({isLoading: true});
+class MyQRScreen extends React.Component{
+  static navigationOptions = ({ navigation }) => { return {
+    header: <AppHeader title="QR Code Saya" navigation={navigation} style={{ backgroundColor: "transparent" }}/>
+  }}
 
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
-      const userCollection = new UserCollection();
-      const userDocument = new Document(currentUserEmail);
-      const getDocumentQuery = new GetDocument();
-      getDocumentQuery.setGetConfiguration("default");
-      return getDocumentQuery.executeQuery(userCollection, userDocument);
-    }).then(doc => {
-      if(doc.exists){
-        const userData = doc.data();
-        const userId = doc.id;
-        const nickName = userData.applicationInformation.nickName;
-        this.setState({ isLoading: false, userId, nickName })
-      }
-    }).catch(err => console.error(err));
+  loadPeopleInformation = () => {
+    this.setState({ isLoading: true });
+
+    const promises = [ CurrentUserAPI.getCurrentUserEmail(), CurrentUserAPI.getApplicationInformation() ]
+    Promise.all(promises).then(results => {
+      const userEmail = results[0];
+      const applicationInformation =  results[1];
+      this.setState({ 
+        isLoading: false, email: userEmail, nickName: applicationInformation.nickName,
+        profilePicture: applicationInformation.profilePicture
+      });
+    })
+  }
+
+  loadStatus = () => {
+    this.setState({ isLoadingStatus: true });
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
+      return new PeopleAPI().getLatestStatus(currentUserEmail);
+    }).then(status => {
+      this.setState({ isLoadingStatus: false, status });
+    })
   }
 
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
+    this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
+    this.loadStatus = this.loadStatus.bind(this);
+  }
+
+  componentDidMount(){
+    this.loadPeopleInformation();
+    this.loadStatus();
   }
 
   render(){
+    const { colors } = this.props.theme;
     return(
       <View style={styles.container}>
-        <NavigationEvents onWillFocus={this.handleScreenWillFocus}/>
         <Card>
           <Card.Content>
             <View style={styles.profileContainer}>
-              <Image style={styles.profilePicture} source={{uri: "https://picsum.photos/200/200/?random", cache: "force-cache" }}/>
+              <SquareAvatar size={70} uri={this.state.profilePicture} style={{ marginRight: 16 }} />
               <View style={styles.profileDescriptionContainer}>
                 <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{this.state.nickName}</Text>
-                <Text style={{ fontSize: 12}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+                {this.state.isLoadingStatus?(
+                  <Spinners type="ThreeBounce" color={colors.primary}/>
+                ):(
+                  <Text style={{ fontSize: 12}}>{this.state.status.content}</Text>
+                )}
               </View>
             </View>
             <View style={{ flexDirection: "row", marginBottom: 32, marginTop: 32, justifyContent: "center" }}>
               {this.state.isLoading
               ?<ActivityIndicator size="large" color="#0EAD69"/>
-              :<QRCode size={200} value={this.state.userId}/>}
+              :<QRCode size={200} value={this.state.email}/>}
             </View>
             <Text style={styles.smallDescription}>Scan QR Code diatas ini untuk menambahkan aku dalam daftar pertemanan-mu</Text>
           </Card.Content>
@@ -75,12 +96,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#E8EEE8"
   },
-  profilePicture: {
-    width: 70, 
-    height: 70,
-    borderRadius: 8,
-    marginRight: 16
-  },
   profileDescriptionContainer: { width: 0, flexGrow: 1 },
   smallDescription: { fontSize: 12, textAlign: "center", color: "#5E8864" }
 })
+
+export default withTheme(MyQRScreen);

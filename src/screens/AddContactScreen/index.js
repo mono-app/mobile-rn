@@ -1,27 +1,51 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
+import CurrentUserAPI from "src/api/people/CurrentUser";
+
+import AppHeader from "src/components/AppHeader";
 import MonoIDSearch from "./MonoIDSearch";
 
-export default class AddContactScreen extends React.Component{
-  static navigationOptions = {
-    headerTitle: "Add Contact",
-    headerStyle: { backgroundColor: "#E8EEE8", elevation: 0 }
-  };
+const INITIAL_STATE = { monoId: null }
+
+export default class AddContactScreen extends React.PureComponent{
+  static navigationOptions = ({ navigation }) => {
+    return { header: (
+      <AppHeader style={{ backgroundColor: "#E8EEE8" }} title="Tambah Kontak" navigation={navigation}/> 
+    )}
+  }
+
+  loadUserInformation = () => {
+    CurrentUserAPI.getApplicationInformation().then(applicationInformation => {
+      this.setState({ monoId: applicationInformation.id });
+    })
+  }
+
+  handleScanQRCodePress = () => { this.props.navigation.navigate("ScanQRCode"); }
+
+  constructor(props){
+    super(props);
+
+    this.state = INITIAL_STATE;
+    this.loadUserInformation = this.loadUserInformation.bind(this);
+    this.handleScanQRCodePress = this.handleScanQRCodePress.bind(this);
+  }
+
+  componentDidMount(){ this.loadUserInformation(); }
 
   render(){
     return (
       <KeyboardAwareScrollView style={styles.container}>
         <MonoIDSearch {...this.props}/>
         <View style={{ marginBottom: 16, flex: 1, alignItems: "center" }}>
-          <Text style={{ color: "#5E8864" }}>Mono ID: franziz</Text>
+          <Text style={{ color: "#5E8864" }}>Mono ID: {this.state.monoId}</Text>
         </View>
         <View>
-          <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.menuContainer} onPress={this.handleScanQRCodePress}>
             <MaterialCommunityIcons name="qrcode-scan" size={36} style={{ marginRight: 16 }}/>
             <View style={{ display: "flex", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
               <View style={{ display: "flex", flexDirection: "column" }}>
@@ -30,7 +54,7 @@ export default class AddContactScreen extends React.Component{
               </View>
               <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
     )

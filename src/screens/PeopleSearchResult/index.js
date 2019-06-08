@@ -1,6 +1,5 @@
 import React from "react";
 import { View, FlatList } from "react-native";
-import { NavigationEvents } from "react-navigation";
 
 import ResultItem from "./ResultItem";
 
@@ -9,39 +8,37 @@ const INITIAL_STATE = { users: [] };
 export default class PeopleSearchResult extends React.Component{
   static navigationOptions = { headerTitle: "Hasil Pencarian Pengguna" }
 
-  handleResultItemPress = (userId) => {
+  handleResultItemPress = (peopleEmail) => {
     this.props.navigation.navigate("PeopleInformation", { 
-      peopleId: userId, source: { id: "MonoID", value: "Mono ID" } 
+      peopleEmail, source: { id: "MonoID", value: "Mono ID" }
     });
-  }
-
-  handleScreenDidFocus = () => {
-    const users = this.props.navigation.getParam("users", []);
-    this.setState({ users });
   }
 
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
-    this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
+    this.people = this.props.navigation.getParam("people", []);
     this.handleResultItemPress = this.handleResultItemPress.bind(this);
   }
 
   render(){
     return(
       <View>
-        <NavigationEvents onDidFocus={this.handleScreenDidFocus}/>
-
         <FlatList
-          data={this.state.users}
+          data={this.people}
           renderItem={ ({ item }) => {
-            const user = item.data();
+            let profilePicture = "https://picsum.photos/200/200/?random";
+            if(item.applicationInformation.profilePicture){
+              if(item.applicationInformation.profilePicture.downloadUrl) profilePicture = item.applicationInformation.profilePicture.downloadUrl
+              else profilePicture = item.application.profilePicture;
+            }
             return (
               <ResultItem
                 onPress={() => this.handleResultItemPress(item.id)}
-                name={user.applicationInformation.nickName}
-                status={user.applicationInformation.status}/>
+                peopleEmail={item.id}
+                profilePicture={profilePicture}
+                name={item.applicationInformation.nickName}/>
             )
           }}/>
       </View>

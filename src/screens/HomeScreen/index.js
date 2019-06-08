@@ -1,21 +1,18 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { NavigationEvents } from "react-navigation";
 
-import { default as FriendRequestNotification } from "./Notifications/FriendRequest";
-import RightMenuButton from "./RightMenuButton";
 import Room from "./Room";
-import PeopleAPI from '../../api/people';
+import Header from "src/screens/HomeScreen/Header";
+import { default as FriendRequestNotification } from "./Notifications/FriendRequest";
+
+import PeopleAPI from 'src/api/people';
 
 INITIAL_STATE = { rooms: [] }
 
-export default class HomeScreen extends React.Component {
+export default class HomeScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
-    return{
-      title: 'All Chats',
-      headerRight: <RightMenuButton navigation={navigation}/>
-    }
-  };
+    return { header: <Header navigation={navigation}/> }
+  }
 
   handleOpenPrivateRoom = room => {
     const peopleName = room.audience.applicationInformation.nickName;
@@ -23,27 +20,24 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate({ routeName: "Chat", params: { peopleName, roomId }});
   }
 
-  handleScreenDidFocus = () => {
-    const api = new PeopleAPI();
-    api.getRoomsWithRealtimeUpdate(rooms => {
-      this.setState({ rooms });
-    })
-  }
-
   constructor(props){
     super(props);
 
     this.state = INITIAL_STATE;
-    this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
+    this.roomListener = null;
     this.handleOpenPrivateRoom = this.handleOpenPrivateRoom.bind(this);
   }
+
+  componentDidMount(){
+    this.roomListener = new PeopleAPI().getRoomsWithRealtimeUpdate(rooms => this.setState({ rooms }));
+  }
+
+  componentWillUnmount(){ if(this.roomListener) this.roomListener(); }
   
   render() {
     return (
       <View style={styles.container}>
-        <NavigationEvents onDidFocus={this.handleScreenDidFocus}/>
-
-        <FriendRequestNotification {...this.props}/>
+        <FriendRequestNotification navigation={this.props.navigation}/>
         <FlatList
           data={this.state.rooms}
           renderItem={({item}) => {
