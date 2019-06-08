@@ -127,15 +127,12 @@ export default class AccountScreen extends React.Component{
             </View>
           </TouchableOpacity>
           
-          <TouchableOpacity onPress={this.handleMonoIdPress}>
-            <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>Mono ID</Text>
-              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                <Text>{this.state.monoId}</Text>
-                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-              </View>
+          <View style={styles.menu}>
+            <Text style={{ fontWeight: "500" }}>Mono ID</Text>
+            <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+              <Text>{this.state.monoId}</Text>
             </View>
-          </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.groupContainer}>
