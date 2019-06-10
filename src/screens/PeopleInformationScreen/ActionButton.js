@@ -1,15 +1,24 @@
 import React from "react";
+import { StackActions } from "react-navigation";
 import { View } from "react-native";
-import { Button, ActivityIndicator } from "react-native-paper";
+import { Button } from "react-native-paper";
 
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import FriendsAPI from "src/api/friends";
+import { PersonalRoomsAPI } from "src/api/rooms";
 
 const INITIAL_STATE = { isLoading: false };
 
 export default class ActionButton extends React.PureComponent{
 
-  handleStartChatPress = () => {}
+  handleStartChatPress = async () => {
+    this.setState({ isLoading: true });
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const roomId = await PersonalRoomsAPI.createRoomIfNotExists(currentUserEmail, this.props.peopleEmail);
+    this.setState({ isLoading: false });
+    if(roomId) this.props.navigation.dispatch(StackActions.replace({ routeName: "Chat", params: {roomId} }));
+  }
+
   handleAddFriendPress = async () => {
     this.setState({ isLoading: true });
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
@@ -46,6 +55,7 @@ export default class ActionButton extends React.PureComponent{
     super(props);
 
     this.state = INITIAL_STATE;
+    this.handleStartChatPress = this.handleStartChatPress.bind(this);
     this.handleAddFriendPress = this.handleAddFriendPress.bind(this);
     this.handleCancelRequestPress = this.handleCancelRequestPress.bind(this);
     this.handleRejectRequestPress = this.handleRejectRequestPress.bind(this);
@@ -56,7 +66,7 @@ export default class ActionButton extends React.PureComponent{
   render(){
     const style = { marginHorizontal: 16 }
     const { peopleFriendStatus } = this.props;
-    if(!peopleFriendStatus) return <Button loading={true} disabled={true} mode="contained" style={style}>Harap tunggu...</Button>
+    if(!peopleFriendStatus || this.state.isLoading) return <Button loading={true} disabled={true} mode="contained" style={style}>Harap tunggu...</Button>
     if(peopleFriendStatus === "stranger"){
       return(
         <Button 
@@ -78,7 +88,7 @@ export default class ActionButton extends React.PureComponent{
         </Button>
       )
     }else if(peopleFriendStatus === "friend"){
-      return <Button mode="contained" style={style}>Mulai Percakapan</Button>
+      return <Button mode="contained" style={style} onPress={this.handleStartChatPress}>Mulai Percakapan</Button>
     }else if(peopleFriendStatus === "pendingAccept"){
       if(this.state.isLoading) return <Button loading={true} disabled={true} mode="contained" style={style}>Harap tunggu...</Button>
       else return (

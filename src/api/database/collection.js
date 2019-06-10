@@ -34,6 +34,10 @@ export class RoomsCollection extends Collection{
   constructor(){ super("rooms"); }
 }
 
+export class RoomUserMappingCollection extends Collection{
+  constructor(){ super("roomUserMapping"); }
+}
+
 export class MessagesCollection extends Collection{ 
   constructor(){ super("messages"); }
 }
