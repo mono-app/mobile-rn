@@ -2,14 +2,13 @@ import React from "react";
 import { 
   View, FlatList, StyleSheet, TextInput, KeyboardAvoidingView
 } from "react-native";
-import { Text, Surface, IconButton } from "react-native-paper";
+import { Text, Surface, IconButton, withTheme } from "react-native-paper";
 import { Header, NavigationEvents } from "react-navigation";
-
-import MyBubble from "src/screens/ChatScreen/MyBubble";
-import PeopleBubble from "src/screens/ChatScreen/PeopleBubble";
 
 import MessagesAPI from "src/api/messages";
 import PeopleAPI from "src/api/people";
+
+import BottomTextInput from "src/components/BottomTextInput";
 
 const INITIAL_STATE = { 
   messages: [], message: "", isChatRoomReady: false,
@@ -24,7 +23,7 @@ const INITIAL_STATE = {
  * @params {string} peopleName
  * @params {string} roomId
  */
-export default class ChatScreen extends React.PureComponent{
+ class ChatScreen extends React.PureComponent{
   static navigationOptions = ({ navigation }) => {
     return { headerTitle: navigation.getParam("peopleName", "Chat") }
   }
@@ -122,11 +121,7 @@ export default class ChatScreen extends React.PureComponent{
       <KeyboardAvoidingView 
         style={{ flex: 1 }}
         keyboardVerticalOffset = {Header.HEIGHT + 20}>
-        <NavigationEvents 
-          onDidFocus={this.handleScreenDidFocus}
-          onWillFocus={this.handleScreenWillFocus}/>
-
-        <FlatList
+        {/* <FlatList
           inverted={true}
           ref={i => this.flatList = i}
           onScroll={this.handleBubbleListScroll}
@@ -137,20 +132,39 @@ export default class ChatScreen extends React.PureComponent{
             if(item.type === "dateDivider") return <DateDividerListItem />
             if(item.type === "peopleBubble") return <PeopleBubble {...item}/>
             if(item.type === "myBubble") return <MyBubble {...item}/>
-          }}/>
+          }}/> */}
 
-          {/* TODO: Change below to ButtomTextInput */}
-          <Surface style={styles.inputBoxContainer}>
-            <View style={{ flexDirection: "row" }}>
-              <TextInput 
-                ref={i => this.txtMessage = i} 
-                placeholder="Type a message" 
-                style={{ flex: 1 }}
-                value={this.state.message}
-                onChangeText={this.handleMessageChange}/>
-              <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0 }} onPress={this.handleSendPress}/>
-            </View>
-          </Surface>
+          <FlatList
+            inverted={true}
+            style={{ paddingHorizontal: 16, marginVertical: 4 }}
+            data={[ {}, {}, {}, {}, {}, {}, {}, {}, {} ]}
+            renderItem={({ item, index }) => {
+              const { colors } = this.props.theme;
+              const myBubbleStyle = {
+                container: { display: "flex", flex: 1, flexDirection: "row-reverse", marginVertical: 4 },
+                content: { backgroundColor: colors.primary, padding: 8, borderRadius: 8, flexWrap: "wrap", flex: 1 },
+                text: { color: "white" }
+              }
+              
+              const peopleBubbleStyle = {
+                container: { display: "flex", flexDirection: "row", marginVertical: 4, marginRight: 64 },
+                content: { backgroundColor: "white", padding: 8, borderRadius: 8, borderWidth: 1, borderColor: "#D3D9D3" },
+                text: { color: "#161616" }
+              }
+
+              const selectedStyle = index % 2 === 0? JSON.parse(JSON.stringify(myBubbleStyle)): JSON.parse(JSON.stringify(peopleBubbleStyle));
+
+              return (
+                <View style={selectedStyle.container}>
+                  <View style={selectedStyle.content}>
+                    <Text style={selectedStyle.text}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nunc nunc, ornare sit amet cursus at, lobortis a dui. Donec tempus nec leo vitae laoreet.</Text>
+                  </View>
+                  <Text style={{ fontSize: 10, color: "#B9BBBA", marginHorizontal: 8, alignSelf: "flex-end" }}>10:30 AM</Text>
+                </View>
+              )
+            }}/>
+
+          <BottomTextInput/>
       </KeyboardAvoidingView>
     )
   }
@@ -169,3 +183,5 @@ const styles = StyleSheet.create({
   chatListContainer: { paddingLeft: 16, paddingRight: 16 },
   inputBoxContainer: { backgroundColor: "white", elevation: 16, padding: 16, paddingTop: 8, paddingBottom: 8 }
 })
+
+export default withTheme(ChatScreen);
