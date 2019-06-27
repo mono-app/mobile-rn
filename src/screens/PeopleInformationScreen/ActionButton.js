@@ -16,7 +16,7 @@ export default class ActionButton extends React.PureComponent{
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
     const roomId = await PersonalRoomsAPI.createRoomIfNotExists(currentUserEmail, this.props.peopleEmail);
     this.setState({ isLoading: false });
-    if(roomId) this.props.navigation.dispatch(StackActions.replace({ routeName: "Chat", params: {roomId} }));
+    if(roomId) this.props.navigation.dispatch(StackActions.replace({ routeName: "Chat", params: {roomId, peopleEmail: this.props.peopleEmail} }));
   }
 
   handleAddFriendPress = async () => {

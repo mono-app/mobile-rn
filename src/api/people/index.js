@@ -119,10 +119,10 @@ export default class PeopleAPI{
           const { applicationInformation } = userData;
           const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture.downloadUrl: "https://picsum.photos/200/200/?random";
           userData.applicationInformation.profilePicture = profilePicture;
-          return userData;
-        }else return null;
+          return Promise.resolve(userData);
+        }else return Promise.resolve(null);
       })
-    }else return null;
+    }else return Promise.resolve(null);
   }
 
   /**
