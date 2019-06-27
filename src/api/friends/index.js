@@ -44,16 +44,21 @@ export default class FriendsAPI{
    * 
    * @param {String} peopleEmail 
    */
-  static getFriends(peopleEmail){
+  static async getFriends(peopleEmail){
+    const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
+    const peopleCollection = new PeopleCollection();
     const userDocument = new Document(peopleEmail);
-    const getQuery = new GetDocument();
-
-    getQuery.setGetConfiguration("default");
-    return getQuery.executeQuery(friendListCollection, userDocument).then(documentSnapshot => {
-      if(!documentSnapshot.exists) return [];
-      else return documentSnapshot.data().friends;
-    });
+    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendListRef.collection(peopleCollection.getName());
+    const querySnapshot = await peopleRef.get();
+    
+    if(querySnapshot.empty) return Promise.resolve([]);
+    else{
+      const friends = [];
+      querySnapshot.forEach(documentSnapshot => friends.push({ email: documentSnapshot.id, ...documentSnapshot.data() }))
+      return Promise.resolve(friends);
+    }
   }
 
   /**
