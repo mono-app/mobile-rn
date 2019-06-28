@@ -72,7 +72,7 @@ export default class MessagesAPI{
    * @param {string} message
    * @returns {Promise} `true` if insert is successful, throw an error if result is not success
    */
-  sendMessage(roomId, senderEmail, message){
+  static sendMessage(roomId, senderEmail, message){
     const payload = { senderEmail, message, sentTime: firebase.firestore.FieldValue.serverTimestamp() }
     const db = firebase.firestore();
     const batch = db.batch();
@@ -84,6 +84,6 @@ export default class MessagesAPI{
     const newCollectionRef = roomsRef.collection(messagesCollection.getName()).doc();
     batch.set(newCollectionRef, payload);
     batch.update(roomsRef, { lastMessage: { message, sentTime: firebase.firestore.FieldValue.serverTimestamp() } });
-    return batch.commit().then(() => true);
+    return batch.commit().then(() => Promise.resolve(true));
   }
 }

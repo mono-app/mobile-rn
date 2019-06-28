@@ -92,28 +92,25 @@ export default class MomentAPI{
    * @param {String} email 
    * @returns {Promise} an array of `moments` object
    */
-  static getMoments(email){
+  static async getMoments(email){
+    const friends = await FriendsAPI.getFriends(email);
+    const friendsEmail = friends.map(friend => friend.email);
+    friendsEmail.push(email) // to include create moment, so that user can see his/her moment
+
     const db = firebase.firestore();
     const momentsCollection = new MomentsCollection();
-    return FriendsAPI.getFriends(email).then(friends => {
-      let promises = [];
-      friends.push(email); // to include the creator moment, so that user can see his/her moment
-      friends.forEach(friendEmail => {
-        const getQuery = db.collection(momentsCollection.getName())
-                           .where("posterEmail", "==", friendEmail).where("privacy", "==", "friends")
-                           .orderBy("postTime", "desc").get();
-        promises.push(getQuery);
-      })
-      return Promise.all(promises);
-    }).then(promiseResults => {
-      let documentSnapshots = [];
-      promiseResults.forEach(promiseResult => documentSnapshots = documentSnapshots.concat(promiseResult.docs))
-      
-      const moments = documentSnapshots.map(documentSnapshot => {
-        return { id: documentSnapshot.id, ...documentSnapshot.data()}
-      });
-      moments.sort((a, b) => (a.postTime > b.postTime)? -1: 1);
-      return moments;
+    const momentsRef = db.collection(momentsCollection.getName());
+    const queries = friendsEmail.map(friendEmail => {
+      return momentsRef.where("posterEmail", "==", friendEmail).where("privacy", "==", "friends").orderBy("postTime", "desc").get();
+    })
+    const promiseResults = await Promise.all(queries);
+    
+    let documentSnapshots = [];
+    promiseResults.map(promiseResult => documentSnapshots = documentSnapshots.concat(promiseResult.docs));
+    const moments = documentSnapshots.map(documentSnapshot => { 
+      return { id: documentSnapshot.id, ...documentSnapshot.data() }
     });
+    moments.sort((a, b) => (a.postTime > b.postTime)? -1: 1);
+    return Promise.resolve(moments);
   }
 }

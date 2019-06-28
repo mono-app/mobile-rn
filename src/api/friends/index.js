@@ -3,7 +3,6 @@ import firebase from "react-native-firebase";
 import { FriendRequestCollection, FriendListCollection, PeopleCollection } from "src/api/database/collection";
 import { GetDocument } from "src/api/database/query";
 import { Document } from "src/api/database/document";
-import { DocumentListener } from "src/api/database/listener";
 
 export default class FriendsAPI{
 
@@ -45,16 +44,21 @@ export default class FriendsAPI{
    * 
    * @param {String} peopleEmail 
    */
-  static getFriends(peopleEmail){
+  static async getFriends(peopleEmail){
+    const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
+    const peopleCollection = new PeopleCollection();
     const userDocument = new Document(peopleEmail);
-    const getQuery = new GetDocument();
-
-    getQuery.setGetConfiguration("default");
-    return getQuery.executeQuery(friendListCollection, userDocument).then(documentSnapshot => {
-      if(!documentSnapshot.exists) return [];
-      else return documentSnapshot.data().friends;
-    });
+    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendListRef.collection(peopleCollection.getName());
+    const querySnapshot = await peopleRef.get();
+    
+    if(querySnapshot.empty) return Promise.resolve([]);
+    else{
+      const friends = [];
+      querySnapshot.forEach(documentSnapshot => friends.push({ email: documentSnapshot.id, ...documentSnapshot.data() }))
+      return Promise.resolve(friends);
+    }
   }
 
   /**
@@ -65,11 +69,14 @@ export default class FriendsAPI{
    * @returns {function} - unsubscribe function from the listener
    */
   getFriendsWithRealTimeUpdate(peopleEmail, callback){
+    const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
+    const peopleCollection = new PeopleCollection();
     const userDocument = new Document(peopleEmail);
-    const listener = new DocumentListener();
-    return listener.listen(friendListCollection, userDocument, doc => {
-      if(doc.exists) callback(doc.data().friends);
+    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendListRef.collection(peopleCollection.getName());
+    return peopleRef.onSnapshot(querySnapshot => {
+      if(!querySnapshot.empty) callback(querySnapshot.docs);
       else callback([]);
     })
   }
@@ -91,22 +98,6 @@ export default class FriendsAPI{
       callback(querySnapshot);
     })
   }
-
-  // /**
-  //  * 
-  //  * @param {string} peopleEmail - email address of the people. 
-  //  * @returns {Promise} - return a list of friends in the `peopleEmail` friend requests list.
-  //  */
-  // getRequestList(peopleEmail){
-  //   const friendRequestCollection = new FriendRequestCollection();
-  //   const userDocument = new Document(peopleEmail);
-  //   const getFriendRequestQuery = new GetDocument();
-  //   getFriendRequestQuery.setGetConfiguration("default");
-  //   return getFriendRequestQuery.executeQuery(friendRequestCollection, userDocument).then(doc => {
-  //     if(doc.exists) return doc.data().friends;
-  //     return [];
-  //   });
-  // }
 
   /**
    * 

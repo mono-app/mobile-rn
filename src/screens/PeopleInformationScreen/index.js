@@ -87,6 +87,7 @@ export default class PeopleInformationScreen extends React.PureComponent {
         <ActionButton 
           peopleEmail={this.peopleEmail}
           source={this.source}
+          navigation={this.props.navigation}
           peopleFriendStatus={this.state.peopleFriendStatus}
           onComplete={this.handleActionButtonComplete}/>
       </View>

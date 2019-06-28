@@ -12,7 +12,9 @@ export default class AppHeader extends React.PureComponent{
   render(){
     return(
       <Appbar.Header style={this.props.style}>
-        <Appbar.BackAction onPress={this.handleBackPress}/>
+        {this.props.navigation?(
+          <Appbar.BackAction onPress={this.handleBackPress}/>
+        ): null}
         <Appbar.Content title={this.props.title}/>
       </Appbar.Header>
     )

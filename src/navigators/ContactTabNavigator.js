@@ -1,18 +1,14 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
 
-import ContactScreen from "../screens/ContactScreen";
-import AddContactScreen from "../screens/AddContactScreen";
-import PeopleInformationScreen from "../screens/PeopleInformationScreen";
-import ChatScreen from "../screens/ChatScreen";
-import PeopleDetailScreen from "../screens/PeopleDetailScreen";
+import ContactScreen from "src/screens/ContactScreen";
+import ChatScreen from "src/screens/ChatScreen";
+import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 
 export default ContactTabNavigator =  createStackNavigator({
   ContactHome: { screen: ContactScreen },
-  ContactAddContact: { screen: AddContactScreen },
-  ContactPeopleInformation: { screen: PeopleInformationScreen },
   Chat: { screen: ChatScreen },
-  PeopleDetail: { screen: PeopleDetailScreen }
+  PeopleInformation: { screen: PeopleInformationScreen }
 }, {
   initialRouteName: "ContactHome",
   defaultNavigationOptions: { headerStyle: { elevation: 0 }},
