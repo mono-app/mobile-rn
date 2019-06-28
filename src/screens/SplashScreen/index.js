@@ -7,7 +7,23 @@ import PeopleAPI from "src/api/people";
 import Navigator from "src/api/navigator";
 
 export default class SplashScreen extends React.Component{
+  constructor(props){
+    super(props);
+    this.notificationListener = null;
+  }
+
   async componentDidMount(){
+    // handle notification
+    try{
+      const isNotificationEnabled = await firebase.messaging().hasPermission();
+      if(!isNotificationEnabled) await firebase.messaging().requestPermission();
+
+      // Creating notification channel for Android
+      const channel = new firebase.notifications.Android.Channel('message-notification', 'Message Notification', firebase.notifications.Android.Importance.Default)
+      firebase.notifications().android.createChannel(channel);
+
+    }catch(err){ console.log("User reject notification", err); }
+
     const firebaseUser = firebase.auth().currentUser;
     const navigator = new Navigator(this.props.navigation);
     if(firebaseUser !== null){

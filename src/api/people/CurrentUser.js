@@ -52,7 +52,11 @@ export default class CurrentUserAPI{
    *                            for the profilePicture, since the data is set from `PeopleAPI.getDetail()`, 
    *                            there is no need to get the `downloadUrl` again.
    */
-  static storeBasicInformation(userData){
+  static async storeBasicInformation(userData){
+    // Generate token for FCM
+    // const messagingToken = await firebase.iid().getToken();
+    // await new PeopleAPI().storeMessagingToken(messagingToken);
+
     const promises = [
       SInfo.setItem("currentUserEmail", userData.id, {}),
       SInfo.setItem("creationTime", `${userData.creationTime}`, {}),
