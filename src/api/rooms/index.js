@@ -59,7 +59,7 @@ export class PersonalRoomsAPI extends RoomsAPI{
       audiencesPayload[firstPeopleEmail] = true;
       audiencesPayload[secondPeopleEmail] = true;
       batch.set(newRoomRef, {
-        audiences: audiencesPayload,
+        audiences: audiencesPayload, type: "private",
         lastMessage: { message: "", sentTime: null }
       })
 

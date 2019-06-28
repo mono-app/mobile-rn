@@ -10,6 +10,7 @@ export default class CurrentUserAPI{
   static changeListener = null;
   static triggers = {};
 
+  static isCompleteSetup(){ return SInfo.getItem("isCompleteSetup", {}).then(isCompleteSetup => Promise.resolve(JSON.parse(isCompleteSetup)))}
   static getCreationTime(){ return SInfo.getItem("creationTime", {}).then(creationTime => Promise.resolve(moment(creationTime * 1000))); }
   static getCurrentUserEmail(){ return SInfo.getItem("currentUserEmail", {}) }
   static removeDataChangedTrigger(triggerId){ delete CurrentUserAPI.triggers[triggerId] }
@@ -41,7 +42,8 @@ export default class CurrentUserAPI{
     const personalInformation = await CurrentUserAPI.getPersonalInformation();
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
     const creationTime = await CurrentUserAPI.getCreationTime();
-    return Promise.resolve({ id: currentUserEmail, applicationInformation, personalInformation, creationTime });
+    const isCompleteSetup = await CurrentUserAPI.isCompleteSetup();
+    return Promise.resolve({ id: currentUserEmail, applicationInformation, personalInformation, creationTime, isCompleteSetup });
   }
 
   /**
@@ -54,6 +56,7 @@ export default class CurrentUserAPI{
     const promises = [
       SInfo.setItem("currentUserEmail", userData.id, {}),
       SInfo.setItem("creationTime", `${userData.creationTime}`, {}),
+      SInfo.setItem("isCompleteSetup", JSON.stringify(userData.isCompleteSetup), {}),
       SInfo.setItem("applicationInformation", JSON.stringify(userData.applicationInformation), {}),
       SInfo.setItem("personalInformation", JSON.stringify(userData.personalInformation), {})
     ]
@@ -64,6 +67,7 @@ export default class CurrentUserAPI{
     const promises = [
       SInfo.deleteItem("currentUserEmail", {}),
       SInfo.deleteItem("creationTime", {}),
+      SInfo.deleteItem("isCompleteSetup", {}),
       SInfo.deleteItem("applicationInformation", {}),
       SInfo.deleteItem("personalInformation", {})
     ]

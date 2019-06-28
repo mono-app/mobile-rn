@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 
-import Room from "./Room";
+import CurrentUserAPI from "src/api/people/CurrentUser";
+import PeopleAPI from 'src/api/people';
+
+import PrivateRoom from "src/screens/HomeScreen/PrivateRoom";
 import Header from "src/screens/HomeScreen/Header";
 import { default as FriendRequestNotification } from "./Notifications/FriendRequest";
-
-import PeopleAPI from 'src/api/people';
 
 INITIAL_STATE = { rooms: [] }
 
@@ -14,10 +15,12 @@ export default class HomeScreen extends React.PureComponent {
     return { header: <Header navigation={navigation}/> }
   }
 
-  handleOpenPrivateRoom = room => {
-    const peopleName = room.audience.applicationInformation.nickName;
+  handleOpenPrivateRoom = async room => {
+    const { audiences } = room;
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const filteredAudience = Object.keys(audiences).filter(audience => audience !== currentUserEmail)[0];
     const roomId = room.id;
-    this.props.navigation.navigate({ routeName: "Chat", params: { peopleName, roomId }});
+    this.props.navigation.navigate({ routeName: "Chat", params: { peopleEmail: filteredAudience, roomId }});
   }
 
   constructor(props){
@@ -29,7 +32,7 @@ export default class HomeScreen extends React.PureComponent {
   }
 
   componentDidMount(){
-    this.roomListener = new PeopleAPI().getRoomsWithRealtimeUpdate(rooms => this.setState({ rooms }));
+    this.roomListener = PeopleAPI.getRoomsWithRealtimeUpdate(rooms => this.setState({ rooms }));
   }
 
   componentWillUnmount(){ if(this.roomListener) this.roomListener(); }
@@ -42,7 +45,7 @@ export default class HomeScreen extends React.PureComponent {
           data={this.state.rooms}
           renderItem={({item}) => {
             if(item.type === "private"){
-              return <Room {...item} onPress={() => this.handleOpenPrivateRoom(item)}/>
+              return <PrivateRoom {...item} onPress={() => this.handleOpenPrivateRoom(item)}/>
             }
           }}/>
       </View>

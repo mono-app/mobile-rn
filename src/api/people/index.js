@@ -8,7 +8,6 @@ import StorageAPI from "src/api/storage";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
-import { GetDocument } from "src/api/database/query";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -104,16 +103,19 @@ export default class PeopleAPI{
    * @param {String} source - default value `default`, available value `cache`, `server`, `default`
    * @returns {Promise} - object of user in firebase, or null if cannot find
    */
-  getDetail(email=null, source="default"){
+  async getDetail(email=null, source="default"){
     const selectedPeopleEmail = (email === null)? this.currentUserEmail: email;
-
     if(selectedPeopleEmail){
-      const userCollection = new UserCollection();
-      const userDocument = new Document(selectedPeopleEmail);
-      const getDocumentQuery = new GetDocument();
-
-      getDocumentQuery.setGetConfiguration(source);
-      return getDocumentQuery.executeQuery(userCollection, userDocument).then(documentSnapshot => {
+      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+      if(email === currentUserEmail) {
+        const userData = await CurrentUserAPI.getDetail();
+        return Promise.resolve(userData);
+      }else{
+        const userCollection = new UserCollection();
+        const userDocument = new Document(selectedPeopleEmail);
+        const db = new firebase.firestore();
+        const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+        const documentSnapshot = await userRef.get({ source });
         if(documentSnapshot.exists){
           const userData = { id: documentSnapshot.id, ...documentSnapshot.data() };
           const { applicationInformation } = userData;
@@ -121,7 +123,7 @@ export default class PeopleAPI{
           userData.applicationInformation.profilePicture = profilePicture;
           return Promise.resolve(userData);
         }else return Promise.resolve(null);
-      })
+      }
     }else return Promise.resolve(null);
   }
 
@@ -136,27 +138,17 @@ export default class PeopleAPI{
     })
   }
 
-  async getRoomsWithRealtimeUpdate(callback){
-    const currentUserEmail = await this.getCurrentUserEmail();
-    const roomCollection = new RoomsCollection();
+  static async getRoomsWithRealtimeUpdate(callback){
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const roomsCollection = new RoomsCollection();
     const searchField = new firebase.firestore.FieldPath("audiences", currentUserEmail);
     const db = firebase.firestore();
-    const roomRef = db.collection(roomCollection.getName()).where(searchField, "==", true);
-    roomRef.onSnapshot({ includeMetadataChanges: true }, async querySnapshot => {
-      let rooms = [];
-      await Promise.all(querySnapshot.docs.map(async doc => {
-        let room = doc.data();
-        if(room.type === "private"){
-          // we are assuming that the audiences for private will only have 2 audiences.
-          const audienceEmail = Object.keys(room.audiences).filter(audience => currentUserEmail !== audience)[0];
-          const audience = await this.getDetail(audienceEmail);
-          delete room.audiences;
-          room = { audience, ...room, id: doc.id };
-          rooms.push(room);
-        }
-      }));
+    const roomsRef = db.collection(roomsCollection.getName()).where(searchField, "==", true);
+    return roomsRef.onSnapshot({ includeMetadataChanges: true }, querySnapshot => {
+      const rooms = querySnapshot.docs.map(documentSnapshot => {
+        return { id: documentSnapshot.id, ...documentSnapshot.data() }
+      })
 
-      // Sort based on lastMessage.sentTime
       rooms.sort((a, b) => {
         const firstSentItem = a.lastMessage.sentTime? a.lastMessage.sentTime.seconds: moment().unix();
         const secondSentItem = b.lastMessage.sentTime? b.lastMessage.sentTime.seconds: moment().unix();
