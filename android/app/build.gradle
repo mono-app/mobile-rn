@@ -152,8 +152,10 @@ dependencies {
     implementation "com.google.android.gms:play-services-base:16.1.0"
     implementation "com.google.firebase:firebase-core:16.0.8"
     implementation "com.google.firebase:firebase-firestore:18.2.0"
-    implementation "com.google.firebase:firebase-auth:16.2.1"
-    implementation "com.google.firebase:firebase-storage:16.1.0"
+    implementation "com.google.firebase:firebase-auth:17.0.0"
+    implementation "com.google.firebase:firebase-storage:17.0.0"
+    implementation "com.google.firebase:firebase-messaging:18.0.0"
+    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
 }
 
 // Run this once to be able to run the application with BUCK
