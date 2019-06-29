@@ -171,4 +171,16 @@ export default class PeopleAPI{
     })
   }
 
+  static async setOnlineStatus(peopleEmail, status){
+    const db = firebase.firestore();
+    const usersCollection = new UserCollection();
+    const userDocument = new Document(peopleEmail);
+    const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
+    const batch = db.batch();
+    batch.update(userRef, { "lastOnline.status": status });
+    batch.update(userRef, { "lastOnline.timestamp": moment().unix() });
+    await batch.commit();
+    return Promise.resolve(true);
+  }
+
 }

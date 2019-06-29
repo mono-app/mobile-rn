@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 import { AppState, FlatList, KeyboardAvoidingView } from "react-native";
 import { withTheme } from "react-native-paper";
 import { Header  } from "react-navigation";
@@ -9,6 +10,8 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 
 import ChatBubble from "src/screens/ChatScreen/ChatBubble";
 import BottomTextInput from "src/components/BottomTextInput";
+import AppHeader from "src/components/AppHeader";
+import LastOnlineListener from "src/screens/ChatScreen/LastOnlineListener";
 
 const INITIAL_STATE = { 
   messages: [], message: "", appState: AppState.currentState,
@@ -24,7 +27,9 @@ const INITIAL_STATE = {
  */
  class ChatScreen extends React.PureComponent{
   static navigationOptions = ({ navigation }) => {
-    return { headerTitle: navigation.getParam("peopleName", "Chat") }
+    const title = navigation.getParam("peopleName", "");
+    const subtitle = navigation.getParam("peopleOnlineStatus", "");
+    return { header: <AppHeader style={{ backgroundColor: "white" }} title={title} subtitle={subtitle} navigation={navigation}/> }
   }
 
   listenNewMessages = () => {
@@ -80,6 +85,17 @@ const INITIAL_STATE = {
     this.setState({ appState: nextAppState });
   }
 
+  handleLastOnlineListenerChange = (lastOnline) => {
+    let peopleOnlineStatus = null
+    if(lastOnline.status === "Online"){
+      peopleOnlineStatus = "Online";
+    }else if(lastOnline.status === "Offline"){
+      const timeString = moment.unix(lastOnline.timestamp).format("hh:mmA");
+      peopleOnlineStatus = `Last Seen: ${timeString}`;
+    }
+    this.props.navigation.setParams({ peopleOnlineStatus });
+  }
+
   constructor(props){
     super(props);
 
@@ -94,6 +110,7 @@ const INITIAL_STATE = {
     this.handleBubbleListContentSizeChange = this.handleBubbleListContentSizeChange.bind(this);
     this.handleBubbleListScroll = this.handleBubbleListScroll.bind(this);
     this.handleAppStateChange = this.handleAppStateChange.bind(this);
+    this.handleLastOnlineListenerChange = this.handleLastOnlineListenerChange.bind(this);
   }
 
   componentDidMount(){
@@ -121,6 +138,9 @@ const INITIAL_STATE = {
       <KeyboardAvoidingView 
         style={{ flex: 1 }}
         keyboardVerticalOffset = {Header.HEIGHT + 20}>
+          
+          <LastOnlineListener peopleEmail={this.peopleEmail} onChange={this.handleLastOnlineListenerChange}/>
+
           <FlatList
             inverted={true}
             style={{ paddingHorizontal: 16, marginVertical: 4 }}
@@ -131,7 +151,6 @@ const INITIAL_STATE = {
               const bubbleStyle = (this.peopleEmail === item.senderEmail)? "peopleBubble": "myBubble";
               return <ChatBubble bubbleStyle={bubbleStyle} messageItem={item}/>
             }}/>
-
           <BottomTextInput ref={i => this.txtMessage = i } onSendPress={this.handleSendPress}/>
       </KeyboardAvoidingView>
     )

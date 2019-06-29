@@ -15,10 +15,10 @@ export default class AppHeader extends React.PureComponent{
         {this.props.navigation?(
           <Appbar.BackAction onPress={this.handleBackPress}/>
         ): null}
-        <Appbar.Content title={this.props.title}/>
+        <Appbar.Content title={this.props.title} subtitle={this.props.subtitle}/>
       </Appbar.Header>
     )
   }
 }
 
-AppHeader.defaultProps = { navigation: null, title: null, style: null }
+AppHeader.defaultProps = { navigation: null, title: null, style: null, subtitle: null }

@@ -7,6 +7,8 @@ import PeopleAPI from "src/api/people";
 import Navigator from "src/api/navigator";
 
 export default class SplashScreen extends React.Component{
+  static navigationOptions = { header: null };
+  
   constructor(props){
     super(props);
     this.notificationListener = null;
