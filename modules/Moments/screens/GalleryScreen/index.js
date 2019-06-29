@@ -6,10 +6,14 @@ import { NavigationEvents } from "react-navigation";
 import { CameraKitGallery } from "react-native-camera-kit";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
+import AppHeader from "src/components/AppHeader";
+
 const INITIAL_STATE = { isPermitted: false, albums: {}, albumNames: [], selectedAlbum: null, selectedImages: [] }
 
 class GalleryScreen extends React.Component{
-  static navigationOptions = { headerTitle: "Pilih Foto" }
+  static navigationOptions = ({ navigation }) => {
+    return { header: <AppHeader title="Pilih Foto" navigation={navigation} style={{ backgroundColor: "white" }}/> }
+  }
 
   formatData = (data, numColumns) => {
     if(data === undefined)  return [];
