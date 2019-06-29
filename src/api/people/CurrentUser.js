@@ -3,6 +3,7 @@ import firebase from "react-native-firebase";
 import moment from "moment";
 import uuid from "uuid/v4";
 
+import PeopleAPI from "src/api/people";
 import { Document } from "src/api/database/document";
 import { UserCollection } from "Src/api/database/collection";
 
@@ -54,8 +55,8 @@ export default class CurrentUserAPI{
    */
   static async storeBasicInformation(userData){
     // Generate token for FCM
-    // const messagingToken = await firebase.iid().getToken();
-    // await new PeopleAPI().storeMessagingToken(messagingToken);
+    const messagingToken = await firebase.iid().getToken();
+    await PeopleAPI.storeMessagingToken(userData.id, messagingToken);
 
     const promises = [
       SInfo.setItem("currentUserEmail", userData.id, {}),
