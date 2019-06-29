@@ -28,7 +28,7 @@ export default class BottomTextInput extends React.Component{
 
   render(){
     return(
-      <Surface style={styles.inputBoxContainer}>
+      <Surface style={{...this.props.style, ...styles.inputBoxContainer}}>
         <View style={{ flexDirection: "row" }}>
           <TextInput 
             ref={i => this.txtMessage = i} 
@@ -45,7 +45,8 @@ export default class BottomTextInput extends React.Component{
 }
 
 const styles = StyleSheet.create({
-  inputBoxContainer: { 
-    backgroundColor: "white", elevation: 16, padding: 16, paddingTop: 8, paddingBottom: 8 
+  inputBoxContainer: {
+    elevation: 8, paddingHorizontal: 16, padding: 2, margin: 8, marginHorizontal: 8,
+    borderRadius: 999, overflow: "hidden"
   }
 })

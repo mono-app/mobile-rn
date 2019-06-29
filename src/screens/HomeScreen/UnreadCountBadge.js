@@ -24,7 +24,6 @@ export default class UnreadCountBadge extends React.PureComponent{
           if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
           else return false;
         }).length;
-        console.log(unreadCount);
         this.setState({ count: unreadCount });
       })
     }
@@ -43,7 +42,7 @@ export default class UnreadCountBadge extends React.PureComponent{
   componentWillUnmount(){ if(this.listener) this.listener(); }
 
   render(){
-    if(this.state.count === null) return null;
+    if(this.state.count === null || this.state.count === 0) return null;
     else return <Badge style={this.props.style}>{this.state.count}</Badge>
   }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { AppState, FlatList, KeyboardAvoidingView } from "react-native";
+import { AppState, FlatList, KeyboardAvoidingView, View } from "react-native";
 import { withTheme } from "react-native-paper";
 import { Header  } from "react-navigation";
 
@@ -29,7 +29,7 @@ const INITIAL_STATE = {
   static navigationOptions = ({ navigation }) => {
     const title = navigation.getParam("peopleName", "");
     const subtitle = navigation.getParam("peopleOnlineStatus", "");
-    return { header: <AppHeader style={{ backgroundColor: "white" }} title={title} subtitle={subtitle} navigation={navigation}/> }
+    return { header: <AppHeader style={{ backgroundColor: "#E8EEE8" }} title={title} subtitle={subtitle} navigation={navigation}/> }
   }
 
   listenNewMessages = () => {
@@ -138,12 +138,13 @@ const INITIAL_STATE = {
       <KeyboardAvoidingView 
         style={{ flex: 1 }}
         keyboardVerticalOffset = {Header.HEIGHT + 20}>
-          
+          <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, backgroundColor: "#E8EEE8" }}/>
+
           <LastOnlineListener peopleEmail={this.peopleEmail} onChange={this.handleLastOnlineListenerChange}/>
 
           <FlatList
             inverted={true}
-            style={{ paddingHorizontal: 16, marginVertical: 4 }}
+            style={{ elevation: 8, paddingHorizontal: 16 }}
             data={this.state.messages}
             onScroll={this.handleBubbleListScroll}
             oonContentSizeChange={this.handleBubbleListContentSizeChange}
