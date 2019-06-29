@@ -50,6 +50,14 @@ export default class PeopleAPI{
     }else throw "Cannot find user in the database. Application error.";
   }
 
+  static async storeMessagingToken(peopleEmail, messagingToken){
+    const db = firebase.firestore();
+    const usersCollection = new UserCollection();
+    const userDocument = new Document(peopleEmail);
+    const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
+    await userRef.update({ "tokenInformation.messagingToken": messagingToken });
+  }
+
   /**
    * 
    * @param {String} peopleEmail 
@@ -80,7 +88,7 @@ export default class PeopleAPI{
    * @param {String} peopleEmail 
    * @returns {Promise} - `null` if status is not found.
    */
-  getLatestStatus(peopleEmail=null){
+  async getLatestStatus(peopleEmail=null){
     const selectedPeopleEmail = (peopleEmail === null)? this.currentUserEmail: peopleEmail;
     if(selectedPeopleEmail){
       const db = firebase.firestore();
@@ -90,11 +98,10 @@ export default class PeopleAPI{
 
       const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
       const statusRef = userRef.collection(statusCollection.getName());
-      return statusRef.orderBy("timestamp", "desc").limit(1).get().then(querySnapshot => {
-        if(querySnapshot.empty) return null;
-        else return querySnapshot.docs[0].data()
-      })
-    }else return null;
+      const querySnapshot = await statusRef.orderBy("timestamp", "desc").limit(1).get();
+      if(querySnapshot.empty) return Promise.resolve(null);
+      else return Promise.resolve(querySnapshot.docs[0].data());
+    }else return Promise.resolve(null);
   }
 
   /**
@@ -131,13 +138,16 @@ export default class PeopleAPI{
    * Get currentUserEmail from local database.
    * @returns {Promise} - a promise that contains a `currentUserEmail` variable. return your currentUserEmail
    */
-  getCurrentUserEmail(){
-    return SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
-      this.currentUserEmail = currentUserEmail;
-      return currentUserEmail;
-    })
+  async getCurrentUserEmail(){
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    this.currentUserEmail = JSON.parse(JSON.stringify(currentUserEmail));
+    return Promise.resolve(currentUserEmail);
   }
 
+  /**
+   * 
+   * @param {function} callback 
+   */
   static async getRoomsWithRealtimeUpdate(callback){
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
     const roomsCollection = new RoomsCollection();
@@ -159,6 +169,18 @@ export default class PeopleAPI{
       });
       callback(rooms);
     })
+  }
+
+  static async setOnlineStatus(peopleEmail, status){
+    const db = firebase.firestore();
+    const usersCollection = new UserCollection();
+    const userDocument = new Document(peopleEmail);
+    const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
+    const batch = db.batch();
+    batch.update(userRef, { "lastOnline.status": status });
+    batch.update(userRef, { "lastOnline.timestamp": moment().unix() });
+    await batch.commit();
+    return Promise.resolve(true);
   }
 
 }

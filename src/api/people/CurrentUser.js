@@ -3,6 +3,7 @@ import firebase from "react-native-firebase";
 import moment from "moment";
 import uuid from "uuid/v4";
 
+import PeopleAPI from "src/api/people";
 import { Document } from "src/api/database/document";
 import { UserCollection } from "Src/api/database/collection";
 
@@ -52,7 +53,11 @@ export default class CurrentUserAPI{
    *                            for the profilePicture, since the data is set from `PeopleAPI.getDetail()`, 
    *                            there is no need to get the `downloadUrl` again.
    */
-  static storeBasicInformation(userData){
+  static async storeBasicInformation(userData){
+    // Generate token for FCM
+    const messagingToken = await firebase.iid().getToken();
+    await PeopleAPI.storeMessagingToken(userData.id, messagingToken);
+
     const promises = [
       SInfo.setItem("currentUserEmail", userData.id, {}),
       SInfo.setItem("creationTime", `${userData.creationTime}`, {}),

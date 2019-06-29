@@ -1,4 +1,5 @@
 import firebase from "react-native-firebase";
+import moment from "moment";
 
 import { RoomsCollection, MessagesCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
@@ -43,7 +44,7 @@ export default class MessagesAPI{
     const messages = [];
     querySnapshot.forEach(documentSnapshot => {
       lastDocumentSnapshot = documentSnapshot;
-      const payload = Object.assign({ isSent: !documentSnapshot.metadata.hasPendingWrites }, documentSnapshot.data());
+      const payload = { isSent: documentSnapshot.sentTime !== null, id: documentSnapshot.id, ...documentSnapshot.data() }
       messages.push(payload);
     })
     return { messages, lastDocumentSnapshot }
@@ -58,7 +59,7 @@ export default class MessagesAPI{
   getMessagesWithRealTimeUpdate(roomId, callback){
     const messagesRef = this.getMessageReference(roomId);
     const filteredMessagesRef = messagesRef.orderBy("sentTime", "desc").limit(this.messagePaginationLimit);
-    filteredMessagesRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
+    return filteredMessagesRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
       const { messages, lastDocumentSnapshot } = this.parseQuerySnapshotToMessages(snapshot);
       this.lastDocumentSnapshot = lastDocumentSnapshot;
       callback(messages, lastDocumentSnapshot);
@@ -73,7 +74,11 @@ export default class MessagesAPI{
    * @returns {Promise} `true` if insert is successful, throw an error if result is not success
    */
   static sendMessage(roomId, senderEmail, message){
-    const payload = { senderEmail, message, sentTime: firebase.firestore.FieldValue.serverTimestamp() }
+    const sentTime = moment().unix();
+    const payload = { 
+      senderEmail, message, sentTime, serverDeliveredTime: firebase.firestore.FieldValue.serverTimestamp(),
+      read: { isRead: false }
+    }
     const db = firebase.firestore();
     const batch = db.batch();
 
@@ -83,7 +88,28 @@ export default class MessagesAPI{
     const roomsRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
     const newCollectionRef = roomsRef.collection(messagesCollection.getName()).doc();
     batch.set(newCollectionRef, payload);
-    batch.update(roomsRef, { lastMessage: { message, sentTime: firebase.firestore.FieldValue.serverTimestamp() } });
+    batch.update(roomsRef, { lastMessage: { message, sentTime } });
     return batch.commit().then(() => Promise.resolve(true));
+  }
+
+  /**
+   * @param {String} roomId
+   * @param {String} messageId 
+   * @param {String} peopleEmail 
+   */
+  static async markAsRead(roomId, messageId, peopleEmail){
+    const db = firebase.firestore();
+    const batch = db.batch();
+    const roomsCollection = new RoomsCollection();
+    const roomDocument = new Document(roomId);
+    const messagesCollection = new MessagesCollection();
+    const messageDocument = new Document(messageId);
+    const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
+    const messageRef = roomRef.collection(messagesCollection.getName()).doc(messageDocument.getId());
+    batch.update(messageRef, { "read.isRead": true });
+    batch.update(messageRef, { "read.by": firebase.firestore.FieldValue.arrayUnion(peopleEmail) });
+    batch.update(roomRef, { "lastMessage.readTime": moment().unix() })
+    await batch.commit();
+    return Promise.resolve(true);
   }
 }
