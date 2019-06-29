@@ -30,6 +30,11 @@ const INITIAL_STATE = {
   listenNewMessages = () => {
     this.messagesApi = new MessagesAPI(this.roomId);
     this.messageListener = this.messagesApi.getMessagesWithRealTimeUpdate(this.roomId, messages => {
+      messages.forEach(message => {
+        if(!message.read.isRead && message.senderEmail !== this.state.currentUserEmail){
+          MessagesAPI.markAsRead(this.roomId, message.id, this.state.currentUserEmail)
+        }
+      });
       this.setState({ messages });
     })
   }
@@ -73,6 +78,7 @@ const INITIAL_STATE = {
     this.peopleEmail = this.props.navigation.getParam("peopleEmail", null);
     this.txtMessage = null;
     this.messagesApi = null;
+    this.messageListener = null;
     this.listenNewMessages = this.listenNewMessages.bind(this);
     this.handleSendPress = this.handleSendPress.bind(this);
     this.handleBubbleListContentSizeChange = this.handleBubbleListContentSizeChange.bind(this);
@@ -84,8 +90,16 @@ const INITIAL_STATE = {
       const { nickName } = peopleData.applicationInformation;
       this.props.navigation.setParams({ peopleName: nickName });
     })
-    this.listenNewMessages();
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => this.setState({ currentUserEmail }));
   }
+
+  componentDidUpdate(){
+    if(this.state.currentUserEmail && this.messageListener === null){
+      this.listenNewMessages();
+    }
+  }
+
+  componentWillUnmount(){ if(this.messageListener) this.messageListener(); }
 
   render(){
     return(

@@ -27,8 +27,8 @@ class ChatBubble extends React.PureComponent{
 
   render(){
     const { messageItem } = this.props;
-    const timeString = messageItem.isSent? moment.unix(messageItem.sentTime.seconds).format("hh:mm A"): <MaterialIcons name="access-time" size={16}/>
-    const readString = "";
+    const timeString = messageItem.isSent? moment.unix(messageItem.sentTime).format("hh:mm A"): <MaterialIcons name="access-time" size={16}/>
+    const readString = messageItem.read.isRead && this.props.bubbleStyle === "myBubble"? "Read": null;
     
     let selectedStyle = JSON.parse(JSON.stringify(this.myBubbleStyle));
     if(this.props.bubbleStyle === "peopleBubble") selectedStyle = JSON.parse(JSON.stringify(this.peopleBubbleStyle));

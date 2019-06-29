@@ -1,12 +1,29 @@
 import firebase from "react-native-firebase";
 
-import { RoomsCollection, RoomUserMappingCollection } from "src/api/database/collection";
+import CurrentUserAPI from "src/api/people/CurrentUser";
+import { RoomsCollection, RoomUserMappingCollection, MessagesCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { GetDocument } from "src/api/database/query";
 
 export default class RoomsAPI{
   constructor(){
     this.isRoomExists = this.isRoomExists.bind(this);
+  }
+
+  static async getUnreadCount(roomId){
+    const db = firebase.firestore();
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const roomsCollection = new RoomsCollection();
+    const roomDocument = new Document(roomId);
+    const messagesCollection = new MessagesCollection();
+    const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
+    const messageRef = roomRef.collection(messagesCollection.getName());
+    const querySnapshot = await messageRef.where("read.isRead", "==", false).get();
+    const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
+      if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
+      else return false;
+    }).length;
+    return Promise.resolve(unreadCount);
   }
 
   /**
