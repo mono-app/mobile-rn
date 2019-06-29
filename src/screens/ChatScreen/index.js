@@ -1,7 +1,7 @@
 import React from "react";
-import { View, FlatList, StyleSheet, KeyboardAvoidingView } from "react-native";
-import { Text, withTheme } from "react-native-paper";
-import { Header } from "react-navigation";
+import { AppState, FlatList, KeyboardAvoidingView } from "react-native";
+import { withTheme } from "react-native-paper";
+import { Header  } from "react-navigation";
 
 import MessagesAPI from "src/api/messages";
 import PeopleAPI from "src/api/people";
@@ -11,7 +11,7 @@ import ChatBubble from "src/screens/ChatScreen/ChatBubble";
 import BottomTextInput from "src/components/BottomTextInput";
 
 const INITIAL_STATE = { 
-  messages: [], message: "", isChatRoomReady: false,
+  messages: [], message: "", appState: AppState.currentState,
   currentUserEmail: null, bubbleListHeight: 0, isLoadingNewData: false
 }
 
@@ -70,6 +70,16 @@ const INITIAL_STATE = {
     }
   }
 
+  handleAppStateChange = (nextAppState) => {
+    if(nextAppState === "inactive" || nextAppState === "background"){
+      if(this.messageListener) this.messageListener();
+      this.messageListener = null;
+    }else if(nextAppState === "active" && this.state.currentUserEmail && this.messageListener === null){
+      this.listenNewMessages();
+    }
+    this.setState({ appState: nextAppState });
+  }
+
   constructor(props){
     super(props);
 
@@ -83,6 +93,7 @@ const INITIAL_STATE = {
     this.handleSendPress = this.handleSendPress.bind(this);
     this.handleBubbleListContentSizeChange = this.handleBubbleListContentSizeChange.bind(this);
     this.handleBubbleListScroll = this.handleBubbleListScroll.bind(this);
+    this.handleAppStateChange = this.handleAppStateChange.bind(this);
   }
 
   componentDidMount(){
@@ -91,15 +102,19 @@ const INITIAL_STATE = {
       this.props.navigation.setParams({ peopleName: nickName });
     })
     CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => this.setState({ currentUserEmail }));
+    AppState.addEventListener("change", this.handleAppStateChange);
   }
 
   componentDidUpdate(){
-    if(this.state.currentUserEmail && this.messageListener === null){
+    if(this.state.currentUserEmail && this.messageListener === null && this.state.appState === "active"){
       this.listenNewMessages();
     }
   }
 
-  componentWillUnmount(){ if(this.messageListener) this.messageListener(); }
+  componentWillUnmount(){ 
+    AppState.removeEventListener("change", this.handleAppStateChange);
+    if(this.messageListener) this.messageListener();
+  }
 
   render(){
     return(
