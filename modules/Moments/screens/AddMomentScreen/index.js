@@ -3,32 +3,34 @@ import { View, TextInput } from "react-native";
 import { Button, IconButton } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
+import MomentAPI from "modules/Moments/api/moment";
+import CurrentUserAPI from "src/api/people/CurrentUser";
+
 import PeopleInformation from "./ProfileInformation";
 import PhotoGrid from "modules/Moments/components/PhotoGrid";
-
-import MomentAPI from "../../api/moment";
-import PeopleAPI from "src/api/people";
+import AppHeader from "src/components/AppHeader";
 
 const INITIAL_STATE = { content: "", images: [], isSubmitting: false, isError: false, errorMessage: null };
 
 export default class AddMomentScreen extends React.Component{
-  static navigationOptions = { headerTitle: "Menambahkan Moment" };
+  static navigationOptions = ({ navigation }) => {
+    return { header: <AppHeader title="Menambahkan Moment" navigation={navigation} style={{ backgroundColor: "white" }}/>}
+  }
 
   handleGalleryComplete = images => this.setState({ images });
   handleGalleryIconPress = () => this.props.navigation.navigate("Gallery", { onComplete: this.handleGalleryComplete});
   handleContentChange = content => this.setState({ content });
-  handleSubmitMoment = () => {
+  handleSubmitMoment = async () => {
     this.setState({ isSubmitting: true });
 
     if(this.photoGrid !== null){
       const imagesPath = this.photoGrid.getImagesPath();
-      new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
-        const content = { message: this.state.content, images: imagesPath };
-        return MomentAPI.publishMoment(currentUserEmail, content);
-      }).then(() => {
-        this.setState({ content: "", images: [], isSubmitting: false });
-        this.props.navigation.goBack();
-      })
+      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+      const content = { message: this.state.content, images: imagesPath };
+      
+      await MomentAPI.publishMoment(currentUserEmail, content);
+      this.setState({ content: "", images: [], isSubmitting: false });
+      this.props.navigation.goBack();
     }
   };
 

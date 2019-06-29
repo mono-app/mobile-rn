@@ -8,28 +8,22 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
 import TranslateAPI from "src/api/translate";
 
+import PeopleDetailListener from "src/components/PeopleDetailListener";
+
 const INITIAL_STATE = { nickName: "", profilePicture: "https://picsum.photos/200/200/?random" }
 
 export default class CommentItem extends React.PureComponent{
-  refreshComment = async () => {
-    let selectedApi = CurrentUserAPI;
-    
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    if(currentUserEmail === this.props.peopleEmail) selectedApi = new PeopleAPI();
-
-    const peopleData = await selectedApi.getDetail(this.props.peopleEmail);
-    const { nickName, profilePicture } = peopleData.applicationInformation;
-    this.setState({ nickName, profilePicture });
+  handlePeopleDetailListenerChange = (peopleData) => {
+    const { applicationInformation } = peopleData;
+    this.setState({ nickName: applicationInformation.nickName, profilePicture: applicationInformation.profilePicture });
   }
 
   constructor(props){
     super(props);
 
-    this.state = { INITIAL_STATE };
-    this.refreshComment = this.refreshComment.bind(this);
+    this.state = INITIAL_STATE;
+    this.handlePeopleDetailListenerChange = this.handlePeopleDetailListenerChange.bind(this);
   }
-
-  componentDidMount(){ this.refreshComment(); }
 
   render(){
     let shortTimeFromNow =  <MaterialCommunityIcons name="progress-clock" size={16}/>
@@ -40,6 +34,9 @@ export default class CommentItem extends React.PureComponent{
 
     return(
       <View style={{ flex: 1, flexDirection: "row", padding: 16, paddingVertical: 8 }}>
+
+        <PeopleDetailListener peopleEmail={this.props.peopleEmail} onChange={this.handlePeopleDetailListenerChange}/>
+
         <Avatar.Image size={50} source={{ uri: this.state.profilePicture, cache: "force-cache" }}/>
         <View style={{ paddingHorizontal: 8, flex: 1 }}>
           <Text style={{ fontWeight: "700" }}>{this.state.nickName}</Text>

@@ -1,32 +1,32 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { Text, Surface, Avatar, IconButton } from "react-native-paper";
+import { Text, Surface, IconButton } from "react-native-paper";
 
-import MomentItem from "./MomentItem";
-import PeopleAPI from "src/api/people";
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import MomentsAPI from "modules/Moments/api/moment";
 
+import MomentItem from "./MomentItem";
+import AppHeader from "src/components/AppHeader";
 import CircleAvatar from "src/components/Avatar/Circle";
 
 const INITIAL_STATE = { moments: [], isLoading: false, profilePicture: "https://picsum.photos/200/200/?random" }
 
 export default class HomeScreen extends React.Component{
-  static navigationOptions = { headerTitle: "Moments" }
+  static navigationOptions = { header: <AppHeader title="Moments" style={{ backgroundColor: "white" }}/> }
 
   handleAddMomentPress = () => this.props.navigation.navigate("AddMoment");
   handlePullToRefresh = () => this.refreshMoments();
 
-  refreshMoments = () => {
+  refreshProfileDetail = async () => {
+    const { applicationInformation } = await CurrentUserAPI.getDetail();
+    this.setState({ profilePicture: applicationInformation.profilePicture });
+  }
+
+  refreshMoments = async () => {
     this.setState({ moments: [], isLoading: true });
-    const peopleAPI = new PeopleAPI();
-    peopleAPI.getCurrentUserEmail().then(currentUserEmail =>{
-      const promises = [ MomentsAPI.getMoments(currentUserEmail), peopleAPI.getDetail() ]
-      return Promise.all(promises);
-    }).then(results => {
-      const moments = results[0];
-      const userData = results[1];
-      this.setState({ isLoading: false, moments, profilePicture: userData.applicationInformation.profilePicture })
-    });
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const moments = await MomentsAPI.getMoments(currentUserEmail);
+    this.setState({ moments, isLoading: false });
   }
 
   constructor(props){
@@ -38,7 +38,10 @@ export default class HomeScreen extends React.Component{
     this.handlePullToRefresh = this.handlePullToRefresh.bind(this);
   }
 
-  componentDidMount(){ this.refreshMoments(); }
+  componentDidMount(){ 
+    this.refreshMoments(); 
+    this.refreshProfileDetail();
+  }
 
   render(){
     

@@ -7,7 +7,6 @@ import StorageAPI from "src/api/storage";
 import { MomentsCollection, FansCollection } from "src/api/database/collection";
 import { AddDocument } from "src/api/database/query";
 import { Document } from "src/api/database/document";
-import { DocumentListener } from "src/api/database/listener";
 
 export default class MomentAPI{
   /**
@@ -47,11 +46,12 @@ export default class MomentAPI{
    * @param {function} callback 
    */
   static getDetailWithRealTimeUpdate(momentId, callback){
+    const db = firebase.firestore();
     const momentsCollection = new MomentsCollection();
     const momentDocument = new Document(momentId);
-    const listener = new DocumentListener();
-    return listener.listen(momentsCollection, momentDocument, doc => {
-      if(doc.exists) callback(doc.data());
+    const momentRef = db.collection(momentsCollection.getName()).doc(momentDocument.getId());
+    return momentRef.onSnapshot({ includeMetadataChanges: true }, (documentSnapshot) => {
+      if(documentSnapshot.exists) callback(documentSnapshot.data());
       else callback(null);
     })
   }

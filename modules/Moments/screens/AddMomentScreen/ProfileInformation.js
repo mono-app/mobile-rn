@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Text, Avatar, Caption } from "react-native-paper";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
-import PeopleAPI from "src/api/people";
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import CirlceAvatar from "src/components/Avatar/Circle";
 
 const INITIAL_STATE = { nickName: "", profilePicture: "https://picsum.photos/200/200/?random" }
@@ -11,18 +11,12 @@ const INITIAL_STATE = { nickName: "", profilePicture: "https://picsum.photos/200
 export default class ProfileInformation extends React.Component{
   constructor(props){
     super(props);
-
     this.state = INITIAL_STATE;
   }
 
-  componentDidMount(){
-    const peopleApi = new PeopleAPI();
-    peopleApi.getCurrentUserEmail().then(currentUserEmail => {
-      return peopleApi.getDetail(currentUserEmail);
-    }).then(people => {
-      const { nickName, profilePicture } = people.applicationInformation;
-      this.setState({ nickName, profilePicture });
-    })
+  async componentDidMount(){
+    const { applicationInformation } = await CurrentUserAPI.getDetail();
+    this.setState({ nickName: applicationInformation.nickName, profilePicture: applicationInformation.profilePicture });
   }
 
   render(){
