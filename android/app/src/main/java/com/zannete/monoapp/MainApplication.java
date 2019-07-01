@@ -26,6 +26,8 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 
+import com.oney.WebRTCModule.WebRTCModulePackage;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +58,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseStoragePackage(),
           new RNFirebaseMessagingPackage(),
           new RNFirebaseNotificationsPackage(),
-          new RNFirebaseInstanceIdPackage()
+          new RNFirebaseInstanceIdPackage(),
+          new WebRTCModulePackage()  
       );
     }
 
