@@ -5,7 +5,7 @@ import uuid from "uuid/v4";
 
 import PeopleAPI from "src/api/people";
 import { Document } from "src/api/database/document";
-import { UserCollection } from "Src/api/database/collection";
+import { UserCollection } from "src/api/database/collection";
 
 export default class CurrentUserAPI{
   static changeListener = null;

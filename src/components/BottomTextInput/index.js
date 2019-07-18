@@ -4,7 +4,7 @@ import { Surface, IconButton } from "react-native-paper";
 
 const INITIAL_STATE = { message: "" }
 
-export default class BottomTextInput extends React.Component{
+export default class BottomTextInput extends React.PureComponent{
   handleMessageChange = message => this.setState({ message });
   handleSendPress = () => {
     if(this.props.onSendPress) this.props.onSendPress(this.state.message);
