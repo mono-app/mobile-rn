@@ -9,7 +9,7 @@ import PeopleAPI from "src/api/people";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 
 import ChatBubble from "src/screens/ChatScreen/ChatBubble";
-import BottomTextInput from "src/components/BottomTextInput";
+import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import AppHeader from "src/components/AppHeader";
 import LastOnlineListener from "src/screens/ChatScreen/LastOnlineListener";
 
@@ -29,7 +29,7 @@ const INITIAL_STATE = {
   static navigationOptions = ({ navigation }) => {
     const title = navigation.getParam("peopleName", "");
     const subtitle = navigation.getParam("peopleOnlineStatus", "");
-    return { header: <AppHeader style={{ backgroundColor: "#E8EEE8" }} title={title} subtitle={subtitle} navigation={navigation}/> }
+    return { header: <AppHeader style={{ backgroundColor: "white" }} title={title} subtitle={subtitle} navigation={navigation}/> }
   }
 
   listenNewMessages = () => {
@@ -90,7 +90,13 @@ const INITIAL_STATE = {
     if(lastOnline.status === "Online"){
       peopleOnlineStatus = "Online";
     }else if(lastOnline.status === "Offline"){
-      const timeString = moment.unix(lastOnline.timestamp).format("hh:mmA");
+      const lastOnlineDate = moment.unix(lastOnline.timestamp);
+      const todayDate = moment().startOf("day");
+      
+      let timeString = "";
+      if(todayDate.isSameOrBefore(lastOnlineDate)){ timeString = lastOnlineDate.format("hh:mmA") }
+      else{ timeString = lastOnlineDate.format("DD MMMM YYYY [at] hh:mmA"); }
+      
       peopleOnlineStatus = `Last Seen: ${timeString}`;
     }
     this.props.navigation.setParams({ peopleOnlineStatus });
@@ -152,7 +158,7 @@ const INITIAL_STATE = {
               const bubbleStyle = (this.peopleEmail === item.senderEmail)? "peopleBubble": "myBubble";
               return <ChatBubble bubbleStyle={bubbleStyle} messageItem={item}/>
             }}/>
-          <BottomTextInput ref={i => this.txtMessage = i } onSendPress={this.handleSendPress}/>
+          <ChatBottomTextInput ref={i => this.txtMessage = i } onSendPress={this.handleSendPress}/>
       </KeyboardAvoidingView>
     )
   }

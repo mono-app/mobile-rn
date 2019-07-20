@@ -7,7 +7,7 @@ import { Text, Caption } from "react-native-paper";
 import PeopleAPI from "src/api/people";
 import StatusAPI from "src/api/status";
 
-import StatusInputCard from "src/screens/StatusChangeSCreen/StatusInputCard";
+import StatusInputCard from "src/screens/StatusChangeScreen/StatusInputCard";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
 const INITIAL_STATE = { status: [] }
