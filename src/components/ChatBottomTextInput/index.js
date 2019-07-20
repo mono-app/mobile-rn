@@ -33,7 +33,7 @@ class ChatBottomTextInput extends React.PureComponent{
     const { colors } = this.props.theme;
     return (
       <Surface style={{ margin: 8, marginHorizontal: 16, overflow: "hidden", borderRadius: 32, elevation: 8 }}>
-        <View style={{ paddingHorizontal: 8, backgroundColor: "white", flexDirection: "row", borderTopStartRadius: 32, borderTopEndRadius: 32, overflow: "hidden" }}>
+        <View style={{ paddingHorizontal: 8, backgroundColor: "white", flexDirection: "row", borderTopStartRadius: 32, borderTopEndRadius: 32, borderBottomColor: colors.disabled, borderBottomWidth: 1, overflow: "hidden" }}>
           <MicButton/>
           <SpeakerButton/>
         </View>

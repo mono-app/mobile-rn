@@ -13,7 +13,7 @@ import TextInput from "src/components/TextInput";
 
 const INITIAL_STATE = { email: "", password: "", isLoading: false }
 
-export default class SignInScreen extends React.Component {
+export default class SignInScreen extends React.PureComponent {
   static navigationOptions = { header: null }
   
   handleScreenWillBlur = () => this.authListener();
