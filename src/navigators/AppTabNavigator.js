@@ -7,7 +7,7 @@ import NewsNavigator from "../../modules/News/navigators/NewsNavigator";
 
 export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen },
-  Classroom: { screen: ClassroomNavigator, navigationOptions: { headerTitle: "Classroom" }},
+  Classroom: { screen: ClassroomNavigator, navigationOptions: { header: null }},
   News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
 }, {
   initialRouteName: "Home",

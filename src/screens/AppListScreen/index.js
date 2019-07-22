@@ -6,7 +6,7 @@ import { default as MaterialCommunityIcons } from "react-native-vector-icons/Mat
 import MenuListItemWithIcon from "../../components/MenuListItemWithIcon";
 
 export default class AppListScreen extends React.Component{
-  static navigationOptions = { headerTitle: "Applikasi" }
+  static navigationOptions = { headerTitle: "Aplikasi" }
   
   render(){
     return(
