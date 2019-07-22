@@ -24,6 +24,7 @@ const INITIAL_STATE = {
 /**
  * Navigation parameters
  * @params {string} roomId
+ * @params {String} peopleEmail
  */
  class ChatScreen extends React.PureComponent{
   static navigationOptions = ({ navigation }) => {
