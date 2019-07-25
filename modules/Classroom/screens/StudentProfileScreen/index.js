@@ -46,7 +46,8 @@ export default class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "name", 
       fieldValue: this.state.student.name,
-      fieldTitle: "Edit Nama Murid"
+      fieldTitle: "Edit Nama Murid",
+      onRefresh: () => {this.loadPeopleInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -58,7 +59,8 @@ export default class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "address", 
       fieldValue: this.state.student.address,
-      fieldTitle: "Edit Alamat"
+      fieldTitle: "Edit Alamat",
+      onRefresh: () => {this.loadPeopleInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -71,7 +73,8 @@ export default class StudentProfileScreen extends React.PureComponent {
       databaseFieldName: "phone", 
       fieldValue: this.state.student.phone,
       fieldTitle: "Edit Telepon",
-      isNumber: true
+      isNumber: true,
+      onRefresh: () => {this.loadPeopleInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -83,7 +86,8 @@ export default class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "email", 
       fieldValue: this.state.student.email,
-      fieldTitle: "Edit Email"
+      fieldTitle: "Edit Email",
+      onRefresh: () => {this.loadPeopleInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -97,6 +101,7 @@ export default class StudentProfileScreen extends React.PureComponent {
       fieldValue: this.state.student.nik,
       fieldTitle: "Edit NIK",
       isNumber: true,
+      onRefresh: () => {this.loadPeopleInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -110,6 +115,7 @@ export default class StudentProfileScreen extends React.PureComponent {
       fieldValue: this.state.student.gender,
       fieldTitle: "Edit Jenis Kelamin",
       isGender: true,
+      onRefresh: () => {this.loadPeopleInformation()} 
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }

@@ -39,8 +39,9 @@ export default class EditSingleFieldScreen extends React.PureComponent{
       updateObject[`${databaseFieldName}`] = this.state.defaultValue;
       updateQuery.executeQuery(schoolCollection, collection, schoolDocument, myDocument, updateObject).then( () => {
         this.setState({ isLoading: false });
-        const navigator = new StackNavigator(this.props.navigation);
-        navigator.pop();
+        const { navigation } = this.props;
+        navigation.state.params.onRefresh();
+        navigation.goBack();
       });
     }else this.setState({ isLoading: false });
   }

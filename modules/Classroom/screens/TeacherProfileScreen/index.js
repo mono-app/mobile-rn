@@ -26,6 +26,7 @@ export default class TeacherProfileScreen extends React.PureComponent {
       )
     };
   };
+  
 
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
@@ -46,7 +47,8 @@ export default class TeacherProfileScreen extends React.PureComponent {
       databaseDocumentId: this.teacherEmail,
       databaseFieldName: "name", 
       fieldValue: this.state.teacher.name,
-      fieldTitle: "Edit Nama Guru"
+      fieldTitle: "Edit Nama Guru",
+      onRefresh: () => {this.loadPeopleInformation()} 
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -58,7 +60,8 @@ export default class TeacherProfileScreen extends React.PureComponent {
       databaseDocumentId: this.teacherEmail,
       databaseFieldName: "address", 
       fieldValue: this.state.teacher.address,
-      fieldTitle: "Edit Alamat"
+      fieldTitle: "Edit Alamat",
+      onRefresh: () => {this.loadPeopleInformation()} 
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -71,7 +74,8 @@ export default class TeacherProfileScreen extends React.PureComponent {
       databaseFieldName: "phone", 
       fieldValue: this.state.teacher.phone,
       fieldTitle: "Edit Telepon",
-      isNumber: true
+      isNumber: true,
+      onRefresh: () => {this.loadPeopleInformation()} 
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -83,7 +87,8 @@ export default class TeacherProfileScreen extends React.PureComponent {
       databaseDocumentId: this.teacherEmail,
       databaseFieldName: "email", 
       fieldValue: this.state.teacher.email,
-      fieldTitle: "Edit Email"
+      fieldTitle: "Edit Email",
+      onRefresh: () => {this.loadPeopleInformation()} 
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -97,6 +102,7 @@ export default class TeacherProfileScreen extends React.PureComponent {
       fieldValue: this.state.teacher.nik,
       fieldTitle: "Edit NIK",
       isNumber: true,
+      onRefresh: () => {this.loadPeopleInformation()} 
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -110,6 +116,7 @@ export default class TeacherProfileScreen extends React.PureComponent {
       fieldValue: this.state.teacher.gender,
       fieldTitle: "Edit Jenis Kelamin",
       isGender: true,
+      onRefresh: () => {this.loadPeopleInformation()} 
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }

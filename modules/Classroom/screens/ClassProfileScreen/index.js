@@ -53,7 +53,8 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseDocumentId: this.classId,
       databaseFieldName: "subject", 
       fieldValue: this.state.class.subject,
-      fieldTitle: "Edit Mata Pelajaran"
+      fieldTitle: "Edit Mata Pelajaran",
+      onRefresh: () => {this.loadClassInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -65,7 +66,8 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseDocumentId: this.classId,
       databaseFieldName: "room", 
       fieldValue: this.state.class.room,
-      fieldTitle: "Edit Ruangan"
+      fieldTitle: "Edit Ruangan",
+      onRefresh: () => {this.loadClassInformation()}
     }
     console.log(payload);
     this.props.navigation.navigate(`EditSingleField`, payload);
@@ -78,7 +80,8 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseDocumentId: this.classId,
       databaseFieldName: "academicYear", 
       fieldValue: this.state.class.academicYear,
-      fieldTitle: "Edit Tahun Ajaran"
+      fieldTitle: "Edit Tahun Ajaran",
+      onRefresh: () => {this.loadClassInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -91,7 +94,8 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseFieldName: "semester", 
       fieldValue: this.state.class.semester,
       fieldTitle: "Edit Mata Pelajaran",
-      isNumber:true
+      isNumber:true,
+      onRefresh: () => {this.loadClassInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -104,7 +108,8 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseFieldName: "information", 
       fieldValue: this.state.class.information,
       fieldTitle: "Edit Informasi Kelas",
-      isMultiline: true
+      isMultiline: true,
+      onRefresh: () => {this.loadClassInformation()}
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
