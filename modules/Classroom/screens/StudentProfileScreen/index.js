@@ -7,7 +7,7 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: null }
+const INITIAL_STATE = { isLoadingProfile: true, student: null, schoolId: "1hZ2DiIYSFa5K26oTe75"  }
 
 /**
  * Parameter list
@@ -39,11 +39,92 @@ export default class StudentProfileScreen extends React.PureComponent {
       })
   }
 
+  handleNamePress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "students",
+      databaseDocumentId: this.studentEmail,
+      databaseFieldName: "name", 
+      fieldValue: this.state.student.name,
+      fieldTitle: "Edit Nama Murid"
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleAddressPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "students",
+      databaseDocumentId: this.studentEmail,
+      databaseFieldName: "address", 
+      fieldValue: this.state.student.address,
+      fieldTitle: "Edit Alamat"
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handlePhonePress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "students",
+      databaseDocumentId: this.studentEmail,
+      databaseFieldName: "phone", 
+      fieldValue: this.state.student.phone,
+      fieldTitle: "Edit Telepon",
+      isNumber: true
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleEmailPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "students",
+      databaseDocumentId: this.studentEmail,
+      databaseFieldName: "email", 
+      fieldValue: this.state.student.email,
+      fieldTitle: "Edit Email"
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleNoIndukPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "students",
+      databaseDocumentId: this.studentEmail,
+      databaseFieldName: "nik", 
+      fieldValue: this.state.student.nik,
+      fieldTitle: "Edit NIK",
+      isNumber: true,
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleGenderPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "students",
+      databaseDocumentId: this.studentEmail,
+      databaseFieldName: "gender", 
+      fieldValue: this.state.student.gender,
+      fieldTitle: "Edit Jenis Kelamin",
+      isGender: true,
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
   constructor(props){
     super(props);
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.state = INITIAL_STATE;
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
+    this.handleNamePress = this.handleNamePress.bind(this);
+    this.handleAddressPress = this.handleAddressPress.bind(this);
+    this.handlePhonePress = this.handlePhonePress.bind(this);
+    this.handleEmailPress = this.handleEmailPress.bind(this);
+    this.handleNoIndukPress = this.handleNoIndukPress.bind(this);
+    this.handleGenderPress = this.handleGenderPress.bind(this);
   }
 
   componentDidMount(){ 
@@ -78,7 +159,7 @@ export default class StudentProfileScreen extends React.PureComponent {
             
             </View>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.handleNamePress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text>Nama murid</Text>
@@ -89,56 +170,56 @@ export default class StudentProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity  onPress={this.handleAddressPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text>Alamat</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>-</Text>
+                      <Text>{this.state.student.address}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity  onPress={this.handlePhonePress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text>Nomor Telepon</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>-</Text>
+                      <Text>{this.state.student.phone}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity  onPress={this.handleEmailPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text >Email</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.student.id}</Text>
+                      <Text>{this.state.student.email}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity  onPress={this.handleNoIndukPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text >No Induk</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>-</Text>
+                    <Text>{this.state.student.noInduk}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.handleGenderPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text >Jenis Kelamin</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>-</Text>
+                    <Text>{this.state.student.gender}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>

@@ -14,7 +14,7 @@ import ClassAPI from "../../api/class";
 import CircleAvatar from "src/components/Avatar/Circle";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-const INITIAL_STATE = { isLoadingProfile: true, class: null };
+const INITIAL_STATE = { isLoadingProfile: true, class: null, schoolId: "1hZ2DiIYSFa5K26oTe75" };
 
 /**
  * Parameter list
@@ -46,11 +46,79 @@ export default class ClassProfileScreen extends React.PureComponent {
     });
   };
 
+  handleSubjectPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "classes",
+      databaseDocumentId: this.classId,
+      databaseFieldName: "subject", 
+      fieldValue: this.state.class.subject,
+      fieldTitle: "Edit Mata Pelajaran"
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleRoomPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "classes",
+      databaseDocumentId: this.classId,
+      databaseFieldName: "room", 
+      fieldValue: this.state.class.room,
+      fieldTitle: "Edit Ruangan"
+    }
+    console.log(payload);
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleAcademicYearPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "classes",
+      databaseDocumentId: this.classId,
+      databaseFieldName: "academicYear", 
+      fieldValue: this.state.class.academicYear,
+      fieldTitle: "Edit Tahun Ajaran"
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleSemesterPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "classes",
+      databaseDocumentId: this.classId,
+      databaseFieldName: "semester", 
+      fieldValue: this.state.class.semester,
+      fieldTitle: "Edit Mata Pelajaran",
+      isNumber:true
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
+  handleInformationPress = e => {
+    const payload = {
+      schoolId: this.state.schoolId,
+      databaseCollection: "classes",
+      databaseDocumentId: this.classId,
+      databaseFieldName: "information", 
+      fieldValue: this.state.class.information,
+      fieldTitle: "Edit Informasi Kelas",
+      isMultiline: true
+    }
+    this.props.navigation.navigate(`EditSingleField`, payload);
+  }
+
   constructor(props) {
     super(props);
     this.classId = this.props.navigation.getParam("classId", null);
     this.state = INITIAL_STATE;
     this.loadClassInformation = this.loadClassInformation.bind(this);
+    this.handleSubjectPress = this.handleSubjectPress.bind(this);
+    this.handleRoomPress = this.handleRoomPress.bind(this);
+    this.handleAcademicYearPress = this.handleAcademicYearPress.bind(this);
+    this.handleSemesterPress = this.handleSemesterPress.bind(this);
+    this.handleInformationPress = this.handleInformationPress.bind(this);
   }
 
   componentDidMount() {
@@ -86,7 +154,7 @@ export default class ClassProfileScreen extends React.PureComponent {
                 />            
             </View>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.handleSubjectPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text style={{  }}>Mata Pelajaran</Text>
@@ -97,7 +165,7 @@ export default class ClassProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.handleRoomPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text>Ruangan</Text>
@@ -108,7 +176,7 @@ export default class ClassProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.handleAcademicYearPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text>Tahun Ajaran</Text>
@@ -119,7 +187,7 @@ export default class ClassProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.handleSemesterPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text >Semester</Text>
@@ -130,12 +198,12 @@ export default class ClassProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={this.handleInformationPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"column",textAlign: "right"}}>
                       <Text>Informasi Kelas</Text>
-                      <Text>-</Text>
+                      <Text>{this.state.class.information}</Text>
                     </View>
                   </View>
                 </View>
