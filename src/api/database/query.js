@@ -78,6 +78,23 @@ export class UpdateDocument extends Query{
                         .doc(firebaseDocument.getId())
                         .update(updateObject)
   }
+
+  /**
+   * 
+   * @param {Collection} collection1 
+   * @param {Collection} collection2 
+   * @param {Document} firebaseDocument1 
+   * @param {Document} firebaseDocument2 
+   * @param {Object} updateObject - Firestore update statement, see firebase/firestore documentation
+   */
+  executeQuery(collection1, collection2, firebaseDocument1, firebaseDocument2, updateObject){
+    return this.database.getDatabase()
+                        .collection(collection1.getName())
+                        .doc(firebaseDocument1.getId())
+                        .collection(collection2.getName())
+                        .doc(firebaseDocument2.getId())
+                        .update(updateObject)
+  }
 }
 
 export class RemoveDocumentField extends Query{
