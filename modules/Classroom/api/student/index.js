@@ -4,8 +4,6 @@ import { StudentsCollection, SchoolsCollection } from "src/api/database/collecti
 
 export default class StudentAPI{
 
-
-  
   async addStudent(schoolId, studentEmail, data){
     try{
       const db = firebase.firestore();

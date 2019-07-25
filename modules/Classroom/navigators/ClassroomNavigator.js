@@ -15,6 +15,7 @@ import StudentListScreen from "../screens/StudentListScreen";
 import TeacherProfileScreen from "../screens/TeacherProfileScreen";
 import StudentProfileScreen from "../screens/StudentProfileScreen";
 import ClassProfileScreen from "../screens/ClassProfileScreen";
+import EditSingleFieldScreen from "../screens/EditSingleFieldScreen";
 
 export default ClassroomNavigator = createStackNavigator(
   {
@@ -31,7 +32,8 @@ export default ClassroomNavigator = createStackNavigator(
     StudentList: { screen: StudentListScreen },
     TeacherProfile: { screen: TeacherProfileScreen },
     StudentProfile: { screen: StudentProfileScreen },
-    ClassProfile: { screen: ClassProfileScreen }
+    ClassProfile: { screen: ClassProfileScreen },
+    EditSingleField: { screen: EditSingleFieldScreen }
   },
   {
     initialRouteName: "Splash"
