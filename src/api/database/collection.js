@@ -57,3 +57,27 @@ export class CommentsCollection extends Collection{
 export class StatusCollection extends Collection{
   constructor(){ super("status"); }
 }
+
+export class SchoolsCollection extends Collection{
+  constructor(){ super("schools"); }
+}
+
+export class ClassesCollection extends Collection{
+  constructor(){ super("classes"); }
+}
+
+export class SchoolAdminsCollection extends Collection{
+  constructor(){ super("schoolAdmins"); }
+}
+
+export class TeachersCollection extends Collection{
+  constructor(){ super("teachers"); }
+}
+
+export class StudentsCollection extends Collection{
+  constructor(){ super("students"); }
+}
+
+export class TasksCollection extends Collection{
+  constructor(){ super("tasks"); }
+}
