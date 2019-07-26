@@ -7,7 +7,7 @@ export default class SplashClass extends React.PureComponent {
   async componentDidMount(){
     const navigator = new Navigator(this.props.navigation);
 
-    navigator.resetTo("SchoolAdminHome", StackActions);
+    navigator.resetTo("TeacherHome", StackActions);
   }
 
   render() {

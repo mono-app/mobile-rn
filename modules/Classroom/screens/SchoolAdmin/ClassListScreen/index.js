@@ -1,64 +1,65 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Searchbar } from "react-native-paper";
-import TeacherAPI from "../../api/teacher";
-import TeacherListItem from "../../components/TeacherListItem";
+import ClassAPI from "../../../api/class";
+import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 
-const INITIAL_STATE = { isLoading: true, peopleList: [] };
+const INITIAL_STATE = { isLoading: true };
 
-export default class TeacherListScreen extends React.PureComponent {
+export default class ClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Data Master Guru"
+          title="Data Master Kelas"
           style={{ backgroundColor: "transparent" }}
         />
       )
     };
   };
 
-  loadTeachers = async () => {
-    this.teacherListListener = new TeacherAPI().getTeachersWithRealTimeUpdate("1hZ2DiIYSFa5K26oTe75", teachers => {
-      const people = teachers.map(teacher => {
-        return { id: teacher.id, ...teacher.data() }
+  loadClasses = async () => {
+    this.classListListener = new ClassAPI().getClassesWithRealTimeUpdate("1hZ2DiIYSFa5K26oTe75", classes => {
+      const people = classes.map(class_ => {
+        return { id: class_.id, ...class_.data() }
       });
       this.setState({ peopleList: people });
     })
   }
 
-  handleTeacherPress = people => {
-    const teacherEmail = people.id;
-    this.props.navigation.navigate("TeacherProfile", { teacherEmail });
+  handleClassPress = class_ => {
+    const classId = class_.id;
+    this.props.navigation.navigate("ClassProfile", { classId });
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadTeachers = this.loadTeachers.bind(this);
-    this.handleTeacherPress = this.handleTeacherPress.bind(this);
+    this.loadClasses = this.loadClasses.bind(this);
+    this.handleClassPress = this.handleClassPress.bind(this);
   }
 
+
   componentDidMount(){
-    this.loadTeachers();
+    this.loadClasses();
   }
 
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar placeholder="Cari Guru" />
+          <Searchbar placeholder="Cari Kelas" />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.peopleList}
           renderItem={({ item, index }) => {
             return (
-              <TeacherListItem 
-                onPress={() => this.handleTeacherPress(item)}
-                key={index} autoFetch={true} email={item.id}/>
+              <ClassListItem 
+                onPress={() => this.handleClassPress(item)}
+                key={index} autoFetch={true} classId={item.id}/>
             )
           }}
         />

@@ -5,7 +5,7 @@ import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import ClassAPI from "../../api/class";
+import ClassAPI from "../../../api/class";
 
 const INITIAL_STATE = {
   isLoading: false,

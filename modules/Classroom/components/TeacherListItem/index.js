@@ -6,7 +6,7 @@ import { Text } from "react-native-paper";
 
 import TeacherAPI from "../../api/teacher";
 
-const INITIAL_STATE = { name: "", isFetching: false }
+const INITIAL_STATE = { name: "",nik: "-", isFetching: false }
 
 /**
  * @param {string} name 
@@ -30,8 +30,8 @@ export default class TeacherListItem extends React.Component{
 
       Promise.all(promises).then(results => {
         const people = results[0];
-        const { name } = people  
-        this.setState({ isFetching: false, name });
+        const { name, nik } = people  
+        this.setState({ isFetching: false, name, nik });
       })
     }
   }
@@ -45,15 +45,16 @@ export default class TeacherListItem extends React.Component{
       )
     }
 
-    let { name } = this.props;
+    let { name,nik } = this.props;
     if(this.props.autoFetch){
       name = this.state.name;
+      nik = this.state.nik;
     }
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>
         <View>
-          <Text style={{ fontWeight: "700" }}>{name}</Text>
+          <Text style={{ fontWeight: "700" }}>{(nik)?nik:"-"} / {name}</Text>
         </View>
       </TouchableOpacity>
     )

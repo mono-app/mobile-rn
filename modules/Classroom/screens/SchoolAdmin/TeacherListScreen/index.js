@@ -1,64 +1,63 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Searchbar } from "react-native-paper";
-import StudentListItem from "../../components/StudentListItem";
+import TeacherAPI from "../../../api/teacher";
+import TeacherListItem from "../../../components/TeacherListItem";
 import AppHeader from "src/components/AppHeader";
-import StudentAPI from "../../api/student";
 
-const INITIAL_STATE = { isLoading: true };
+const INITIAL_STATE = { isLoading: true, peopleList: [] };
 
-export default class StudentListScreen extends React.PureComponent {
+export default class TeacherListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Data Master Murid"
+          title="Data Master Guru"
           style={{ backgroundColor: "transparent" }}
         />
       )
     };
   };
 
-  loadStudents = async () => {
-    this.studentListListener = new StudentAPI().getStudentsWithRealTimeUpdate("1hZ2DiIYSFa5K26oTe75", students => {
-      const people = students.map(student => {
-        return { id: student.id, ...student.data() }
+  loadTeachers = async () => {
+    this.teacherListListener = new TeacherAPI().getTeachersWithRealTimeUpdate("1hZ2DiIYSFa5K26oTe75", teachers => {
+      const people = teachers.map(teacher => {
+        return { id: teacher.id, ...teacher.data() }
       });
       this.setState({ peopleList: people });
     })
   }
 
-  handleStudentPress = people => {
-    const studentEmail = people.id;
-    this.props.navigation.navigate("StudentProfile", { studentEmail });
+  handleTeacherPress = people => {
+    const teacherEmail = people.id;
+    this.props.navigation.navigate("TeacherProfile", { teacherEmail });
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadStudents = this.loadStudents.bind(this);
-    this.handleStudentPress = this.handleStudentPress.bind(this);
+    this.loadTeachers = this.loadTeachers.bind(this);
+    this.handleTeacherPress = this.handleTeacherPress.bind(this);
   }
 
   componentDidMount(){
-    this.loadStudents();
+    this.loadTeachers();
   }
-
 
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar placeholder="Cari Murid" />
+          <Searchbar placeholder="Cari Guru" />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.peopleList}
           renderItem={({ item, index }) => {
             return (
-              <StudentListItem 
-                onPress={() => this.handleStudentPress(item)}
+              <TeacherListItem 
+                onPress={() => this.handleTeacherPress(item)}
                 key={index} autoFetch={true} email={item.id}/>
             )
           }}

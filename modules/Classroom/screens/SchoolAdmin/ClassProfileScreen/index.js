@@ -1,5 +1,4 @@
 import React from "react";
-import moment from "moment";
 import { View,StyleSheet } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import {
@@ -10,7 +9,7 @@ import {
   Caption
 } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import ClassAPI from "../../api/class";
+import ClassAPI from "../../../api/class";
 import CircleAvatar from "src/components/Avatar/Circle";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 

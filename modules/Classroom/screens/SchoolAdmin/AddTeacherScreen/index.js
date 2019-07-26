@@ -5,31 +5,32 @@ import { Text, Title, Card } from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import StudentAPI from "../../api/student";
+import TeacherAPI from "../../../api/teacher";
 
 const INITIAL_STATE = {
   isLoading: false,
-  studentEmail: "",
-  studentName: "",
+  teacherEmail: "",
+  teacherName: "",
 };
-export default class AddStudentScreen extends React.PureComponent {
+export default class AddTeacherScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
           style={{ backgroundColor: "transparent" }}
-          title="Tambah Murid"
+          title="Tambah Guru"
         />
       )
     };
   };
-  handleStudentEmailChange = studentEmail => this.setState({ studentEmail });
-  handleStudentNameChange = studentName => this.setState({ studentName });
+  handleTeacherEmailChange = teacherEmail => this.setState({ teacherEmail });
+  handleTeacherNameChange = teacherName => this.setState({ teacherName });
+
   handleSavePress = () => {
     this.setState({ isLoading: true });
-    new StudentAPI().addStudent("1hZ2DiIYSFa5K26oTe75", this.state.studentEmail,{name: this.state.studentName}).then(() => {
-      this.setState({ isLoading: false, studentEmail: "", studentName:"" });
+    TeacherAPI.addTeacher("1hZ2DiIYSFa5K26oTe75", this.state.teacherEmail,{name: this.state.teacherName}).then(() => {
+      this.setState({ isLoading: false, teacherEmail: "", teacherName:"" });
     }).catch(err => console.log(err));
   };
 
@@ -37,6 +38,8 @@ export default class AddStudentScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.handleSavePress = this.handleSavePress.bind(this);
+    this.handleTeacherEmailChange = this.handleTeacherEmailChange.bind(this);
+    this.handleTeacherNameChange = this.handleTeacherNameChange.bind(this);
   }
 
   render() {
@@ -45,27 +48,25 @@ export default class AddStudentScreen extends React.PureComponent {
         <View>
           <Card>
             <Card.Content>
-              <Title style={{ marginBottom: 8 }}>Tambah Murid</Title>
+              <Title style={{ marginBottom: 8 }}>Tambah Guru</Title>
               <Text style={styles.smallDescription}>
-                Harap isi ID murid yang akan ditambah.
+                Harap isi ID guru yang akan ditambah.
               </Text>
               <View style={{ marginTop: 16 }}>
-                <Text style={styles.label}>Email Murid</Text>
+                <Text style={styles.label}>Email Guru</Text>
                 <TextInput
                   style={{ marginBottom: 0 }}
                   placeholder="cth: johndoe@gmail.com"
-                  value={this.state.studentEmail}
-                  onChangeText={this.handleStudentEmailChange}
-                />
+                  value={this.state.teacherEmail}
+                  onChangeText={this.handleTeacherEmailChange}/>
               </View>
               <View style={{ marginTop: 16 }}>
-                <Text style={styles.label}>Nama Murid</Text>
+                <Text style={styles.label}>Nama Guru</Text>
                 <TextInput
                   style={{ marginBottom: 0 }}
                   placeholder="cth: John Doe"
-                  value={this.state.studentName}
-                  onChangeText={this.handleStudentNameChange}
-                />
+                  value={this.state.teacherName}
+                  onChangeText={this.handleTeacherNameChange}/>
               </View>
               <View style={{ paddingVertical: 8 }} />
               <Button

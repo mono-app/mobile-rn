@@ -3,8 +3,8 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
-import CircleAvatar from "src/components/Avatar/Circle";
-import Header from "./Header";
+import SquareAvatar from "src/components/Avatar/Square";
+import Header from "../../../components/Header";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -35,21 +35,31 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
     return (
       <View style={styles.groupContainer}>
         <View style={styles.logo}>
-          <CircleAvatar size={126} uri={this.state.profilePicture} />
+          <SquareAvatar size={100} uri={this.state.profilePicture}/>
           <Text style={{ fontWeight: "700", marginTop: 16, fontSize: 20 }}>
             Selamat Datang,
           </Text>
           <Text style={{ fontWeight: "400", fontSize: 16 }}>School Admin</Text>
         </View>
 
-        <View style={{marginTop: 64}}/>
+        <View style={{marginBottom: 64}}/>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={this.handleAddPress} >
-            <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+          <TouchableOpacity onPress={this.handleAddPress} >
+            <View>
+              <View style={styles.button} >
+                <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+              </View>
+              <Text>Tambah</Text>
+            </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={this.handleDataMasterPress}>
-            <FontAwesome name="cog" style={{color: "#fff"}} size={24} />
+          <TouchableOpacity onPress={this.handleDataMasterPress}>
+            <View>
+              <View style={styles.button} >
+                <FontAwesome name="cog" style={{color: "#fff"}} size={24} />
+              </View>
+              <Text>Data Master</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -86,7 +96,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     backgroundColor: "#0EAD69",
-    padding: 16,
+    padding:16,
     borderColor: "#fff",
     borderRadius: 12
   }
