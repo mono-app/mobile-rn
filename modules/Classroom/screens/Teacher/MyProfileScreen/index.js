@@ -3,9 +3,9 @@ import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, Card, Dialog, Text, Caption, TextInput } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "../../../api/teacher";
-import SquareAvatar from "src/components/Avatar/Square";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { ScrollView } from "react-native-gesture-handler";
+import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 
 const INITIAL_STATE = { isLoadingProfile: true, teacher: null, schoolId: "1hZ2DiIYSFa5K26oTe75" }
 
@@ -152,93 +152,50 @@ export default class MyProfileScreen extends React.PureComponent {
         </Dialog>
       )
     }else return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+      <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
-          <Card style={{margin: 16}}>
+          <PeopleProfileHeader
+            profilePicture="https://picsum.photos/200/200/?random"
+            nickName="Henry Sanders"
+            status="NIK 3542354345234513235"/>
 
-            <View style={styles.profileContainer}>
-               <SquareAvatar size={80} uri="https://picsum.photos/200/200/?random"/>
-               <View style={{ marginLeft: 16,  justifyContent: 'flex-end'}}>
-                <Text style={{ fontSize: 16 }}>Henry Sanders</Text>
-                <Text style={{  fontSize: 12 }}>NIK 3542354345234513235</Text>
-                <Text style={{  fontSize: 12, color: 'blue' }}>Bergabung sejak 17 Juli 2001</Text>
-               </View>
+          <View style={styles.statusContainer}>
+            <Text style={styles.label}>Status saya</Text>
+            <View style={{flexDirection:"row"}}>
+              <Text>Statuss</Text>
             </View>
-
-            <View style={styles.statusContainer}>
-              <Text style={{  fontSize: 12 }}>Status saya</Text>
-              <TextInput style={{  marginTop: 12 }} placeholder="Isi status"></TextInput>
-            </View>
-
-            <View>
-              <TouchableOpacity onPress={this.handleAddressPress}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <Text>Alamat</Text>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.address}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.handlePhonePress}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <Text>Nomor Telepon</Text>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.phone}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleEmailPress}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <Text >Email</Text>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.id}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleNIKPress}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <Text >NIK</Text>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.nik}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleGenderPress}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <Text >Jenis Kelamin</Text>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.gender}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <Text >Jumlah Kelas</Text>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>-</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </Card>
+            
+          </View>
+          <View style={{  marginBottom: 16 }}>
+           <PeopleInformationContainer
+              fieldName="Bergabung Sejak"
+              fieldValue="17 Juli 2001"/>
+          </View>
+          
+          <View style={{  marginBottom: 16 }}>
+            
+            <PeopleInformationContainer
+              fieldName="Alamat"
+              fieldValue="-"/>
+            <PeopleInformationContainer
+              fieldName="Nomor Telepon"
+              fieldValue="-"/>
+            <PeopleInformationContainer
+              fieldName="Email"
+              fieldValue="-"/>
+            <PeopleInformationContainer
+              fieldName="Jenis Kelamin"
+              fieldValue="-"/>
+          
+          </View>
+          <View style={{  marginBottom: 16 }}>
+            <PeopleInformationContainer
+              fieldName="Jumlah Kelas"
+              fieldValue="-"/>
+            <PeopleInformationContainer
+              fieldName="Arsip Tugas"
+              fieldValue="-"/>
+          </View>
         </ScrollView>
       </View>
     )
@@ -260,12 +217,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8",
     backgroundColor: "white",
     flexDirection: "row",
-    padding: 16,
+    padding: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
     alignItems: "center"
   },
   statusContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8",
+    marginVertical: 16,
     backgroundColor: "white",
     padding: 16,
   },
@@ -274,5 +232,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  textInputContainer: {
+    flex: 1,
+    height: 30,
+    justifyContent:"center"
+  },
+  label: {
+    fontWeight: "bold"
   }
 })

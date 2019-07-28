@@ -1,23 +1,25 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
 
-import HomeScreen from "../screens/HomeScreen";
-import SchoolAdminHomeScreen from "../screens/SchoolAdmin/SchoolAdminHomeScreen";
-import SchoolAdminAddScreen from "../screens/SchoolAdmin/SchoolAdminAddScreen";
-import AddClassScreen from "../screens/SchoolAdmin/AddClassScreen";
-import AddTeacherScreen from "../screens/SchoolAdmin/AddTeacherScreen";
-import AddStudentScreen from "../screens/SchoolAdmin/AddStudentScreen";
-import SplashScreen from "../screens/SplashScreen";
-import SchoolAdminDataMasterScreen from "../screens/SchoolAdmin/SchoolAdminDataMasterScreen";
-import ClassListScreen from "../screens/SchoolAdmin/ClassListScreen";
-import TeacherListScreen from "../screens/SchoolAdmin/TeacherListScreen";
-import StudentListScreen from "../screens/SchoolAdmin/StudentListScreen";
-import TeacherProfileScreen from "../screens/SchoolAdmin/TeacherProfileScreen";
-import StudentProfileScreen from "../screens/SchoolAdmin/StudentProfileScreen";
-import ClassProfileScreen from "../screens/SchoolAdmin/ClassProfileScreen";
-import EditSingleFieldScreen from "../screens/EditSingleFieldScreen";
-import TeacherHomeScreen from "../screens/Teacher/TeacherHomeScreen";
-import MyProfileScreen from "../screens/Teacher/MyProfileScreen";
+import HomeScreen from "modules/Classroom/screens/HomeScreen";
+import SchoolAdminHomeScreen from "modules/Classroom/screens/SchoolAdmin/SchoolAdminHomeScreen";
+import SchoolAdminAddScreen from "modules/Classroom/screens/SchoolAdmin/SchoolAdminAddScreen";
+import AddClassScreen from "modules/Classroom/screens/SchoolAdmin/AddClassScreen";
+import AddTeacherScreen from "modules/Classroom/screens/SchoolAdmin/AddTeacherScreen";
+import AddStudentScreen from "modules/Classroom/screens/SchoolAdmin/AddStudentScreen";
+import SplashScreen from "modules/Classroom/screens/SplashScreen";
+import SchoolAdminDataMasterScreen from "modules/Classroom/screens/SchoolAdmin/SchoolAdminDataMasterScreen";
+import ClassListScreen from "modules/Classroom/screens/SchoolAdmin/ClassListScreen";
+import TeacherListScreen from "modules/Classroom/screens/SchoolAdmin/TeacherListScreen";
+import StudentListScreen from "modules/Classroom/screens/SchoolAdmin/StudentListScreen";
+import TeacherProfileScreen from "modules/Classroom/screens/SchoolAdmin/TeacherProfileScreen";
+import StudentProfileScreen from "modules/Classroom/screens/SchoolAdmin/StudentProfileScreen";
+import ClassProfileScreen from "modules/Classroom/screens/SchoolAdmin/ClassProfileScreen";
+import TeacherClassListScreen from "modules/Classroom/screens/SchoolAdmin/TeacherClassListScreen";
+import EditSingleFieldScreen from "modules/Classroom/screens/EditSingleFieldScreen";
+import TeacherHomeScreen from "modules/Classroom/screens/Teacher/TeacherHomeScreen";
+import MyProfileScreen from "modules/Classroom/screens/Teacher/MyProfileScreen";
+import StatusChangeScreen from "src/screens/StatusChangeScreen";
 
 export default ClassroomNavigator = createStackNavigator(
   {
@@ -33,11 +35,13 @@ export default ClassroomNavigator = createStackNavigator(
     TeacherList: { screen:  TeacherListScreen},
     StudentList: { screen: StudentListScreen },
     TeacherProfile: { screen: TeacherProfileScreen },
+    TeacherClassList: { screen: TeacherClassListScreen },
     StudentProfile: { screen: StudentProfileScreen },
     ClassProfile: { screen: ClassProfileScreen },
     EditSingleField: { screen: EditSingleFieldScreen },
     TeacherHome: { screen: TeacherHomeScreen },
-    MyProfile: { screen: MyProfileScreen }
+    MyProfile: { screen: MyProfileScreen },
+    StatusChange : { screen: StatusChangeScreen }
   },
   {
     initialRouteName: "Splash"

@@ -27,6 +27,9 @@ const CustomTopNavigator = createAppContainer(
         style: {
             backgroundColor: 'transparent',
           },
+          indicatorStyle: {
+            backgroundColor: 'green',
+        },
       }
   })
 );

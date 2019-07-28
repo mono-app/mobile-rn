@@ -44,9 +44,8 @@ export default class AddTeacherScreen extends React.PureComponent {
 
   render() {
     return (
-      <KeyboardAwareScrollView style={styles.container}>
-        <View>
-          <Card>
+      <KeyboardAwareScrollView style={{backgroundColor: "#E8EEE8"}}>
+          <Card style={styles.container}>
             <Card.Content>
               <Title style={{ marginBottom: 8 }}>Tambah Guru</Title>
               <Text style={styles.smallDescription}>
@@ -76,14 +75,13 @@ export default class AddTeacherScreen extends React.PureComponent {
               />
             </Card.Content>
           </Card>
-        </View>
       </KeyboardAwareScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: "#E8EEE8" },
+  container: { flex: 1, margin: 16 },
   smallDescription: { fontSize: 12, textAlign: "left", color: "#5E8864" },
   label: { fontSize: 14, textAlign: "left", color: "#000000" }
 });

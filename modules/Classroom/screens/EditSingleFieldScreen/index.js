@@ -4,7 +4,6 @@ import { Card, Title, Caption, Drawer } from "react-native-paper";
 
 import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
-import { StackNavigator } from "src/api/navigator";
 import { Collection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { UpdateDocument } from "src/api/database/query";
@@ -37,10 +36,13 @@ export default class EditSingleFieldScreen extends React.PureComponent{
       let updateObject = {};
 
       updateObject[`${databaseFieldName}`] = this.state.defaultValue;
+      if(databaseFieldName==="email"){
+        updateObject['isActive'] = false;
+      }
       updateQuery.executeQuery(schoolCollection, collection, schoolDocument, myDocument, updateObject).then( () => {
         this.setState({ isLoading: false });
         const { navigation } = this.props;
-        navigation.state.params.onRefresh();
+        navigation.state.params.onRefresh(this.state.defaultValue);
         navigation.goBack();
       });
     }else this.setState({ isLoading: false });

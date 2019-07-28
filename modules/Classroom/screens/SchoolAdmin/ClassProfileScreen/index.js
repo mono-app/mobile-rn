@@ -3,14 +3,15 @@ import { View,StyleSheet } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import {
   ActivityIndicator,
-  Card,
+  Title,
   Dialog,
   Text,
-  Caption
+  Caption,
+  Subheading
 } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import ClassAPI from "../../../api/class";
-import CircleAvatar from "src/components/Avatar/Circle";
+import SquareAvatar from "src/components/Avatar/Square";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null, schoolId: "1hZ2DiIYSFa5K26oTe75" };
@@ -53,7 +54,11 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseFieldName: "subject", 
       fieldValue: this.state.class.subject,
       fieldTitle: "Edit Mata Pelajaran",
-      onRefresh: () => {this.loadClassInformation()}
+      onRefresh: (data) => {
+        const newClass = JSON.parse(JSON.stringify(this.state.class));
+        newClass.subject = data;
+        this.setState({class: newClass})
+      }
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -66,7 +71,11 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseFieldName: "room", 
       fieldValue: this.state.class.room,
       fieldTitle: "Edit Ruangan",
-      onRefresh: () => {this.loadClassInformation()}
+      onRefresh: (data) => {
+        const newClass = JSON.parse(JSON.stringify(this.state.class));
+        newClass.room = data;
+        this.setState({class: newClass})
+      }
     }
     console.log(payload);
     this.props.navigation.navigate(`EditSingleField`, payload);
@@ -80,7 +89,11 @@ export default class ClassProfileScreen extends React.PureComponent {
       databaseFieldName: "academicYear", 
       fieldValue: this.state.class.academicYear,
       fieldTitle: "Edit Tahun Ajaran",
-      onRefresh: () => {this.loadClassInformation()}
+      onRefresh: (data) => {
+        const newClass = JSON.parse(JSON.stringify(this.state.class));
+        newClass.academicYear = data;
+        this.setState({class: newClass})
+      }
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -94,7 +107,11 @@ export default class ClassProfileScreen extends React.PureComponent {
       fieldValue: this.state.class.semester,
       fieldTitle: "Edit Mata Pelajaran",
       isNumber:true,
-      onRefresh: () => {this.loadClassInformation()}
+      onRefresh: (data) => {
+        const newClass = JSON.parse(JSON.stringify(this.state.class));
+        newClass.semester = data;
+        this.setState({class: newClass})
+      }
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -108,7 +125,11 @@ export default class ClassProfileScreen extends React.PureComponent {
       fieldValue: this.state.class.information,
       fieldTitle: "Edit Informasi Kelas",
       isMultiline: true,
-      onRefresh: () => {this.loadClassInformation()}
+      onRefresh: (data) => {
+        const newClass = JSON.parse(JSON.stringify(this.state.class));
+        newClass.information = data;
+        this.setState({class: newClass})
+      }
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
@@ -146,14 +167,15 @@ export default class ClassProfileScreen extends React.PureComponent {
       );
     } else
       return (
-        <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <ScrollView>
-          <Card style={{margin: 16}}>
-            <Text style={{ marginLeft: 16, marginTop: 16, fontSize: 20 }}>{this.state.class.subject}</Text>
+          <View style={{padding: 16}}>
+            <Title style={{ marginLeft: 16 }}>{this.state.class.subject}</Title>
+            <Subheading style={{ marginLeft: 16 }}>{this.state.class.room} | {this.state.class.academicYear} | Semester {this.state.class.semester}</Subheading>
             <View style={styles.profileContainer}>
               <Text style={{  fontSize: 16 }}></Text>
-                <CircleAvatar
-                  size={80}
+                <SquareAvatar
+                  size={100}
                   uri="https://picsum.photos/200/200/?random"
                 />            
             </View>
@@ -161,7 +183,7 @@ export default class ClassProfileScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleSubjectPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={{  }}>Mata Pelajaran</Text>
+                    <Text style={styles.label}>Mata Pelajaran</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.class.subject}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -172,7 +194,7 @@ export default class ClassProfileScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleRoomPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text>Ruangan</Text>
+                    <Text style={styles.label}>Ruangan</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.class.room}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -183,7 +205,7 @@ export default class ClassProfileScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleAcademicYearPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text>Tahun Ajaran</Text>
+                    <Text style={styles.label}>Tahun Ajaran</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.class.academicYear}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -194,7 +216,7 @@ export default class ClassProfileScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleSemesterPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text >Semester</Text>
+                    <Text style={styles.label}>Semester</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.class.semester}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -206,14 +228,14 @@ export default class ClassProfileScreen extends React.PureComponent {
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"column",textAlign: "right"}}>
-                      <Text>Informasi Kelas</Text>
+                      <Text style={styles.label}>Informasi Kelas</Text>
                       <Text>{this.state.class.information}</Text>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
             </View>
-          </Card>
+          </View>
         </ScrollView>
       </View>
       );
@@ -243,5 +265,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  label: {
+    fontWeight: "bold"
   }
 })

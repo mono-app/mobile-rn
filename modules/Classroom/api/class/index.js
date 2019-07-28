@@ -1,6 +1,6 @@
 import firebase from "react-native-firebase";
 
-import { ClassesCollection, SchoolsCollection } from "src/api/database/collection";
+import { ClassesCollection, SchoolsCollection, UserMappingCollection } from "src/api/database/collection";
 
 export default class TeacherAPI{
 
@@ -27,6 +27,18 @@ export default class TeacherAPI{
     const schoolsCollection = new SchoolsCollection();
     const schoolRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const classListDoc = schoolRef.collection(classesCollection.getName());
+    return classListDoc.onSnapshot(querySnapshot => {
+      if (!querySnapshot.empty) callback(querySnapshot.docs);
+      else callback([]);
+    });
+  }
+
+  getTeacherClassesWithRealTimeUpdate(teacherEmail, callback) {
+    const db = firebase.firestore();
+    const userMappingCollection = new UserMappingCollection();
+    const classesCollection = new ClassesCollection();
+    const userMappingRef = db.collection(userMappingCollection.getName()).doc(teacherEmail);
+    const classListDoc = userMappingRef.collection(classesCollection.getName());
     return classListDoc.onSnapshot(querySnapshot => {
       if (!querySnapshot.empty) callback(querySnapshot.docs);
       else callback([]);

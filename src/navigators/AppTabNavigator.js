@@ -11,5 +11,4 @@ export default AppTabNavigator =  createStackNavigator({
   News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
 }, {
   initialRouteName: "Home",
-  defaultNavigationOptions: { headerStyle: { elevation: 0 } },
 })

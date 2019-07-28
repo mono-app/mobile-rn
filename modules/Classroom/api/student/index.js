@@ -1,6 +1,6 @@
 import firebase from "react-native-firebase";
 
-import { StudentsCollection, SchoolsCollection } from "src/api/database/collection";
+import { StudentsCollection, SchoolsCollection, UserMappingCollection } from "src/api/database/collection";
 
 export default class StudentAPI{
 
@@ -12,6 +12,14 @@ export default class StudentAPI{
       const schoolRef = db.collection(schoolsCollection.getName()).doc(schoolId);
       const schoolStudentRef = schoolRef.collection(studentsCollection.getName()).doc(studentEmail);
       await schoolStudentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), isActive: false, ...data });
+
+      // insert to userMapping
+      const userMappingCollection = new UserMappingCollection();
+      const userMappingRef = db.collection(userMappingCollection.getName()).doc(studentEmail);
+      const userMappingSchoolRef = userMappingRef.collection(schoolsCollection.getName()).doc(schoolId);
+      await userMappingSchoolRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() });
+
+      
       return Promise.resolve(true);
     }catch(err){ 
       console.log(err);

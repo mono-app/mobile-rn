@@ -81,3 +81,7 @@ export class StudentsCollection extends Collection{
 export class TasksCollection extends Collection{
   constructor(){ super("tasks"); }
 }
+
+export class UserMappingCollection extends Collection{
+  constructor(){ super("userMapping"); }
+}

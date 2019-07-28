@@ -95,6 +95,7 @@ export class UpdateDocument extends Query{
                         .doc(firebaseDocument2.getId())
                         .update(updateObject)
   }
+
 }
 
 export class RemoveDocumentField extends Query{
