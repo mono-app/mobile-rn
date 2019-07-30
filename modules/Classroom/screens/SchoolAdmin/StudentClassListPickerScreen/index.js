@@ -1,19 +1,20 @@
 import React from "react";
-import { View, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Searchbar, Text } from "react-native-paper";
+import { View, FlatList, StyleSheet } from "react-native";
+import { Searchbar } from "react-native-paper";
 import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
+import StudentAPI from "modules/Classroom/api/student";
 
-const INITIAL_STATE = { isLoading: true };
+const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75" };
 
-export default class TeacherClassListScreen extends React.PureComponent {
+export default class StudentClassListPickerScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Daftar Kelas Guru"
+          title="Tambahkan Kelas"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -21,37 +22,34 @@ export default class TeacherClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.classListListener = new ClassAPI().getUserClassesWithRealTimeUpdate(this.teacherEmail , classes => {
-      const people = classes.map(class_ => {
+    this.classListListener = new ClassAPI().getClassesWithRealTimeUpdate(this.state.schoolId, classes => {
+      const class_ = classes.map(class_ => {
         return { id: class_.id, ...class_.data() }
       });
-      this.setState({ peopleList: people });
+      this.setState({ classList: class_ });
     })
   }
 
   handleClassPress = class_ => {
     const classId = class_.id;
-    this.props.navigation.navigate("ClassProfile", { classId });
-  }
-
-  handleAddClassPress = () => {
-    const payload = {
-      isPicker: true,
-      teacherEmail: this.teacherEmail,
-      onRefresh: this.loadClasses
-    }
-    this.props.navigation.navigate("TeacherClassListPicker",  payload);
+    console.log(classId)
+    StudentAPI.addStudentClass(this.studentEmail, this.state.schoolId, classId).then(() => {
+      this.setState({ isLoading: false });
+      const { navigation } = this.props;
+      navigation.state.params.onRefresh();
+      navigation.goBack();
+    }).catch(err => console.log(err));
+  
   }
 
   constructor(props) {
     super(props);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
-
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.handleAddClassPress = this.handleAddClassPress.bind(this);
+    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
   }
+
 
   componentDidMount(){
     this.loadClasses();
@@ -63,14 +61,9 @@ export default class TeacherClassListScreen extends React.PureComponent {
         <View style={{ padding: 16 }}>
           <Searchbar placeholder="Cari Kelas" />
         </View>
-        <View style={{ padding: 16, backgroundColor: "#fff"}}>
-          <TouchableOpacity onPress={this.handleAddClassPress}>
-            <Text style={{color: "green"}}>+ Tambahkan kelas</Text>
-          </TouchableOpacity>
-        </View>
         <FlatList
           style={{ backgroundColor: "white" }}
-          data={this.state.peopleList}
+          data={this.state.classList}
           renderItem={({ item, index }) => {
             return (
               <ClassListItem 

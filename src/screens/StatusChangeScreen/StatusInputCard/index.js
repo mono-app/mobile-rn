@@ -16,6 +16,12 @@ export default class StatusInputCard extends React.Component{
     }).then(() => {
       this.setState({ isLoading: false, status: "" });
       if(this.props.onSaved) this.props.onSaved();
+      const { navigation } = this.props;
+      if(navigation.state.params.onRefresh()){
+        navigation.state.params.onRefresh();
+        navigation.goBack();
+      }
+      
     }).catch(err => console.log(err));
   }
 

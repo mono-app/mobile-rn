@@ -31,7 +31,7 @@ export default class StudentProfileScreen extends React.PureComponent {
     this.setState({ isLoadingProfile: true });
 
     const api = new StudentAPI();
-      const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75", this.studentEmail)];
+      const promises = [ api.getDetail(this.state.schoolId, this.studentEmail)];
 
       Promise.all(promises).then(results => {
         const student = results[0];
@@ -147,6 +147,14 @@ export default class StudentProfileScreen extends React.PureComponent {
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
 
+  handleClassListPress = e => {
+    const payload = {
+      studentEmail: this.studentEmail
+    }
+    this.props.navigation.navigate('StudentClassList', payload);
+  }
+  
+
   constructor(props){
     super(props);
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
@@ -248,6 +256,17 @@ export default class StudentProfileScreen extends React.PureComponent {
                     <Text style={styles.label}>Jenis Kelamin</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.student.gender}</Text>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleClassListPress}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <Text style={styles.label}>Jumlah Kelas</Text>
+                    <View style={{flexDirection:"row", textAlign: "right"}}>
+                      <Text>-</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>

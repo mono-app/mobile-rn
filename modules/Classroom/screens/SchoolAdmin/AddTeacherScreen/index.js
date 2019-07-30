@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "src/components/Button";
 import { View, StyleSheet } from "react-native";
-import { Text, Title, Card } from "react-native-paper";
+import { Text, Title, Card, Snackbar } from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -44,7 +44,7 @@ export default class AddTeacherScreen extends React.PureComponent {
 
   render() {
     return (
-      <KeyboardAwareScrollView style={{backgroundColor: "#E8EEE8"}}>
+      <KeyboardAwareScrollView style={{flex:1,backgroundColor: "#E8EEE8"}}>
           <Card style={styles.container}>
             <Card.Content>
               <Title style={{ marginBottom: 8 }}>Tambah Guru</Title>

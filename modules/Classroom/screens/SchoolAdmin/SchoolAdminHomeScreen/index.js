@@ -47,13 +47,17 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={this.handleAddPress} >
             <View style={styles.button} >
-              <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+              <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+              </View>
             </View>
             <Text>Tambah</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.handleDataMasterPress}>
             <View style={styles.button} >
-              <FontAwesome name="cog" style={{color: "#fff"}} size={24} />
+              <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                <FontAwesome name="cog" style={{color: "#fff"}} size={24} />
+              </View>
             </View>
             <Text>Data Master</Text>
           </TouchableOpacity>
@@ -93,7 +97,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     backgroundColor: "#0EAD69",
-    padding:16,
+    height: 60,
+    width: 60,
     borderColor: "#fff",
     borderRadius: 12
   }

@@ -4,10 +4,12 @@ import { Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "../../../components/Header";
+import CurrentUserAPI from "src/api/people/CurrentUser";
 
 
 const INITIAL_STATE = {
   isLoading: false,
+  teacherEmail: "",
   profilePicture: "https://picsum.photos/200/200/?random"
 };
 
@@ -17,7 +19,7 @@ class TeacherHomeScreen extends React.PureComponent {
   };
 
   handleAddPress = e => {
-    this.props.navigation.navigate("SchoolAdminAdd");
+    this.props.navigation.navigate("AddTask");
   };
 
   handleDataMasterPress = e => {
@@ -25,15 +27,32 @@ class TeacherHomeScreen extends React.PureComponent {
   };
 
   handleTeacherProfilePress = e => {
-    this.props.navigation.navigate("MyProfile");
+    this.props.navigation.navigate("MyProfile",{"teacherEmail": this.state.teacherEmail});
   };
+
+  handleClassListPress = e => {
+    this.props.navigation.navigate("ClassList",{"teacherEmail": this.state.teacherEmail});
+  }
+
+  loadProfileInformation = async () => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
+      this.setState({teacherEmail: currentUserEmail})
+
+    });
+  }
   
-  constructor(props) {
+  constructor(props) {    
     super(props);
     this.state = INITIAL_STATE;
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
     this.handleTeacherProfilePress = this.handleTeacherProfilePress.bind(this);
+    this.handleClassListPress = this.handleClassListPress.bind(this);
+    this.loadProfileInformation = this.loadProfileInformation.bind(this);
+  }
+
+  componentDidMount(){
+    this.loadProfileInformation();
   }
 
   render() {
@@ -53,15 +72,19 @@ class TeacherHomeScreen extends React.PureComponent {
         <View style={{marginBottom: 64}}/>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={this.handleDataMasterPress}>
+          <TouchableOpacity onPress={this.handleClassListPress}>
               <View style={styles.button} >
-                <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                  <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                </View>
               </View>
               <Text>Lihat kelas</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.handleAddPress} >
               <View style={styles.button} >
-                <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+                <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                  <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+                </View>
               </View>
               <Text>Tambah Tugas</Text>
           </TouchableOpacity>
@@ -101,7 +124,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     backgroundColor: "#0EAD69",
-    padding:16,
+    height: 60,
+    width: 60,
     borderColor: "#fff",
     borderRadius: 12
   }
