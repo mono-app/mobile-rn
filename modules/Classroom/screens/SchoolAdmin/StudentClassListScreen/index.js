@@ -7,13 +7,13 @@ import AppHeader from "src/components/AppHeader";
 
 const INITIAL_STATE = { isLoading: true };
 
-export default class TeacherClassListScreen extends React.PureComponent {
+export default class StudentClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Daftar Kelas Guru"
+          title="Daftar Kelas Murid"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -21,7 +21,7 @@ export default class TeacherClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.classListListener = new ClassAPI().getUserClassesWithRealTimeUpdate(this.teacherEmail , classes => {
+    this.classListListener = new ClassAPI().getUserClassesWithRealTimeUpdate(this.studentEmail , classes => {
       const people = classes.map(class_ => {
         return { id: class_.id, ...class_.data() }
       });
@@ -36,16 +36,15 @@ export default class TeacherClassListScreen extends React.PureComponent {
 
   handleAddClassPress = () => {
     const payload = {
-      isPicker: true,
-      teacherEmail: this.teacherEmail,
+      studentEmail: this.studentEmail,
       onRefresh: this.loadClasses
     }
-    this.props.navigation.navigate("TeacherClassListPicker",  payload);
+    this.props.navigation.navigate("StudentClassListPicker",  payload);
   }
 
   constructor(props) {
     super(props);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
 
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);

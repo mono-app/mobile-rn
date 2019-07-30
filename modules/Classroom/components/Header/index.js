@@ -1,11 +1,16 @@
 import React from "react";
 import { Appbar, Menu } from "react-native-paper";
+import { StackActions } from "react-navigation";
+import Navigator from "src/api/navigator";
 
 const INITIAL_STATE = { isMenuVisible: false }
 
 export default class Header extends React.PureComponent{
  
-  handleBackPress = () => this.props.navigation.dismiss();
+  handleBackPress = () => {
+    const navigator = new Navigator(this.props.navigation);
+    navigator.resetTo("Home", StackActions, {key: "AppTab"});
+  }
   
   constructor(props){
     super(props);

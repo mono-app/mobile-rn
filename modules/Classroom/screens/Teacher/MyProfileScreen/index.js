@@ -3,11 +3,14 @@ import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, Card, Dialog, Text, Caption, TextInput } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "../../../api/teacher";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
+import CurrentUserAPI from "src/api/people/CurrentUser";
+import PeopleAPI from "src/api/people";
+import moment from "moment"
 
-const INITIAL_STATE = { isLoadingProfile: true, teacher: null, schoolId: "1hZ2DiIYSFa5K26oTe75" }
+const INITIAL_STATE = { isLoadingProfile: true, teacher: null, status:"", teacherEmail:"" ,schoolId: "1hZ2DiIYSFa5K26oTe75" }
 
 /**
  * Parameter list
@@ -27,115 +30,55 @@ export default class MyProfileScreen extends React.PureComponent {
     };
   };
   
-
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
     const api = new TeacherAPI();
-      const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75", this.teacherEmail)];
+    const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75", this.teacherEmail)];
+    console.log("sadf")
 
-      Promise.all(promises).then(results => {
-        const teacher = results[0];
-        this.setState({ isLoadingProfile: false, teacher });
-      })
+    Promise.all(promises).then(results => {
+      const teacher = results[0];
+      if(teacher.gender){
+        teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
+      }
+      this.setState({ isLoadingProfile: false, teacher });
+      console.log(this.state.teacher)
+    })
   }
 
-  handleNamePress = e => {
-    const payload = {
-      schoolId: this.state.schoolId,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "name", 
-      fieldValue: this.state.teacher.name,
-      fieldTitle: "Edit Nama Guru",
-      onRefresh: () => {this.loadPeopleInformation()} 
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
+  
+  loadStatus = () => {
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
+      return new PeopleAPI().getLatestStatus(currentUserEmail);
+    }).then(status => {
+      if(!status) status = { content: "Tulis statusmu disini..." };
+      this.setState({ status: status.content });
+    })
   }
 
-  handleAddressPress = e => {
+  handleTaskListPress = () => this.props.navigation.navigate("TaskList",{"teacherEmail": this.state.teacher.id })
+  
+  handleStatusPress = () => {
     const payload = {
-      schoolId: this.state.schoolId,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "address", 
-      fieldValue: this.state.teacher.address,
-      fieldTitle: "Edit Alamat",
-      onRefresh: () => {this.loadPeopleInformation()} 
+      onRefresh: this.loadStatus
     }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
-
-  handlePhonePress = e => {
-    const payload = {
-      schoolId: this.state.schoolId,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "phone", 
-      fieldValue: this.state.teacher.phone,
-      fieldTitle: "Edit Telepon",
-      isNumber: true,
-      onRefresh: () => {this.loadPeopleInformation()} 
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
-
-  handleEmailPress = e => {
-    const payload = {
-      schoolId: this.state.schoolId,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "email", 
-      fieldValue: this.state.teacher.email,
-      fieldTitle: "Edit Email",
-      onRefresh: () => {this.loadPeopleInformation()} 
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
-
-  handleNIKPress = e => {
-    const payload = {
-      schoolId: this.state.schoolId,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "nik", 
-      fieldValue: this.state.teacher.nik,
-      fieldTitle: "Edit NIK",
-      isNumber: true,
-      onRefresh: () => {this.loadPeopleInformation()} 
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
-
-  handleGenderPress = e => {
-    const payload = {
-      schoolId: this.state.schoolId,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "gender", 
-      fieldValue: this.state.teacher.gender,
-      fieldTitle: "Edit Jenis Kelamin",
-      isGender: true,
-      onRefresh: () => {this.loadPeopleInformation()} 
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
+    this.props.navigation.navigate("StatusChange",payload)
   }
 
   constructor(props){
     super(props);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", null);
     this.state = INITIAL_STATE;
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
-    this.handleNamePress = this.handleNamePress.bind(this);
-    this.handleAddressPress = this.handleAddressPress.bind(this);
-    this.handlePhonePress = this.handlePhonePress.bind(this);
-    this.handleEmailPress = this.handleEmailPress.bind(this);
-    this.handleNIKPress = this.handleNIKPress.bind(this);
-    this.handleGenderPress = this.handleGenderPress.bind(this);
+    this.loadStatus = this.loadStatus.bind(this);
+    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    console.log(this.teacherEmail);
+
   }
 
   componentDidMount(){ 
-    this.loadPeopleInformation(); 
+    this.loadPeopleInformation();
+    this.loadStatus();
   }
 
   render(){
@@ -156,45 +99,49 @@ export default class MyProfileScreen extends React.PureComponent {
         <ScrollView>
           <PeopleProfileHeader
             profilePicture="https://picsum.photos/200/200/?random"
-            nickName="Henry Sanders"
-            status="NIK 3542354345234513235"/>
+            nickName={this.state.teacher.name}
+            status= {"NIK" + this.state.teacher.nik}/>
 
-          <View style={styles.statusContainer}>
-            <Text style={styles.label}>Status saya</Text>
-            <View style={{flexDirection:"row"}}>
-              <Text>Statuss</Text>
+          <TouchableOpacity onPress={this.handleStatusPress}>
+            <View style={styles.statusContainer}>
+              <Text style={styles.label}>Status saya</Text>
+              <View style={{flexDirection:"row"}}>
+                <Text>{this.state.status}</Text>
+              </View>
             </View>
-            
-          </View>
-          <View style={{  marginBottom: 16 }}>
+          </TouchableOpacity>
+
+          <View style={{  marginBottom: 16 }}>  
            <PeopleInformationContainer
               fieldName="Bergabung Sejak"
-              fieldValue="17 Juli 2001"/>
+              fieldValue={moment(this.state.teacher.creationTime.seconds * 1000).format("DD MMMM YYYY")}/>
           </View>
           
           <View style={{  marginBottom: 16 }}>
             
             <PeopleInformationContainer
               fieldName="Alamat"
-              fieldValue="-"/>
+              fieldValue={this.state.teacher.address}/>
             <PeopleInformationContainer
               fieldName="Nomor Telepon"
-              fieldValue="-"/>
+              fieldValue={this.state.teacher.phone}/>
             <PeopleInformationContainer
               fieldName="Email"
-              fieldValue="-"/>
+              fieldValue={this.state.teacher.id}/>
             <PeopleInformationContainer
               fieldName="Jenis Kelamin"
-              fieldValue="-"/>
+              fieldValue={this.state.teacher.gender}/>
           
           </View>
           <View style={{  marginBottom: 16 }}>
             <PeopleInformationContainer
               fieldName="Jumlah Kelas"
               fieldValue="-"/>
-            <PeopleInformationContainer
-              fieldName="Arsip Tugas"
-              fieldValue="-"/>
+            <TouchableOpacity onPress={this.handleTaskListPress}>
+              <PeopleInformationContainer
+                fieldName="Arsip Tugas"
+                fieldValue="-"/>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>

@@ -33,11 +33,11 @@ export default class TeacherAPI{
     });
   }
 
-  getTeacherClassesWithRealTimeUpdate(teacherEmail, callback) {
+  getUserClassesWithRealTimeUpdate(email, callback) {
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection();
     const classesCollection = new ClassesCollection();
-    const userMappingRef = db.collection(userMappingCollection.getName()).doc(teacherEmail);
+    const userMappingRef = db.collection(userMappingCollection.getName()).doc(email);
     const classListDoc = userMappingRef.collection(classesCollection.getName());
     return classListDoc.onSnapshot(querySnapshot => {
       if (!querySnapshot.empty) callback(querySnapshot.docs);

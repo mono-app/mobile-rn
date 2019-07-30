@@ -77,7 +77,7 @@ export default class EditSingleFieldScreen extends React.PureComponent{
         <Title style={{ marginBottom: 8 }}>{this.title}</Title>
         {(this.isGender)?
           (
-            <Card>
+            <Card style={{paddingTop: 8}}>
               <Drawer.Section>
               <Drawer.Item
                 label="Pria"
