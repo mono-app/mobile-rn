@@ -21,13 +21,9 @@ export default class TeacherClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.classListListener = new ClassAPI().getUserClassesWithRealTimeUpdate(this.teacherEmail , classes => {
-      const people = classes.map(class_ => {
-        return { id: class_.id, ...class_.data() }
-      });
-      this.setState({ peopleList: people });
-    })
-  }
+    const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
+    this.setState({ classList });
+   }
 
   handleClassPress = class_ => {
     const classId = class_.id;
@@ -46,6 +42,7 @@ export default class TeacherClassListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
 
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
@@ -70,7 +67,7 @@ export default class TeacherClassListScreen extends React.PureComponent {
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
-          data={this.state.peopleList}
+          data={this.state.classList}
           renderItem={({ item, index }) => {
             return (
               <ClassListItem 

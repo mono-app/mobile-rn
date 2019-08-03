@@ -3,11 +3,9 @@ import { View,StyleSheet } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import {
   ActivityIndicator,
-  Title,
   Dialog,
   Text,
   Caption,
-  Subheading
 } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import ClassAPI from "modules/Classroom/api/class";
@@ -35,6 +33,8 @@ export default class ClassProfileScreen extends React.PureComponent {
     };
   };
 
+
+  
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
@@ -51,13 +51,47 @@ export default class ClassProfileScreen extends React.PureComponent {
     this.props.navigation.navigate("StudentList", {classId: this.classId})
   }
 
+  handleTaskListScreen = () => {
+    payload = {
+      classId: this.classId,
+      subject: this.state.class.subject,
+      subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
+    }
+
+    this.props.navigation.navigate("TaskList", payload)
+  }
+
+  handleClassFilesScreenPress = () => {
+
+    payload = {
+      schoolId: this.state.schoolId,
+      classId: this.classId,
+      subject: this.state.class.subject,
+      subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
+    }
+    this.props.navigation.navigate("ClassFiles", payload)
+  }
+
+  handleAddTask = () => {
+    payload = {
+      classId: this.classId,
+      subject: this.state.class.subject,
+      subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
+    }
+
+    this.props.navigation.navigate("AddTask",payload);
+  }
+
+
   constructor(props) {
     super(props);
     this.classId = this.props.navigation.getParam("classId", null);
     this.state = INITIAL_STATE;
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
-  
+    this.handleAddTask = this.handleAddTask.bind(this);
+    this.handleClassFilesScreenPress = this.handleClassFilesScreenPress.bind(this);
+    
   }
 
   componentDidMount() {
@@ -118,7 +152,7 @@ export default class ClassProfileScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={this.handleClassFilesScreenPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <Text style={styles.label}>Berkas</Text>
@@ -128,7 +162,7 @@ export default class ClassProfileScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={this.handleAddTask}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <Text style={styles.label}>Tambah Tugas</Text>
@@ -138,10 +172,10 @@ export default class ClassProfileScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={this.handleTaskListScreen}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Pengumpulan Tugas</Text>
+                  <Text style={styles.label}>Daftar Tugas</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>

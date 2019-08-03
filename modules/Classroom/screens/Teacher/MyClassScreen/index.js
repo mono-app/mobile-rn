@@ -4,17 +4,16 @@ import { Searchbar } from "react-native-paper";
 import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
-import TeacherAPI from "modules/Classroom/api/teacher";
 
-const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75" };
+const INITIAL_STATE = { classList: [], isLoading: true };
 
-export default class ClassListScreen extends React.PureComponent {
+export default class MyClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Data Master Kelas"
+          title="Kelas Saya"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -22,25 +21,13 @@ export default class ClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    const classList = ClassAPI.getClasses(this.state.schoolId);
-
+    const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
     this.setState({ classList });
-
-  }
+   }
 
   handleClassPress = class_ => {
-    const classId = class_.id;
-    if(!this.isPicker){
-      this.props.navigation.navigate("ClassProfile", { classId });
-    } else {
-      
-      TeacherAPI.addTeacherClass(this.teacherEmail,"1hZ2DiIYSFa5K26oTe75",classId).then(() => {
-        this.setState({ isLoading: false });
-        const { navigation } = this.props;
-        navigation.state.params.onRefresh();
-        navigation.goBack();
-      }).catch(err => console.log(err));
-    }
+     const classId = class_.id;
+     this.props.navigation.navigate("ClassProfile", { classId });
   }
 
   constructor(props) {
@@ -48,8 +35,8 @@ export default class ClassListScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.isPicker = this.props.navigation.getParam("isPicker", false);
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
   }
 
 
@@ -64,7 +51,7 @@ export default class ClassListScreen extends React.PureComponent {
           <Searchbar placeholder="Cari Kelas" />
         </View>
         <FlatList
-          style={{ backgroundColor: "white" }}
+          style={{ flex:1, backgroundColor: "white" }}
           data={this.state.classList}
           renderItem={({ item, index }) => {
             return (

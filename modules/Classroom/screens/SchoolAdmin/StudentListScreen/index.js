@@ -21,12 +21,8 @@ export default class StudentListScreen extends React.PureComponent {
   };
 
   loadStudents = async () => {
-    this.studentListListener = new StudentAPI().getStudentsWithRealTimeUpdate("1hZ2DiIYSFa5K26oTe75", students => {
-      const people = students.map(student => {
-        return { id: student.id, ...student.data() }
-      });
-      this.setState({ peopleList: people });
-    })
+    const peopleList = await StudentAPI.getStudents("1hZ2DiIYSFa5K26oTe75");
+    this.setState({ peopleList });
   }
 
   handleStudentPress = people => {

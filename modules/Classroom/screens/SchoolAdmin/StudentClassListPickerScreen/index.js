@@ -22,12 +22,10 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.classListListener = new ClassAPI().getClassesWithRealTimeUpdate(this.state.schoolId, classes => {
-      const class_ = classes.map(class_ => {
-        return { id: class_.id, ...class_.data() }
-      });
-      this.setState({ classList: class_ });
-    })
+    const classList = await ClassAPI.getClasses(this.state.schoolId);
+
+    this.setState({ classList });
+
   }
 
   handleClassPress = class_ => {

@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, Card, Dialog, Text, Caption, TextInput } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import TeacherAPI from "../../../api/teacher";
+import TeacherAPI from "modules/Classroom/api/teacher";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
@@ -57,7 +57,7 @@ export default class MyProfileScreen extends React.PureComponent {
     })
   }
 
-  handleTaskListPress = () => this.props.navigation.navigate("TaskList",{"teacherEmail": this.state.teacher.id })
+  handleTaskListPress = () => this.props.navigation.navigate("ArchiveList",{"teacherEmail": this.state.teacher.id })
   
   handleStatusPress = () => {
     const payload = {

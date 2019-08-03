@@ -1,67 +1,81 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, Title, Dialog, Text, Caption } from "react-native-paper";
+import { ActivityIndicator, Card, Dialog, Text, Caption, TextInput } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import StudentAPI from "../../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import moment from "moment"
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
+import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
-import Button from "src/components/Button";
+import moment from "moment"
 
-const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "" , schoolId: "1hZ2DiIYSFa5K26oTe75"  }
+const INITIAL_STATE = { isLoadingProfile: true, student: {}, status:"", studentEmail:"" ,schoolId: "1hZ2DiIYSFa5K26oTe75" }
 
 /**
  * Parameter list
  * 
  * @param {string} studentEmail
  */
-export default class StudentProfileScreen extends React.PureComponent {
+export default class MyProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Profil Murid"
+          title="Profil Saya"
           style={{ backgroundColor: "transparent" }}
         />
       )
     };
   };
-
+  
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
     const api = new StudentAPI();
-      const promises = [ api.getDetail(this.state.schoolId, this.studentEmail)];
+    const promises = [ api.getDetail(this.state.schoolId, this.studentEmail)];
 
-      Promise.all(promises).then(results => {
-        const student = results[0];
-        if(student.gender){
-          student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
-        }
-        this.setState({ isLoadingProfile: false, student });
-      })
+    Promise.all(promises).then(results => {
+      const student = results[0];
+      if(student.gender){
+        student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
+      }
+      this.setState({ isLoadingProfile: false, student });
+    })
   }
 
+  
   loadStatus = () => {
-    new PeopleAPI().getLatestStatus(this.studentEmail).then(status => {
-      if(!status) status = { content: "-" };
+    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
+      return new PeopleAPI().getLatestStatus(currentUserEmail);
+    }).then(status => {
+      if(!status) status = { content: "Tulis statusmu disini..." };
       this.setState({ status: status.content });
     })
   }
 
+  handleTaskListPress = () => this.props.navigation.navigate("ArchiveList",{"studentEmail": this.state.student.id })
+  
+  handleStatusPress = () => {
+    const payload = {
+      onRefresh: this.loadStatus
+    }
+    this.props.navigation.navigate("StatusChange",payload)
+  }
+
   constructor(props){
     super(props);
-    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.state = INITIAL_STATE;
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
-    
+    this.loadStatus = this.loadStatus.bind(this);
+    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
+    console.log(this.studentEmail);
+
   }
 
   componentDidMount(){ 
-    this.loadPeopleInformation(); 
+    this.loadPeopleInformation();
     this.loadStatus();
   }
 
@@ -79,27 +93,30 @@ export default class StudentProfileScreen extends React.PureComponent {
         </Dialog>
       )
     }else return (
-      <View style={{ backgroundColor: "#E8EEE8"}}>
+      <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
-          <View style={{marginTop: 16}}/>
           <PeopleProfileHeader
             profilePicture="https://picsum.photos/200/200/?random"
             nickName={this.state.student.name}
-            status= {"NIM " + ((!this.state.student)?this.state.student.noInduk:"-")}/>
+            status= {"NIK " + this.state.student.noInduk}/>
 
-
-          <View style={{ marginTop:16, paddingHorizontal: 16, paddingVertical:8, backgroundColor: "#fff" }}>
-            <Text style={{fontWeight: "bold"}}>Status</Text>
-            <View style={{flexDirection:"row"}}>
-            <Text>{this.state.status}</Text>
+          <TouchableOpacity onPress={this.handleStatusPress}>
+            <View style={styles.statusContainer}>
+              <Text style={styles.label}>Status saya</Text>
+              <View style={{flexDirection:"row"}}>
+                <Text>{this.state.status}</Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
 
-          
-          <View style={{  marginVertical: 16 }}>
-             <PeopleInformationContainer
+          <View style={{  marginBottom: 16 }}>  
+           <PeopleInformationContainer
               fieldName="Bergabung Sejak"
               fieldValue={moment(this.state.student.creationTime.seconds * 1000).format("DD MMMM YYYY")}/>
+          </View>
+          
+          <View style={{  marginBottom: 16 }}>
+            
             <PeopleInformationContainer
               fieldName="Alamat"
               fieldValue={this.state.student.address}/>
@@ -114,12 +131,16 @@ export default class StudentProfileScreen extends React.PureComponent {
               fieldValue={this.state.student.gender}/>
           
           </View>
-          <View>
+          <View style={{  marginBottom: 16 }}>
             <PeopleInformationContainer
               fieldName="Jumlah Kelas"
               fieldValue="-"/>
+            <TouchableOpacity onPress={this.handleTaskListPress}>
+              <PeopleInformationContainer
+                fieldName="Riwayat Kelas"
+                fieldValue="-"/>
+            </TouchableOpacity>
           </View>
-          <Button text="Mulai Percakapan" style={{margin: 16}}></Button>
         </ScrollView>
       </View>
     )
@@ -130,9 +151,8 @@ const styles = StyleSheet.create({
   profileContainer: {
     backgroundColor: "white",
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
+    flexDirection: 'row',
+    padding: 16,
     paddingBottom: 32,
     borderBottomWidth: 1,
     borderBottomColor: "#E8EEE8"
@@ -142,14 +162,26 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8",
     backgroundColor: "white",
     flexDirection: "row",
-    padding: 16,
+    padding: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
     alignItems: "center"
+  },
+  statusContainer: {
+    marginVertical: 16,
+    backgroundColor: "white",
+    padding: 16,
   },
   listDescriptionContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  textInputContainer: {
+    flex: 1,
+    height: 30,
+    justifyContent:"center"
   },
   label: {
     fontWeight: "bold"

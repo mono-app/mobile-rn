@@ -9,50 +9,31 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 
 const INITIAL_STATE = {
   isLoading: false,
-  teacherEmail: "",
+  studentEmail: "",
   profilePicture: "https://picsum.photos/200/200/?random",
   schoolId: "1hZ2DiIYSFa5K26oTe75" 
 };
 
-class TeacherHomeScreen extends React.PureComponent {
+class StudentHomeScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
-    return { header: <Header navigation={navigation} title="Guru" /> };
+    return { header: <Header navigation={navigation} title="Murid" /> };
   };
 
-  handleAddPress = e => {
-    this.props.navigation.navigate("AddTask");
-  };
-
-  handleDataMasterPress = e => {
-    this.props.navigation.navigate("SchoolAdminDataMaster");
-  };
-
-  handleTeacherProfilePress = e => {
-    this.props.navigation.navigate("MyProfile",{"teacherEmail": this.state.teacherEmail});
-  };
-
-  handleClassListPress = e => {
-    payload = {
-      schoolId: this.state.schoolId,
-      teacherEmail: this.state.teacherEmail
-    }
-    this.props.navigation.navigate("MyClass", payload);
-  }
 
   loadProfileInformation = async () => {
     CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
-      this.setState({teacherEmail: currentUserEmail})
-
+      this.setState({studentEmail: currentUserEmail})
     });
+  }
+
+  handleStudentProfilePress = () => {
+    this.props.navigation.navigate("MyProfile",{"studentEmail": this.state.studentEmail});
   }
   
   constructor(props) {    
     super(props);
     this.state = INITIAL_STATE;
-    this.handleAddPress = this.handleAddPress.bind(this);
-    this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
-    this.handleTeacherProfilePress = this.handleTeacherProfilePress.bind(this);
-    this.handleClassListPress = this.handleClassListPress.bind(this);
+    
     this.loadProfileInformation = this.loadProfileInformation.bind(this);
   }
 
@@ -65,13 +46,13 @@ class TeacherHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={this.state.profilePicture}/>
-          <TouchableOpacity onPress={this.handleTeacherProfilePress} style={{marginTop:16}}>
+          <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
             <Text style={{ color: this.props.theme.colors.primary }}>Lihat Profile</Text>
           </TouchableOpacity>
           <Title style={{marginTop: 22}}>
             Selamat Datang,
           </Title>
-          <Subheading>Henry Sanders</Subheading>
+          <Subheading>Michelle Brown</Subheading>
         </View>
 
         <View style={{marginBottom: 64}}/>
@@ -83,15 +64,15 @@ class TeacherHomeScreen extends React.PureComponent {
                   <FontAwesome name="list" style={{color: "#fff"}} size={24} />
                 </View>
               </View>
-              <Text>Lihat kelas</Text>
+              <Text>Kelas Saya</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.handleAddPress} >
               <View style={styles.button} >
                 <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                  <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+                  <FontAwesome name="comment" style={{color: "#fff"}} size={24} />
                 </View>
               </View>
-              <Text>Tambah Tugas</Text>
+              <Text>Forum Diskusi</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -136,4 +117,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTheme(TeacherHomeScreen)
+export default withTheme(StudentHomeScreen)

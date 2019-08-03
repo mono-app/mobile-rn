@@ -149,6 +149,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleClassListPress = e => {
     const payload = {
+      schoolId: this.state.schoolId,
       studentEmail: this.studentEmail
     }
     this.props.navigation.navigate('StudentClassList', payload);

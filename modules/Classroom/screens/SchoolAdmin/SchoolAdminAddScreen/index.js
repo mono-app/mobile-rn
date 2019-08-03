@@ -50,16 +50,11 @@ export default class SchoolAdminAddScreen extends React.PureComponent {
     };
   };
 
-  showSnackbar() {
-    this.setState({
-      showSnackbar: true
-    })
-  }
+ 
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.showSnackbar = this.showSnackbar.bind(this)
 
   }
 
@@ -67,12 +62,7 @@ export default class SchoolAdminAddScreen extends React.PureComponent {
     return (
       <View style={{flex:1}}>
         <CustomTopNavigator showSnackbar={this.showSnackbar}/>
-        <Snackbar
-            visible= {this.state.showSnackbar}
-            duration={Snackbar.DURATION_SHORT}
-            onDismiss={() => this.setState({showSnackbar: false})}>
-             foto terpilih
-          </Snackbar>
+        
       </View>
     );
   }

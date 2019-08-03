@@ -22,12 +22,10 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.classListListener = new ClassAPI().getClassesWithRealTimeUpdate(this.state.schoolId, classes => {
-      const people = classes.map(class_ => {
-        return { id: class_.id, ...class_.data() }
-      });
-      this.setState({ peopleList: people });
-    })
+    const classList = await ClassAPI.getClasses(this.state.schoolId);
+
+    this.setState({ classList });
+
   }
 
   handleClassPress = class_ => {
@@ -63,7 +61,7 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
-          data={this.state.peopleList}
+          data={this.state.classList}
           renderItem={({ item, index }) => {
             return (
               <ClassListItem 

@@ -149,7 +149,8 @@ export default class TeacherProfileScreen extends React.PureComponent {
 
   handleClassListPress = e => {
     const payload = {
-      teacherEmail: this.teacherEmail
+      teacherEmail: this.teacherEmail,
+      schoolId: this.state.schoolId
     }
     this.props.navigation.navigate('TeacherClassList', payload);
   }

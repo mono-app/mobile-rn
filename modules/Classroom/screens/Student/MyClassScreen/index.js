@@ -7,7 +7,7 @@ import AppHeader from "src/components/AppHeader";
 
 const INITIAL_STATE = { classList: [], isLoading: true };
 
-export default class ClassListScreen extends React.PureComponent {
+export default class MyClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -21,13 +21,9 @@ export default class ClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.classListListener = new ClassAPI().getUserClassesWithRealTimeUpdate(this.teacherEmail, classes => {
-      const class_ = classes.map(class_ => {
-        return { id: class_.id, ...class_.data() }
-      });
-      this.setState({ classList: class_ });
-    })
-  }
+    const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
+    this.setState({ classList });
+   }
 
   handleClassPress = class_ => {
      const classId = class_.id;
@@ -40,6 +36,7 @@ export default class ClassListScreen extends React.PureComponent {
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
   }
 
 
@@ -54,7 +51,7 @@ export default class ClassListScreen extends React.PureComponent {
           <Searchbar placeholder="Cari Kelas" />
         </View>
         <FlatList
-          style={{ backgroundColor: "white" }}
+          style={{ flex:1, backgroundColor: "white" }}
           data={this.state.classList}
           renderItem={({ item, index }) => {
             return (
