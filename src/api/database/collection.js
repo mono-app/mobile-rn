@@ -85,3 +85,15 @@ export class TasksCollection extends Collection{
 export class UserMappingCollection extends Collection{
   constructor(){ super("userMapping"); }
 }
+
+export class SubmissionsCollection extends Collection{
+  constructor(){ super("submissions"); }
+}
+
+export class FilesCollection extends Collection{
+  constructor(){ super("files"); }
+}
+
+export class DiscussionsCollection extends Collection{
+  constructor(){ super("discussions"); }
+}

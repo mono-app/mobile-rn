@@ -96,6 +96,17 @@ export class UpdateDocument extends Query{
                         .update(updateObject)
   }
 
+  executeQuery(collection1, collection2, collection3, firebaseDocument1, firebaseDocument2, firebaseDocument3, updateObject){
+    return this.database.getDatabase()
+                        .collection(collection1.getName())
+                        .doc(firebaseDocument1.getId())
+                        .collection(collection2.getName())
+                        .doc(firebaseDocument2.getId())
+                        .collection(collection3.getName())
+                        .doc(firebaseDocument3.getId())
+                        .update(updateObject)
+  }
+
 }
 
 export class RemoveDocumentField extends Query{
