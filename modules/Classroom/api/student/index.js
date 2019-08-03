@@ -10,8 +10,8 @@ export default class StudentAPI{
       const db = firebase.firestore();
       const studentsCollection = new StudentsCollection();
       const schoolsCollection = new SchoolsCollection();
-      const schoolRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-      const schoolStudentRef = schoolRef.collection(studentsCollection.getName()).doc(studentEmail);
+      const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+      const schoolStudentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(studentEmail);
       await schoolStudentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), isActive: false, ...data });
 
       // insert to userMapping
@@ -51,6 +51,8 @@ export default class StudentAPI{
 
       await db.collection(userMappingCollection.getName())
               .doc(studentDocument.getId())
+              .collection(schoolsCollection.getName())
+              .doc(schoolDocument.getId())
               .collection(classesCollection.getName())
               .doc(classDocument.getId())
               .set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() })
@@ -63,42 +65,46 @@ export default class StudentAPI{
   }
 
   
-  getStudentsWithRealTimeUpdate(schoolId, callback) {
+  static async getStudents(schoolId) {
     const db = firebase.firestore();
     const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();
-    const schoolRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const studentListDoc = schoolRef.collection(studentsCollection.getName());
-    return studentListDoc.onSnapshot(querySnapshot => {
-      if (!querySnapshot.empty) callback(querySnapshot.docs);
-      else callback([]);
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const studentsCollectionRef = schoolsDocumentRef.collection(studentsCollection.getName());
+    const studentSnapshot = await studentsCollectionRef.get();
+    const studentDocuments = (await studentSnapshot.docs).map((snap) => {
+      return {id: snap.id, ...snap.data()}
     });
+
+    return Promise.resolve(studentDocuments);
+  
   }
 
-  getClassStudentWithRealTimeUpdate(schoolId, classId, callback){
+  static async getClassStudent(schoolId, classId){
     const db = firebase.firestore();
     const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
-    const schoolRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const classRef = schoolRef.collection(classesCollection.getName()).doc(classId);
-    const studentListDoc = classRef.collection(studentsCollection.getName());
-
-    return studentListDoc.onSnapshot(querySnapshot => {
-      if (!querySnapshot.empty) callback(querySnapshot.docs);
-      else callback([]);
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const studentsCollectionRef = classesDocumentRef.collection(studentsCollection.getName());
+    const studentSnapshot = await studentsCollectionRef.get();
+    const studentDocuments = (await studentSnapshot.docs).map((snap) => {
+      return {id:snap.id, ...snap.data()}
     });
+
+    return Promise.resolve(studentDocuments);
   }
 
   async getDetail(schoolId, email, source = "default") {
     const db = new firebase.firestore();
     const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();
-    const schoolRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const studentRef = schoolRef.collection(studentsCollection.getName()).doc(email);
-    const documentSnapshot = await studentRef.get({ source });
-    const userData = { id: documentSnapshot.id, ...documentSnapshot.data() };
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(email);
+    const documentSnapshot = await studentsDocumentRef.get({ source });
+    const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
 
-    return Promise.resolve(userData);
+    return Promise.resolve(data);
   }
 }
