@@ -40,7 +40,7 @@ export default class ClassListItem extends React.Component{
   render(){
     if(this.state.isFetching){
       return (
-        <ContentLoader style={styles.userContainer}>
+        <ContentLoader height={50}>
           <Rect x={86} y={16} rx="4" ry="4" width={150} height={12}/>
         </ContentLoader>
       )

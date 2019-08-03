@@ -30,8 +30,8 @@ export default class StudentListItem extends React.Component{
 
       Promise.all(promises).then(results => {
         const people = results[0];
-        const { name } = people  
-        this.setState({ isFetching: false, name });
+        const { name, noInduk } = people  
+        this.setState({ isFetching: false, name, noInduk });
       })
     }
   }
@@ -45,15 +45,16 @@ export default class StudentListItem extends React.Component{
       )
     }
 
-    let { name } = this.props;
+    let { name, noInduk } = this.props;
     if(this.props.autoFetch){
       name = this.state.name;
+      noInduk = this.state.noInduk;
     }
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>
         <View>
-          <Text style={{ fontWeight: "700" }}>{name}</Text>
+        <Text style={{ fontWeight: "700" }}>{(noInduk)?noInduk:"-"} / {name}</Text>
         </View>
       </TouchableOpacity>
     )
