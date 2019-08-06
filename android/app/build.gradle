@@ -135,6 +135,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-background-downloader')
+    implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-spinkit')
     implementation project(':react-native-fast-image')
     implementation project(':react-native-fs')
