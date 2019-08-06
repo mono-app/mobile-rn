@@ -23,6 +23,7 @@ export default class MyClassScreen extends React.PureComponent {
   loadClasses = async () => {
     const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
     this.setState({ classList });
+    console.log(classList)
    }
 
   handleClassPress = class_ => {
@@ -57,7 +58,7 @@ export default class MyClassScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} autoFetch={true} classId={item.id}/>
+                key={index} class_={item}/>
             )
           }}
         />

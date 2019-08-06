@@ -30,16 +30,12 @@ export default class StudentProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const api = new StudentAPI();
-      const promises = [ api.getDetail(this.state.schoolId, this.studentEmail)];
+    const student = StudentAPI.getDetail(this.state.schoolId, this.studentEmail);
+    if(student.gender){
+      student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
+    }
+    this.setState({ isLoadingProfile: false, student });
 
-      Promise.all(promises).then(results => {
-        const student = results[0];
-        if(student.gender){
-          student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
-        }
-        this.setState({ isLoadingProfile: false, student });
-      })
   }
 
   handleNamePress = e => {

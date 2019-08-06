@@ -12,10 +12,9 @@ const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
 
 /**
  * @param {string} title 
- * @param {boolean} autoFetch - by default is `false`
- * @param {string} classId - required when `autoFetch` is `true`
+ * @param {string} classId
  */
-export default class FileListItem extends React.Component{
+export default class FileListItem extends React.PureComponent{
   constructor(props){
     super(props);
 
@@ -23,20 +22,14 @@ export default class FileListItem extends React.Component{
   }
 
   componentDidMount(){
-    const { schoolId, classId, fileId, autoFetch } = this.props;
+    this.setState({ isFetching: true });
 
-    if(autoFetch && classId){
-      this.setState({ isFetching: true });
-      const api = new FileAPI();
-      const promises = [ api.getDetail(schoolId, classId, fileId)];
+    const { file } = this.props;
+    const { title, creationTime } = file  
 
-      Promise.all(promises).then(results => {
-        const file = results[0];
-        const { title, creationTime } = file  
-        this.setState({ isFetching: false, title, creationTime });
-      })
-    }
+    this.setState({ isFetching: false, title, creationTime });
   }
+
 
   render(){
     if(this.state.isFetching){
@@ -48,18 +41,17 @@ export default class FileListItem extends React.Component{
     }
 
     let { title, creationTime } = this.props;
-    if(this.props.autoFetch){
-      title = this.state.title;
-      creationTime = this.state.creationTime;
-    }
+    title = this.state.title;
+    creationTime = this.state.creationTime;
+    
 
     return(
         <Card style={styles.container}> 
           <View  style={styles.subContainer}> 
-            <TouchableOpacity onPress={this.props.onPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <View>
+                  <TouchableOpacity onPress={this.props.onDownloadPress}>
+                  <View style={{display:"flex", maxWidth: "80%"}}>
                    <Text style={{ fontWeight: "700" }}>{title}</Text>
                    {
                     (creationTime)? 
@@ -68,12 +60,14 @@ export default class FileListItem extends React.Component{
                     <Text/>
                     } 
                   </View>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                  </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={this.props.onDeletePress}>
+                    <View style={{flexDirection:"row",alignSelf: "flex-end"}}>
+                      <EvilIcons name="trash" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </TouchableOpacity>
           </View>
         </Card>
     )
@@ -97,7 +91,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    flexWrap:"wrap"
   },
   label: {
     fontWeight: "bold"

@@ -10,8 +10,7 @@ const INITIAL_STATE = { name: "",nik: "-", isFetching: false }
 
 /**
  * @param {string} name 
- * @param {boolean} autoFetch - by default is `false`
- * @param {string} email - required when `autoFetch` is `true`
+ * @param {string} email 
  */
 export default class TeacherListItem extends React.Component{
   constructor(props){
@@ -21,19 +20,10 @@ export default class TeacherListItem extends React.Component{
   }
 
   componentDidMount(){
-    const { email, autoFetch } = this.props;
-
-    if(autoFetch && email){
-      this.setState({ isFetching: true });
-      const api = new TeacherAPI();
-      const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75",email)];
-
-      Promise.all(promises).then(results => {
-        const people = results[0];
-        const { name, nik } = people  
-        this.setState({ isFetching: false, name, nik });
-      })
-    }
+    this.setState({ isFetching: true });
+    const { teacher } = this.props;
+    const { name, nik } = teacher  
+    this.setState({ isFetching: false, name, nik });
   }
 
   render(){
@@ -46,10 +36,9 @@ export default class TeacherListItem extends React.Component{
     }
 
     let { name,nik } = this.props;
-    if(this.props.autoFetch){
-      name = this.state.name;
-      nik = this.state.nik;
-    }
+    name = this.state.name;
+    nik = this.state.nik;
+    
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>

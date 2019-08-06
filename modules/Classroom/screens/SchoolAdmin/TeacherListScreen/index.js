@@ -58,7 +58,7 @@ export default class TeacherListScreen extends React.PureComponent {
             return (
               <TeacherListItem 
                 onPress={() => this.handleTeacherPress(item)}
-                key={index} autoFetch={true} email={item.id}/>
+                key={index} teacher={item}/>
             )
           }}
         />

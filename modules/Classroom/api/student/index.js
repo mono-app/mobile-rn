@@ -96,7 +96,7 @@ export default class StudentAPI{
     return Promise.resolve(studentDocuments);
   }
 
-  async getDetail(schoolId, email, source = "default") {
+  static async getDetail(schoolId, email, source = "default") {
     const db = new firebase.firestore();
     const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();

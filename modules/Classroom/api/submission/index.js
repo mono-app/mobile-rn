@@ -4,7 +4,7 @@ import { SchoolsCollection, ClassesCollection, TasksCollection, SubmissionsColle
 
 export default class SubmissionAPI{
 
-  static async addScore(schoolId, classId, taskId, submissionId, score){
+  static async addScore(schoolId, classId, taskId, submissionId, data){
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
@@ -15,7 +15,7 @@ export default class SubmissionAPI{
     const tasksDocumentRef = classesDocumentRef.collection(tasksCollection.getName()).doc(taskId);
     const submissionsDocumentRef = tasksDocumentRef.collection(submissionsCollection.getName()).doc(submissionId);
 
-    submissionsDocumentRef.update({score})
+    submissionsDocumentRef.update({creationTime: firebase.firestore.FieldValue.serverTimestamp(),...data})
     return Promise.resolve(true);
   }
   

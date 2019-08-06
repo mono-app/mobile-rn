@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "src/components/Button";
 import { View, StyleSheet } from "react-native";
-import { Text, Drawer, Card, Dialog, Portal, RadioButton} from "react-native-paper";
+import Button from "src/components/Button";
+import { Text, Button as ButtonDialog, Drawer, Card, Dialog, Portal, RadioButton} from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -10,6 +10,7 @@ import SubmissionAPI from "../../../api/submission";
 const INITIAL_STATE = {
   isLoading: false,
   defaultValue: "",
+  note: "",
   type: 0,
   visible: true,
   checked: 0
@@ -29,10 +30,17 @@ export default class SubmissionScoringScreen extends React.PureComponent {
   handleScoreChange = defaultValue => {
     this.setState({defaultValue})
   }
+  handleNoteChange = note => {
+    this.setState({note})
+  }
 
   handleSavePress = () => {
     this.setState({ isLoading: true });
-    SubmissionAPI.addScore(this.schoolId, this.classId, this.taskId, this.submissionId, this.state.defaultValue).then(() => {
+    data = {
+      score: this.state.defaultValue,
+      note: this.state.note
+    }
+    SubmissionAPI.addScore(this.schoolId, this.classId, this.taskId, this.submissionId, data).then(() => {
       const { navigation } = this.props;
       navigation.state.params.onRefresh(this.state.defaultValue);
       navigation.goBack();   
@@ -62,66 +70,26 @@ export default class SubmissionScoringScreen extends React.PureComponent {
                 <View style={{ margin: 16 }}>
                   <Text style={styles.label}>Input Nilai</Text>
                 </View>
-                {this.state.type===1? 
                 <View style={{ marginHorizontal: 16 }}>
                   <TextInput
-                    style={{ marginBottom: 0 }}
                     placeholder=""
-                    keyboardType="numeric"
+                    keyboardType={(this.state.type===1)? "numeric": ""}
                     value={this.state.defaultValue}
                     onChangeText={this.handleScoreChange}/>
                 </View>
-                : 
-                this.state.type===2? 
-                <View style={{ marginHorizontal: 16 }}>
-                  <Card style={{paddingTop: 8}}>
-                    <Drawer.Section>
-                      <Drawer.Item
-                        label="A"
-                        active={this.state.defaultValue === 'A'}
-                        onPress={() => { this.setState({ defaultValue: 'A' }); }}
-                      />
-                      <Drawer.Item
-                        label="AB"
-                        active={this.state.defaultValue === 'AB'}
-                        onPress={() => { this.setState({ defaultValue: 'AB' }); }}
-                      />
-                       <Drawer.Item
-                        label="B"
-                        active={this.state.defaultValue === 'B'}
-                        onPress={() => { this.setState({ defaultValue: 'B' }); }}
-                      />
-                       <Drawer.Item
-                        label="BC"
-                        active={this.state.defaultValue === 'BC'}
-                        onPress={() => { this.setState({ defaultValue: 'BC' }); }}
-                      />
-                       <Drawer.Item
-                        label="C"
-                        active={this.state.defaultValue === 'C'}
-                        onPress={() => { this.setState({ defaultValue: 'C' }); }}
-                      />
-                       <Drawer.Item
-                        label="D"
-                        active={this.state.defaultValue === 'D'}
-                        onPress={() => { this.setState({ defaultValue: 'D' }); }}
-                      />
-                       <Drawer.Item
-                        label="E"
-                        active={this.state.defaultValue === 'E'}
-                        onPress={() => { this.setState({ defaultValue: 'E' }); }}
-                      />
-                       <Drawer.Item
-                        label="F"
-                        active={this.state.defaultValue === 'F'}
-                        onPress={() => { this.setState({ defaultValue: 'F' }); }}
-                      />
-                    </Drawer.Section>
-                  </Card>
+                <View style={{ marginHorizontal: 16, marginBottom:16 }}>
+                  <Text style={styles.label}>Note</Text>
                 </View>
-                :
-                <View/>
-                }
+                <View style={{ marginHorizontal: 16 }}>
+                  <TextInput
+                    style={{ textAlignVertical: "top" }}
+                    placeholder=""
+                    multiline={true}
+                    numberOfLines = {5}
+                    value={this.state.note}
+                    onChangeText={this.handleNoteChange}/>
+                </View>
+              
                 
                 {(this.state.type===1||this.state.type===2) ? 
                   <Button
@@ -137,19 +105,27 @@ export default class SubmissionScoringScreen extends React.PureComponent {
                     visible={this.state.visible}>
                     <Dialog.Title>Pilih Format Penilaian</Dialog.Title>
                     <Dialog.Content>
-                    <RadioButton
-                      value="Angka"
-                      status={this.state.checked === 1 ? 'checked' : 'unchecked'}
-                      onPress={() => { this.setState({ checked: 1 }); }}
-                    />
-                    <RadioButton
-                      value="Alphabet"
-                      status={this.state.checked === 2 ? 'checked' : 'unchecked'}
-                      onPress={() => { this.setState({ checked: 2 }); }}
-                    />
+                    <RadioButton.Group
+                      onValueChange={checked => this.setState({ checked })}
+                      value={this.state.checked}
+                    >
+                      <View style={{flexDirection: "row", alignItems:"center"}}>
+                        <RadioButton
+                          value={1}
+                        />
+                       <Text>Angka</Text>
+                      </View>
+                      <View style={{flexDirection: "row", alignItems:"center"}}>
+                        <RadioButton
+                          value={2}
+                        />
+                        <Text>Alphabet</Text>
+                      </View>
+                    </RadioButton.Group>
+                  
                     </Dialog.Content>
                     <Dialog.Actions>
-                      <Button onPress={this._hideDialog} text="OK"></Button>
+                      <ButtonDialog onPress={this._hideDialog}>OK</ButtonDialog>
                     </Dialog.Actions>
                   </Dialog>
                 </Portal>

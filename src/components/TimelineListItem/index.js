@@ -3,55 +3,38 @@ import moment from "moment";
 import { Dimensions, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Card, Caption, Paragraph } from "react-native-paper";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
-
-import MomentsAPI from "modules/Moments/api/moment";
 import DiscussionAPI from "modules/Classroom/api/discussion";
-import CurrentUserAPI from "src/api/people/CurrentUser";
-import PeopleAPI from "src/api/people";
-import TranslateAPI from "src/api/translate";
 import FastImage from "react-native-fast-image";
-
 import SquareAvatar from "src/components/Avatar/Square";
-import PhotoGrid from "modules/Moments/components/PhotoGrid";
 
 const INITIAL_STATE = { posterEmail: null, discussion: {}, isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
 
 export default class TimelineListItem extends React.Component{
 
   refreshDetail = async () => {
-    const { schoolId, classId, taskId, discussionId } = this.props;
+    const { schoolId, classId, taskId, discussion } = this.props;
 
-     this.setState({ isLoading: true });
-     const promises = [ new DiscussionAPI().getDetail(schoolId, classId, taskId, discussionId)];
+    this.setState({ isLoading: true });
 
-     Promise.all(promises).then(results => {
-       const discussion = results[0];
-       this.setState({ isLoading: false, discussion });
-     })
-  }
+    this.isLikedListener = await DiscussionAPI.isLikedRealTimeUpdate(schoolId,classId,taskId,discussion.id, (isLiked) => {
+      this.setState({isLiked});
+    });
+  
 
-  handleCommentPress = () => {
+    this.setState({ isLoading: false, discussion, isLiked: discussion.isLiked });
 
-  }
-  handleLikePress = async () => {
     
-  }
-  handleSharePress = () => {
-
   }
 
   constructor(props){
     super(props);
 
     this.state = { ...INITIAL_STATE, ...this.props };
-    this.listener = null;
+    this.isLikedListener = null;
     this.refreshDetail = this.refreshDetail.bind(this);
-    this.handleLikePress = this.handleLikePress.bind(this);
-    this.handleCommentPress = this.handleCommentPress.bind(this);
-    this.handleSharePress = this.handleSharePress.bind(this);
   }
 
-  componentWillUnmount(){ if(this.listener) this.listener(); }
+  componentWillUnmount(){ if(this.isLikedListener) this.isLikedListener(); }
   componentDidMount(){ this.refreshDetail(); }
 
   render(){
@@ -59,13 +42,12 @@ export default class TimelineListItem extends React.Component{
 
     if(this.state.isLoading) return <View/>
     const { poster, discussion } = this.state;
-
-    const hasImage = discussion.images.length > 0;
+    const hasImage = (discussion.images && discussion.images.length > 0);
     const remainingImageCount = 0;
-    if(discussion.images.length>4){
+    if(discussion.images && discussion.images.length>4){
       remainingImageCount = discussion.images.length-4;
     }
-    
+
     let timeFromNow = moment(discussion.creationTime.seconds*1000).format("DD MMMM YYYY HH:mm");
     
     let newPoster = JSON.parse(JSON.stringify(poster));
@@ -78,7 +60,7 @@ export default class TimelineListItem extends React.Component{
 
     return(
       <Card style={{ elevation: 1, marginHorizontal: 8, marginTop: 8}}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={this.props.onPress}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
             <SquareAvatar size={40} uri={newPoster.applicationInformation.profilePicture}/>
             <View style={{ marginLeft: 16 }}>
@@ -96,14 +78,15 @@ export default class TimelineListItem extends React.Component{
                 {discussion.images.map((item, index) => {
                   if((index >= 0 && index < 3)) {
                     return (
-                      <FastImage 
-                        key={index} 
-                        resizeMode="cover"
-                        source={{ uri: item.downloadUrl  }} 
-                        style={{ height: (window.width/4), flex:1, margin:8 }}/>
+                      <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), padding:4 }}>
+                        <FastImage 
+                          resizeMode="cover"
+                          source={{ uri: item.downloadUrl  }} 
+                          style={{ alignSelf: "stretch", flex: 1 }}/>
+                      </View>
                     )
                   }else if(index === 3) return (
-                    <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), margin:8 }}>
+                    <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), padding:4 }}>
                       <FastImage source={{ uri: item.downloadUrl }} style={{ alignSelf: "stretch", flex: 1 }} resizeMode="cover"/>
                       {(remainingImageCount>0)? 
                         <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, .7)", alignItems: "center", justifyContent: "center" }}>
@@ -122,7 +105,7 @@ export default class TimelineListItem extends React.Component{
         </TouchableOpacity>
        
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={this.handleLikePress} style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity onPress={this.props.onLikePress} style={{ flexDirection: "row", alignItems: "center" }}>
             {this.state.isLiked?(
               <MaterialCommunityIcons name="heart" color="#EF6F6C" size={16} style={{ marginRight: 4 }}/>
             ):(
@@ -130,11 +113,12 @@ export default class TimelineListItem extends React.Component{
             )}
             <Caption>Suka</Caption>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleCommentPress} style={{ flexDirection: "row", alignItems: "center" }}>
+          
+          <TouchableOpacity onPress={this.props.onPress} style={{ flexDirection: "row", alignItems: "center" }}>
             <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
             <Caption>Komentar</Caption>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleCommentPress} style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity onPress={this.props.onSharePress} style={{ flexDirection: "row", alignItems: "center" }}>
             <MaterialCommunityIcons name="share" size={16} style={{ marginRight: 4 }}/>
             <Caption>Share</Caption>
           </TouchableOpacity>

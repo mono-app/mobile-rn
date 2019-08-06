@@ -97,3 +97,7 @@ export class FilesCollection extends Collection{
 export class DiscussionsCollection extends Collection{
   constructor(){ super("discussions"); }
 }
+
+export class LikesCollection extends Collection{
+  constructor(){ super("likes"); }
+}

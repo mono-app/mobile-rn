@@ -48,13 +48,29 @@ export default class TaskDetailsScreen extends React.PureComponent {
   handleDueDatePress = e => {
     const payload = {
       isDatetimePicker: true,
+      pickerType: "date",
       schoolId: this.state.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "dueDate", 
-      fieldValue: this.state.task.dueDate.seconds * 1000,
-      fieldTitle: "Ubah Batas Pengumpulan",
-      onRefresh: this.loadTask
+      fieldValue: this.state.task.dueDate.toDate(),
+      fieldTitle: "Ubah Tanggal Pengumpulan",
+      onRefresh: this.loadTask  
+    }
+    this.props.navigation.navigate(`EditTaskSingleField`, payload);
+  } 
+
+  handleDueTimePress = e => {
+    const payload = {
+      isDatetimePicker: true,
+      pickerType: "time",
+      schoolId: this.state.schoolId,
+      classId: this.classId,
+      taskId: this.taskId,
+      databaseFieldName: "dueDate", 
+      fieldValue: this.state.task.dueDate.toDate(),
+      fieldTitle: "Ubah Jam Pengumpulan",
+      onRefresh: this.loadTask  
     }
     this.props.navigation.navigate(`EditTaskSingleField`, payload);
   } 
@@ -92,7 +108,9 @@ export default class TaskDetailsScreen extends React.PureComponent {
     const payload = {
       schoolId: this.state.schoolId,
       classId: this.classId,
-      taskId: this.taskId
+      taskId: this.taskId,
+      subject: this.subject,
+      subjectDesc: this.subjectDesc
     }
     this.props.navigation.navigate(`Discussions`, payload);
   }
@@ -155,7 +173,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity  onPress={this.handleDueDatePress}>
+          <TouchableOpacity  onPress={this.handleDueTimePress}>
             <View style={styles.listItemContainer}>
               <View style={styles.listDescriptionContainer}>
                 <Text style={styles.label}>Jam Pengumpulan</Text>

@@ -68,7 +68,7 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
             return (
               <StudentListItem 
                 onPress={() => this.handleSubmissionPress(item)}
-                key={index} autoFetch={true} email={item.id}/>
+                key={index} student={item}/>
             )
           }}
         />

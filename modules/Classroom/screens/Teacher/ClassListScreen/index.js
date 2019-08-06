@@ -21,12 +21,8 @@ export default class ClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.classListListener = new ClassAPI().getUserClassesWithRealTimeUpdate(this.teacherEmail, classes => {
-      const class_ = classes.map(class_ => {
-        return { id: class_.id, ...class_.data() }
-      });
-      this.setState({ classList: class_ });
-    })
+    const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
+    this.setState({ classList });
   }
 
   handleClassPress = class_ => {
@@ -60,7 +56,7 @@ export default class ClassListScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} autoFetch={true} classId={item.id}/>
+                key={index} class_={item}/>
             )
           }}
         />

@@ -20,6 +20,8 @@ import ClassFilesScreen from "modules/Classroom/screens/Teacher/ClassFilesScreen
 import SubmissionDetailsScreen from "modules/Classroom/screens/Teacher/SubmissionDetailsScreen"
 import SubmissionScoringScreen from "modules/Classroom/screens/Teacher/SubmissionScoringScreen"
 import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
+import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionCommentScreen"
+import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 
 export default TeacherNavigator = createStackNavigator(
   {
@@ -41,6 +43,8 @@ export default TeacherNavigator = createStackNavigator(
     SubmissionDetails: {screen: SubmissionDetailsScreen},
     SubmissionScoring: {screen: SubmissionScoringScreen},
     Discussions: {screen: DiscussionsScreen},
+    DiscussionComment: {screen: DiscussionCommentScreen},
+    AddDiscussion: {screen: AddDiscussionScreen},
   },
   {
     initialRouteName: "TeacherHome"

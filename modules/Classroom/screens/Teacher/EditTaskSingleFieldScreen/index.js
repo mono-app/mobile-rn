@@ -98,6 +98,8 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
     this.caption = this.props.navigation.getParam("caption", null);
     this.title = this.props.navigation.getParam("fieldTitle", "");
     this.beforeSave = this.props.navigation.getParam("beforeSave", null);
+    this.pickerType = this.props.navigation.getParam("pickerType", "datetime");
+
     this.handleDefaultValueChange = this.handleDefaultValueChange.bind(this);
     this.handleSavePress = this.handleSavePress.bind(this);
   }
@@ -108,8 +110,8 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
       <View style={styles.container}>
         <Title style={{ marginBottom: 8 }}>{this.title}</Title>
         {(this.isGender)?
-            <Card style={{paddingTop: 8}}>
-              <Drawer.Section>
+          <Card style={{paddingTop: 8}}>
+            <Drawer.Section>
               <Drawer.Item
                 label="Pria"
                 active={this.state.defaultValue === 'pria'}
@@ -127,7 +129,12 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
           <TouchableOpacity onPress={this.showDateTimePicker}>
             <View style={styles.listItemContainer}>
               <View style={styles.listDescriptionContainer}>
-                <Text style={styles.label}>{moment(this.state.defaultValue).format("DD MMMM YYYY HH:mm")}</Text>
+                {(this.pickerType=="date")? 
+                  <Text style={styles.label}>{moment(this.state.defaultValue).format("DD MMMM YYYY")}</Text>
+                : 
+                  <Text style={styles.label}>{moment(this.state.defaultValue).format("HH:mm")}</Text>
+                }
+
                 <View style={{flexDirection:"row",textAlign: "right"}}>
                   <EvilIcons name="calendar" size={24} style={{ color: "#5E8864" }}/>
                 </View>
@@ -153,10 +160,11 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
           isLoading={this.state.isLoading}
           onPress={this.handleSavePress}/>
           <DateTimePicker
+          date={(this.state.defaultValue)?this.state.defaultValue:new Date()}
           isVisible={this.state.isDateTimePickerVisible}
           onConfirm={this.handleDatePicked}
           onCancel={this.hideDateTimePicker}
-          mode={"datetime"}
+          mode={this.pickerType}
         />
       </View>
       

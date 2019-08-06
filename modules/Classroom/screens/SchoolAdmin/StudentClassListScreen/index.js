@@ -71,7 +71,7 @@ export default class StudentClassListScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} autoFetch={true} classId={item.id}/>
+                key={index} class_={item}/>
             )
           }}
         />

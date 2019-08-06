@@ -12,8 +12,7 @@ const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
 
 /**
  * @param {string} title 
- * @param {boolean} autoFetch - by default is `false`
- * @param {string} classId - required when `autoFetch` is `true`
+ * @param {string} classId
  */
 export default class TaskListItem extends React.Component{
   constructor(props){
@@ -23,19 +22,12 @@ export default class TaskListItem extends React.Component{
   }
 
   componentDidMount(){
-    const { classId, taskId, autoFetch } = this.props;
+    this.setState({ isFetching: true });
 
-    if(autoFetch && classId){
-      this.setState({ isFetching: true });
-      const api = new TaskAPI();
-      const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75", classId, taskId)];
-
-      Promise.all(promises).then(results => {
-        const task = results[0];
-        const { title, details, dueDate } = task  
-        this.setState({ isFetching: false, title, details, dueDate });
-      })
-    }
+    const { task } = this.props;
+    const { title, details, dueDate } = task  
+    this.setState({ isFetching: false, title, details, dueDate });
+    
   }
 
   render(){
@@ -47,12 +39,17 @@ export default class TaskListItem extends React.Component{
       )
     }
 
-    let { title,details,dueDate } = this.props;
-    if(this.props.autoFetch){
-      title = this.state.title;
-      details = this.state.details;
-      dueDate = this.state.dueDate;
+    let { title,dueDate } = this.props;
+    title = this.state.title;
+    details = this.state.details;
+    dueDate = this.state.dueDate;
+    let creationDate = ""
+    let creationTime = ""
+    if(dueDate){
+      creationDate = moment(dueDate.seconds * 1000).format("DD MMMM YYYY")
+      creationTime = moment(dueDate.seconds * 1000).format("HH:mm")
     }
+    
 
     return(
         <Card style={styles.container}> 
@@ -63,7 +60,7 @@ export default class TaskListItem extends React.Component{
                   <View>
                    <Text style={{ fontWeight: "700" }}>{title}</Text>
                    <Paragraph style={{ color: "#5E8864", fontWeight: "bold", fontStyle:"italic" }}>Batas akhir pengumpulan</Paragraph>
-                   <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>Tanggal {moment(dueDate.seconds * 1000).format("DD MMMM YYYY")} | Pukul {moment(dueDate.seconds * 1000).format("HH:mm")}</Paragraph>
+                   <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>Tanggal {creationDate} | Pukul {creationTime}</Paragraph>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>

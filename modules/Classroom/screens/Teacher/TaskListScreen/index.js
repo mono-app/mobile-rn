@@ -7,7 +7,7 @@ import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75" };
+const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75" };
 
 export default class TaskListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -95,7 +95,7 @@ export default class TaskListScreen extends React.PureComponent {
             return (
               <TaskListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} autoFetch={true} classId={this.classId} taskId={item.id}/>
+                key={index} task={item}/>
             )
           }}
         />

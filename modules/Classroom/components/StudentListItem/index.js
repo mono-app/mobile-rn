@@ -10,8 +10,7 @@ const INITIAL_STATE = { name: "", isFetching: false }
 
 /**
  * @param {string} name 
- * @param {boolean} autoFetch - by default is `false`
- * @param {string} email - required when `autoFetch` is `true`
+ * @param {string} email
  */
 export default class StudentListItem extends React.Component{
   constructor(props){
@@ -21,18 +20,23 @@ export default class StudentListItem extends React.Component{
   }
 
   componentDidMount(){
-    const { email, autoFetch } = this.props;
+    this.setState({ isFetching: true });
 
-    if(autoFetch && email){
-      this.setState({ isFetching: true });
-      const api = new StudentAPI();
-      const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75",email)];
+    const { student } = this.props;
 
-      Promise.all(promises).then(results => {
-        const people = results[0];
-        const { name, noInduk } = people  
-        this.setState({ isFetching: false, name, noInduk });
-      })
+    if(student.noInduk){
+      const { name, noInduk } = student  
+      this.setState({ isFetching: false, name, noInduk });
+    }else{
+      
+      const student = StudentAPI.getDetail(this.state.schoolId, this.studentEmail);
+      if(student.gender){
+        student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
+      }
+      const { name, noInduk } = student  
+
+      this.setState({ isFetching: false, name, noInduk });
+
     }
   }
 
@@ -46,10 +50,9 @@ export default class StudentListItem extends React.Component{
     }
 
     let { name, noInduk } = this.props;
-    if(this.props.autoFetch){
-      name = this.state.name;
-      noInduk = this.state.noInduk;
-    }
+    name = this.state.name;
+    noInduk = this.state.noInduk;
+    
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>

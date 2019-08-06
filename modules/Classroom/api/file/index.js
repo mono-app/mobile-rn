@@ -24,7 +24,7 @@ export default class FileAPI{
     return Promise.resolve(files)
   }
 
-  async getDetail(schoolId, classId, fileId, source = "default") {
+  static async getDetail(schoolId, classId, fileId, source = "default") {
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
@@ -37,5 +37,22 @@ export default class FileAPI{
     const data = { id: filesDocumentSnapshot.id, ...filesDocumentSnapshot.data() };
 
     return Promise.resolve(data);
+  }
+
+  static async delete(schoolId, classId, file) {
+    const db = new firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const filesCollection = new FilesCollection();
+    const schoolDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classDocumentRef = schoolDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const filesDocumentRef = classDocumentRef.collection(filesCollection.getName()).doc(file.id);
+
+    const promises = []
+    promises.push(filesDocumentRef.delete())
+    promises.push(new firebase.storage().ref(file.storage.storagePath).delete())
+    await Promise.all(promises);
+   
+    return Promise.resolve(true);
   }
 }

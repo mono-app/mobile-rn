@@ -29,7 +29,7 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
     const submission = await SubmissionAPI.getDetail(this.state.schoolId, this.classId, this.taskId, this.submissionId);
 
     const promises = [ SubmissionAPI.getDetail(this.state.schoolId, this.classId, this.taskId, this.submissionId),
-      new StudentAPI().getDetail(this.state.schoolId,this.submissionId),
+      StudentAPI.getDetail(this.state.schoolId,this.submissionId),
       new ClassAPI().getDetail(this.state.schoolId,this.classId),
       new TaskAPI().getDetail(this.state.schoolId,this.classId,this.taskId),
     ];
