@@ -15,7 +15,8 @@ export default class DiscussionsScreen extends React.PureComponent {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Diskusi Umum"
+          title={navigation.getParam("subject", "")}
+          subtitle={navigation.getParam("subjectDesc", "")}
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -23,6 +24,7 @@ export default class DiscussionsScreen extends React.PureComponent {
   };
 
   loadDiscussions = async () => {
+    this.setState({ discussionList: [] });
     const discussionList = await DiscussionAPI.getDiscussions(this.schoolId, this.classId, this.taskId);
     this.setState({ discussionList });
   }

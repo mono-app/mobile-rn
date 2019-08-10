@@ -110,7 +110,7 @@ export default class AddDiscussionScreen extends React.PureComponent {
             </View>
             <View style={{ paddingVertical: 8 }} />
             <Button
-              text="Simpan"
+              text="Buat Diskusi"
               isLoading={this.state.isLoading}
               onPress={this.handleSavePress}
             />

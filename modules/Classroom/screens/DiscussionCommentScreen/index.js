@@ -16,7 +16,7 @@ import StudentAPI from "modules/Classroom/api/student";
 import CommentListItem from "src/components/CommentListItem";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 
-const INITIAL_STATE = { isLoading: true, discussion: {}, comment:"" };
+const INITIAL_STATE = { isLoading: true, discussion: {}, comment:"", commentList: [] };
 
 export default class DiscussionCommentScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -24,7 +24,7 @@ export default class DiscussionCommentScreen extends React.PureComponent {
       header: (
         <AppHeader
           navigation={navigation}
-          title={"Diskusi Umum"}
+          title={navigation.getParam("discussion", "").title}
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -32,34 +32,33 @@ export default class DiscussionCommentScreen extends React.PureComponent {
   };
 
   loadDiscussion = async () => {
-
-    this.setState({ isLoading: true});
+    this.setState({ isLoading: true });
     const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterEmail)
-    this.setState({ isLoading: false, discussion: this.discussion , posterName: student.name });
+    this.setState({ isLoading: false, discussion: this.discussion, posterName: student.name });
   }
 
   loadComments = async () => {
+    this.setState({ isLoading:true, commentList: [] })
     const commentList = await DiscussionAPI.getComments(this.schoolId, this.classId, this.taskId, this.discussion.id);
-    this.setState({commentList})
-    console.log(commentList)
+    this.setState({ commentList, isLoading:false })
   }
 
   handleCommentChange = comment => {
-    this.setState({comment})
+    this.setState({ comment })
   }
 
-
   handleSendCommentPress = async () => {
-    console.log("bagikan")
-    const currentUserEmail= await CurrentUserAPI.getCurrentUserEmail();
+    this.setState({ isLoading:true })
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
 
     data = {
       comment: this.state.comment,
       posterEmail: currentUserEmail
     }
+
     await DiscussionAPI.sendComment(this.schoolId, this.classId, this.taskId, this.discussion.id, data)
-    this.setState({comment:"",})
-    this.loadComments();
+    await this.loadComments();
+    this.setState({ comment:"", isLoading:false })
   }
 
   constructor(props) {
@@ -183,13 +182,14 @@ export default class DiscussionCommentScreen extends React.PureComponent {
                 />
               </View>
             </Card>
-          <Card style={{marginHorizontal: 8,marginTop:8, padding:8}}>
+          <Card style={{marginTop: 8}}>
             <FlatList
+              style={{marginHorizontal: 8}}
               data={this.state.commentList}
               renderItem={({ item, index }) => {
                 return (
                   <CommentListItem 
-                    key={index} comment={item} />
+                   key={index} comment={item} />
                 )
               }}
             />
