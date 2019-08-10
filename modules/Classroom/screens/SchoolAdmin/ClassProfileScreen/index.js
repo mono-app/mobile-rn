@@ -37,8 +37,7 @@ export default class ClassProfileScreen extends React.PureComponent {
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const api = new ClassAPI();
-    const promises = [api.getDetail("1hZ2DiIYSFa5K26oTe75", this.classId)];
+    const promises = [ClassAPI.getDetail("1hZ2DiIYSFa5K26oTe75", this.classId)];
 
     Promise.all(promises).then(results => {
       const class_ = results[0];

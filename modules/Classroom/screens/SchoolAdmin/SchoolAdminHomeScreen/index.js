@@ -29,6 +29,8 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    console.log(this.schoolId)
   }
 
   render() {

@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "src/components/Button";
 import { View, StyleSheet } from "react-native";
-import { Text, Title, Card,Snackbar } from "react-native-paper";
+import { Text, Title, Card, Snackbar } from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";

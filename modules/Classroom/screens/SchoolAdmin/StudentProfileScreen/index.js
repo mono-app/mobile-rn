@@ -30,7 +30,7 @@ export default class StudentProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = StudentAPI.getDetail(this.state.schoolId, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.state.schoolId, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }

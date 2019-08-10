@@ -21,12 +21,8 @@ export default class TeacherListScreen extends React.PureComponent {
   };
 
   loadTeachers = async () => {
-    this.teacherListListener = new TeacherAPI().getTeachersWithRealTimeUpdate("1hZ2DiIYSFa5K26oTe75", teachers => {
-      const people = teachers.map(teacher => {
-        return { id: teacher.id, ...teacher.data() }
-      });
-      this.setState({ peopleList: people });
-    })
+    const peopleList = await TeacherAPI.getTeachers("1hZ2DiIYSFa5K26oTe75");
+    this.setState({ peopleList });
   }
 
   handleTeacherPress = people => {

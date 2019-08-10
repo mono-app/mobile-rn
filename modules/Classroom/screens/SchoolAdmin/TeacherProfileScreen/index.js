@@ -30,16 +30,12 @@ export default class TeacherProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const api = new TeacherAPI();
-      const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75", this.teacherEmail)];
-
-      Promise.all(promises).then(results => {
-        const teacher = results[0];
-        if(teacher.gender){
-          teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
-        }
-        this.setState({ isLoadingProfile: false, teacher });
-      })
+    const teacher = await TeacherAPI.getDetail("1hZ2DiIYSFa5K26oTe75", this.teacherEmail);
+    if(teacher.gender){
+      teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
+    }
+    this.setState({ isLoadingProfile: false, teacher });
+    
   }
 
   handleNamePress = e => {
