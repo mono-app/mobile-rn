@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Button from "src/components/Button";
-import { Text, Button as ButtonDialog, Drawer, Card, Dialog, Portal, RadioButton} from "react-native-paper";
+import { Text, Button as ButtonDialog, Dialog, Portal, RadioButton} from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -65,7 +65,7 @@ export default class SubmissionScoringScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{flex:1,display:"flex",backgroundColor: "#E8EEE8"}}>
+      <View style={{flex:1,display:"flex",backgroundColor: "white"}}>
         <KeyboardAwareScrollView style={{flex:1}}>
                 <View style={{ margin: 16 }}>
                   <Text style={styles.label}>Input Nilai</Text>
@@ -73,6 +73,8 @@ export default class SubmissionScoringScreen extends React.PureComponent {
                 <View style={{ marginHorizontal: 16 }}>
                   <TextInput
                     placeholder=""
+                    style={{ backgroundColor: "#E8EEE8" }}
+
                     keyboardType={(this.state.type===1)? "numeric": ""}
                     value={this.state.defaultValue}
                     onChangeText={this.handleScoreChange}/>
@@ -82,7 +84,7 @@ export default class SubmissionScoringScreen extends React.PureComponent {
                 </View>
                 <View style={{ marginHorizontal: 16 }}>
                   <TextInput
-                    style={{ textAlignVertical: "top" }}
+                    style={{ backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
                     placeholder=""
                     multiline={true}
                     numberOfLines = {5}

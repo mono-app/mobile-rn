@@ -31,7 +31,9 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
       classId: this.classId,
       taskId: this.taskId,
       submissionId: submissionId,
-      title: this.title
+      title: this.title,
+      subject: this.subject,
+      subjectDesc: this.subjectDesc
     }
 
     this.props.navigation.navigate("SubmissionDetails", payload);
@@ -46,6 +48,8 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.title = this.props.navigation.getParam("title", "");
+    this.subject = this.props.navigation.getParam("subject", "");
+    this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
   }
 
   componentDidMount(){
@@ -68,7 +72,7 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
             return (
               <StudentListItem 
                 onPress={() => this.handleSubmissionPress(item)}
-                key={index} student={item}/>
+                key={index} schoolId={this.schoolId} student={item}/>
             )
           }}
         />

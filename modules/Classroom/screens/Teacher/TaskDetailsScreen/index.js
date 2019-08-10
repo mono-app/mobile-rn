@@ -1,13 +1,15 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
-import TaskAPI from "../../../api/task";
+import { Text, Snackbar } from "react-native-paper";
+import TaskAPI from "modules/Classroom/api/task";
+import SubmissionAPI from "modules/Classroom/api/submission";
 import AppHeader from "src/components/AppHeader";
 import moment from "moment"
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import DeleteDialog from "src/components/DeleteDialog";
 
-const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", task:{} };
+const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", task:{}, showSnackbarFailDeleting: false };
 
 export default class TaskDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -98,9 +100,10 @@ export default class TaskDetailsScreen extends React.PureComponent {
       schoolId: this.state.schoolId,
       classId: this.classId,
       taskId: this.taskId,
-      title: this.state.task.title
+      title: this.state.task.title,
+      subject: this.subject,
+      subjectDesc: this.subjectDesc
     }
-
     this.props.navigation.navigate(`TaskSubmissionList`, payload);
   }
 
@@ -115,14 +118,24 @@ export default class TaskDetailsScreen extends React.PureComponent {
     this.props.navigation.navigate(`Discussions`, payload);
   }
 
-  handleDelete = () => {
-
+  handleDelete = async () => {
+    const total = await SubmissionAPI.getSubmissionsCount(this.state.schoolId, this.classId, this.taskId);
+    
+    if(total===0){
+      await TaskAPI.deleteTask(this.state.schoolId, this.classId, this.taskId);
+      const { navigation } = this.props;
+      navigation.state.params.onDeleteSuccess();
+      navigation.goBack();   
+    }else{
+      this.setState({showSnackbarFailDeleting: true});
+    }
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
     this.loadTask = this.loadTask.bind(this);
+    this.deleteDialog = null;
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");
@@ -134,99 +147,111 @@ export default class TaskDetailsScreen extends React.PureComponent {
   }
 
 
-
   componentDidMount(){
     this.loadTask();
   }
 
   render() {
     return (
-      <ScrollView>
-        <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
-          <View style={styles.subjectContainer}>
-                <Text style={{fontWeight: "bold", fontSize: 18}}>
-                  {this.subject}
-                </Text>
-                <Text style={{fontSize: 18}}>
-                  {this.subjectDesc}
-                </Text>
+      <View>
+        <ScrollView>
+          <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+            <View style={styles.subjectContainer}>
+                  <Text style={{fontWeight: "bold", fontSize: 18}}>
+                    {this.subject}
+                  </Text>
+                  <Text style={{fontSize: 18}}>
+                    {this.subjectDesc}
+                  </Text>
+            </View>
+            <TouchableOpacity  onPress={this.handleNamePress}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={styles.label}>Nama Tugas</Text>
+                  <Text style={styles.value}>{this.state.task.title}</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity  onPress={this.handleDueDatePress}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={styles.label}>Tanggal Pengumpulan</Text>   
+                  <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("DD MMMM YYYY"):""}</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity  onPress={this.handleDueTimePress}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={styles.label}>Jam Pengumpulan</Text>
+                  <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("HH:mm"):""}</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity  onPress={this.handleDetailPress}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={styles.label}>Detail Tugas</Text>
+                  <Text style={styles.value}>{this.state.task.details}</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <View style={{marginTop: 8}}/>
+            <TouchableOpacity  onPress={this.handleTaskSubmissionPress}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                <Text>Lihat pengumpulan</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <View style={{marginTop: 8}}/>
+
+            <TouchableOpacity  onPress={this.handleDiscussionPress}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text>Diskusi</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => {this.deleteDialog.toggleShow()}}>
+              <View style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}>
+                  <Text style={{alignSelf: "center",alignItems:"center", color: "#fff"}}>Hapus Tugas</Text>
+              </View>
+            </TouchableOpacity>
+            
           </View>
-          <TouchableOpacity  onPress={this.handleNamePress}>
-            <View style={styles.listItemContainer}>
-              <View style={styles.listDescriptionContainer}>
-                <Text style={styles.label}>Nama Tugas</Text>
-                <Text style={styles.value}>{this.state.task.title}</Text>
-                <View style={{flexDirection:"row",textAlign: "right"}}>
-                  <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity  onPress={this.handleDueDatePress}>
-            <View style={styles.listItemContainer}>
-              <View style={styles.listDescriptionContainer}>
-                <Text style={styles.label}>Tanggal Pengumpulan</Text>   
-                <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("DD MMMM YYYY"):""}</Text>
-                <View style={{flexDirection:"row",textAlign: "right"}}>
-                  <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity  onPress={this.handleDueTimePress}>
-            <View style={styles.listItemContainer}>
-              <View style={styles.listDescriptionContainer}>
-                <Text style={styles.label}>Jam Pengumpulan</Text>
-                <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("HH:mm"):""}</Text>
-                <View style={{flexDirection:"row",textAlign: "right"}}>
-                  <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity  onPress={this.handleDetailPress}>
-            <View style={styles.listItemContainer}>
-              <View style={styles.listDescriptionContainer}>
-                <Text style={styles.label}>Detail Tugas</Text>
-                <Text style={styles.value}>{this.state.task.details}</Text>
-                <View style={{flexDirection:"row",textAlign: "right"}}>
-                  <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <View style={{marginTop: 8}}/>
-          <TouchableOpacity  onPress={this.handleTaskSubmissionPress}>
-            <View style={styles.listItemContainer}>
-              <View style={styles.listDescriptionContainer}>
-              <Text>Lihat pengumpulan</Text>
-                <View style={{flexDirection:"row",textAlign: "right"}}>
-                  <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <View style={{marginTop: 8}}/>
-
-          <TouchableOpacity  onPress={this.handleDiscussionPress}>
-            <View style={styles.listItemContainer}>
-              <View style={styles.listDescriptionContainer}>
-                <Text>Diskusi</Text>
-                <View style={{flexDirection:"row",textAlign: "right"}}>
-                  <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={this.handleDelete}>
-            <View style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}>
-                <Text style={{alignSelf: "center",alignItems:"center", color: "#fff"}}>Hapus Tugas</Text>
-            </View>
-          </TouchableOpacity>
-          
-        </View>
-      </ScrollView>
+        </ScrollView>
+        <DeleteDialog 
+        ref ={i => this.deleteDialog = i}
+        title= {"Apakah anda ingin menghapus tugas ini?"}
+        onDeletePress={this.handleDelete}/>
+        <Snackbar
+          visible= {this.state.showSnackbarFailDeleting}
+          onDismiss={() => this.setState({ showSnackbarFailDeleting: false })}
+          style={{backgroundColor:"red"}}
+          duration={Snackbar.DURATION_SHORT}>
+          Tidak bisa menghapus karena sudah ada murid yang mengumpulkan tugas
+        </Snackbar>
+      </View>
     );
   }
 }

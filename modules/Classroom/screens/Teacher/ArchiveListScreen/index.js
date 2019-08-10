@@ -1,14 +1,13 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { Text, Snackbar } from "react-native-paper";
+import { Text, Searchbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
-import TaskListItem from "../../../components/TaskListItem";
+import ArchiveListItem from "modules/Classroom/components/ArchiveListItem";
 import AppHeader from "src/components/AppHeader";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
-const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75", showSnackbarSuccessDeleting: false };
+const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false };
 
-export default class TaskListScreen extends React.PureComponent {
+export default class ArchiveListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -24,40 +23,41 @@ export default class TaskListScreen extends React.PureComponent {
 
   loadTasks = async () => {
     this.setState({ taskList: [] });
-
-    const taskList = await TaskAPI.getTasks(this.state.schoolId, this.classId);
+    const taskList = await TaskAPI.getTasks(this.schoolId, this.classId);
     this.setState({ taskList });
   }
 
-  handleAddTaskPress = () => {
-    payload = {
+  handleTaskSubmissionPress = (task) => {
+    const payload = {
+      schoolId: this.schoolId,
       classId: this.classId,
+      taskId: task.id,
+      title: task.title,
       subject: this.subject,
       subjectDesc: this.subjectDesc
     }
-    this.props.navigation.navigate("AddTask",payload);
+    this.props.navigation.navigate(`TaskSubmissionList`, payload);
   }
 
-  handleClassPress = (item) => {
-    payload = {
-      taskId: item.id,
+  handleDiscussionPress = (task) => {
+    const payload = {
+      schoolId: this.schoolId,
       classId: this.classId,
+      taskId: task.id,
       subject: this.subject,
-      subjectDesc: this.subjectDesc,
-      onDeleteSuccess: () => {this.loadTasks; this.setState({showSnackbarSuccessDeleting: true})}
+      subjectDesc: this.subjectDesc
     }
-    this.props.navigation.navigate("TaskDetails", payload);
+    this.props.navigation.navigate(`Discussions`, payload);
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
     this.loadTasks = this.loadTasks.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
-    this.handleAddTaskPress = this.handleAddTaskPress.bind(this);
-    this.handleClassPress = this.handleClassPress.bind(this);
   }
 
   componentDidMount(){
@@ -67,34 +67,22 @@ export default class TaskListScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <View style={{marginTop: 8,
-                      backgroundColor: "#DCDCDC",
-                      padding: 16}}>
-          <TouchableOpacity onPress={this.handleAddTaskPress}>
-            <Text style={{fontWeight:"bold"}}>
-              + Tambah Tugas
-            </Text>
-          </TouchableOpacity>
+  
+        <View style={{ paddingVertical: 8 }}>
+          <Searchbar placeholder="Cari Tugas" />
         </View>
-        <View style={{marginTop: 16}}/>
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
           data={this.state.taskList}
           renderItem={({ item, index }) => {
             return (
-              <TaskListItem 
-                onPress={() => this.handleClassPress(item)}
+              <ArchiveListItem 
+                onSubmissionPress={() => this.handleTaskSubmissionPress(item)}
+                onDiscussionPress={() => this.handleDiscussionPress(item)}
                 key={index} task={item}/>
             )
           }}
         />
-        <Snackbar
-          visible= {this.state.showSnackbarSuccessDeleting}
-          onDismiss={() => this.setState({ showSnackbarSuccessDeleting: false })}
-          style={{backgroundColor:"#0ead69"}}
-          duration={Snackbar.DURATION_SHORT}>
-          Tugas Berhasil Dihapus
-        </Snackbar>
       </View>
     );
   }

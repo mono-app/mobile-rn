@@ -4,20 +4,19 @@ import { ProgressBar,Caption,Searchbar,Text,Dialog,Portal } from "react-native-p
 import FileListItem from "../../../components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "../../../api/file";
-import {  TouchableOpacity } from "react-native-gesture-handler";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
+import Button from "src/components/Button";
 
-const INITIAL_STATE = { isLoading: true, progressPercentage: 0, showProgressbar: false, isDeleting: false, selectedFile: null, selectedIndex: -1 };
+const INITIAL_STATE = { isLoading: true,isDownloadAllTaskLoading:false, progressPercentage: 0, showProgressbar: false, isDeleting: false, selectedFile: null, selectedIndex: -1 };
 
-export default class ClassFilesScreen extends React.PureComponent {
+export default class TaskFilesScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title={navigation.getParam("subject", "")}
-          subtitle={navigation.getParam("subjectDesc", "")}
+          title="Tugas"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -27,7 +26,7 @@ export default class ClassFilesScreen extends React.PureComponent {
   loadFiles = async () => {
     this.setState({ fileList: [], isLoading: true });
 
-    const fileList = await FileAPI.getClassFiles(this.schoolId, this.classId);
+    const fileList = await FileAPI.getStudentSubmissionFiles(this.schoolId, this.classId, this.taskId, this.submissionId);
     this.setState({ fileList });
     this.setState({isLoading: false})
 
@@ -60,14 +59,15 @@ export default class ClassFilesScreen extends React.PureComponent {
 
   onDeletePress = async () => {
     this.setState({isLoading: true})
-    await FileAPI.deleteClassFile(this.schoolId,this.classId,this.state.selectedFile);
+    await FileAPI.deleteSubmissionFile(this.schoolId,this.classId,this.state.selectedFile);
     this.deleteDialog.toggleShow()
     await this.loadFiles();
     this.setState({isLoading: false})
   }
 
-  handleAddFiles = () => {
-    this.props.navigation.navigate("AddClassFiles")
+  handleDownloadAllTask = async () => {
+    this.setState({isDownloadAllTaskLoading: true})
+    this.setState({isDownloadAllTaskLoading: false})
   }
 
   constructor(props) {
@@ -79,6 +79,8 @@ export default class ClassFilesScreen extends React.PureComponent {
     this.deleteDialog = null;
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
+    this.taskId = this.props.navigation.getParam("taskId", "");
+    this.submissionId = this.props.navigation.getParam("submissionId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
   
@@ -90,19 +92,19 @@ export default class ClassFilesScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8"}}>
+        <View style={styles.subjectContainer}>
+              <Text style={{fontWeight: "bold", fontSize: 18}}>
+                {this.subject}
+              </Text>
+              <Text style={{fontSize: 18}}>
+                {this.subjectDesc}
+              </Text>
+        </View>
         <View style={{marginTop: 8 }}>
-          <Searchbar placeholder="Cari Berkas" />
+          <Searchbar placeholder="Cari Tugas" />
         </View>
-        <View style={{marginTop: 8,
-                      backgroundColor: "#DCDCDC",
-                      padding: 16}}>
-          <TouchableOpacity onPress={this.handleAddFiles}>
-            <Text style={{fontWeight:"bold"}}>
-              + Tambahkan Berkas Lainnya
-            </Text>
-          </TouchableOpacity>
-        </View>
+        
         <FlatList
           style={{ backgroundColor: "white", marginTop:8 }}
           data={this.state.fileList}
@@ -115,22 +117,27 @@ export default class ClassFilesScreen extends React.PureComponent {
             )
           }}
         />
+         <Button
+              text="Unduh Semua Tugas"
+              isLoading={this.state.isDownloadAllTaskLoading}
+              onPress={this.handleDownloadAllTask}
+            />
         <Portal>
           <Dialog visible={this.state.showProgressbar}>
             <Dialog.Content
               style={{ flexDirection: "row", justifyContent: "space-evenly" }}
             >
               <View>
-                <Text>Mendownload Berkas</Text>
+                <Text>Mendownload Tugas</Text>
                   <ProgressBar progress={this.state.progressPercentage} color="red" />
               </View>
             </Dialog.Content>
           </Dialog>
         </Portal>
         <DeleteDialog 
-        ref ={i => this.deleteDialog = i}
-        title= {"Apakah anda ingin menghapus berkas ini?"}
-        onDeletePress={this.onDeletePress}/>
+          ref ={i => this.deleteDialog = i}
+          title= {"Apakah anda ingin menghapus file ini?"}
+          onDeletePress={this.onDeletePress}/>
       </View>
     );
   }

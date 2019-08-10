@@ -6,19 +6,18 @@ import StudentAPI from "modules/Classroom/api/student";
 import ClassAPI from "modules/Classroom/api/class";
 import TaskAPI from "modules/Classroom/api/task";
 import AppHeader from "src/components/AppHeader";
-import moment from "moment"
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
-export default class SubmissionDetailsScreen extends React.PureComponent {
+export default class ScoreDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Nilai Tugas"
+          title="Lihat Nilai"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -51,49 +50,26 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
     })
   }
 
-  handleScoringPress = ()=>{
-    payload = {
+  handleOtherScoring = () => {
+    const payload = {
       schoolId: this.state.schoolId,
       classId: this.classId,
       taskId: this.taskId,
-      submissionId: this.submissionId,
-      title: this.title,
-      onRefresh: (score) => {this.setState({showSnackbarScoringSuccess: true,score})}
+      title: this.title
     }
-    if(this.state.score){
-      this.props.navigation.navigate("ScoreDetails", payload)
-    }else{
-      this.props.navigation.navigate("SubmissionScoring", payload)
-    }
-  }
 
-  handleTaskDownload = () => {
-    payload = {
-      schoolId: this.state.schoolId,
-      classId: this.classId,
-      taskId: this.taskId,
-      submissionId: this.submissionId,
-      title: this.title,
-      subject: this.subject,
-      subjectDesc: this.subjectDesc
-    }
-    this.props.navigation.navigate("TaskFiles", payload)
-
+    this.props.navigation.navigate(`TaskSubmissionList`, payload);
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
     this.loadSubmission = this.loadSubmission.bind(this);
-    this.handleScoringPress = this.handleScoringPress.bind(this);
-    this.handleTaskDownload = this.handleTaskDownload.bind(this);
-    
+    this.handleOtherScoring = this.handleOtherScoring.bind(this);
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
     this.title = this.props.navigation.getParam("title", "");
-    this.subject = this.props.navigation.getParam("subject", "");
-    this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
  
   }
 
@@ -103,9 +79,20 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{paddingBottom:64}}>
         <ScrollView>
           <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+            <TouchableOpacity  onPress={this.handleOtherScoring} style={{marginTop: 16}}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={[styles.label, {fontWeight: "bold", fontSize: 18}]}>Beri Penilaian Lainnya</Text>
+
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+           
             <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>
                   {this.state.studentInfo}
@@ -147,64 +134,26 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
                   </View>
                 </View>
               </View>
-            </View>
-
-            <View style={{marginTop: 16, paddingTop:8 ,backgroundColor:"#fff"}}>
-              <Text style={{marginHorizontal:16, paddingBottom:4,fontWeight:"bold",color:"grey", borderBottomWidth: 1, borderBottomColor: "#E8EEE8"}}>Info Pengumpulan Tugas</Text>
-
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Tanggal Pengumpulan</Text>
+                  <Text style={[styles.label, {color: "#0ead69"}]}>Total nilai</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("DD MMMM YYYY"):""}</Text>
+                    <Text style={{color: "#0ead69"}}>{this.state.submission.score}</Text>
                   </View>
                 </View>
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Jam Pengumpulan</Text>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("HH:mm"):""}</Text>
+                  <Text style={styles.label}>Note</Text>
+                  <View style={styles.value}>
+                    <Text>{this.state.submission.note}</Text>
                   </View>
                 </View>
               </View>
-              <TouchableOpacity onPress={this.handleScoringPress}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    {(this.state.score)? 
-                    <Text style={styles.label}>Lihat Nilai</Text>
-                    :
-                    <Text style={styles.label}>Beri Penilaian</Text>
-                    }
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{(this.state.score)?this.state.score:""}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleTaskDownload}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Unduh Tugas</Text>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
+           
             </View>
           </View>
-        
         </ScrollView>
-          <Snackbar
-            visible= {this.state.showSnackbarScoringSuccess}
-            onDismiss={() => this.setState({ showSnackbarScoringSuccess: false })}
-            style={{backgroundColor:"#0ead69"}}
-            duration={Snackbar.DURATION_SHORT}>
-            Berhasil memberikan nilai
-          </Snackbar>
-    </View>
     );
   }
 }
@@ -222,7 +171,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     padding: 16,
-    alignItems: "center"
   },
   listDescriptionContainer: {
     flex: 1,

@@ -1,19 +1,19 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Searchbar } from "react-native-paper";
-import ClassAPI from "../../../api/class";
-import ClassListItem from "../../../components/ClassListItem";
+import ClassAPI from "modules/Classroom/api/class";
+import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 
 const INITIAL_STATE = { classList: [], isLoading: true };
 
-export default class MyClassScreen extends React.PureComponent {
+export default class ArchiveSelectClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Kelas Saya"
+          title="Arsip Tugas"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -23,14 +23,17 @@ export default class MyClassScreen extends React.PureComponent {
   loadClasses = async () => {
     const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
     this.setState({ classList });
-    console.log(classList)
-   }
+  }
 
-  handleClassPress = class_ => {
-     payload = {
-       classId: class_.id
-     }
-     this.props.navigation.navigate("ClassProfile", payload);
+  handleClassPress = async theClass => {
+    const class_ = await ClassAPI.getDetail(this.schoolId, theClass.id);
+    const payload = {
+      schoolId: this.schoolId,
+      classId: class_.id,
+      subject: class_.subject,
+      subjectDesc: class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
+    }
+    this.props.navigation.navigate("ArchiveList", payload);
   }
 
   constructor(props) {
@@ -38,10 +41,9 @@ export default class MyClassScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
   }
-
 
   componentDidMount(){
     this.loadClasses();
@@ -50,11 +52,11 @@ export default class MyClassScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <View style={{ padding: 16 }}>
+        <View style={{ paddingVertical: 8 }}>
           <Searchbar placeholder="Cari Kelas" />
         </View>
         <FlatList
-          style={{ flex:1, backgroundColor: "white" }}
+          style={{ backgroundColor: "white" }}
           data={this.state.classList}
           renderItem={({ item, index }) => {
             return (

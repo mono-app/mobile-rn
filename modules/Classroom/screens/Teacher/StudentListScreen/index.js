@@ -5,7 +5,7 @@ import StudentListItem from "../../../components/StudentListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "../../../api/student";
 
-const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75" };
+const INITIAL_STATE = { isLoading: true };
 
 export default class StudentListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -21,9 +21,8 @@ export default class StudentListScreen extends React.PureComponent {
   };
 
   loadStudents = async () => {
-    const peopleList = await StudentAPI.getClassStudent(this.state.schoolId, this.classId);
+    const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
     this.setState({ peopleList });
-
   }
 
   handleStudentPress = people => {
@@ -36,6 +35,7 @@ export default class StudentListScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
   }
 
@@ -57,7 +57,7 @@ export default class StudentListScreen extends React.PureComponent {
             return (
               <StudentListItem 
                 onPress={() => this.handleStudentPress(item)}
-                key={index} student={item}/>
+                key={index} schoolId={this.schoolId} student={item}/>
             )
           }}
         />

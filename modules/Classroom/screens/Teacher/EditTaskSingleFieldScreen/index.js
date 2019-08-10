@@ -34,9 +34,7 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
   }
   
   handleDatePicked = date => {
-    console.log(date.getTime())
     this.setState({defaultValue: date})
-   
     this.hideDateTimePicker();
   };
 
@@ -53,17 +51,16 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
       const schoolId = this.props.navigation.getParam("schoolId", null);
       const classId = this.props.navigation.getParam("classId", null);
       const taskId = this.props.navigation.getParam("taskId", null);
-     
+
       const schoolsCollection = new SchoolsCollection();
       const classesCollection = new ClassesCollection();
       const tasksCollection = new TasksCollection();
       const schoolDocument = new Document(schoolId);
       const classDocument = new Document(classId);
       const taskDocument = new Document(taskId);
-
       const updateQuery = new UpdateDocument();
-      let updateObject = {};
 
+      let updateObject = {};
       updateObject[`${databaseFieldName}`] = this.state.defaultValue;
       if(databaseFieldName==="email"){
         updateObject['isActive'] = false;
@@ -79,13 +76,11 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
 
   constructor(props){
     super(props);
-
     this.state = {
       defaultValue: this.props.navigation.getParam("fieldValue", ""),
       isLoading: false,
       isDateTimePickerVisible: false
     }
-
     this.keyboardType="default";
     this.isNumber = this.props.navigation.getParam("isNumber", false);
     this.isMultiline = this.props.navigation.getParam("isMultiline", false);
@@ -99,7 +94,6 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
     this.title = this.props.navigation.getParam("fieldTitle", "");
     this.beforeSave = this.props.navigation.getParam("beforeSave", null);
     this.pickerType = this.props.navigation.getParam("pickerType", "datetime");
-
     this.handleDefaultValueChange = this.handleDefaultValueChange.bind(this);
     this.handleSavePress = this.handleSavePress.bind(this);
   }
@@ -160,7 +154,7 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
           isLoading={this.state.isLoading}
           onPress={this.handleSavePress}/>
           <DateTimePicker
-          date={(this.state.defaultValue)?this.state.defaultValue:new Date()}
+          date={(this.isDatetimePicker && this.state.defaultValue)?this.state.defaultValue:new Date()}
           isVisible={this.state.isDateTimePickerVisible}
           onConfirm={this.handleDatePicked}
           onCancel={this.hideDateTimePicker}

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, Card, Dialog, Text, Caption, TextInput } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
@@ -9,6 +9,7 @@ import PeopleInformationContainer from "src/components/PeopleProfile/Information
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
 import moment from "moment"
+import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 const INITIAL_STATE = { isLoadingProfile: true, teacher: null, status:"", teacherEmail:"" ,schoolId: "1hZ2DiIYSFa5K26oTe75" }
 
@@ -33,18 +34,13 @@ export default class MyProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const api = new TeacherAPI();
-    const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75", this.teacherEmail)];
-    console.log("sadf")
+    const teacher = await TeacherAPI.getDetail("1hZ2DiIYSFa5K26oTe75", this.teacherEmail);
+    if(teacher.gender){
+      teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
+    }
 
-    Promise.all(promises).then(results => {
-      const teacher = results[0];
-      if(teacher.gender){
-        teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
-      }
-      this.setState({ isLoadingProfile: false, teacher });
-      console.log(this.state.teacher)
-    })
+    this.setState({ isLoadingProfile: false, teacher });
+   
   }
 
   
@@ -57,7 +53,14 @@ export default class MyProfileScreen extends React.PureComponent {
     })
   }
 
-  handleTaskListPress = () => this.props.navigation.navigate("ArchiveList",{"teacherEmail": this.state.teacher.id })
+  handleArchivePress = () => {
+    payload = {
+      schoolId: this.state.schoolId,
+      teacherEmail: this.teacherEmail
+    }
+
+    this.props.navigation.navigate("ArchiveSelectClass", payload)
+  }
   
   handleStatusPress = () => {
     const payload = {
@@ -72,7 +75,6 @@ export default class MyProfileScreen extends React.PureComponent {
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.loadStatus = this.loadStatus.bind(this);
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
-    console.log(this.teacherEmail);
 
   }
 
@@ -134,13 +136,25 @@ export default class MyProfileScreen extends React.PureComponent {
           
           </View>
           <View style={{  marginBottom: 16 }}>
-            <PeopleInformationContainer
-              fieldName="Jumlah Kelas"
-              fieldValue="-"/>
             <TouchableOpacity onPress={this.handleTaskListPress}>
-              <PeopleInformationContainer
-                fieldName="Arsip Tugas"
-                fieldValue="-"/>
+            <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={styles.label}>Jumlah Kelas</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.handleArchivePress}>
+              <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={styles.label}>Arsip Tugas</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
             </TouchableOpacity>
           </View>
         </ScrollView>

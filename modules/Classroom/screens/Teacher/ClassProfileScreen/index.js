@@ -32,14 +32,11 @@ export default class ClassProfileScreen extends React.PureComponent {
       )
     };
   };
-
-
   
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const api = new ClassAPI();
-    const promises = [api.getDetail(this.state.schoolId, this.classId)];
+    const promises = [ClassAPI.getDetail(this.state.schoolId, this.classId)];
 
     Promise.all(promises).then(results => {
       const class_ = results[0];
@@ -48,7 +45,11 @@ export default class ClassProfileScreen extends React.PureComponent {
   };
 
   handleStudentListScreen = () => {
-    this.props.navigation.navigate("StudentList", {classId: this.classId})
+    payload = {
+      schoolId: this.state.schoolId,
+      classId: this.classId
+    }
+    this.props.navigation.navigate("StudentList", payload)
   }
 
   handleTaskListScreen = () => {
@@ -78,14 +79,21 @@ export default class ClassProfileScreen extends React.PureComponent {
       subject: this.state.class.subject,
       subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
     }
-
     this.props.navigation.navigate("AddTask",payload);
   }
 
+  handleMassScoringPress = () => {
+    payload = {
+      schoolId: this.state.schoolId,
+      classId: this.classId,
+    }
+    this.props.navigation.navigate("MassScoring", payload);
+  }
 
   constructor(props) {
     super(props);
     this.classId = this.props.navigation.getParam("classId", null);
+
     this.state = INITIAL_STATE;
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
@@ -176,6 +184,16 @@ export default class ClassProfileScreen extends React.PureComponent {
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <Text style={styles.label}>Daftar Tugas</Text>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.handleMassScoringPress}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  <Text style={styles.label}>Penilaian Massal</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
