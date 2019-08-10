@@ -22,6 +22,12 @@ import SubmissionScoringScreen from "modules/Classroom/screens/Teacher/Submissio
 import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
 import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionCommentScreen"
 import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
+import ScoreDetailsScreen from "modules/Classroom/screens/Teacher/ScoreDetailsScreen"
+import TaskFilesScreen from "modules/Classroom/screens/Teacher/TaskFilesScreen"
+import ArchiveListScreen from "modules/Classroom/screens/Teacher/ArchiveListScreen"
+import ArchiveSelectClassScreen from "modules/Classroom/screens/Teacher/ArchiveSelectClassScreen"
+import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFilesScreen"
+import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
 
 export default TeacherNavigator = createStackNavigator(
   {
@@ -45,6 +51,12 @@ export default TeacherNavigator = createStackNavigator(
     Discussions: {screen: DiscussionsScreen},
     DiscussionComment: {screen: DiscussionCommentScreen},
     AddDiscussion: {screen: AddDiscussionScreen},
+    ScoreDetails: {screen: ScoreDetailsScreen},
+    TaskFiles: {screen: TaskFilesScreen},
+    ArchiveList: {screen: ArchiveListScreen},
+    ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
+    AddClassFiles: {screen: AddClassFilesScreen},
+    MassScoring: {screen: MassScoringScreen},
   },
   {
     initialRouteName: "TeacherHome"
