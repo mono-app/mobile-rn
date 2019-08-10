@@ -64,6 +64,18 @@ export default class StudentAPI{
     }
   }
 
+  static async saveFinalScoreStudent(schoolId, classId, studentId, updateObject){
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const studentsCollection = new StudentsCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const studentsDocumentRef = classesDocumentRef.collection(studentsCollection.getName()).doc(studentId);
+    await studentsDocumentRef.update(updateObject)
+    return Promise.resolve(true);
+  }
+
   
   static async getStudents(schoolId) {
     const db = firebase.firestore();
@@ -106,5 +118,16 @@ export default class StudentAPI{
     const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
 
     return Promise.resolve(data);
+  }
+
+  static async isStudent(schoolId, userEmail){
+    const db = new firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const studentsCollection = new StudentsCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(userEmail);
+    const studentsSnapshot = await studentsDocumentRef.get();
+
+    return Promise.resolve(studentsSnapshot.exists);
   }
 }

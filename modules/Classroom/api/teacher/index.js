@@ -66,19 +66,41 @@ export default class TeacherAPI {
     }
   }
 
-  getTeachersWithRealTimeUpdate(schoolId, callback) {
+  static async getTeachers(schoolId) {
     const db = firebase.firestore();
     const teachersCollection = new TeachersCollection();
     const schoolsCollection = new SchoolsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const teachersCollectionRef = schoolsDocumentRef.collection(teachersCollection.getName());
-    return teachersCollectionRef.onSnapshot(querySnapshot => {
-      if (!querySnapshot.empty) callback(querySnapshot.docs);
-      else callback([]);
+
+    const teachersQuerySnapshot = await teachersCollectionRef.get()
+
+    const teachers = (await teachersQuerySnapshot.docs).map((snap)=> {
+      return {id: snap.id, ...snap.data()}
     });
+
+    return Promise.resolve(teachers)
   }
 
-  async getDetail(schoolId, email, source = "default") {
+  static async getClassTeachers(schoolId, classId){
+    const db = firebase.firestore();
+    const teachersCollection = new TeachersCollection();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const teachersCollectionRef = classesDocumentRef.collection(teachersCollection.getName());
+
+    const teachersQuerySnapshot = await teachersCollectionRef.orderBy("creationTime","desc").get()
+
+    const teachers = (await teachersQuerySnapshot.docs).map((snap)=> {
+      return {id: snap.id, ...snap.data()}
+    });
+
+    return Promise.resolve(teachers)
+  }
+
+  static async getDetail(schoolId, email, source = "default") {
     const db = new firebase.firestore();
     const teachersCollection = new TeachersCollection();
     const schoolsCollection = new SchoolsCollection();
@@ -88,5 +110,16 @@ export default class TeacherAPI {
     const data = { id: teachersSnapshot.id, ...teachersSnapshot.data() };
 
     return Promise.resolve(data);
+  }
+
+  static async isTeacher(schoolId, userEmail){
+    const db = new firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const teachersCollection = new TeachersCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userEmail);
+    const teachersSnapshot = await teachersDocumentRef.get();
+
+    return Promise.resolve(teachersSnapshot.exists);
   }
 }

@@ -13,22 +13,16 @@ export default class TimelineListItem extends React.Component{
 
   refreshDetail = async () => {
     const { schoolId, classId, taskId, discussion } = this.props;
-
     this.setState({ isLoading: true });
-
     this.isLikedListener = await DiscussionAPI.isLikedRealTimeUpdate(schoolId,classId,taskId,discussion.id, (isLiked) => {
       this.setState({isLiked});
     });
-  
 
     this.setState({ isLoading: false, discussion, isLiked: discussion.isLiked });
-
-    
   }
 
   constructor(props){
     super(props);
-
     this.state = { ...INITIAL_STATE, ...this.props };
     this.isLikedListener = null;
     this.refreshDetail = this.refreshDetail.bind(this);
@@ -72,7 +66,6 @@ export default class TimelineListItem extends React.Component{
             <Paragraph>{discussion.contents} 
             </Paragraph>
           </View>
-
           { hasImage?(
             <View style={{ flex: 1, flexDirection: "row", marginHorizontal: 8 }}>
                 {discussion.images.map((item, index) => {
@@ -97,11 +90,7 @@ export default class TimelineListItem extends React.Component{
                   );
                 })}
             </View>
-
           ):<View/>}
-        
-
-          
         </TouchableOpacity>
        
         <View style={styles.buttonContainer}>

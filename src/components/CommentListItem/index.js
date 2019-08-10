@@ -39,7 +39,7 @@ export default class CommentListItem extends React.Component{
   
 
     return(
-      <Card style={{ elevation: 1, marginHorizontal: 8, marginTop: 8, borderBottomWidth:1, borderBottomColor: "#E8EEE8"}}>
+      <View style={{ marginTop: 8, borderBottomWidth:1, borderBottomColor: "#E8EEE8"}}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
             <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
             <View style={{ marginLeft: 16 }}>
@@ -78,7 +78,7 @@ export default class CommentListItem extends React.Component{
 
           ):<View/>}
       
-      </Card>
+      </View>
     )
   }
 }

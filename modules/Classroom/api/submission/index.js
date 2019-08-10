@@ -40,6 +40,21 @@ export default class SubmissionAPI{
     return Promise.resolve(submissions)
   }
 
+  static async getSubmissionsCount(schoolId, classId, taskId) {
+      const db = firebase.firestore();
+      const schoolsCollection = new SchoolsCollection();
+      const classesCollection = new ClassesCollection();
+      const tasksCollection = new TasksCollection();
+      const submissionsCollection = new SubmissionsCollection();
+      const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+      const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+      const tasksDocumentRef = classesDocumentRef.collection(tasksCollection.getName()).doc(taskId);
+      const submissionsCollectionRef = tasksDocumentRef.collection(submissionsCollection.getName());
+
+      const submissionSnapshot = await submissionsCollectionRef.get();
+
+      return Promise.resolve(submissionSnapshot.size)
+    }
 
   static async getDetail(schoolId, classId, taskId, studentId) {
     const db = firebase.firestore();

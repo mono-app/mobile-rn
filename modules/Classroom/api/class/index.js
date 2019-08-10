@@ -55,7 +55,7 @@ export default class TeacherAPI{
 
   }
 
-  async getDetail(schoolId, classId, source = "default") {
+  static async getDetail(schoolId, classId, source = "default") {
     const db = new firebase.firestore();
     const classesCollection = new ClassesCollection();
     const schoolsCollection = new SchoolsCollection();

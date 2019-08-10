@@ -57,5 +57,17 @@ export default class TaskAPI{
   }
 
 
+  static async deleteTask(schoolId, classId, taskId) {
+    const db = new firebase.firestore();
+    const classesCollection = new ClassesCollection();
+    const schoolsCollection = new SchoolsCollection();
+    const tasksCollection = new TasksCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const tasksDocumentRef = classesDocumentRef.collection(tasksCollection.getName()).doc(taskId);
+    await tasksDocumentRef.delete();
+   
+    return Promise.resolve(true);
+  }
   
 }

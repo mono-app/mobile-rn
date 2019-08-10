@@ -19,7 +19,7 @@ export default class DeleteDialog extends React.Component{
         <Dialog visible={this.state.isVisible}>
           <Dialog.Title>Perhatian</Dialog.Title>
           <Dialog.Content>
-            <Paragraph>Apakah Anda ingin menghapus file ini?</Paragraph>
+            <Paragraph>{this.props.title}</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
             <Button color="#5E8864" onPress={() => this.toggleShow()}>Batal</Button>

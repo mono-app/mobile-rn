@@ -122,7 +122,7 @@ export default class DiscussionAPI{
     const discussionsCollectionRef = tasksCollectionRef.collection(discussionsCollection.getName()).doc(discussionId);
     const commentsCollectionRef = discussionsCollectionRef.collection(commentsCollection.getName());
 
-    const commentsQuerySnapshot = await commentsCollectionRef.get();
+    const commentsQuerySnapshot = await commentsCollectionRef.orderBy("creationTime","desc").get();
 
     const comments = (await commentsQuerySnapshot.docs).map((snap)=> {
       return {id: snap.id, ...snap.data()}
@@ -132,6 +132,7 @@ export default class DiscussionAPI{
   }
 
   static async sendComment(schoolId, classId, taskId, discussionId, data){
+    
     try{
       const db = firebase.firestore();
       const schoolsCollection = new SchoolsCollection();
