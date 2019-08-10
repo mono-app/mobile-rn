@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
-import Header from "../../../components/Header";
+import Header from "modules/Classroom/components/Header";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 
 
@@ -16,7 +16,15 @@ const INITIAL_STATE = {
 
 class StudentHomeScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
-    return { header: <Header navigation={navigation} title="Murid" /> };
+    return {
+      header: (
+        <Header
+          navigation={navigation}
+          title="Profil Saya"
+          style={{ backgroundColor: "transparent" }}
+        />
+      )
+    };
   };
 
 
@@ -28,6 +36,14 @@ class StudentHomeScreen extends React.PureComponent {
 
   handleStudentProfilePress = () => {
     this.props.navigation.navigate("MyProfile",{"studentEmail": this.state.studentEmail});
+  }
+
+  handleClassListPress = () => {
+    payload = {
+      schoolId: this.state.schoolId,
+      studentEmail: this.state.studentEmail
+    }
+    this.props.navigation.navigate("MyClasses", payload);
   }
   
   constructor(props) {    

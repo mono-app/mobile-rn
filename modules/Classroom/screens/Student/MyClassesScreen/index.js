@@ -7,7 +7,7 @@ import AppHeader from "src/components/AppHeader";
 
 const INITIAL_STATE = { classList: [], isLoading: true };
 
-export default class MyClassScreen extends React.PureComponent {
+export default class MyClassesScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -21,13 +21,16 @@ export default class MyClassScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
+    const classList = await ClassAPI.getUserClasses(this.schoolId, this.studentEmail);
     this.setState({ classList });
    }
 
   handleClassPress = class_ => {
-     const classId = class_.id;
-     this.props.navigation.navigate("ClassProfile", { classId });
+     const payload = {
+       schoolId: this.schoolId,
+       classId: class_.id
+     }
+     this.props.navigation.navigate("ClassDetails", payload);
   }
 
   constructor(props) {
@@ -35,10 +38,9 @@ export default class MyClassScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
     this.schoolId = this.props.navigation.getParam("schoolId", "");
   }
-
 
   componentDidMount(){
     this.loadClasses();
