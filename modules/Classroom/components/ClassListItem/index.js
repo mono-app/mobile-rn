@@ -28,20 +28,13 @@ export default class ClassListItem extends React.Component{
       const { subject } = class_  
       const info  = class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
       this.setState({ isFetching: false, subject, info });
-      console.log(111111)
     } else {
-
-      const api = new ClassAPI();
-      const promises = [ api.getDetail("1hZ2DiIYSFa5K26oTe75", class_.id)];
+      const promises = [ ClassAPI.getDetail("1hZ2DiIYSFa5K26oTe75", class_.id)];
 
       Promise.all(promises).then(results => {
         const class_ = results[0];
         const {subject} = class_  
         const info  = class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
-        console.log(22222)
-        console.log(subject)
-        console.log(info)
-
         this.setState({ isFetching: false, subject, info });
       })
     }
