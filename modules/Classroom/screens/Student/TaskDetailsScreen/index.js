@@ -3,12 +3,14 @@ import { View, StyleSheet } from "react-native";
 import { Text, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import SubmissionAPI from "modules/Classroom/api/submission";
+import DiscussionAPI from "modules/Classroom/api/discussion";
 import AppHeader from "src/components/AppHeader";
 import moment from "moment"
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
-const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", task:{}, showSnackbarFailDeleting: false };
+const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", task:{}, showSnackbarFailDeleting: false, totalSubmission:0, totalDiscussion: 0 };
 
 export default class TaskDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -26,7 +28,11 @@ export default class TaskDetailsScreen extends React.PureComponent {
   loadTask = async () => {
     const api = new TaskAPI();
     const task = await api.getDetail(this.state.schoolId, this.classId, this.taskId);
-    this.setState({ isFetching: false, task });
+  
+    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.state.schoolId, this.classId, this.taskId);
+    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.state.schoolId, this.classId, this.taskId);
+
+    this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
   }
 
 
@@ -138,8 +144,12 @@ export default class TaskDetailsScreen extends React.PureComponent {
             <TouchableOpacity  onPress={this.handleTaskSubmissionPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                <Text>Lihat pengumpulan</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="file-o" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text>Lihat pengumpulan</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalSubmission}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>
@@ -150,8 +160,12 @@ export default class TaskDetailsScreen extends React.PureComponent {
             <TouchableOpacity  onPress={this.handleDiscussionPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text>Diskusi</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="comments-o" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text>Diskusi</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalDiscussion}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>

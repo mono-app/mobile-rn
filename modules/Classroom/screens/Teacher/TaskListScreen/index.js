@@ -25,7 +25,7 @@ export default class TaskListScreen extends React.PureComponent {
   loadTasks = async () => {
     this.setState({ taskList: [] });
 
-    const taskList = await TaskAPI.getTasks(this.state.schoolId, this.classId);
+    const taskList = await TaskAPI.getActiveTasks(this.state.schoolId, this.classId);
     this.setState({ taskList });
   }
 
@@ -67,7 +67,7 @@ export default class TaskListScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <View style={{marginTop: 8,
+        <View style={{marginTop: 16,
                       backgroundColor: "#DCDCDC",
                       padding: 16}}>
           <TouchableOpacity onPress={this.handleAddTaskPress}>

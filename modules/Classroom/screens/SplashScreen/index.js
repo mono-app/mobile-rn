@@ -41,15 +41,16 @@ export default class SplashClass extends React.PureComponent {
   }
 
   redirectScreen = async (school) => {
-    const payload = {
-      schoolId: school.id
-    }
+
+    const clonedSchoolId = JSON.parse(JSON.stringify(school.id))
+    SchoolAPI.currentSchoolId = clonedSchoolId
+
     if(await SchoolAdminAPI.isSchoolAdmin(school.id, this.state.currentUserEmail)){
-      this.props.navigation.navigate("SchoolAdmin",payload);
+      this.props.navigation.navigate("Student");
     }else if(await TeacherAPI.isTeacher(school.id, this.state.currentUserEmail)){
-      this.props.navigation.navigate("Teacher",payload);
+      this.props.navigation.navigate("Teacher");
     }else if (await StudentAPI.isStudent(school.id, this.state.currentUserEmail)) {
-      this.props.navigation.navigate("Student",payload);
+      this.props.navigation.navigate("Student");
     }
   }
 

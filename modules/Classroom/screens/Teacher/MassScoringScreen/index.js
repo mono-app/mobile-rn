@@ -46,6 +46,10 @@ export default class MassScoringScreen extends React.PureComponent {
   }
 
   saveDialog = async () => {
+    console.log(this.schoolId)
+    console.log(this.classId)
+    console.log(this.state.selectedStudent.id)
+    console.log(this.state.dialogScore)
     await StudentAPI.saveFinalScoreStudent(this.schoolId, this.classId, this.state.selectedStudent.id, {finalScore: this.state.dialogScore})
     this.setState({dialogVisible: false})
     this.loadStudents()

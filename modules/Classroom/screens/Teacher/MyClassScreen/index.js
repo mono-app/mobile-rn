@@ -60,7 +60,7 @@ export default class MyClassScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} class_={item}/>
+                key={index} schoolId={this.schoolId} class_={item}/>
             )
           }}
         />

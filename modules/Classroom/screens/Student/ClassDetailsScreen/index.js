@@ -13,6 +13,7 @@ import TeacherAPI from "modules/Classroom/api/teacher";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {} };
 
@@ -108,13 +109,13 @@ export default class ClassDetailsScreen extends React.PureComponent {
       );
     } else 
     return (
-      <View style={{ backgroundColor: "#E8EEE8", paddingTop: 16 }}>
+      <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
+          <View style={{  marginTop: 16 }}/>  
           <PeopleProfileHeader
             profilePicture="https://picsum.photos/200/200/?random"
             nickName={this.state.class.subject}
             />
-
           <View style={{  marginVertical: 16 }}>  
             <PeopleInformationContainer
               fieldName="Ruangan"
@@ -141,7 +142,10 @@ export default class ClassDetailsScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleStudentListScreen}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Daftar Murid</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="users" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Daftar Murid</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -151,7 +155,10 @@ export default class ClassDetailsScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleClassFilesScreenPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Berkas</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Berkas</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -161,7 +168,10 @@ export default class ClassDetailsScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleTaskListScreen}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Daftar Tugas</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Daftar Tugas</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>

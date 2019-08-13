@@ -5,10 +5,12 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "../../../components/Header";
+import SchoolAPI from "modules/Classroom/api/school"
 
 const INITIAL_STATE = {
   isLoading: false,
-  profilePicture: "https://picsum.photos/200/200/?random"
+  profilePicture: "https://picsum.photos/200/200/?random",
+  schoolId: ""
 };
 
 export default class SchoolAdminHomeScreen extends React.PureComponent {
@@ -26,12 +28,13 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
   
   constructor(props) {
     super(props);
+    INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
     this.state = INITIAL_STATE;
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
-    console.log(this.schoolId)
+    console.log(this.state.schoolId)
   }
+  
 
   render() {
     return (

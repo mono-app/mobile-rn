@@ -101,27 +101,28 @@ export default class TaskFilesScreen extends React.PureComponent {
                 {this.subjectDesc}
               </Text>
         </View>
-        <View style={{marginTop: 8 }}>
+        <View style={{margin: 16 }}>
           <Searchbar placeholder="Cari Tugas" />
         </View>
-        
-        <FlatList
-          style={{ backgroundColor: "white", marginTop:8 }}
-          data={this.state.fileList}
-          renderItem={({ item, index }) => {
-            return (
-              <FileListItem 
-                onDownloadPress={() => this.handleDownloadPress(item)}
-                onDeletePress={() => this.handleDeletePress(item, index)}
-                key={index} file={item} />
-            )
-          }}
-        />
-         <Button
-              text="Unduh Semua Tugas"
-              isLoading={this.state.isDownloadAllTaskLoading}
-              onPress={this.handleDownloadAllTask}
-            />
+        <View style={{ flex:1, backgroundColor: "white" }}>
+          <FlatList
+            data={this.state.fileList}
+            renderItem={({ item, index }) => {
+              return (
+                <FileListItem 
+                  onDownloadPress={() => this.handleDownloadPress(item)}
+                  onDeletePress={() => this.handleDeletePress(item, index)}
+                  key={index} file={item} />
+              )
+            }}
+          />
+          <Button
+                text="Unduh Semua Tugas"
+                style={{margin:16}}
+                isLoading={this.state.isDownloadAllTaskLoading}
+                onPress={this.handleDownloadAllTask}
+              />
+        </View>
         <Portal>
           <Dialog visible={this.state.showProgressbar}>
             <Dialog.Content

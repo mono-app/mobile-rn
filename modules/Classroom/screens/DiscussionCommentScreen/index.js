@@ -61,6 +61,14 @@ export default class DiscussionCommentScreen extends React.PureComponent {
     this.setState({ comment:"", isLoading:false })
   }
 
+  handlePicturePress = () => {
+    payload = {
+      images: this.state.discussion.images
+    }
+    this.props.navigation.navigate("GallerySwiper", payload);
+  }
+
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
@@ -68,11 +76,12 @@ export default class DiscussionCommentScreen extends React.PureComponent {
     this.loadComments = this.loadComments.bind(this);
     this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleSendCommentPress = this.handleSendCommentPress.bind(this);
+    this.handlePicturePress = this.handlePicturePress.bind(this);
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.discussion = this.props.navigation.getParam("discussion", "");
-  
+    
   }
 
   componentDidMount(){
@@ -99,7 +108,6 @@ export default class DiscussionCommentScreen extends React.PureComponent {
         <KeyboardAwareScrollView style={{flex:1}}>         
 
           <Card style={{ elevation: 1, marginTop: 8}}>
-            <TouchableOpacity>
               <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
                 <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
                 <View style={{ marginLeft: 16 }}>
@@ -113,7 +121,7 @@ export default class DiscussionCommentScreen extends React.PureComponent {
                   {this.state.discussion.description} 
                 </Paragraph>
               </View>
-
+              <TouchableOpacity onPress={this.handlePicturePress}>
               { (this.state.discussion.images && this.state.discussion.images.length) > 0?(
                 <View style={{ flex: 1, flexDirection: "row", marginHorizontal: 8 }}>
                     {this.state.discussion.images.map((item, index) => {

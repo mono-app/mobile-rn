@@ -23,7 +23,7 @@ export default class ArchiveListScreen extends React.PureComponent {
 
   loadTasks = async () => {
     this.setState({ taskList: [] });
-    const taskList = await TaskAPI.getTasks(this.schoolId, this.classId);
+    const taskList = await TaskAPI.getExpiredTasks(this.schoolId, this.classId);
     this.setState({ taskList });
   }
 
@@ -68,7 +68,7 @@ export default class ArchiveListScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
   
-        <View style={{ paddingVertical: 8 }}>
+        <View style={{ margin: 16 }}>
           <Searchbar placeholder="Cari Tugas" />
         </View>
         <FlatList

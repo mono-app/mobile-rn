@@ -8,6 +8,7 @@ import TaskAPI from "modules/Classroom/api/task";
 import AppHeader from "src/components/AppHeader";
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
 const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
@@ -84,8 +85,8 @@ export default class ScoreDetailsScreen extends React.PureComponent {
             <TouchableOpacity  onPress={this.handleOtherScoring} style={{marginTop: 16}}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
+                  <FontAwesome name="pencil" size={24} style={{marginRight:8, width: 30}}/>
                   <Text style={[styles.label, {fontWeight: "bold", fontSize: 18}]}>Beri Penilaian Lainnya</Text>
-
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -138,16 +139,14 @@ export default class ScoreDetailsScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <Text style={[styles.label, {color: "#0ead69"}]}>Total nilai</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text style={{color: "#0ead69"}}>{this.state.submission.score}</Text>
+                    <Text>{this.state.submission.score}</Text>
                   </View>
                 </View>
               </View>
               <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Note</Text>
-                  <View style={styles.value}>
-                    <Text>{this.state.submission.note}</Text>
-                  </View>
+                <View style={{...styles.listDescriptionContainer}}>
+                  <Text style={{...styles.label, color: "#0ead69"}}>Catatan Tambahan</Text>
+                  <Text style={{flex:3, textAlign:"right"}}>Makan malam setiap malam dengerin lagu eminem</Text>
                 </View>
               </View>
            
@@ -182,6 +181,8 @@ const styles = StyleSheet.create({
     flex:2
   },
   value:{
-    flex: 3
+    flex: 3,
+    textAlign: "right",
+    backgroundColor: "red"
   }
 });

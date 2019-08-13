@@ -4,7 +4,7 @@ import {Rect} from 'react-native-svg'
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph } from "react-native-paper";
 
-import ClassAPI from "../../api/class";
+import ClassAPI from "modules/Classroom/api/class";
 
 const INITIAL_STATE = { subject: "", info: "", isFetching: false }
 
@@ -19,24 +19,24 @@ export default class ClassListItem extends React.Component{
     this.state = INITIAL_STATE;
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     this.setState({ isFetching: true });
 
-    const { class_ } = this.props;
+    const { schoolId, class_ } = this.props;
+    
 
     if(class_.subject){
+
       const { subject } = class_  
       const info  = class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
       this.setState({ isFetching: false, subject, info });
     } else {
-      const promises = [ ClassAPI.getDetail("1hZ2DiIYSFa5K26oTe75", class_.id)];
-
-      Promise.all(promises).then(results => {
-        const class_ = results[0];
-        const {subject} = class_  
-        const info  = class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
-        this.setState({ isFetching: false, subject, info });
-      })
+     
+      const class_ = await ClassAPI.getDetail("1hZ2DiIYSFa5K26oTe75", this.props.class_.id);
+      const {subject} = class_  
+      const info  = class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
+      this.setState({ isFetching: false, subject, info });
+    
     }
   }
 
@@ -49,7 +49,7 @@ export default class ClassListItem extends React.Component{
       )
     }
 
-    let { subject,info } = this.props;
+    let { subject,info } = this.state;
     subject = this.state.subject;
     info = this.state.info;
     

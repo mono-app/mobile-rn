@@ -86,11 +86,10 @@ export default class DiscussionsScreen extends React.PureComponent {
   render() {
     return (  
       <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
-        <View style={{marginTop: 8 }}>
+        <View style={{margin: 16 }}>
             <Searchbar placeholder="Cari Diskusi" />
         </View>
-        <View style={{marginTop: 8,
-                      backgroundColor: "#DCDCDC",
+        <View style={{backgroundColor: "#DCDCDC",
                       padding: 16}}>
           <TouchableOpacity onPress={this.handleAddDiscussion}>
             <Text style={{fontWeight:"bold"}}>

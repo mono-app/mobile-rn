@@ -25,6 +25,7 @@ export default class MassScoringListItem extends React.PureComponent{
     const { schoolId, student } = this.props;
 
     this.setState({finalScore: student.finalScore})
+    console.log(student)
 
     if(student.name){
       const { name, noInduk, finalScore } = student  

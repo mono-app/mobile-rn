@@ -91,11 +91,10 @@ export default class ClassFilesScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
-        <View style={{marginTop: 8 }}>
+        <View style={{margin: 16 }}>
           <Searchbar placeholder="Cari Berkas" />
         </View>
-        <View style={{marginTop: 8,
-                      backgroundColor: "#DCDCDC",
+        <View style={{backgroundColor: "#DCDCDC",
                       padding: 16}}>
           <TouchableOpacity onPress={this.handleAddFiles}>
             <Text style={{fontWeight:"bold"}}>
@@ -104,7 +103,7 @@ export default class ClassFilesScreen extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <FlatList
-          style={{ backgroundColor: "white", marginTop:8 }}
+          style={{ backgroundColor: "white", marginTop:16 }}
           data={this.state.fileList}
           renderItem={({ item, index }) => {
             return (

@@ -9,6 +9,7 @@ import AppHeader from "src/components/AppHeader";
 import moment from "moment"
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
 const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
@@ -106,13 +107,16 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
       <View style={{paddingBottom:64}}>
         <ScrollView>
           <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-            <View style={styles.subjectContainer}>
-                <Text style={{fontWeight: "bold", fontSize: 18}}>
-                  {this.state.studentInfo}
-                </Text>
-                <Text style={{fontSize: 16}}>
-                  {this.title}
-                </Text>
+            <View style={{flexDirection:"row", backgroundColor: "#fff", marginTop: 16, alignItems:"center", justifyContent:"space-between"}}>
+              <View style={styles.subjectContainer}>
+                  <Text style={{fontWeight: "bold", fontSize: 18}}>
+                    {this.state.studentInfo}
+                  </Text>
+                  <Text style={{fontSize: 16}}>
+                    {this.title}
+                  </Text>
+              </View>
+                <FontAwesome name="user-o" size={24} style={{marginRight:4, width: 30}}/>
             </View>
             <View style={{marginTop: 16}}>
               <View style={styles.listItemContainer}>
@@ -154,6 +158,7 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
 
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
+                  <FontAwesome name="calendar" size={24} style={{marginRight:4, width: 30}}/>
                   <Text style={styles.label}>Tanggal Pengumpulan</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("DD MMMM YYYY"):""}</Text>
@@ -162,6 +167,7 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
+                  <FontAwesome name="clock-o" size={24} style={{marginRight:4, width: 30}}/>
                   <Text style={styles.label}>Jam Pengumpulan</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("HH:mm"):""}</Text>
@@ -171,12 +177,19 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleScoringPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
+
                     {(this.state.score)? 
-                    <Text style={styles.label}>Lihat Nilai</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>
+                      <FontAwesome name="eye" size={24} style={{marginRight:4, width: 30}}/>
+                      <Text style={styles.label}>Lihat Nilai</Text>
+                    </View>
                     :
-                    <Text style={styles.label}>Beri Penilaian</Text>
+                    <View style={{flex:1, flexDirection:"row"}}>
+                      <FontAwesome name="pencil" size={24} style={{marginRight:4, width: 30}}/>
+                      <Text style={styles.label}>Beri Penilaian</Text>
+                    </View>
                     }
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <View style={{flexDirection:"row", textAlign: "right"}}>
                       <Text>{(this.state.score)?this.state.score:""}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
@@ -186,6 +199,8 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleTaskDownload}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
+                   <FontAwesome name="download" size={24} style={{marginRight:4, width: 30}}/>
+
                     <Text style={styles.label}>Unduh Tugas</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -211,8 +226,6 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
 
 const styles = StyleSheet.create({
   subjectContainer:{
-    marginTop: 16,
-    backgroundColor: "#fff",
     flexDirection: "column",
     padding: 16
   },
@@ -227,7 +240,7 @@ const styles = StyleSheet.create({
   listDescriptionContainer: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   label:{
     fontWeight: "bold",

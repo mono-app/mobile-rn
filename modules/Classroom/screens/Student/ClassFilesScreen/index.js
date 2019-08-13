@@ -94,12 +94,12 @@ export default class ClassFilesScreen extends React.PureComponent {
                 {this.subjectDesc}
               </Text>
         </View>
-        <View style={{marginTop: 8 }}>
+        <View style={{marginTop: 16, marginHorizontal: 16 }}>
           <Searchbar placeholder="Cari Berkas" />
         </View>
       
         <FlatList
-          style={{ backgroundColor: "white", marginTop:8 }}
+          style={{ backgroundColor: "white", marginTop:16 }}
           data={this.state.fileList}
           renderItem={({ item, index }) => {
             return (

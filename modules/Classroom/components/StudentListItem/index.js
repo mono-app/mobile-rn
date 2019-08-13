@@ -28,8 +28,6 @@ export default class StudentListItem extends React.Component{
       const { name, noInduk } = student  
       this.setState({ isFetching: false, name, noInduk });
     }else{  
-      console.log(schoolId)
-      console.log( this.props.student.id)
       const student = await StudentAPI.getDetail(schoolId, this.props.student.id)
       if(student.gender){
         student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)

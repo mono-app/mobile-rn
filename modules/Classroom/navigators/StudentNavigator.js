@@ -16,6 +16,8 @@ import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionComment
 import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 import TaskSubmissionScreen from "modules/Classroom/screens/Student/TaskSubmissionScreen"
 import AddTaskSubmissionScreen from "modules/Classroom/screens/Student/AddTaskSubmissionScreen"
+import AnnouncementScreen from "modules/Classroom/screens/Student/AnnouncementScreen"
+import GallerySwiperScreen from "modules/Classroom/screens/GallerySwiperScreen"
 
 export default StudentNavigator = createStackNavigator(
   {
@@ -34,6 +36,9 @@ export default StudentNavigator = createStackNavigator(
     AddDiscussion: {screen: AddDiscussionScreen},
     TaskSubmission: {screen: TaskSubmissionScreen},
     AddTaskSubmission: {screen: AddTaskSubmissionScreen},
+    Announcement: {screen: AnnouncementScreen},
+    GallerySwiper: {screen: GallerySwiperScreen},
+
   },
   {
     initialRouteName: "StudentHome"

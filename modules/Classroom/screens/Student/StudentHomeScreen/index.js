@@ -20,7 +20,7 @@ class StudentHomeScreen extends React.PureComponent {
       header: (
         <Header
           navigation={navigation}
-          title="Profil Saya"
+          title="Classroom"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -45,12 +45,19 @@ class StudentHomeScreen extends React.PureComponent {
     }
     this.props.navigation.navigate("MyClasses", payload);
   }
+
+  handleAnnouncementPress = () => {
+    this.props.navigation.navigate("Announcement");
+  }
   
   constructor(props) {    
     super(props);
     this.state = INITIAL_STATE;
     
     this.loadProfileInformation = this.loadProfileInformation.bind(this);
+    this.handleStudentProfilePress = this.handleStudentProfilePress.bind(this);
+    this.handleClassListPress = this.handleClassListPress.bind(this);
+    this.handleAnnouncementPress = this.handleAnnouncementPress.bind(this);
   }
 
   componentDidMount(){
@@ -82,13 +89,13 @@ class StudentHomeScreen extends React.PureComponent {
               </View>
               <Text>Kelas Saya</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleAddPress} >
+          <TouchableOpacity onPress={this.handleAnnouncementPress} >
               <View style={styles.button} >
                 <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
                   <FontAwesome name="comment" style={{color: "#fff"}} size={24} />
                 </View>
               </View>
-              <Text>Forum Diskusi</Text>
+              <Text>Pengumuman</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -12,6 +12,7 @@ import ClassAPI from "modules/Classroom/api/class";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null, schoolId: "1hZ2DiIYSFa5K26oTe75" };
 
@@ -153,7 +154,10 @@ export default class ClassProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleStudentListScreen}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Daftar Murid</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="users" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Daftar Murid</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -163,7 +167,10 @@ export default class ClassProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleClassFilesScreenPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Berkas</Text>
+                 <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Berkas</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -173,7 +180,10 @@ export default class ClassProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleAddTask}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Tambah Tugas</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="pencil" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Tambah Tugas</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -183,7 +193,10 @@ export default class ClassProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleTaskListScreen}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Daftar Tugas</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Daftar Tugas</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -193,7 +206,10 @@ export default class ClassProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleMassScoringPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Penilaian Massal</Text>
+                  <View style={{flexDirection:"row"}}>
+                    <FontAwesome name="pencil" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Penilaian Massal</Text>
+                  </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>

@@ -22,6 +22,7 @@ const INITIAL_STATE = {
   subjectDesc: "",
   isDateTimePickerVisible: false
 };
+import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 /**
  * Parameter list
@@ -128,15 +129,19 @@ export default class AddTaskScreen extends React.PureComponent {
                 }}
               >
                 <View style={styles.listDescriptionContainer}>
-                  {!this.state.classId ? (
-                    <Text style={styles.label}>Pilih Kelas Saya</Text>
-                  ) : (
-                    <View>
-                      <Text style={styles.label}>{this.state.subject}</Text>
-                      <Text style={styles.label}>{this.state.subjectDesc}</Text>
+                  <View style={{flexDirection:"row", justifyContent: 'center', alignItems: 'center'}}>
+                    <MaterialIcons name="web-asset" size={45} style={{marginRight: 8}}/>
+                    {!this.state.classId ? (
+                      <View>
+                        <Text style={styles.label}>Pilih Kelas Saya</Text>
+                      </View>
+                    ) : (
+                      <View>
+                        <Text style={styles.label}>{this.state.subject}</Text>
+                        <Text style={styles.label}>{this.state.subjectDesc}</Text>
+                      </View>
+                    )}
                     </View>
-                  )}
-
                   <View style={{ flexDirection: "row", textAlign: "right" }}>
                     <EvilIcons
                       name="chevron-right"

@@ -1,11 +1,11 @@
 import React from "react";
 import { View, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Searchbar, Text } from "react-native-paper";
-import ClassAPI from "../../../api/class";
-import ClassListItem from "../../../components/ClassListItem";
+import ClassAPI from "modules/Classroom/api/class";
+import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 
-const INITIAL_STATE = { isLoading: true };
+const INITIAL_STATE = { isLoading: true, classList: [] };
 
 export default class StudentClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -71,7 +71,7 @@ export default class StudentClassListScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} class_={item}/>
+                key={index} schoolId={this.schoolId} class_={item}/>
             )
           }}
         />

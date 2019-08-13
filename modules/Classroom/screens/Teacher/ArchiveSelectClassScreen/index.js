@@ -52,7 +52,7 @@ export default class ArchiveSelectClassScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <View style={{ paddingVertical: 8 }}>
+        <View style={{ margin: 16 }}>
           <Searchbar placeholder="Cari Kelas" />
         </View>
         <FlatList
@@ -62,7 +62,7 @@ export default class ArchiveSelectClassScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} class_={item}/>
+                key={index} schoolId={this.schoolId} class_={item}/>
             )
           }}
         />
