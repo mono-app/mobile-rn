@@ -3,6 +3,7 @@ import firebase from "react-native-firebase";
 import { SchoolsCollection, UserMappingCollection } from "src/api/database/collection";
 
 export default class SchoolAPI{
+  static currentSchoolId = ""
 
   static async getUserSchools(userEmail) {
     const db = firebase.firestore();

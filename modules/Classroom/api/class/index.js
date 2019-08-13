@@ -55,16 +55,16 @@ export default class TeacherAPI{
 
   }
 
-  static async getDetail(schoolId, classId, source = "default") {
+  static async getDetail(schoolId, classId) {
     const db = new firebase.firestore();
-    const classesCollection = new ClassesCollection();
     const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
-    const documentSnapshot = await classesDocumentRef.get({ source });
-    const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
-
+    const classesSnapshot = await classesDocumentRef.get();
+    
+    const data = { id: classesSnapshot.id, ...classesSnapshot.data() };
     return Promise.resolve(data);
   }
-
+  
 }

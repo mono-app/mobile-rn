@@ -41,6 +41,42 @@ export default class TaskAPI{
     return Promise.resolve(task)
   }
 
+  static async getActiveTasks(schoolId, classId) {
+    const db = firebase.firestore();
+    const classesCollection = new ClassesCollection();
+    const schoolsCollection = new SchoolsCollection();
+    const tasksCollection = new TasksCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const tasksCollectionRef = classesDocumentRef.collection(tasksCollection.getName()).orderBy('dueDate').startAt(new Date());
+    
+    const taskSnapshot = await tasksCollectionRef.get();
+
+    const task = (await taskSnapshot.docs).map((snap)=> {
+      return {id: snap.id, ...snap.data()}
+    });
+
+    return Promise.resolve(task)
+  }
+
+  static async getExpiredTasks(schoolId, classId) {
+    const db = firebase.firestore();
+    const classesCollection = new ClassesCollection();
+    const schoolsCollection = new SchoolsCollection();
+    const tasksCollection = new TasksCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const tasksCollectionRef = classesDocumentRef.collection(tasksCollection.getName()).orderBy('dueDate').endAt(new Date());
+    
+    const taskSnapshot = await tasksCollectionRef.get();
+
+    const task = (await taskSnapshot.docs).map((snap)=> {
+      return {id: snap.id, ...snap.data()}
+    });
+
+    return Promise.resolve(task)
+  }
+
   
   async getDetail(schoolId, classId, taskId, source = "default") {
     const db = new firebase.firestore();

@@ -23,7 +23,6 @@ export default class StudentAPI{
       
       return Promise.resolve(true);
     }catch(err){ 
-      console.log(err);
       return Promise.resolve(false); 
     }
   }
@@ -59,7 +58,6 @@ export default class StudentAPI{
 
       return Promise.resolve(true);
     } catch (err) {
-      console.log(err);
       return Promise.resolve(false);
     }
   }
@@ -99,11 +97,15 @@ export default class StudentAPI{
     const classesCollection = new ClassesCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
-    const studentsCollectionRef = classesDocumentRef.collection(studentsCollection.getName());
+    let studentsCollectionRef = classesDocumentRef.collection(studentsCollection.getName());
+
     const studentSnapshot = await studentsCollectionRef.get();
-    const studentDocuments = (await studentSnapshot.docs).map((snap) => {
-      return {id:snap.id, ...snap.data()}
+    const arrayOfPromise = studentSnapshot.docs.map(async (snap) => {
+      const student = await StudentAPI.getDetail(schoolId, snap.id)
+      return Promise.resolve({...student, finalScore: snap.data().finalScore})
     });
+
+    const studentDocuments = await Promise.all(arrayOfPromise);
 
     return Promise.resolve(studentDocuments);
   }

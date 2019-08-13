@@ -45,6 +45,22 @@ export default class DiscussionAPI{
     return Promise.resolve(discussions)
   }
 
+  static async getTotalDiscussion(schoolId, classId, taskId) {
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const tasksCollection = new TasksCollection();
+    const discussionsCollection = new DiscussionsCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const tasksCollectionRef = classesDocumentRef.collection(tasksCollection.getName()).doc(taskId);
+    const discussionsCollectionRef = tasksCollectionRef.collection(discussionsCollection.getName());
+
+    const discussionsQuerySnapshot = await discussionsCollectionRef.get();
+
+    return Promise.resolve(discussionsQuerySnapshot.size)
+  }
+
   
   async getDetail(schoolId, classId, taskId, discussionId, callback) {
     const db = new firebase.firestore();
