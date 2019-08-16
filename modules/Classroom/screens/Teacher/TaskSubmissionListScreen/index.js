@@ -1,6 +1,6 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import StudentListItem from "../../../components/StudentListItem";
 import AppHeader from "src/components/AppHeader";
 import SubmissionAPI from "../../../api/submission";
@@ -28,6 +28,7 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
   handleSubmissionPress = submission => {
     const submissionId = submission.id;
     const payload = {
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       submissionId: submissionId,
@@ -42,14 +43,14 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadSubmissions = this.loadSubmissions.bind(this);
-    this.handleSubmissionPress = this.handleSubmissionPress.bind(this);
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.title = this.props.navigation.getParam("title", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
+    this.loadSubmissions = this.loadSubmissions.bind(this);
+    this.handleSubmissionPress = this.handleSubmissionPress.bind(this);
   }
 
   componentDidMount(){
@@ -68,11 +69,12 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.submissionList}
-          renderItem={({ item, index }) => {
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <StudentListItem 
                 onPress={() => this.handleSubmissionPress(item)}
-                key={index} schoolId={this.schoolId} student={item}/>
+                schoolId={this.schoolId} student={item}/>
             )
           }}
         />

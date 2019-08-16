@@ -4,12 +4,10 @@ import AppHeader from "src/components/AppHeader";
 import AddClassScreen from "../AddClassScreen";
 import AddTeacherScreen from "../AddTeacherScreen";
 import AddStudentScreen from "../AddStudentScreen";
-import { Snackbar } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 
 const INITIAL_STATE = {
-  isLoading: false,
-  showSnackbar: false
+  isLoading: false
 };
 
 const CustomTopNavigator = createAppContainer(
@@ -50,19 +48,17 @@ export default class SchoolAdminAddScreen extends React.PureComponent {
     };
   };
 
- 
-
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
 
   }
 
   render() {
     return (
       <View style={{flex:1}}>
-        <CustomTopNavigator showSnackbar={this.showSnackbar}/>
-        
+        <CustomTopNavigator schoolId={this.schoolId}/>
       </View>
     );
   }

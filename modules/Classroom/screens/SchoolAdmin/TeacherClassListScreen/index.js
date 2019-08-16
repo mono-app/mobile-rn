@@ -5,7 +5,7 @@ import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 
-const INITIAL_STATE = { isLoading: true };
+const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]   };
 
 export default class TeacherClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -21,33 +21,53 @@ export default class TeacherClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
-    this.setState({ classList });
+    this.setState({classList: []})
+    const classList = await ClassAPI.getUserActiveClasses(this.schoolId, this.teacherEmail);
+    this.setState({ classList, filteredClassList: classList });
    }
 
   handleClassPress = class_ => {
-    const classId = class_.id;
-    this.props.navigation.navigate("ClassProfile", { classId });
+    const payload = {
+      schoolId: this.schoolId,
+      classId: class_.id
+    }
+    this.props.navigation.navigate("ClassProfile", payload);
   }
 
   handleAddClassPress = () => {
     const payload = {
-      isPicker: true,
+      schoolId: this.schoolId,
       teacherEmail: this.teacherEmail,
       onRefresh: this.loadClasses
     }
     this.props.navigation.navigate("TeacherClassListPicker",  payload);
   }
 
+  handleSearchPress = () => {
+    this.setState({filteredClassList: []})
+
+    const clonedClassList = JSON.parse(JSON.stringify(this.state.classList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+
+      const filteredClassList = clonedClassList.filter((class_) => {
+        return class_.subject.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredClassList})
+    } else {
+      this.setState({filteredClassList: clonedClassList})
+    }
+  }
+
   constructor(props) {
     super(props);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.schoolId = this.props.navigation.getParam("schoolId", "");
-
+    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleAddClassPress = this.handleAddClassPress.bind(this);
+    this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
@@ -58,21 +78,29 @@ export default class TeacherClassListScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar placeholder="Cari Kelas" />
+          <Searchbar 
+            onChangeText={searchText => {this.setState({searchText})}}
+            onSubmitEditing={this.handleSearchPress}
+            value={this.state.searchText}
+            placeholder="Cari Kelas" />
         </View>
-        <View style={{ padding: 16, backgroundColor: "#fff"}}>
+        <View style={{backgroundColor: "#DCDCDC",
+                      padding: 16}}>
           <TouchableOpacity onPress={this.handleAddClassPress}>
-            <Text style={{color: "green"}}>+ Tambahkan kelas</Text>
+            <Text style={{fontWeight:"bold"}}>
+              + Tambahkan kelas
+            </Text>
           </TouchableOpacity>
         </View>
         <FlatList
-          style={{ backgroundColor: "white" }}
-          data={this.state.classList}
-          renderItem={({ item, index }) => {
+          style={{ backgroundColor: "white", paddingTop: 16 }}
+          data={this.state.filteredClassList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} schoolId={this.schoolId} class_={item}/>
+                schoolId={this.schoolId} class_={item}/>
             )
           }}
         />

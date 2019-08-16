@@ -24,7 +24,7 @@ import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionComment
 import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 import ScoreDetailsScreen from "modules/Classroom/screens/Teacher/ScoreDetailsScreen"
 import TaskFilesScreen from "modules/Classroom/screens/Teacher/TaskFilesScreen"
-import ArchiveListScreen from "modules/Classroom/screens/Teacher/ArchiveListScreen"
+import TaskArchiveListScreen from "modules/Classroom/screens/Teacher/TaskArchiveListScreen"
 import ArchiveSelectClassScreen from "modules/Classroom/screens/Teacher/ArchiveSelectClassScreen"
 import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFilesScreen"
 import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
@@ -54,7 +54,7 @@ export default TeacherNavigator = createStackNavigator(
     AddDiscussion: {screen: AddDiscussionScreen},
     ScoreDetails: {screen: ScoreDetailsScreen},
     TaskFiles: {screen: TaskFilesScreen},
-    ArchiveList: {screen: ArchiveListScreen},
+    TaskArchiveList: {screen: TaskArchiveListScreen},
     ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
     AddClassFiles: {screen: AddClassFilesScreen},
     MassScoring: {screen: MassScoringScreen},

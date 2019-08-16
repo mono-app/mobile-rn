@@ -77,11 +77,12 @@ export default class TaskListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
           data={this.state.taskList}
-          renderItem={({ item, index }) => {
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <TaskListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} task={item}/>
+                task={item}/>
             )
           }}
         />

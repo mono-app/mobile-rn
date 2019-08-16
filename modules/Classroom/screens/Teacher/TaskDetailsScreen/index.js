@@ -11,7 +11,7 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import DeleteDialog from "src/components/DeleteDialog";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
-const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", task:{}, showSnackbarFailDeleting: false, totalSubmission: 0, totalDiscussion: 0 };
+const INITIAL_STATE = { isLoading: true, task:{}, showSnackbarFailDeleting: false, totalSubmission: 0, totalDiscussion: 0 };
 
 export default class TaskDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -28,15 +28,15 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   loadTask = async () => {
     const api = new TaskAPI();
-    const task = await api.getDetail(this.state.schoolId, this.classId, this.taskId);
-    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.state.schoolId, this.classId, this.taskId);
-    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.state.schoolId, this.classId, this.taskId);
+    const task = await api.getDetail(this.schoolId, this.classId, this.taskId);
+    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
+    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.schoolId, this.classId, this.taskId);
     this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
   }
 
   handleNamePress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "title", 
@@ -55,7 +55,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
     const payload = {
       isDatetimePicker: true,
       pickerType: "date",
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "dueDate", 
@@ -70,7 +70,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
     const payload = {
       isDatetimePicker: true,
       pickerType: "time",
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "dueDate", 
@@ -84,7 +84,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
   handleDetailPress = e => {
     const payload = {
       isMultiline: true,
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "details", 
@@ -101,7 +101,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleTaskSubmissionPress = () => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       title: this.state.task.title,
@@ -113,7 +113,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleDiscussionPress = () => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       subject: this.subject,
@@ -123,10 +123,10 @@ export default class TaskDetailsScreen extends React.PureComponent {
   }
 
   handleDelete = async () => {
-    const total = await SubmissionAPI.getSubmissionsCount(this.state.schoolId, this.classId, this.taskId);
+    const total = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
     
     if(total===0){
-      await TaskAPI.deleteTask(this.state.schoolId, this.classId, this.taskId);
+      await TaskAPI.deleteTask(this.schoolId, this.classId, this.taskId);
       const { navigation } = this.props;
       navigation.state.params.onDeleteSuccess();
       navigation.goBack();   
@@ -140,6 +140,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.loadTask = this.loadTask.bind(this);
     this.deleteDialog = null;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");

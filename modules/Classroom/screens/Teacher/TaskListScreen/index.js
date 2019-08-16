@@ -6,7 +6,7 @@ import TaskListItem from "../../../components/TaskListItem";
 import AppHeader from "src/components/AppHeader";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75", showSnackbarSuccessDeleting: false };
+const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false };
 
 export default class TaskListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -25,12 +25,13 @@ export default class TaskListScreen extends React.PureComponent {
   loadTasks = async () => {
     this.setState({ taskList: [] });
 
-    const taskList = await TaskAPI.getActiveTasks(this.state.schoolId, this.classId);
+    const taskList = await TaskAPI.getActiveTasks(this.schoolId, this.classId);
     this.setState({ taskList });
   }
 
   handleAddTaskPress = () => {
     payload = {
+      schoolId: this.schoolId,
       classId: this.classId,
       subject: this.subject,
       subjectDesc: this.subjectDesc
@@ -40,6 +41,7 @@ export default class TaskListScreen extends React.PureComponent {
 
   handleClassPress = (item) => {
     payload = {
+      schoolId: this.schoolId,
       taskId: item.id,
       classId: this.classId,
       subject: this.subject,
@@ -52,10 +54,11 @@ export default class TaskListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadTasks = this.loadTasks.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
+    this.loadTasks = this.loadTasks.bind(this);
     this.handleAddTaskPress = this.handleAddTaskPress.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
   }
@@ -80,11 +83,12 @@ export default class TaskListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
           data={this.state.taskList}
-          renderItem={({ item, index }) => {
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <TaskListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} task={item}/>
+                task={item}/>
             )
           }}
         />

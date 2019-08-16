@@ -99,11 +99,12 @@ export default class DiscussionsScreen extends React.PureComponent {
         </View>
         <FlatList
           data={this.state.discussionList}
-          renderItem={({ item, index }) => {
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <DiscussionListItem 
                 onPress={() => this.handleDiscussionPress(item)}
-                key={index} schoolId={this.schoolId} discussion={item} />
+                schoolId={this.schoolId} discussion={item} />
             )
           }}
         />

@@ -3,7 +3,8 @@ import { createStackNavigator } from "react-navigation";
 
 import StudentHomeScreen from "modules/Classroom/screens/Student/StudentHomeScreen";
 import MyProfileScreen from "modules/Classroom/screens/Student/MyProfileScreen";
-import MyClassesScreen from "modules/Classroom/screens/Student/MyClassesScreen";
+import MyClassScreen from "modules/Classroom/screens/Student/MyClassScreen";
+import MyArchiveClassScreen from "modules/Classroom/screens/Student/MyArchiveClassScreen";
 import ClassDetailsScreen from "modules/Classroom/screens/Student/ClassDetailsScreen";
 import StudentListScreen from "modules/Classroom/screens/Student/StudentListScreen";
 import StudentProfileScreen from "modules/Classroom/screens/Student/StudentProfileScreen";
@@ -23,7 +24,8 @@ export default StudentNavigator = createStackNavigator(
   {
     StudentHome: { screen: StudentHomeScreen },
     MyProfile: { screen: MyProfileScreen },
-    MyClasses: { screen: MyClassesScreen },
+    MyClass: { screen: MyClassScreen },
+    MyArchiveClass: { screen: MyArchiveClassScreen },
     ClassDetails: { screen: ClassDetailsScreen },
     StudentList: { screen: StudentListScreen },
     StudentProfile: { screen: StudentProfileScreen },

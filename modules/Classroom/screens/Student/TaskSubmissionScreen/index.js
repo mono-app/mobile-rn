@@ -9,7 +9,17 @@ import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 
-const INITIAL_STATE = { isLoading: true, progressPercentage: 0, showProgressbar: false, isDeleting: false, selectedFile: null, selectedIndex: -1 };
+const INITIAL_STATE = { 
+  isLoading: true, 
+  progressPercentage: 0, 
+  showProgressbar: false, 
+  isDeleting: false, 
+  selectedFile: null, 
+  selectedIndex: -1,
+  searchText: "", 
+  fileList:[], 
+  filteredFileList:[] 
+};
 
 export default class TaskSubmissionScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -28,16 +38,13 @@ export default class TaskSubmissionScreen extends React.PureComponent {
   loadFiles = async () => {
     this.setState({ fileList: [], isLoading: true });
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
-
     const fileList = await FileAPI.getStudentSubmissionFiles(this.schoolId, this.classId, this.taskId, currentUserEmail);
-    this.setState({ fileList });
-    this.setState({isLoading: false})
-
+    this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
 
   handleDownloadPress = item => {
     this.setState({progressPercentage:0,showProgressbar: true})
-    let task = RNBackgroundDownloader.download({
+    RNBackgroundDownloader.download({
         id: item.id,
         url: item.storage.downloadUrl,
         destination: `/storage/emulated/0/Download/${item.title}`
@@ -74,19 +81,34 @@ export default class TaskSubmissionScreen extends React.PureComponent {
     this.props.navigation.navigate("AddTaskSubmission")
   }
 
+  handleSearchPress = () => {
+    this.setState({filteredFileList: []})
+
+    const clonedFileList = JSON.parse(JSON.stringify(this.state.fileList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+      const filteredFileList = clonedFileList.filter((file) => {
+        return file.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredFileList})
+    } else {
+      this.setState({filteredFileList: clonedFileList})
+    }
+  }
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadFiles = this.loadFiles.bind(this);
-    this.handleDownloadPress = this.handleDownloadPress.bind(this);
-    this.onDeletePress = this.onDeletePress.bind(this);
     this.deleteDialog = null;
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
-  
+    this.loadFiles = this.loadFiles.bind(this);
+    this.handleDownloadPress = this.handleDownloadPress.bind(this);
+    this.onDeletePress = this.onDeletePress.bind(this);
+    this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
@@ -97,7 +119,11 @@ export default class TaskSubmissionScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
         <View style={{marginTop: 8 }}>
-          <Searchbar placeholder="Cari Berkas" />
+          <Searchbar 
+              onChangeText={searchText => {this.setState({searchText})}}
+              onSubmitEditing={this.handleSearchPress}
+              value={this.state.searchText}
+              placeholder="Cari Berkas" />
         </View>
         <View style={{marginTop: 8,
                       backgroundColor: "#DCDCDC",
@@ -110,13 +136,14 @@ export default class TaskSubmissionScreen extends React.PureComponent {
         </View>
         <FlatList
           style={{ backgroundColor: "white", marginTop:8 }}
-          data={this.state.fileList}
-          renderItem={({ item, index }) => {
+          data={this.state.filteredFileList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <FileListItem 
                 onDownloadPress={() => this.handleDownloadPress(item)}
                 onDeletePress={() => this.handleDeletePress(item, index)}
-                key={index} file={item} />
+                file={item} />
             )
           }}
         />
@@ -140,19 +167,3 @@ export default class TaskSubmissionScreen extends React.PureComponent {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  subjectContainer:{
-    marginTop: 8,
-    backgroundColor: "#fff",
-    flexDirection: "column",
-    padding: 16
-  },
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});

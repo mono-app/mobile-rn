@@ -194,10 +194,11 @@ export default class DiscussionCommentScreen extends React.PureComponent {
             <FlatList
               style={{marginHorizontal: 8}}
               data={this.state.commentList}
-              renderItem={({ item, index }) => {
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
                 return (
                   <CommentListItem 
-                   key={index} comment={item} />
+                   comment={item} />
                 )
               }}
             />

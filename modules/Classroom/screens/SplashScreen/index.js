@@ -15,6 +15,8 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 const INITIAL_STATE = {
   isLoading: false,
   schoolList: [],
+  filteredSchoolList: [],
+  searchText: "",
   schoolCount: 1,
   currentUserEmail: ""
 };
@@ -26,9 +28,12 @@ export default class SplashClass extends React.PureComponent {
   }
 
   loadSchools = async () => {
+
     this.setState({schoolList: []});
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+
     this.setState({currentUserEmail})
+
     const schoolList = await SchoolAPI.getUserSchools(this.state.currentUserEmail);
     this.setState({schoolCount: schoolList.length, schoolList})
     if(schoolList.length==1){
@@ -54,9 +59,30 @@ export default class SplashClass extends React.PureComponent {
     }
   }
 
+  handleSearchPress = () => {
+    this.setState({filteredSchoolList: []})
+
+    const clonedSchoolList = JSON.parse(JSON.stringify(this.state.schoolList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+
+      const filteredSchoolList = clonedSchoolList.filter((school) => {
+        return school.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredSchoolList})
+    } else {
+      this.setState({filteredSchoolList: clonedSchoolList})
+    }
+  }
+
   constructor(props){
     super(props)
     this.state = INITIAL_STATE
+    this.loadSchools = this.loadSchools.bind(this)
+    this.handleSchoolPress = this.handleSchoolPress.bind(this)
+    this.handleBackPress = this.handleBackPress.bind(this)
+    this.handleSearchPress = this.handleSearchPress.bind(this)
+    this.redirectScreen = this.redirectScreen.bind(this)
   }
 
   componentDidMount(){
@@ -90,15 +116,21 @@ export default class SplashClass extends React.PureComponent {
           <Subheading style={{alignSelf: "center"}}>Silahkan pilih asal sekolah</Subheading>
 
           <View style={{ padding: 16 }}>
-            <Searchbar style={{backgroundColor: "#E8EEE8"}} placeholder="Cari Sekolah" />
+            <Searchbar 
+              style={{backgroundColor: "#E8EEE8"}} 
+              onChangeText={searchText => {this.setState({searchText})}}
+              onSubmitEditing={this.handleSearchPress}
+              value={this.state.searchText}
+              placeholder="Cari Sekolah" />
             <View style={{marginTop:36}}/>
             <FlatList
-              data={this.state.schoolList}
-              renderItem={({ item, index }) => {
+              data={this.state.filteredSchoolList}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
                 return (
                   <SchoolListItem 
                     onPress={() => this.handleSchoolPress(item)}
-                    key={index} school={item}/>
+                    currentUserEmail={this.state.currentUserEmail} school={item}/>
                 )
               }}
             />

@@ -17,13 +17,22 @@ export default class SchoolAdminDataMasterScreen extends React.PureComponent {
     };
   };
   handleClassPress = e => {
-    this.props.navigation.navigate("ClassList");
+    payload = {
+      schoolId: this.schoolId
+    }
+    this.props.navigation.navigate("ClassList", payload);
   };
   handleTeacherPress = e => {
-    this.props.navigation.navigate("TeacherList");
+    payload = {
+      schoolId: this.schoolId
+    }
+    this.props.navigation.navigate("TeacherList", payload);
   };
   handleStudentPress = e => {
-    this.props.navigation.navigate("StudentList");
+    payload = {
+      schoolId: this.schoolId
+    }
+    this.props.navigation.navigate("StudentList", payload);
   };
 
   constructor(props) {
@@ -31,6 +40,7 @@ export default class SchoolAdminDataMasterScreen extends React.PureComponent {
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleTeacherPress = this.handleTeacherPress.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
   }
 
   render() {

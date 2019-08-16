@@ -11,7 +11,7 @@ import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
-const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
+const INITIAL_STATE = { isLoading: true, showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
 export default class SubmissionDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -28,10 +28,10 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
 
   loadSubmission = async () => {
 
-    const promises = [ SubmissionAPI.getDetail(this.state.schoolId, this.classId, this.taskId, this.submissionId),
-      StudentAPI.getDetail(this.state.schoolId,this.submissionId),
-      ClassAPI.getDetail(this.state.schoolId,this.classId),
-      new TaskAPI().getDetail(this.state.schoolId,this.classId,this.taskId),
+    const promises = [ SubmissionAPI.getDetail(this.schoolId, this.classId, this.taskId, this.submissionId),
+      StudentAPI.getDetail(this.schoolId,this.submissionId),
+      ClassAPI.getDetail(this.schoolId,this.classId),
+      new TaskAPI().getDetail(this.schoolId,this.classId,this.taskId),
     ];
 
     Promise.all(promises).then(results => {
@@ -54,7 +54,7 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
 
   handleScoringPress = ()=>{
     payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       submissionId: this.submissionId,
@@ -70,7 +70,7 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
 
   handleTaskDownload = () => {
     payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       submissionId: this.submissionId,
@@ -85,17 +85,16 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadSubmission = this.loadSubmission.bind(this);
-    this.handleScoringPress = this.handleScoringPress.bind(this);
-    this.handleTaskDownload = this.handleTaskDownload.bind(this);
-    
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
     this.title = this.props.navigation.getParam("title", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
- 
+    this.loadSubmission = this.loadSubmission.bind(this);
+    this.handleScoringPress = this.handleScoringPress.bind(this);
+    this.handleTaskDownload = this.handleTaskDownload.bind(this);
   }
 
   componentDidMount(){

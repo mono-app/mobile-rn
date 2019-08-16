@@ -28,6 +28,7 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
 
   handleClassPickPress = () => {
     payload = {
+      schoolId: this.schoolId,
       result : (classId, subject, subjectDesc) => {this.setState({classId, subject, subjectDesc})}
     }
     this.props.navigation.navigate("AddTaskClassPicker", payload);
@@ -65,7 +66,7 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
       if(databaseFieldName==="email"){
         updateObject['isActive'] = false;
       }
-      updateQuery.executeQuery(schoolsCollection, classesCollection,tasksCollection, schoolDocument, classDocument, taskDocument, updateObject).then( () => {
+      updateQuery.executeQuery3(schoolsCollection, classesCollection,tasksCollection, schoolDocument, classDocument, taskDocument, updateObject).then( () => {
         this.setState({ isLoading: false });
         const { navigation } = this.props;
         navigation.state.params.onRefresh(this.state.defaultValue);
@@ -137,10 +138,11 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
           </TouchableOpacity>
           :
           <TextInput
-            style={{ marginBottom: 0 }}
+            style={(this.isMultiline)?{textAlignVertical: "top" }:{}}
             placeholder={placeholder}
             value={this.state.defaultValue}
             multiline={this.isMultiline}
+            numberOfLines={(this.isMultiline)?3:1}
             keyboardType={this.keyboardType}
             onChangeText={this.handleDefaultValueChange}/>
         }

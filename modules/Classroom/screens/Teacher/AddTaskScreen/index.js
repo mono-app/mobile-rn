@@ -12,7 +12,6 @@ import moment from "moment";
 import { StackActions } from "react-navigation";
 
 const INITIAL_STATE = {
-  schoolId: "1hZ2DiIYSFa5K26oTe75",
   isLoading: false,
   taskTitle: "",
   dueDate: {},
@@ -60,6 +59,7 @@ export default class AddTaskScreen extends React.PureComponent {
 
   handleClassPickPress = () => {
     payload = {
+      schoolId:this.schoolId,
       result: (classId, subject, subjectDesc) => {
         this.setState({ classId, subject, subjectDesc });
       }
@@ -76,10 +76,11 @@ export default class AddTaskScreen extends React.PureComponent {
   handleSavePress = () => {
     this.setState({ isLoading: true });
 
-    TaskAPI.addTask(this.state.schoolId, this.state.classId, {title: this.state.taskTitle, dueDate: this.state.dueDate, details: this.state.taskDetail}).then(() => {
+    TaskAPI.addTask(this.schoolId, this.state.classId, {title: this.state.taskTitle, dueDate: this.state.dueDate, details: this.state.taskDetail}).then(() => {
       this.setState({ isLoading: false });
 
       payload = {
+        schoolId: this.schoolId,
         classId: this.state.classId,
         subject: this.state.subject,
         subjectDesc: this.state.subjectDesc
@@ -104,6 +105,7 @@ export default class AddTaskScreen extends React.PureComponent {
     INITIAL_STATE.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     INITIAL_STATE.dueDate = moment().toDate();
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.handleTaskTitleChange = this.handleTaskTitleChange.bind(this);
     this.handleTaskDetailChange = this.handleTaskDetailChange.bind(this);
     this.showDateTimePicker = this.showDateTimePicker.bind(this);

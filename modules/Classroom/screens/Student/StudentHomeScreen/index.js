@@ -5,37 +5,40 @@ import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
 import CurrentUserAPI from "src/api/people/CurrentUser";
-
+import SchoolAPI from "modules/Classroom/api/school"
+import StudentAPI from "modules/Classroom/api/student"
 
 const INITIAL_STATE = {
   isLoading: false,
   studentEmail: "",
   profilePicture: "https://picsum.photos/200/200/?random",
-  schoolId: "1hZ2DiIYSFa5K26oTe75" 
+  schoolId: "",
+  school: {},
+  userName: ""
 };
-
 class StudentHomeScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      header: (
-        <Header
-          navigation={navigation}
-          title="Classroom"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
-    };
+  static navigationOptions = () => {
+    return { header: null };
   };
 
+  loadSchoolInformation = async () => {
+    const school = await SchoolAPI.getDetail(this.state.schoolId);
+    this.setState({school})
+  }
 
   loadProfileInformation = async () => {
-    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
-      this.setState({studentEmail: currentUserEmail})
-    });
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const student = await StudentAPI.getDetail(this.state.schoolId, currentUserEmail)
+    this.setState({userName: student.name, studentEmail: currentUserEmail})
+  
   }
 
   handleStudentProfilePress = () => {
-    this.props.navigation.navigate("MyProfile",{"studentEmail": this.state.studentEmail});
+    payload = {
+      schoolId: this.state.schoolId,
+      studentEmail: this.state.studentEmail
+    }
+    this.props.navigation.navigate("MyProfile", payload);
   }
 
   handleClassListPress = () => {
@@ -43,17 +46,22 @@ class StudentHomeScreen extends React.PureComponent {
       schoolId: this.state.schoolId,
       studentEmail: this.state.studentEmail
     }
-    this.props.navigation.navigate("MyClasses", payload);
+    this.props.navigation.navigate("MyClass", payload);
   }
 
   handleAnnouncementPress = () => {
-    this.props.navigation.navigate("Announcement");
+    payload = {
+      schoolId : this.state.schoolId,
+      studentEmail : this.state.studentEmail
+    }
+    this.props.navigation.navigate("Announcement", payload);
   }
   
   constructor(props) {    
     super(props);
+    INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
     this.state = INITIAL_STATE;
-    
+    this.loadSchoolInformation = this.loadSchoolInformation.bind(this);
     this.loadProfileInformation = this.loadProfileInformation.bind(this);
     this.handleStudentProfilePress = this.handleStudentProfilePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
@@ -61,12 +69,14 @@ class StudentHomeScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this.loadSchoolInformation();
     this.loadProfileInformation();
   }
 
   render() {
     return (
       <View style={styles.groupContainer}>
+        <Header navigation={this.props.navigation} title={this.state.school.name} />
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={this.state.profilePicture}/>
           <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
@@ -75,7 +85,7 @@ class StudentHomeScreen extends React.PureComponent {
           <Title style={{marginTop: 22}}>
             Selamat Datang,
           </Title>
-          <Subheading>Michelle Brown</Subheading>
+          <Subheading>{this.state.userName}</Subheading>
         </View>
 
         <View style={{marginBottom: 64}}/>

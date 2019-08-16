@@ -14,7 +14,7 @@ import PeopleInformationContainer from "src/components/PeopleProfile/Information
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
-const INITIAL_STATE = { isLoadingProfile: true, class: null, schoolId: "1hZ2DiIYSFa5K26oTe75" };
+const INITIAL_STATE = { isLoadingProfile: true, class: null };
 
 /**
  * Parameter list
@@ -37,7 +37,7 @@ export default class ClassProfileScreen extends React.PureComponent {
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const promises = [ClassAPI.getDetail(this.state.schoolId, this.classId)];
+    const promises = [ClassAPI.getDetail(this.schoolId, this.classId)];
 
     Promise.all(promises).then(results => {
       const class_ = results[0];
@@ -47,7 +47,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleStudentListScreen = () => {
     payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId
     }
     this.props.navigation.navigate("StudentList", payload)
@@ -55,6 +55,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleTaskListScreen = () => {
     payload = {
+      schoolId: this.schoolId,
       classId: this.classId,
       subject: this.state.class.subject,
       subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
@@ -66,7 +67,7 @@ export default class ClassProfileScreen extends React.PureComponent {
   handleClassFilesScreenPress = () => {
 
     payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       subject: this.state.class.subject,
       subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
@@ -76,6 +77,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleAddTask = () => {
     payload = {
+      schoolId: this.schoolId,
       classId: this.classId,
       subject: this.state.class.subject,
       subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
@@ -85,7 +87,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleMassScoringPress = () => {
     payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
     }
     this.props.navigation.navigate("MassScoring", payload);
@@ -93,9 +95,9 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.classId = this.props.navigation.getParam("classId", null);
-
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", null);
+    this.classId = this.props.navigation.getParam("classId", null);
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
     this.handleAddTask = this.handleAddTask.bind(this);
@@ -167,7 +169,7 @@ export default class ClassProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleClassFilesScreenPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                 <View style={{flexDirection:"row"}}>
+                  <View style={{flexDirection:"row"}}>
                     <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
                     <Text style={styles.label}>Berkas</Text>
                   </View>

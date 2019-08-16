@@ -1,50 +1,86 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
-import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
-import Header from "../../../components/Header";
+import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
+import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
+import CurrentUserAPI from "src/api/people/CurrentUser";
 
 const INITIAL_STATE = {
   isLoading: false,
   profilePicture: "https://picsum.photos/200/200/?random",
-  schoolId: ""
+  schoolId: "",
+  school: {},
+  userName: ""
 };
 
 export default class SchoolAdminHomeScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
-    return { header: <Header navigation={navigation} title="School Admin" /> };
+  static navigationOptions = () => {
+    return { header: null };
   };
 
+  loadSchoolInformation = async () => {
+    const school = await SchoolAPI.getDetail(this.state.schoolId);
+    this.setState({school})
+  }
+
+  loadUserName = async () => {
+    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+
+    const schoolAdmin = await SchoolAdminAPI.getDetail(this.state.schoolId, currentUserEmail)
+    this.setState({userName: schoolAdmin.name})
+  }
+
   handleAddPress = e => {
-    this.props.navigation.navigate("SchoolAdminAdd");
+    payload = {
+      schoolId: this.state.schoolId
+    }
+    this.props.navigation.navigate("SchoolAdminAdd", payload);
   };
 
   handleDataMasterPress = e => {
-    this.props.navigation.navigate("SchoolAdminDataMaster");
+    payload = {
+      schoolId: this.state.schoolId
+    }
+    this.props.navigation.navigate("SchoolAdminDataMaster", payload);
+  };
+
+  handleArchiveClass = e => {
+    payload = {
+      schoolId: this.state.schoolId
+    }
+    this.props.navigation.navigate("ArchiveClassList", payload);
   };
   
   constructor(props) {
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
     this.state = INITIAL_STATE;
+    this.loadSchoolInformation = this.loadSchoolInformation.bind(this);
+    this.loadUserName = this.loadUserName.bind(this);
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
-    console.log(this.state.schoolId)
+    this.handleArchiveClass = this.handleArchiveClass.bind(this);
   }
-  
+
+  componentDidMount(){
+    this.loadSchoolInformation();
+    this.loadUserName();
+  }
 
   render() {
     return (
       <View style={styles.groupContainer}>
+        <Header navigation={this.props.navigation} title={this.state.school.name} />
+
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={this.state.profilePicture}/>
           <Text style={{ fontWeight: "700", marginTop: 16, fontSize: 20 }}>
             Selamat Datang,
           </Text>
-          <Text style={{ fontWeight: "400", fontSize: 16 }}>School Admin</Text>
+          <Text style={{ fontWeight: "400", fontSize: 16 }}>{this.state.userName}</Text>
         </View>
 
         <View style={{marginBottom: 64}}/>
@@ -65,6 +101,14 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
               </View>
             </View>
             <Text>Data Master</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.handleArchiveClass}>
+            <View style={styles.button} >
+              <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                <FontAwesome name="folder" style={{color: "#fff"}} size={24} />
+              </View>
+            </View>
+            <Text>Arsip Kelas</Text>
           </TouchableOpacity>
         </View>
       </View>

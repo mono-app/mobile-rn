@@ -1,14 +1,23 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { ProgressBar,Caption,Searchbar,Text,Dialog,Portal } from "react-native-paper";
+import { View, FlatList, StyleSheet, PermissionsAndroid } from "react-native";
+import { ProgressBar, Searchbar, Text ,Dialog, Portal } from "react-native-paper";
 import FileListItem from "../../../components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "../../../api/file";
-import {  TouchableOpacity } from "react-native-gesture-handler";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 
-const INITIAL_STATE = { isLoading: true, progressPercentage: 0, showProgressbar: false, isDeleting: false, selectedFile: null, selectedIndex: -1 };
+const INITIAL_STATE = { 
+  isLoading: true, 
+  progressPercentage: 0, 
+  showProgressbar: false, 
+  isDeleting: false, 
+  selectedFile: null, 
+  selectedIndex: -1,
+  searchText: "", 
+  fileList:[], 
+  filteredFileList:[]  
+};
 
 export default class ClassFilesScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -25,31 +34,44 @@ export default class ClassFilesScreen extends React.PureComponent {
 
   loadFiles = async () => {
     this.setState({ fileList: [], isLoading: true });
-
     const fileList = await FileAPI.getClassFiles(this.schoolId, this.classId);
-    this.setState({ fileList });
-    this.setState({isLoading: false})
-
+    this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
 
-  handleDownloadPress = item => {
-    this.setState({progressPercentage:0,showProgressbar: true})
-    let task = RNBackgroundDownloader.download({
-        id: item.id,
-        url: item.storage.downloadUrl,
-        destination: `/storage/emulated/0/Download/${item.title}`
-    }).begin((expectedBytes) => {
-        console.log(`Going to download ${expectedBytes} bytes!`);
+  handleDownloadPress = async item => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+    }else{
+      this.setState({progressPercentage:0,showProgressbar: true})
+      RNBackgroundDownloader.download({
+          id: item.id,
+          url: item.storage.downloadUrl,
+          destination: `/storage/emulated/0/Download/${item.title}`
+      }).begin((expectedBytes) => {
+          console.log(`Going to download ${expectedBytes} bytes!`);
+  
+      }).progress((percent) => {
+          console.log(`Downloaded: ${percent * 100}%`);
+          this.setState({progressPercentage: percent})
+      }).done(() => {
+          console.log('Download is done!');
+          this.setState({showProgressbar:false})
+      }).error((error) => {
+          console.log('Download canceled due to error: ', error);
+      });
+    }
+  }
 
-    }).progress((percent) => {
-        console.log(`Downloaded: ${percent * 100}%`);
-        this.setState({progressPercentage: percent})
-    }).done(() => {
-        console.log('Download is done!');
-        this.setState({showProgressbar:false})
-    }).error((error) => {
-        console.log('Download canceled due to error: ', error);
-    });
+  requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
   handleDeletePress = (item, selectedIndex) => {
@@ -65,18 +87,34 @@ export default class ClassFilesScreen extends React.PureComponent {
     this.setState({isLoading: false})
   }
 
+  handleSearchPress = () => {
+    this.setState({filteredFileList: []})
+
+    const clonedFileList = JSON.parse(JSON.stringify(this.state.fileList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+      const filteredFileList = clonedFileList.filter((file) => {
+        return file.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredFileList})
+    } else {
+      this.setState({filteredFileList: clonedFileList})
+    }
+  }
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadFiles = this.loadFiles.bind(this);
-    this.handleDownloadPress = this.handleDownloadPress.bind(this);
-    this.onDeletePress = this.onDeletePress.bind(this);
     this.deleteDialog = null;
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
-  
+    this.loadFiles = this.loadFiles.bind(this);
+    this.handleDownloadPress = this.handleDownloadPress.bind(this);
+    this.onDeletePress = this.onDeletePress.bind(this);
+    this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.requestStoragePermission = this.requestStoragePermission.bind(this);
   }
 
   componentDidMount(){
@@ -95,18 +133,23 @@ export default class ClassFilesScreen extends React.PureComponent {
               </Text>
         </View>
         <View style={{marginTop: 16, marginHorizontal: 16 }}>
-          <Searchbar placeholder="Cari Berkas" />
+          <Searchbar 
+            onChangeText={searchText => {this.setState({searchText})}}
+            onSubmitEditing={this.handleSearchPress}
+            value={this.state.searchText}
+            placeholder="Cari Berkas" />
         </View>
       
         <FlatList
           style={{ backgroundColor: "white", marginTop:16 }}
-          data={this.state.fileList}
-          renderItem={({ item, index }) => {
+          data={this.state.filteredFileList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <FileListItem 
                 onDownloadPress={() => this.handleDownloadPress(item)}
                 onDeletePress={() => this.handleDeletePress(item, index)}
-                key={index} file={item} />
+                file={item} />
             )
           }}
         />

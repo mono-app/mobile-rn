@@ -2,15 +2,16 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, Title, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import StudentAPI from "../../../api/student";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import StudentAPI from "modules/Classroom/api/student";
+import ClassAPI from "modules/Classroom/api/class";
+import { ScrollView } from "react-native-gesture-handler";
 import moment from "moment"
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import PeopleAPI from "src/api/people";
 import Button from "src/components/Button";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "" , schoolId: "1hZ2DiIYSFa5K26oTe75"  }
+const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "", totalClass:0  }
 
 /**
  * Parameter list
@@ -33,11 +34,13 @@ export default class StudentProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.state.schoolId, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.schoolId, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    this.setState({ isLoadingProfile: false, student });
+    const totalClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail)).length;
+
+    this.setState({ isLoadingProfile: false, student, totalClass });
 
   }
 
@@ -50,8 +53,9 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   constructor(props){
     super(props);
-    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", null);
+    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     
   }
@@ -113,7 +117,7 @@ export default class StudentProfileScreen extends React.PureComponent {
           <View>
             <PeopleInformationContainer
               fieldName="Jumlah Kelas"
-              fieldValue="-"/>
+              fieldValue={this.state.totalClass}/>
           </View>
           <Button text="Mulai Percakapan" style={{margin: 16}}></Button>
         </ScrollView>
@@ -121,33 +125,3 @@ export default class StudentProfileScreen extends React.PureComponent {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  profileContainer: {
-    backgroundColor: "white",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
-    paddingBottom: 32,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  },
-  listItemContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8",
-    backgroundColor: "white",
-    flexDirection: "row",
-    padding: 16,
-    alignItems: "center"
-  },
-  listDescriptionContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  label: {
-    fontWeight: "bold"
-  }
-})

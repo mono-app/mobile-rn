@@ -14,7 +14,7 @@ import ClassAPI from "../../../api/class";
 import SquareAvatar from "src/components/Avatar/Square";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-const INITIAL_STATE = { isLoadingProfile: true, class: null, schoolId: "1hZ2DiIYSFa5K26oTe75" };
+const INITIAL_STATE = { isLoadingProfile: true, class: null };
 
 /**
  * Parameter list
@@ -37,17 +37,14 @@ export default class ClassProfileScreen extends React.PureComponent {
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const promises = [ClassAPI.getDetail("1hZ2DiIYSFa5K26oTe75", this.classId)];
+    const class_ = await ClassAPI.getDetail(this.schoolId, this.classId);
+    this.setState({ isLoadingProfile: false, class: class_ });
 
-    Promise.all(promises).then(results => {
-      const class_ = results[0];
-      this.setState({ isLoadingProfile: false, class: class_ });
-    });
   };
 
   handleSubjectPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "subject", 
@@ -64,7 +61,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleRoomPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "room", 
@@ -82,7 +79,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleAcademicYearPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "academicYear", 
@@ -99,7 +96,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleSemesterPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "semester", 
@@ -117,7 +114,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleInformationPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "information", 
@@ -131,10 +128,12 @@ export default class ClassProfileScreen extends React.PureComponent {
       }
     }
     this.props.navigation.navigate(`EditSingleField`, payload);
+
   }
 
   constructor(props) {
     super(props);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", null);
     this.state = INITIAL_STATE;
     this.loadClassInformation = this.loadClassInformation.bind(this);
@@ -224,13 +223,12 @@ export default class ClassProfileScreen extends React.PureComponent {
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={this.handleInformationPress}>
-                <View style={styles.listItemContainer}>
-                  <View style={styles.listDescriptionContainer}>
-                    <View style={{flexDirection:"column",textAlign: "right"}}>
-                      <Text style={styles.label}>Informasi Kelas</Text>
-                      <Text>{this.state.class.information}</Text>
-                    </View>
+                <View style={{...styles.listItemContainer,  flexWrap: "wrap", flex: 1, justifyContent:"space-between"}}>
+                  <View style={{flexDirection:"column",maxWidth: "80%"}}>
+                    <Text style={styles.label}>Informasi Kelas</Text>
+                    <Text>{this.state.class.information}</Text>
                   </View>
+                  <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                 </View>
               </TouchableOpacity>
             </View>

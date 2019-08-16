@@ -1,20 +1,19 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList } from "react-native";
 import { Searchbar } from "react-native-paper";
-import ClassAPI from "../../../api/class";
-import ClassListItem from "../../../components/ClassListItem";
+import ClassAPI from "modules/Classroom/api/class";
+import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
-import TeacherAPI from "modules/Classroom/api/teacher";
 
-const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]  };
+const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
-export default class TeacherClassListPickerScreen extends React.PureComponent {
+export default class MyArchiveClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Tambahkan Kelas"
+          title="Riwayat Kelas Saya"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -23,19 +22,16 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getActiveClasses(this.schoolId);
+    const classList = await ClassAPI.getUserArchiveClasses(this.schoolId, this.studentEmail);
     this.setState({ classList, filteredClassList: classList });
-  }
+   }
 
   handleClassPress = class_ => {
-    const classId = class_.id;
-    TeacherAPI.addTeacherClass(this.teacherEmail, this.schoolId, classId).then(() => {
-      this.setState({ isLoading: false });
-      const { navigation } = this.props;
-      navigation.state.params.onRefresh();
-      navigation.goBack();
-    }).catch(err => console.log(err));
-  
+     const payload = {
+       schoolId: this.schoolId,
+       classId: class_.id
+     }
+     this.props.navigation.navigate("ClassDetails", payload);
   }
 
   handleSearchPress = () => {
@@ -57,10 +53,10 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
@@ -72,21 +68,21 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-        <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
-            onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
-            placeholder="Cari Kelas" />
+          <Searchbar 
+              onChangeText={searchText => {this.setState({searchText})}}
+              onSubmitEditing={this.handleSearchPress}
+              value={this.state.searchText}
+              placeholder="Cari Kelas" />
         </View>
         <FlatList
-          style={{ backgroundColor: "white" }}
+          style={{ flex:1, backgroundColor: "white" }}
           data={this.state.filteredClassList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-               schoolId={this.schoolId} class_={item}/>
+                schoolId={this.schoolId} class_={item}/>
             )
           }}
         />
@@ -94,13 +90,3 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});

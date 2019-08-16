@@ -5,7 +5,7 @@ import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 
-const INITIAL_STATE = { classList: [], isLoading: true };
+const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
 export default class MyClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -21,25 +21,43 @@ export default class MyClassScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    const classList = await ClassAPI.getUserClasses(this.schoolId, this.teacherEmail);
-    this.setState({ classList });
-    console.log(classList)
+    this.setState({classList: []})
+    const classList = await ClassAPI.getUserActiveClasses(this.schoolId, this.teacherEmail);
+    this.setState({ classList, filteredClassList: classList });
    }
 
   handleClassPress = class_ => {
      payload = {
-       classId: class_.id
-     }
+        schoolId: this.schoolId,
+        classId: class_.id
+    }
      this.props.navigation.navigate("ClassProfile", payload);
+  }
+
+  handleSearchPress = () => {
+    this.setState({filteredClassList: []})
+
+    const clonedClassList = JSON.parse(JSON.stringify(this.state.classList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+
+      const filteredClassList = clonedClassList.filter((class_) => {
+        return class_.subject.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredClassList})
+    } else {
+      this.setState({filteredClassList: clonedClassList})
+    }
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
 
@@ -51,16 +69,21 @@ export default class MyClassScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar placeholder="Cari Kelas" />
+          <Searchbar 
+            onChangeText={searchText => {this.setState({searchText})}}
+            onSubmitEditing={this.handleSearchPress}
+            value={this.state.searchText}
+            placeholder="Cari Kelas" />
         </View>
         <FlatList
           style={{ flex:1, backgroundColor: "white" }}
-          data={this.state.classList}
-          renderItem={({ item, index }) => {
+          data={this.state.filteredClassList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} schoolId={this.schoolId} class_={item}/>
+                schoolId={this.schoolId} class_={item}/>
             )
           }}
         />

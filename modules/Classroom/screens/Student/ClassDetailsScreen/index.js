@@ -44,7 +44,7 @@ export default class ClassDetailsScreen extends React.PureComponent {
 
   loadTeacherInformation = async () => {
     const teachers = await TeacherAPI.getClassTeachers(this.schoolId, this.classId);
-    const teacher = await TeacherAPI.getDetail(this.schoolId, teachers[0].id);
+    const teacher = teachers[0];
     this.setState({teacher});
   }
 

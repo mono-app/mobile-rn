@@ -5,7 +5,8 @@ import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import ClassAPI from "../../../api/class";
+import ClassAPI from "modules/Classroom/api/class";
+import SchoolAPI from "modules/Classroom/api/school";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -48,7 +49,7 @@ export default class AddClassScreen extends React.PureComponent {
       academicYear: this.state.academicYear
     };
     new ClassAPI()
-      .addClass("1hZ2DiIYSFa5K26oTe75", classInformation)
+      .addClass(SchoolAPI.currentSchoolId, classInformation)
       .then(() => {
         this.setState({ isLoading: false, subject: "" });
         this.showSnackbar();
@@ -66,7 +67,7 @@ export default class AddClassScreen extends React.PureComponent {
     this.handleAcademicYearChange = this.handleAcademicYearChange.bind(this)
     this.handleSavePress = this.handleSavePress.bind(this)
     this.showSnackbar = this.showSnackbar.bind(this)
-
+    
   }
 
   render() {

@@ -18,6 +18,8 @@ import TeacherClassListPickerScreen from "modules/Classroom/screens/SchoolAdmin/
 import StudentClassListScreen from "modules/Classroom/screens/SchoolAdmin/StudentClassListScreen";
 import StudentClassListPickerScreen from "modules/Classroom/screens/SchoolAdmin/StudentClassListPickerScreen";
 import EditSingleFieldScreen from "modules/Classroom/screens/EditSingleFieldScreen";
+import ArchiveClassListScreen from "modules/Classroom/screens/SchoolAdmin/ArchiveClassListScreen";
+import ArchiveClassListPickerScreen from "modules/Classroom/screens/SchoolAdmin/ArchiveClassListPickerScreen";
 
 export default SchoolAdminNavigator = createStackNavigator(
   {
@@ -38,6 +40,8 @@ export default SchoolAdminNavigator = createStackNavigator(
     StudentProfile: { screen: StudentProfileScreen },
     ClassProfile: { screen: ClassProfileScreen },
     EditSingleField: { screen: EditSingleFieldScreen },
+    ArchiveClassList: { screen: ArchiveClassListScreen },
+    ArchiveClassListPicker: { screen: ArchiveClassListPickerScreen },
   },
   {
     initialRouteName: "SchoolAdminHome"

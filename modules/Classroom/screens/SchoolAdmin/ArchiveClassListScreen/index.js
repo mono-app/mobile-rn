@@ -1,20 +1,19 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar } from "react-native-paper";
+import { View, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { Searchbar, Text } from "react-native-paper";
 import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
-import TeacherAPI from "modules/Classroom/api/teacher";
 
-const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]  };
+const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]   };
 
-export default class TeacherClassListPickerScreen extends React.PureComponent {
+export default class ArchiveClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Tambahkan Kelas"
+          title="Arsip Kelas"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -23,19 +22,25 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getActiveClasses(this.schoolId);
+    const classList = await ClassAPI.getArchiveClasses(this.schoolId);
     this.setState({ classList, filteredClassList: classList });
-  }
+   }
 
   handleClassPress = class_ => {
-    const classId = class_.id;
-    TeacherAPI.addTeacherClass(this.teacherEmail, this.schoolId, classId).then(() => {
-      this.setState({ isLoading: false });
-      const { navigation } = this.props;
-      navigation.state.params.onRefresh();
-      navigation.goBack();
-    }).catch(err => console.log(err));
-  
+    const payload = {
+      schoolId: this.schoolId,
+      classId: class_.id
+    }
+    this.props.navigation.navigate("ClassProfile", payload);
+  }
+
+  handleAddClassPress = () => {
+    const payload = {
+      schoolId: this.schoolId,
+      teacherEmail: this.teacherEmail,
+      onRefresh: this.loadClasses
+    }
+    this.props.navigation.navigate("ArchiveClassListPicker",  payload);
   }
 
   handleSearchPress = () => {
@@ -56,11 +61,11 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
 
   constructor(props) {
     super(props);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.handleAddClassPress = this.handleAddClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
@@ -72,21 +77,29 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-        <Searchbar 
+          <Searchbar 
             onChangeText={searchText => {this.setState({searchText})}}
             onSubmitEditing={this.handleSearchPress}
             value={this.state.searchText}
             placeholder="Cari Kelas" />
         </View>
+        <View style={{backgroundColor: "#DCDCDC",
+                      padding: 16}}>
+          <TouchableOpacity onPress={this.handleAddClassPress}>
+            <Text style={{fontWeight:"bold"}}>
+              + Tambah Arsip Kelas
+            </Text>
+          </TouchableOpacity>
+        </View>
         <FlatList
-          style={{ backgroundColor: "white" }}
+          style={{ backgroundColor: "white", paddingTop: 16 }}
           data={this.state.filteredClassList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-               schoolId={this.schoolId} class_={item}/>
+                schoolId={this.schoolId} class_={item}/>
             )
           }}
         />
@@ -95,12 +108,3 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});

@@ -2,12 +2,13 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, Title, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import StudentAPI from "../../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
+import ClassAPI from "modules/Classroom/api/class";
 import SquareAvatar from "src/components/Avatar/Square";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: null, schoolId: "1hZ2DiIYSFa5K26oTe75"  }
+const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0  }
 
 /**
  * Parameter list
@@ -30,17 +31,19 @@ export default class StudentProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.state.schoolId, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.schoolId, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    this.setState({ isLoadingProfile: false, student });
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail)).length;
+
+    this.setState({ isLoadingProfile: false, student, totalActiveClass });
 
   }
 
   handleNamePress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "name", 
@@ -57,7 +60,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleAddressPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "address", 
@@ -74,7 +77,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handlePhonePress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "phone", 
@@ -92,7 +95,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleEmailPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "id", 
@@ -109,7 +112,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleNoIndukPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "noInduk", 
@@ -127,7 +130,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleGenderPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "gender", 
@@ -145,7 +148,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleClassListPress = e => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       studentEmail: this.studentEmail
     }
     this.props.navigation.navigate('StudentClassList', payload);
@@ -154,8 +157,9 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   constructor(props){
     super(props);
-    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.handleNamePress = this.handleNamePress.bind(this);
     this.handleAddressPress = this.handleAddressPress.bind(this);
@@ -263,7 +267,7 @@ export default class StudentProfileScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                     <Text style={styles.label}>Jumlah Kelas</Text>
                     <View style={{flexDirection:"row", textAlign: "right"}}>
-                      <Text>-</Text>
+                      <Text>{this.state.totalActiveClass}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>

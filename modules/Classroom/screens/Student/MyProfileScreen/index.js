@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
+import ClassAPI from "modules/Classroom/api/class";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
@@ -11,7 +12,7 @@ import PeopleAPI from "src/api/people";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: {}, status:"", studentEmail:"" ,schoolId: "1hZ2DiIYSFa5K26oTe75" }
+const INITIAL_STATE = { isLoadingProfile: true, student: {}, status:"", studentEmail:"", totalActiveClass: 0, totalArchiveClass: 0 }
 
 /**
  * Parameter list
@@ -34,11 +35,14 @@ export default class MyProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.state.schoolId, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.schoolId, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    this.setState({ isLoadingProfile: false, student });
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail)).length;
+    const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.schoolId, this.studentEmail)).length;
+
+    this.setState({ isLoadingProfile: false, student, totalActiveClass, totalArchiveClass });
   }
   
   loadStatus = async () => {
@@ -50,13 +54,7 @@ export default class MyProfileScreen extends React.PureComponent {
     });
   }
 
-  handleTaskListPress = () => {
-    payload = {
-      schoolId: this.state.schoolId,
-      studentEmail: this.studentEmail
-    }
-    this.props.navigation.navigate("MyClasses", payload);
-  }
+ 
   
   handleStatusPress = () => {
     const payload = {
@@ -65,14 +63,32 @@ export default class MyProfileScreen extends React.PureComponent {
     this.props.navigation.navigate("StatusChange",payload)
   }
 
+  
+  handleMyClassPress = () => {
+    payload = {
+      schoolId: this.schoolId,
+      studentEmail: this.studentEmail
+    }
+    this.props.navigation.navigate("MyClass", payload);
+  }
+
+  handleMyArchiveClassPress = () => {
+    payload = {
+      schoolId: this.schoolId,
+      studentEmail: this.studentEmail
+    }
+    this.props.navigation.navigate("MyArchiveClass", payload);
+  }
+
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.loadStatus = this.loadStatus.bind(this);
-    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
-    console.log(this.studentEmail);
-
+    this.handleMyClassPress = this.handleMyClassPress.bind(this);
+    this.handleMyArchiveClassPress = this.handleMyArchiveClassPress.bind(this);
   }
 
   componentDidMount(){ 
@@ -132,21 +148,23 @@ export default class MyProfileScreen extends React.PureComponent {
               fieldValue={this.state.student.gender}/>
           </View>
           <View style={{  marginBottom: 16 }}>
-            <TouchableOpacity onPress={this.handleTaskListPress}>
+            <TouchableOpacity onPress={this.handleMyClassPress}>
             <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
                 <View style={styles.listDescriptionContainer}>
                   <Text style={styles.label}>Jumlah Kelas</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalActiveClass}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.handleTaskListPress}>
+            <TouchableOpacity onPress={this.handleMyArchiveClassPress}>
               <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
                 <View style={styles.listDescriptionContainer}>
                   <Text style={styles.label}>Riwayat Kelas</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalArchiveClass}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>

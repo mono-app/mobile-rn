@@ -5,9 +5,9 @@ import TaskAPI from "modules/Classroom/api/task";
 import ArchiveListItem from "modules/Classroom/components/ArchiveListItem";
 import AppHeader from "src/components/AppHeader";
 
-const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false };
+const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false, searchText: "", taskList: [], filteredTaskList: [] };
 
-export default class ArchiveListScreen extends React.PureComponent {
+export default class TaskArchiveListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -24,7 +24,9 @@ export default class ArchiveListScreen extends React.PureComponent {
   loadTasks = async () => {
     this.setState({ taskList: [] });
     const taskList = await TaskAPI.getExpiredTasks(this.schoolId, this.classId);
-    this.setState({ taskList });
+    this.setState({ taskList, filteredTaskList: taskList });
+    console.log(this.schoolId)
+    console.log(this.classId)
   }
 
   handleTaskSubmissionPress = (task) => {
@@ -50,14 +52,30 @@ export default class ArchiveListScreen extends React.PureComponent {
     this.props.navigation.navigate(`Discussions`, payload);
   }
 
+  handleSearchPress = () => {
+    this.setState({filteredTaskList: []})
+
+    const clonedTaskList = JSON.parse(JSON.stringify(this.state.taskList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+      const filteredTaskList = clonedTaskList.filter((task) => {
+        return (task.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0)
+      })
+      this.setState({filteredTaskList})
+    } else {
+      this.setState({filteredTaskList: clonedTaskList})
+    }
+  }
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadTasks = this.loadTasks.bind(this);
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
+    this.loadTasks = this.loadTasks.bind(this);
+    this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
@@ -69,17 +87,22 @@ export default class ArchiveListScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
   
         <View style={{ margin: 16 }}>
-          <Searchbar placeholder="Cari Tugas" />
+          <Searchbar 
+            onChangeText={searchText => {this.setState({searchText})}}
+            onSubmitEditing={this.handleSearchPress}
+            value={this.state.searchText}
+            placeholder="Cari Tugas" />
         </View>
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
-          data={this.state.taskList}
-          renderItem={({ item, index }) => {
+          data={this.state.filteredTaskList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <ArchiveListItem 
                 onSubmissionPress={() => this.handleTaskSubmissionPress(item)}
                 onDiscussionPress={() => this.handleDiscussionPress(item)}
-                key={index} task={item}/>
+                task={item}/>
             )
           }}
         />
@@ -90,7 +113,6 @@ export default class ArchiveListScreen extends React.PureComponent {
 
 const styles = StyleSheet.create({
   listItemContainer: {
-    padding: 16,
     flexDirection: "row",
     justifyContent: "center",
     borderBottomWidth: 1,

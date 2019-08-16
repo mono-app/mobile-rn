@@ -8,10 +8,11 @@ import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
+import ClassAPI from "modules/Classroom/api/class";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-const INITIAL_STATE = { isLoadingProfile: true, teacher: null, status:"", teacherEmail:"" ,schoolId: "1hZ2DiIYSFa5K26oTe75" }
+const INITIAL_STATE = { isLoadingProfile: true, teacher: null, status:"", totalClass: 0 }
 
 /**
  * Parameter list
@@ -34,12 +35,14 @@ export default class MyProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const teacher = await TeacherAPI.getDetail("1hZ2DiIYSFa5K26oTe75", this.teacherEmail);
+    const teacher = await TeacherAPI.getDetail(this.schoolId, this.teacherEmail);
     if(teacher.gender){
       teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
     }
 
-    this.setState({ isLoadingProfile: false, teacher });
+    const totalClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.teacherEmail)).length;
+
+    this.setState({ isLoadingProfile: false, teacher, totalClass });
    
   }
 
@@ -55,7 +58,7 @@ export default class MyProfileScreen extends React.PureComponent {
 
   handleArchivePress = () => {
     payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       teacherEmail: this.teacherEmail
     }
 
@@ -64,17 +67,30 @@ export default class MyProfileScreen extends React.PureComponent {
   
   handleStatusPress = () => {
     const payload = {
+      schoolId: this.schoolId,
       onRefresh: this.loadStatus
     }
     this.props.navigation.navigate("StatusChange",payload)
   }
 
+  handleClassListPress = e => {
+    payload = {
+      schoolId: this.schoolId,
+      teacherEmail: this.teacherEmail
+    }
+    this.props.navigation.navigate("MyClass", payload);
+  }
+
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
-    this.loadStatus = this.loadStatus.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
+    this.handleStatusPress = this.handleStatusPress.bind(this);
+    this.handleArchivePress = this.handleArchivePress.bind(this);
+    this.handleClassListPress = this.handleClassListPress.bind(this);
+    this.loadStatus = this.loadStatus.bind(this);
 
   }
 
@@ -105,11 +121,12 @@ export default class MyProfileScreen extends React.PureComponent {
             status= {"NIK" + this.state.teacher.nik}/>
 
           <TouchableOpacity onPress={this.handleStatusPress}>
-            <View style={styles.statusContainer}>
-              <Text style={styles.label}>Status saya</Text>
-              <View style={{flexDirection:"row"}}>
-                <Text>{this.state.status}</Text>
+            <View style={ styles.statusContainer }>
+              <View>
+                  <Text style={styles.label}>Status saya</Text>
+                  <Text>{this.state.status}</Text>
               </View>
+              <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
             </View>
           </TouchableOpacity>
 
@@ -136,11 +153,12 @@ export default class MyProfileScreen extends React.PureComponent {
           
           </View>
           <View style={{  marginBottom: 16 }}>
-            <TouchableOpacity onPress={this.handleTaskListPress}>
+            <TouchableOpacity onPress={this.handleClassListPress}>
             <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
                 <View style={styles.listDescriptionContainer}>
                   <Text style={styles.label}>Jumlah Kelas</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalClass}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>
@@ -185,8 +203,12 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     marginVertical: 16,
-    backgroundColor: "white",
     padding: 16,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    justifyContent: "space-between"
   },
   listDescriptionContainer: {
     flex: 1,

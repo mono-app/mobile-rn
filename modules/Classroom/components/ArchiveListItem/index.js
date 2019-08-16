@@ -49,36 +49,35 @@ export default class ArchiveListItem extends React.Component{
           <View  style={styles.subContainer}> 
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <View>
+                  <View style={{marginHorizontal: 16, marginVertical: 8}}>
                    <Subheading style={{ fontWeight: "700" }}>{title}</Subheading>
                   </View>
                 </View>
               </View>
               <View style={{  borderBottomWidth:1, borderBottomColor: "#E8EEE8", paddingVertical: 8}}>
-                <Text style={{ fontWeight: "700", marginTop: 8 }}>Detail Tugas</Text>
-
-                <Paragraph>{details}</Paragraph>
-
-                <Text style={{ fontWeight: "700", marginTop: 8 }}>Batas Akhir Pengumpulan</Text>
-                <Text >Tanggal {creationDate}</Text>
-                <Text >Pukul {creationTime}</Text>
-
+                <View style={{marginHorizontal: 16}}>
+                  <Text style={{ fontWeight: "700", marginTop: 8 }}>Detail Tugas</Text>
+                  <Paragraph>{details}</Paragraph>
+                  <Text style={{ fontWeight: "700", marginTop: 8 }}>Batas Akhir Pengumpulan</Text>
+                  <Text >Tanggal {creationDate}</Text>
+                  <Text >Pukul {creationTime}</Text>
+                </View>
               </View>
               <TouchableOpacity onPress={this.props.onSubmissionPress}>
                 <View style={styles.listItemContainer}>
-                <View style={[styles.listDescriptionContainer,{paddingVertical:8}]}>
-                    <View>
-                      <Text style={{ fontWeight: "700" }}>Lihat Pengumpulan</Text>
-                    </View>
-                    <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                    </View>
+                  <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 8}]}>
+                        <View>
+                          <Text style={{ fontWeight: "700" }}>Lihat Pengumpulan</Text>
+                        </View>
+                        <View style={{flexDirection:"row",textAlign: "right"}}>
+                          <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                        </View>
                   </View>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={this.props.onDiscussionPress}>
                 <View style={styles.listItemContainer}>
-                  <View style={[styles.listDescriptionContainer,{paddingVertical:8}]}>
+                  <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 8}]}>
                     <View>
                       <Text style={{ fontWeight: "700" }}>Diskusi</Text>
                     </View>
@@ -98,9 +97,6 @@ const styles = StyleSheet.create({
   container: {
     marginBottom:16,
   },
-  subContainer: {
-    margin:16,
-  }, 
   listItemContainer: {
     backgroundColor: "white",
     flexDirection: "row",
@@ -115,6 +111,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8",
   },
   label: {
-    fontWeight: "bold"
+    fontWeight: "bold",
   }
 })

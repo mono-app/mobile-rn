@@ -71,7 +71,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
   }
 
   handleDelete = async () => {
-    const total = await SubmissionAPI.getSubmissionsCount(this.state.schoolId, this.classId, this.taskId);
+    const total = await SubmissionAPI.getTotalSubmission(this.state.schoolId, this.classId, this.taskId);
     
     if(total===0){
       await TaskAPI.deleteTask(this.state.schoolId, this.classId, this.taskId);

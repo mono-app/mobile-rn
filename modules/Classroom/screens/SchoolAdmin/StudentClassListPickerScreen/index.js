@@ -6,7 +6,7 @@ import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 
-const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75" };
+const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
 export default class StudentClassListPickerScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -22,16 +22,14 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    const classList = await ClassAPI.getClasses(this.state.schoolId);
-
-    this.setState({ classList });
-
+    this.setState({classList: []})
+    const classList = await ClassAPI.getActiveClasses(this.schoolId);
+    this.setState({ classList, filteredClassList: classList });
   }
 
   handleClassPress = class_ => {
     const classId = class_.id;
-    console.log(classId)
-    StudentAPI.addStudentClass(this.studentEmail, this.state.schoolId, classId).then(() => {
+    StudentAPI.addStudentClass(this.studentEmail, this.schoolId, classId).then(() => {
       this.setState({ isLoading: false });
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
@@ -39,13 +37,31 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
     }).catch(err => console.log(err));
   
   }
+  
+  handleSearchPress = () => {
+    this.setState({filteredClassList: []})
+
+    const clonedClassList = JSON.parse(JSON.stringify(this.state.classList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+
+      const filteredClassList = clonedClassList.filter((class_) => {
+        return class_.subject.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredClassList})
+    } else {
+      this.setState({filteredClassList: clonedClassList})
+    }
+  }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
+    this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
 
@@ -57,16 +73,21 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar placeholder="Cari Kelas" />
+        <Searchbar 
+            onChangeText={searchText => {this.setState({searchText})}}
+            onSubmitEditing={this.handleSearchPress}
+            value={this.state.searchText}
+            placeholder="Cari Kelas" />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
-          data={this.state.classList}
-          renderItem={({ item, index }) => {
+          data={this.state.filteredClassList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                key={index} class_={item}/>
+                schoolId={this.schoolId} class_={item}/>
             )
           }}
         />

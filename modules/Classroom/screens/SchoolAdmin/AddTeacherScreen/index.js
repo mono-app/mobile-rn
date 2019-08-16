@@ -5,7 +5,8 @@ import { Text, Title, Card, Snackbar, Portal} from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import TeacherAPI from "../../../api/teacher";
+import TeacherAPI from "modules/Classroom/api/teacher";
+import SchoolAPI from "modules/Classroom/api/school";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -37,7 +38,7 @@ export default class AddTeacherScreen extends React.PureComponent {
   handleSavePress = () => {
     this.setState({ isLoading: true });
 
-    TeacherAPI.addTeacher("1hZ2DiIYSFa5K26oTe75", this.state.teacherEmail,{name: this.state.teacherName}).then(() => {
+    TeacherAPI.addTeacher(SchoolAPI.currentSchoolId, this.state.teacherEmail,{name: this.state.teacherName}).then(() => {
       this.setState({ isLoading: false, teacherEmail: "", teacherName:"" });
       this.showSnackbar()
     }).catch(err => console.log(err));
@@ -50,10 +51,11 @@ export default class AddTeacherScreen extends React.PureComponent {
     this.handleTeacherEmailChange = this.handleTeacherEmailChange.bind(this);
     this.handleTeacherNameChange = this.handleTeacherNameChange.bind(this);
     this.showSnackbar = this.showSnackbar.bind(this)
-
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
   }
 
   render() {
+
     return (
       <View style={{flex:1,display:"flex",backgroundColor: "#E8EEE8"}}>
         <KeyboardAwareScrollView style={{flex:1}}>

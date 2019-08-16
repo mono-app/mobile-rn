@@ -5,7 +5,8 @@ import { Text, Title, Card, Snackbar } from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import StudentAPI from "../../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
+import SchoolAPI from "modules/Classroom/api/school";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -37,7 +38,7 @@ export default class AddStudentScreen extends React.PureComponent {
   handleSavePress = () => {
     this.setState({ isLoading: true });
     
-    new StudentAPI().addStudent("1hZ2DiIYSFa5K26oTe75", this.state.studentEmail,{name: this.state.studentName}).then(() => {
+    new StudentAPI().addStudent(SchoolAPI.currentSchoolId, this.state.studentEmail,{name: this.state.studentName}).then(() => {
       this.setState({ isLoading: false, studentEmail: "", studentName:"" });
       this.showSnackbar();
     }).catch(err => console.log(err));

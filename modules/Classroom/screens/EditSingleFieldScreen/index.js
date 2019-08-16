@@ -39,7 +39,8 @@ export default class EditSingleFieldScreen extends React.PureComponent{
       if(databaseFieldName==="email"){
         updateObject['isActive'] = false;
       }
-      updateQuery.executeQuery(schoolCollection, collection, schoolDocument, myDocument, updateObject).then( () => {
+
+      updateQuery.executeQuery2(schoolCollection, collection, schoolDocument, myDocument, updateObject).then( () => {
         this.setState({ isLoading: false });
         const { navigation } = this.props;
         navigation.state.params.onRefresh(this.state.defaultValue);
@@ -95,17 +96,15 @@ export default class EditSingleFieldScreen extends React.PureComponent{
         :
           (
           <TextInput
-            style={{ marginBottom: 0 }}
+            style={(this.isMultiline)?{textAlignVertical: "top" }:{}}
             placeholder={placeholder}
             value={this.state.defaultValue}
             multiline={this.isMultiline}
+            numberOfLines={(this.isMultiline)?3:1}
             keyboardType={this.keyboardType}
             onChangeText={this.handleDefaultValueChange}/>
           )
         }
-        
-
-        
 
         {this.caption !== null?(
           <Caption>{this.caption}</Caption>

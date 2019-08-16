@@ -1,14 +1,13 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Searchbar } from "react-native-paper";
-import ClassAPI from "../../../api/class";
-import ClassListItem from "../../../components/ClassListItem";
+import ClassAPI from "modules/Classroom/api/class";
+import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
-import TeacherAPI from "modules/Classroom/api/teacher";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]  };
 
-export default class TeacherClassListPickerScreen extends React.PureComponent {
+export default class ArchiveClassListPickerScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -29,7 +28,7 @@ export default class TeacherClassListPickerScreen extends React.PureComponent {
 
   handleClassPress = class_ => {
     const classId = class_.id;
-    TeacherAPI.addTeacherClass(this.teacherEmail, this.schoolId, classId).then(() => {
+    ClassAPI.setArchive(this.schoolId, classId).then(() => {
       this.setState({ isLoading: false });
       const { navigation } = this.props;
       navigation.state.params.onRefresh();

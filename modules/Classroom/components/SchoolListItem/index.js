@@ -3,9 +3,15 @@ import ContentLoader from 'rn-content-loader'
 import {Rect} from 'react-native-svg'
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph } from "react-native-paper";
-import SchoolAPI from "modules/Classroom/api/school"
+import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
+import SquareAvatar from "src/components/Avatar/Square";
 
-const INITIAL_STATE = { school: {}, isFetching: false }
+const INITIAL_STATE = { 
+  school: {}, 
+  isFetching: false,
+  defaultProfilePic: "https://picsum.photos/200/200/?random",
+  userName: "" 
+}
 
 /**
  * @param {string} subject 
@@ -20,13 +26,9 @@ export default class SchoolListItem extends React.Component{
 
   async componentDidMount(){
     this.setState({ isFetching: true });
-
-    let { school } = this.props;
-
-    if(!school.name){
-      school = await SchoolAPI.getDetail(school.id);
-    }
-    this.setState({isFetching:false, school})
+    const { school, currentUserEmail } = this.props;
+    const schoolAdmin = await SchoolAdminAPI.getDetail(school.id, currentUserEmail )
+    this.setState({isFetching:false, school, userName: schoolAdmin.name})
   }
 
   render(){
@@ -37,12 +39,20 @@ export default class SchoolListItem extends React.Component{
         </ContentLoader>
       )
     }
+    let schoolProfilePic = this.state.defaultProfilePic
 
+    if(this.state.school.profilePicture && this.state.school.profilePicture.downloadUrl){
+      schoolProfilePic = this.state.school.profilePicture.downloadUrl
+    }
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>
-        <View>
-          <Text style={{ fontWeight: "700" }}>{this.state.school.name}</Text>
+        <View style={{flexDirection:"row"}}>
+          <SquareAvatar size={40} uri={schoolProfilePic}/>
+          <View style={{marginLeft:16}}>
+            <Text style={{ fontWeight: "700" }}>{this.state.school.name}</Text>
+            <Paragraph style={{ color: "#5E8864" }}>{this.state.userName}</Paragraph>
+          </View>
         </View>
       </TouchableOpacity>
     )

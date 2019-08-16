@@ -72,16 +72,16 @@ export default class StudentListScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
           <Searchbar 
-          onChangeText={searchText => {this.setState({searchText})}}
-          onSubmitEditing={this.handleSearchPress}
-          value={this.state.searchText}
-          placeholder="Cari Murid" />
+            onChangeText={searchText => {this.setState({searchText})}}
+            onSubmitEditing={this.handleSearchPress}
+            value={this.state.searchText}
+            placeholder="Cari Murid" />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredPeopleList}
           keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             return (
               <StudentListItem 
                 onPress={() => this.handleStudentPress(item)}

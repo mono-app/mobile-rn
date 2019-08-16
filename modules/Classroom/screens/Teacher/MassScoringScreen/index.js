@@ -6,7 +6,16 @@ import AppHeader from "src/components/AppHeader";
 import StudentAPI from "../../../api/student";
 import TextInput from "src/components/TextInput";
 
-const INITIAL_STATE = { isLoading: true, dialogVisible: false, dialogScore: "", selectedStudent: {}, selectedStudentInfo: "" };
+const INITIAL_STATE = { 
+  isLoading: true, 
+  dialogVisible: false,
+  dialogScore: "", 
+  selectedStudent: {}, 
+  selectedStudentInfo: "",
+  peopleList: [], 
+  filteredPeopleList: [], 
+  searchText: ""
+  };
 
 export default class MassScoringScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -25,7 +34,7 @@ export default class MassScoringScreen extends React.PureComponent {
     this.setState({ peopleList: [] });
 
     const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
-    this.setState({ peopleList });
+    this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
   handleStudentPress = async student => {
@@ -55,17 +64,34 @@ export default class MassScoringScreen extends React.PureComponent {
     this.loadStudents()
   }
 
-  _hideDialog = () => {
+  hideDialog = () => {
     this.setState({ dialogVisible: false })
+  }
+
+  handleSearchPress = () => {
+    this.setState({filteredPeopleList: []})
+
+    const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
+    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
+    if(this.state.searchText){
+
+      const filteredPeopleList = clonedPeopleList.filter((people) => {
+        return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredPeopleList})
+    } else {
+      this.setState({filteredPeopleList: clonedPeopleList})
+    }
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadStudents = this.loadStudents.bind(this);
-    this.handleStudentPress = this.handleStudentPress.bind(this);
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
+    this.loadStudents = this.loadStudents.bind(this);
+    this.handleStudentPress = this.handleStudentPress.bind(this);
+    this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
@@ -76,22 +102,27 @@ export default class MassScoringScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar placeholder="Cari Murid" />
+          <Searchbar 
+            onChangeText={searchText => {this.setState({searchText})}}
+            onSubmitEditing={this.handleSearchPress}
+            value={this.state.searchText}
+            placeholder="Cari Murid" />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
-          data={this.state.peopleList}
-          renderItem={({ item, index }) => {
+          data={this.state.filteredPeopleList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
             return (
               <MassScoringListItem 
                 onPress={() => this.handleStudentPress(item)}
-                key={index} schoolId={this.schoolId} student={item}/>
+                schoolId={this.schoolId} student={item}/>
             )
           }}
         />
         <Portal>
           <Dialog
-            onDismiss={this._hideDialog}
+            onDismiss={this.hideDialog}
             visible={this.state.dialogVisible}>
             <Dialog.Content>
             <Headline>Masukan Nilai Untuk</Headline>
