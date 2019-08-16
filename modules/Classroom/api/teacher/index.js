@@ -71,7 +71,7 @@ export default class TeacherAPI {
     const teachersCollection = new TeachersCollection();
     const schoolsCollection = new SchoolsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const teachersCollectionRef = schoolsDocumentRef.collection(teachersCollection.getName());
+    const teachersCollectionRef = schoolsDocumentRef.collection(teachersCollection.getName()).orderBy("name", "asc");
 
     const teachersQuerySnapshot = await teachersCollectionRef.get()
 
@@ -93,9 +93,13 @@ export default class TeacherAPI {
 
     const teachersQuerySnapshot = await teachersCollectionRef.orderBy("creationTime","desc").get()
 
-    const teachers = (await teachersQuerySnapshot.docs).map((snap)=> {
-      return {id: snap.id, ...snap.data()}
+    const arrayOfPromise = teachersQuerySnapshot.docs.map(async (snap) => {
+      const data = await TeacherAPI.getDetail(schoolId, snap.id)
+      return Promise.resolve(data)
     });
+
+    const teachers = await Promise.all(arrayOfPromise);
+    teachers.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
 
     return Promise.resolve(teachers)
   }

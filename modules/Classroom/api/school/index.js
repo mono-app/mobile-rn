@@ -14,10 +14,13 @@ export default class SchoolAPI{
 
     const schoolSnapshot = await schoolsCollectionRef.get();
 
-    const schools = (await schoolSnapshot.docs).map((snap)=> {
-      return {id: snap.id, ...snap.data()}
+    const arrayOfPromise = schoolSnapshot.docs.map(async (snap) => {
+      const detail = await SchoolAPI.getDetail(snap.id)
+      return Promise.resolve(detail)
     });
 
+    const schools = await Promise.all(arrayOfPromise);
+   
     return Promise.resolve(schools)
   }
 

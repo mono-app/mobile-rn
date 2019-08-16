@@ -80,7 +80,7 @@ export default class StudentAPI{
     const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const studentsCollectionRef = schoolsDocumentRef.collection(studentsCollection.getName());
+    const studentsCollectionRef = schoolsDocumentRef.collection(studentsCollection.getName()).orderBy("name", "asc");
     const studentSnapshot = await studentsCollectionRef.get();
     const studentDocuments = (await studentSnapshot.docs).map((snap) => {
       return {id: snap.id, ...snap.data()}
@@ -92,9 +92,9 @@ export default class StudentAPI{
 
   static async getClassStudent(schoolId, classId){
     const db = firebase.firestore();
-    const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
+    const studentsCollection = new StudentsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
     let studentsCollectionRef = classesDocumentRef.collection(studentsCollection.getName());
@@ -106,6 +106,7 @@ export default class StudentAPI{
     });
 
     const studentDocuments = await Promise.all(arrayOfPromise);
+    studentDocuments.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
 
     return Promise.resolve(studentDocuments);
   }
