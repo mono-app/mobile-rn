@@ -87,7 +87,7 @@ export class UpdateDocument extends Query{
    * @param {Document} firebaseDocument2 
    * @param {Object} updateObject - Firestore update statement, see firebase/firestore documentation
    */
-  executeQuery(collection1, collection2, firebaseDocument1, firebaseDocument2, updateObject){
+  executeQuery2(collection1, collection2, firebaseDocument1, firebaseDocument2, updateObject){
     return this.database.getDatabase()
                         .collection(collection1.getName())
                         .doc(firebaseDocument1.getId())
@@ -96,7 +96,7 @@ export class UpdateDocument extends Query{
                         .update(updateObject)
   }
 
-  executeQuery(collection1, collection2, collection3, firebaseDocument1, firebaseDocument2, firebaseDocument3, updateObject){
+  executeQuery3(collection1, collection2, collection3, firebaseDocument1, firebaseDocument2, firebaseDocument3, updateObject){
     return this.database.getDatabase()
                         .collection(collection1.getName())
                         .doc(firebaseDocument1.getId())
