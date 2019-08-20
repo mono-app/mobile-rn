@@ -11,6 +11,7 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 import ChatBubble from "src/screens/ChatScreen/ChatBubble";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import AppHeader from "src/components/AppHeader";
+import RTCListener from "src/screens/ChatScreen/RTCListener";
 import LastOnlineListener from "src/screens/ChatScreen/LastOnlineListener";
 
 const INITIAL_STATE = { 
@@ -45,11 +46,10 @@ const INITIAL_STATE = {
     })
   }
 
-  handleSendPress = async message => {
-    if(message !== null || message !== "" || message !== undefined){
-      const copiedMessage = JSON.parse(JSON.stringify(message));
+  handleSendPress = async (message) => {
+    const copiedMessage = JSON.parse(JSON.stringify(message));
+    if(copiedMessage !== null || copiedMessage !== "" || copiedMessage !== undefined){
       const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-      this.txtMessage.clear();
       await MessagesAPI.sendMessage(this.roomId, currentUserEmail, copiedMessage);
     }
   }
@@ -109,7 +109,6 @@ const INITIAL_STATE = {
     this.state = INITIAL_STATE;
     this.roomId = this.props.navigation.getParam("roomId", null);
     this.peopleEmail = this.props.navigation.getParam("peopleEmail", null);
-    this.txtMessage = null;
     this.messagesApi = null;
     this.messageListener = null;
     this.listenNewMessages = this.listenNewMessages.bind(this);
@@ -148,6 +147,7 @@ const INITIAL_STATE = {
           <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, backgroundColor: "#E8EEE8" }}/>
 
           <LastOnlineListener peopleEmail={this.peopleEmail} onChange={this.handleLastOnlineListenerChange}/>
+          <RTCListener roomId={this.roomId}/>
 
           <FlatList
             inverted={true}
@@ -159,7 +159,7 @@ const INITIAL_STATE = {
               const bubbleStyle = (this.peopleEmail === item.senderEmail)? "peopleBubble": "myBubble";
               return <ChatBubble bubbleStyle={bubbleStyle} messageItem={item}/>
             }}/>
-          <ChatBottomTextInput ref={i => this.txtMessage = i } onSendPress={this.handleSendPress}/>
+          <ChatBottomTextInput onSendPress={this.handleSendPress}/>
       </KeyboardAvoidingView>
     )
   }
