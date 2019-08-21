@@ -8,7 +8,7 @@ import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcon
 
 const INITIAL_STATE = { isPermitted: false, originalAlbums: {}, albums: {}, albumNames: [], selectedAlbum: null, selectedImages: [] }
 
-class GalleryScreen extends React.Component{
+class GalleryScreen extends React.PureComponent{
   static navigationOptions = { headerTitle: "Pilih Foto" }
 
   formatData = (data, numColumns) => {
