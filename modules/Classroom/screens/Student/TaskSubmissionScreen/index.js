@@ -1,9 +1,9 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { ProgressBar,Caption,Searchbar,Text,Dialog,Portal } from "react-native-paper";
-import FileListItem from "../../../components/FileListItem";
+import { View, FlatList } from "react-native";
+import { ProgressBar,Searchbar,Text,Dialog,Portal } from "react-native-paper";
+import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
-import FileAPI from "../../../api/file";
+import FileAPI from "modules/Classroom/api/file";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";

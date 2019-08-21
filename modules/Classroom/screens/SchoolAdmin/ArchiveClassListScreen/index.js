@@ -29,9 +29,10 @@ export default class ArchiveClassListScreen extends React.PureComponent {
   handleClassPress = class_ => {
     const payload = {
       schoolId: this.schoolId,
-      classId: class_.id
+      classId: class_.id,
+      onRefresh: this.loadClasses
     }
-    this.props.navigation.navigate("ClassProfile", payload);
+    this.props.navigation.navigate("ArchiveClassDetails", payload);
   }
 
   handleAddClassPress = () => {
@@ -92,7 +93,7 @@ export default class ArchiveClassListScreen extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <FlatList
-          style={{ backgroundColor: "white", paddingTop: 16 }}
+          style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {

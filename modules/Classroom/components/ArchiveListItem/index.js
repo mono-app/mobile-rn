@@ -65,7 +65,7 @@ export default class ArchiveListItem extends React.Component{
               </View>
               <TouchableOpacity onPress={this.props.onSubmissionPress}>
                 <View style={styles.listItemContainer}>
-                  <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 8}]}>
+                  <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 16}]}>
                         <View>
                           <Text style={{ fontWeight: "700" }}>Lihat Pengumpulan</Text>
                         </View>
@@ -77,7 +77,7 @@ export default class ArchiveListItem extends React.Component{
               </TouchableOpacity>
               <TouchableOpacity onPress={this.props.onDiscussionPress}>
                 <View style={styles.listItemContainer}>
-                  <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 8}]}>
+                  <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 16}]}>
                     <View>
                       <Text style={{ fontWeight: "700" }}>Diskusi</Text>
                     </View>

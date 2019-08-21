@@ -1,6 +1,6 @@
 import React from "react";
 import ContentLoader from 'rn-content-loader'
-import {Circle, Rect} from 'react-native-svg'
+import { Rect } from 'react-native-svg'
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
@@ -66,8 +66,6 @@ export default class MassScoringListItem extends React.PureComponent{
             <View style={{flexDirection:"row",textAlign: "right"}}>
               <Text>{finalScore}</Text>
               {(finalScore)? <Text/>: <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>}
-              
-             
             </View>
           </View>
         </View>

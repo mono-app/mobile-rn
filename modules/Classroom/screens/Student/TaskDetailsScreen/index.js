@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Snackbar } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Caption, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import DiscussionAPI from "modules/Classroom/api/discussion";
@@ -10,7 +10,7 @@ import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 
-const INITIAL_STATE = { isLoading: true,schoolId: "1hZ2DiIYSFa5K26oTe75", task:{}, showSnackbarFailDeleting: false, totalSubmission:0, totalDiscussion: 0 };
+const INITIAL_STATE = { isFetching: true, task:{}, showSnackbarFailDeleting: false, totalSubmission:0, totalDiscussion: 0 };
 
 export default class TaskDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -26,11 +26,13 @@ export default class TaskDetailsScreen extends React.PureComponent {
   };
 
   loadTask = async () => {
+    this.setState({ isFetching: true});
+
     const api = new TaskAPI();
-    const task = await api.getDetail(this.state.schoolId, this.classId, this.taskId);
+    const task = await api.getDetail(this.schoolId, this.classId, this.taskId);
   
-    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.state.schoolId, this.classId, this.taskId);
-    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.state.schoolId, this.classId, this.taskId);
+    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
+    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.schoolId, this.classId, this.taskId);
 
     this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
   }
@@ -38,7 +40,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleTaskSubmissionPress = () => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       title: this.state.task.title,
@@ -50,7 +52,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleDiscussionPress = () => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       subject: this.subject,
@@ -61,7 +63,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
   
   handleSubmissionTaskPress = () => {
     const payload = {
-      schoolId: this.state.schoolId,
+      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       subject: this.subject,
@@ -70,29 +72,16 @@ export default class TaskDetailsScreen extends React.PureComponent {
     this.props.navigation.navigate(`TaskSubmission`, payload);
   }
 
-  handleDelete = async () => {
-    const total = await SubmissionAPI.getTotalSubmission(this.state.schoolId, this.classId, this.taskId);
-    
-    if(total===0){
-      await TaskAPI.deleteTask(this.state.schoolId, this.classId, this.taskId);
-      const { navigation } = this.props;
-      navigation.state.params.onDeleteSuccess();
-      navigation.goBack();   
-    }else{
-      this.setState({showSnackbarFailDeleting: true});
-    }
-  }
-
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
     this.loadTask = this.loadTask.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     this.handleTaskSubmissionPress = this.handleTaskSubmissionPress.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentDidMount(){
@@ -100,6 +89,20 @@ export default class TaskDetailsScreen extends React.PureComponent {
   }
 
   render() {
+    if(this.state.isFetching){
+      return (
+        <Dialog visible={true}>
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <ActivityIndicator/>
+            <View>
+              <Text>Sedang memuat data</Text>
+              <Caption>Harap tunggu...</Caption>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      )
+    }
+
     return (
       <View>
         <ScrollView>

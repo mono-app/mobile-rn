@@ -58,6 +58,7 @@ export default class ClassDetailsScreen extends React.PureComponent {
 
   handleTaskListScreen = () => {
     payload = {
+      schoolId: this.schoolId,
       classId: this.classId,
       subject: this.state.class.subject,
       subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester

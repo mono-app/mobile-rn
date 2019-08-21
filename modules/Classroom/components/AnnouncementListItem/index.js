@@ -1,6 +1,5 @@
 import React from "react";
-import ContentLoader from 'rn-content-loader'
-import {Rect} from 'react-native-svg'
+import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph } from "react-native-paper";
 import moment from "moment"
@@ -29,8 +28,6 @@ export default class AnnouncementListItem extends React.Component{
         showDateLabel=false;
       }
     }
-
-
     this.setState({ isFetching: false, announcement, showDateLabel, date });
   }
 
@@ -50,13 +47,40 @@ export default class AnnouncementListItem extends React.Component{
             <Text style={{ fontWeight: "700", marginHorizontal: 16, marginVertical: 8 }}>{this.state.date}</Text>
           </View>
           : <View/>}
-        
-        <TouchableOpacity onPress={this.props.onPress} style={{paddingHorizontal: 16,padding:8, borderBottomWidth:1, borderBottomColor: "#E8EEE8"}}>
-            <Paragraph style={{ color: "#5E8864" }}>{(this.state.announcement.task)? this.state.announcement.task.title : ""}</Paragraph>
+
+        <TouchableOpacity onPress={this.props.onPress}>
+          <View style={styles.listItemContainer}>
+            <View style={styles.listDescriptionContainer}>
+              <View style={styles.listDescriptionContainer}>
+                <Paragraph style={{ color: "#EF6F6C", marginRight: 4 }}>Pengumpulan Tugas</Paragraph>
+                <Paragraph style={{  fontWeight:"700", marginRight: 4 }}>{ (this.state.announcement.task)? this.state.announcement.task.title : ""}</Paragraph>
+                <Paragraph style={{ marginRight: 4 }}>pada kelas</Paragraph>
+                <Paragraph style={{ fontWeight:"700" }}>{ (this.state.announcement.class)? this.state.announcement.class.subject : ""}</Paragraph>
+              </View>
+              <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864", alignSelf:"center" }}/>
+            </View>
+          </View>
         </TouchableOpacity>
-    
+
       </View>
 
     )
   }
 }
+
+const styles = StyleSheet.create({
+  listItemContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8EEE8",
+    backgroundColor: "white",
+    flexDirection: "row",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: "center"
+  },
+  listDescriptionContainer: {
+    flexDirection: "row", 
+    flexWrap:"wrap",
+    flex: 1,    
+  },
+})

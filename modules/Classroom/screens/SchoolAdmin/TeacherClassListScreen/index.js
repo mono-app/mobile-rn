@@ -93,7 +93,7 @@ export default class TeacherClassListScreen extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <FlatList
-          style={{ backgroundColor: "white", paddingTop: 16 }}
+          style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {

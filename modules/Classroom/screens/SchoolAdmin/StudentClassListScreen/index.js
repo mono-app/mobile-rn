@@ -91,7 +91,7 @@ export default class StudentClassListScreen extends React.PureComponent {
         </View>
         
         <FlatList
-          style={{ backgroundColor: "white", paddingTop: 16 }}
+          style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {

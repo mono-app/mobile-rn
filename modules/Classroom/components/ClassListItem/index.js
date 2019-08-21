@@ -3,7 +3,7 @@ import ContentLoader from 'rn-content-loader'
 import {Rect} from 'react-native-svg'
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph } from "react-native-paper";
-
+import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import ClassAPI from "modules/Classroom/api/class";
 
 const INITIAL_STATE = { subject: "", info: "", isFetching: false }
@@ -32,7 +32,7 @@ export default class ClassListItem extends React.Component{
       this.setState({ isFetching: false, subject, info });
     } else {
      
-      const class_ = await ClassAPI.getDetail("1hZ2DiIYSFa5K26oTe75", this.props.class_.id);
+      const class_ = await ClassAPI.getDetail(schoolId, this.props.class_.id);
       const {subject} = class_  
       const info  = class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
       this.setState({ isFetching: false, subject, info });
@@ -55,10 +55,15 @@ export default class ClassListItem extends React.Component{
     
 
     return(
-      <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>
-        <View>
-          <Text style={{ fontWeight: "700" }}>{subject}</Text>
-          <Paragraph style={{ color: "#5E8864" }}>{info}</Paragraph>
+      <TouchableOpacity onPress={this.props.onPress}>
+        <View style={styles.listItemContainer}>
+          <View style={styles.listDescriptionContainer}>
+            <View>
+              <Text style={{ fontWeight: "700" }}>{subject}</Text>
+              <Paragraph style={{ color: "#5E8864" }}>{info}</Paragraph>
+            </View>
+            <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864", alignSelf:"center" }}/>
+          </View>
         </View>
       </TouchableOpacity>
     )
@@ -66,12 +71,18 @@ export default class ClassListItem extends React.Component{
 }
 
 const styles = StyleSheet.create({
-  userContainer: {
-    height: 50,
-    padding:16,
-    borderBottomWidth:1,
+  listItemContainer: {
+    borderBottomWidth: 1,
     borderBottomColor: "#E8EEE8",
+    backgroundColor: "white",
     flexDirection: "row",
-    alignItems: "center",
-  }
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: "center"
+  },
+  listDescriptionContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
 })

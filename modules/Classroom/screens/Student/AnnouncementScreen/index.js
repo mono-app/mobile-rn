@@ -4,6 +4,8 @@ import { Searchbar } from "react-native-paper";
 import AnnouncementListItem from "modules/Classroom/components/AnnouncementListItem";
 import AppHeader from "src/components/AppHeader";
 import AnnouncementAPI from "modules/Classroom/api/announcement";
+import ClassAPI from "modules/Classroom/api/class";
+import { StackActions, NavigationActions } from "react-navigation";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", searchText: "", announcementList:[], filteredAnnouncementList:[]  };
 
@@ -24,12 +26,43 @@ export default class AnnouncementScreen extends React.PureComponent {
     this.setState({ announcementList: [] });
    
     const announcementList = await AnnouncementAPI.getStudentAnnouncements(this.schoolId,this.studentEmail)
-    this.setState({ announcementList, filteredAnnouncementList: announcementList });
- 
+   
+    let clonedAnnouncementList = JSON.parse(JSON.stringify(announcementList));
+    clonedAnnouncementList = clonedAnnouncementList.map((obj)=>{
+      let searchQuery = "";
+      if(obj.type=="task"){
+        searchQuery= "Pengumpulan Tugas "+ obj.task.title+" pada kelas "+ obj.class.subject
+      }
+      return {...obj, searchQuery}
+    })
+
+    this.setState({ announcementList:clonedAnnouncementList, filteredAnnouncementList: clonedAnnouncementList });
   }
 
-  handleAnnouncementPress = people => {
-    
+  handleAnnouncementPress = async item => {
+    if(item.type==="task"){
+      const class_ = await ClassAPI.getDetail(this.schoolId, item.class.id);
+      const payload = {
+        schoolId: this.schoolId,
+        taskId: item.task.id,
+        classId: class_.id,
+        subject: class_.subject,
+        subjectDesc: class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
+      }
+
+      // const resetAction = StackActions.reset({
+      //   index:1,
+      //   key: "Student",
+      //   actions:[
+      //     NavigationActions.navigate({ routeName: 'TaskList' }),
+      //     NavigationActions.navigate({ routeName: 'TaskDetails' }),
+      //   ],
+      //   params: payload
+      // });
+
+      // this.props.navigation.dispatch(resetAction);
+      this.props.navigation.navigate("TaskDetails", payload)
+    }
   }
 
   handleSearchPress = () => {
@@ -40,7 +73,7 @@ export default class AnnouncementScreen extends React.PureComponent {
     if(this.state.searchText){
 
       const filteredAnnouncementList = clonedAnnouncementList.filter((announcement) => {
-        return announcement.task.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+        return announcement.searchQuery.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
       this.setState({filteredAnnouncementList})
     } else {

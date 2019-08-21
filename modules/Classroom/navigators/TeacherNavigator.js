@@ -29,6 +29,7 @@ import ArchiveSelectClassScreen from "modules/Classroom/screens/Teacher/ArchiveS
 import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFilesScreen"
 import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
 import GallerySwiperScreen from "modules/Classroom/screens/GallerySwiperScreen"
+import CameraScreen from "src/screens/CameraScreen";
 
 export default TeacherNavigator = createStackNavigator(
   {
@@ -59,6 +60,7 @@ export default TeacherNavigator = createStackNavigator(
     AddClassFiles: {screen: AddClassFilesScreen},
     MassScoring: {screen: MassScoringScreen},
     GallerySwiper: {screen: GallerySwiperScreen},
+    Camera: {screen: CameraScreen},
   },
   {
     initialRouteName: "TeacherHome"

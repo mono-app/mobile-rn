@@ -35,9 +35,7 @@ export default class TeacherProfileScreen extends React.PureComponent {
     if(teacher.gender){
       teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
     }
-
     const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.teacherEmail)).length;
-
 
     this.setState({ isLoadingProfile: false, teacher, totalActiveClass });
     

@@ -6,8 +6,6 @@ import { Text, Paragraph, Card } from "react-native-paper";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-import TaskAPI from "../../api/task";
-
 const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
 
 /**
@@ -17,7 +15,6 @@ const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
 export default class TaskListItem extends React.Component{
   constructor(props){
     super(props);
-
     this.state = INITIAL_STATE;
   }
 
@@ -49,7 +46,6 @@ export default class TaskListItem extends React.Component{
       creationDate = moment(dueDate.seconds * 1000).format("DD MMMM YYYY")
       creationTime = moment(dueDate.seconds * 1000).format("HH:mm")
     }
-    
 
     return(
         <Card style={styles.container}> 

@@ -19,6 +19,9 @@ import TaskSubmissionScreen from "modules/Classroom/screens/Student/TaskSubmissi
 import AddTaskSubmissionScreen from "modules/Classroom/screens/Student/AddTaskSubmissionScreen"
 import AnnouncementScreen from "modules/Classroom/screens/Student/AnnouncementScreen"
 import GallerySwiperScreen from "modules/Classroom/screens/GallerySwiperScreen"
+import MapsPickerScreen from "modules/Classroom/screens/MapsPickerScreen"
+import StatusChangeScreen from "src/screens/StatusChangeScreen";
+import CameraScreen from "src/screens/CameraScreen";
 
 export default StudentNavigator = createStackNavigator(
   {
@@ -40,6 +43,9 @@ export default StudentNavigator = createStackNavigator(
     AddTaskSubmission: {screen: AddTaskSubmissionScreen},
     Announcement: {screen: AnnouncementScreen},
     GallerySwiper: {screen: GallerySwiperScreen},
+    MapsPicker: {screen: MapsPickerScreen},
+    StatusChange: {screen: StatusChangeScreen},
+    Camera: {screen: CameraScreen},
 
   },
   {

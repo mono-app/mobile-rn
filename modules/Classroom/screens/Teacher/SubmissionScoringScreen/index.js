@@ -74,7 +74,6 @@ export default class SubmissionScoringScreen extends React.PureComponent {
                   <TextInput
                     placeholder=""
                     style={{ backgroundColor: "#E8EEE8" }}
-
                     keyboardType={(this.state.type===1)? "numeric": ""}
                     value={this.state.defaultValue}
                     onChangeText={this.handleScoreChange}/>

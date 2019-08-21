@@ -1,18 +1,27 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Dimensions, View, StyleSheet } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import Button from "src/components/Button";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import CurrentUserAPI from "src/api/people/CurrentUser";
-import DiscussionAPI from "../../api/discussion";
+import DiscussionAPI from "modules/Classroom/api/discussion";
+import DocumentPicker from 'react-native-document-picker';
+import StorageAPI from "src/api/storage"
+import uuid from "uuid/v4"
+import FastImage from "react-native-fast-image";
+import DeleteDialog from "src/components/DeleteDialog";
 
 const INITIAL_STATE = {
   isLoading: false,
   title: "",
-  description: ""
+  description: "",
+  imagesPicked: [],
+  selectedImageToDelete: {},
+  showDeleteImageDialog: false,
+  locationCoordinate: null
 };
 
 /**
@@ -47,7 +56,9 @@ export default class AddDiscussionScreen extends React.PureComponent {
     const data = {
       posterEmail: currentUserEmail,
       title: this.state.title,
-      description: this.state.description
+      description: this.state.description,
+      location: {...this.state.locationCoordinate},
+      images: this.state.imagesPicked
     }
  
     await DiscussionAPI.addDiscussion(this.schoolId, this.classId, this.taskId, data);
@@ -56,6 +67,84 @@ export default class AddDiscussionScreen extends React.PureComponent {
     navigation.state.params.onRefresh(this.state.defaultValue);
     navigation.goBack();
   };
+
+  handleLocationPress = () => {
+    const payload = {
+      onRefresh:(locationCoordinate)=> {
+        this.setState({locationCoordinate})
+        console.log(locationCoordinate)
+        }
+    }
+    this.props.navigation.navigate("MapsPicker",payload)
+  }
+
+  handleSingleImagePress = async () => {
+    // Pick a single file
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+    
+      const downloadUrl = await StorageAPI.uploadFile("/modules/classroom/discussions/"+uuid(),res.uri)
+
+      console.log(downloadUrl)
+
+    } catch (err) {
+      console.log(err)
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  handleCameraPress = () => {
+    const payload = {
+      onRefresh:(image)=> {
+          let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+          clonedImagesPicked.push(image)
+          console.log(clonedImagesPicked)
+          this.setState({imagesPicked: clonedImagesPicked})
+        }
+    }
+    this.props.navigation.navigate("Camera",payload)
+  }
+
+  handleMultipleImagePress = async () => {
+    // Pick multiple files
+    try {
+      const results = await DocumentPicker.pickMultiple({
+        type: [DocumentPicker.types.images],
+      });
+      let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+      for (const res of results) {
+        clonedImagesPicked.push(res)
+      }
+     
+      this.setState({imagesPicked: clonedImagesPicked})
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  handleDeleteImagePress = (item) => {
+    console.log(item)
+    this.setState({selectedImageToDelete: item})
+    this.deleteDialog.toggleShow()
+  }
+
+  onDeletePress = () => {
+    const newselectedImageToDelete = this.state.imagesPicked.filter((image) => {
+      return image.uri!= this.state.selectedImageToDelete.uri
+    })
+    this.setState({imagesPicked: newselectedImageToDelete})
+    this.deleteDialog.toggleShow()
+  }  
 
   constructor(props) {
     super(props);
@@ -66,9 +155,18 @@ export default class AddDiscussionScreen extends React.PureComponent {
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     this.state = INITIAL_STATE;
     this.handleSavePress = this.handleSavePress.bind(this);
+    this.handleLocationPress = this.handleLocationPress.bind(this);
+    this.handleSingleImagePress = this.handleSingleImagePress.bind(this);
+    this.handleMultipleImagePress = this.handleMultipleImagePress.bind(this);
+    this.handleDeleteImagePress = this.handleDeleteImagePress.bind(this);
+    this.onDeletePress = this.onDeletePress.bind(this);
+    this.handleCameraPress = this.handleCameraPress.bind(this);
+    this.deleteDialog = null
   }
 
   render() {
+    const window = Dimensions.get("window");
+
     return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
@@ -101,11 +199,35 @@ export default class AddDiscussionScreen extends React.PureComponent {
                 numberOfLines = {5}
                 onChangeText={this.handleDescriptionChange}
               />
+              <Text style={styles.label}>{(this.state.locationCoordinate)?this.state.locationCoordinate.latitude:""}</Text>
             </View>
+
+            { (this.state.imagesPicked && this.state.imagesPicked.length) > 0?(
+              <View style={{ flex: 1, flexDirection: "row", flexWrap:"wrap", marginHorizontal: 8 }}>
+                  {this.state.imagesPicked.map((item, index) => {
+                      return (
+                        <TouchableOpacity onPress={() => this.handleDeleteImagePress(item)} key={index} style={{ height: (window.width/4), width: (window.width/4), padding:4 }}>
+                          <FastImage 
+                            resizeMode="cover"
+                            source={{ uri: item.uri  }} 
+                            style={{ alignSelf: "stretch", flex: 1 }}/>
+                        </TouchableOpacity>
+                      )
+                  })}
+              </View>
+
+            ):<View/>}
+
             <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginTop:8}}>
+              <TouchableOpacity onPress={this.handleMultipleImagePress}>
                 <EvilIcons name="image" size={24} style={{ color: "#5E8864",padding:8 }}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleCameraPress}>
                 <EvilIcons name="camera" size={24} style={{ color: "#5E8864",padding:8 }}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleLocationPress}>
                 <EvilIcons name="location" size={24} style={{ color: "#5E8864",padding:8 }}/>
+              </TouchableOpacity>
                
             </View>
             <View style={{ paddingVertical: 8 }} />
@@ -116,7 +238,10 @@ export default class AddDiscussionScreen extends React.PureComponent {
             />
           </View>
         </ScrollView>
-    
+        <DeleteDialog 
+          ref ={i => this.deleteDialog = i}
+          title= {"Apakah anda ingin menghapus gambar ini?"}
+          onDeletePress={this.onDeletePress}/>
       </View>
     );
   }

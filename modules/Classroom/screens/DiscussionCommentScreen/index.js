@@ -104,7 +104,7 @@ export default class DiscussionCommentScreen extends React.PureComponent {
     }
     return (  
 
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <KeyboardAwareScrollView style={{flex:1}}>         
 
           <Card style={{ elevation: 1, marginTop: 8}}>

@@ -7,6 +7,9 @@ import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
 import CurrentUserAPI from "src/api/people/CurrentUser";
+import StorageAPI from "src/api/storage";
+import uuid from "uuid/v4"
+import DocumentPicker from 'react-native-document-picker';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -23,7 +26,7 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
 
   loadSchoolInformation = async () => {
     const school = await SchoolAPI.getDetail(this.state.schoolId);
-    this.setState({school})
+    this.setState({school, profilePicture: school.profilePicture.downloadUrl})
   }
 
   loadUserName = async () => {
@@ -54,6 +57,29 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
     this.props.navigation.navigate("ArchiveClassList", payload);
   };
   
+  changeSchoolProfilePicture = async () => {
+
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+      const storagePath = "/modules/classroom/schools/"+uuid()
+      const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
+
+      await SchoolAPI.updateSchoolProfilePicture(this.state.schoolId, storagePath, downloadUrl)
+
+      this.setState({profilePicture: downloadUrl})
+      
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+   
+  }
+
   constructor(props) {
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
@@ -63,6 +89,7 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
     this.handleArchiveClass = this.handleArchiveClass.bind(this);
+    this.changeSchoolProfilePicture = this.changeSchoolProfilePicture.bind(this);
   }
 
   componentDidMount(){
@@ -77,6 +104,9 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
 
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={this.state.profilePicture}/>
+          <TouchableOpacity onPress={this.changeSchoolProfilePicture}>
+            <Text style={{ fontWeight: "400", fontSize: 16, marginTop: 8, color:"#0ead69" }}>Ubah Logo Sekolah</Text>
+          </TouchableOpacity>
           <Text style={{ fontWeight: "700", marginTop: 16, fontSize: 20 }}>
             Selamat Datang,
           </Text>

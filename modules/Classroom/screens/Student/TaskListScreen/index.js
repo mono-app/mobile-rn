@@ -4,9 +4,8 @@ import { Text, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import TaskListItem from "../../../components/TaskListItem";
 import AppHeader from "src/components/AppHeader";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
-const INITIAL_STATE = { isLoading: true, schoolId: "1hZ2DiIYSFa5K26oTe75", showSnackbarSuccessDeleting: false };
+const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false };
 
 export default class TaskListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -24,19 +23,17 @@ export default class TaskListScreen extends React.PureComponent {
   loadTasks = async () => {
     this.setState({ taskList: [] });
 
-    const taskList = await TaskAPI.getActiveTasks(this.state.schoolId, this.classId);
+    const taskList = await TaskAPI.getActiveTasks(this.schoolId, this.classId);
     this.setState({ taskList });
   }
 
- 
-
-  handleClassPress = (item) => {
+  handleTaskPress = (item) => {
     payload = {
+      schoolId: this.schoolId,
       taskId: item.id,
       classId: this.classId,
       subject: this.subject,
-      subjectDesc: this.subjectDesc,
-      onDeleteSuccess: () => {this.loadTasks; this.setState({showSnackbarSuccessDeleting: true})}
+      subjectDesc: this.subjectDesc
     }
     this.props.navigation.navigate("TaskDetails", payload);
   }
@@ -45,10 +42,11 @@ export default class TaskListScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.loadTasks = this.loadTasks.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
-    this.handleClassPress = this.handleClassPress.bind(this);
+    this.handleTaskPress = this.handleTaskPress.bind(this);
   }
 
   componentDidMount(){
@@ -81,7 +79,7 @@ export default class TaskListScreen extends React.PureComponent {
           renderItem={({ item }) => {
             return (
               <TaskListItem 
-                onPress={() => this.handleClassPress(item)}
+                onPress={() => this.handleTaskPress(item)}
                 task={item}/>
             )
           }}
