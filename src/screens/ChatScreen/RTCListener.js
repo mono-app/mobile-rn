@@ -6,6 +6,7 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 
 export default function RTCListener(props){
   const [ stream, setStream ] = React.useState(null);
+  const refPeerConneciton = React.useRef(null);
 
   const sendAnswer = async (answerSdp) => {
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
@@ -43,6 +44,7 @@ export default function RTCListener(props){
 
       const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
       const peerConnection = new RTCPeerConnection(configuration);
+      refPeerConneciton.current = peerConnection;
 
       const localStream = await mediaDevices.getUserMedia({ audio: true, video: false });
       peerConnection.addStream(localStream);
@@ -82,7 +84,18 @@ export default function RTCListener(props){
   }
 
   React.useEffect(() => {
-    initialize()
+    initialize();
+    return async () => {
+      console.log(refPeerConneciton.current)
+      if(refPeerConneciton.current !== null){
+        await refPeerConneciton.current.close()
+        const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+        await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/leave`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: currentUserEmail })
+        });
+      }
+    }
   }, [])
 
   return <RTCView streamURL={stream?stream.toURL():null}/>
