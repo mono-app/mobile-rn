@@ -13,8 +13,7 @@ export default class AnnouncementAPI{
   
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(studentId);
-    const announcementsDocumentRef = studentsDocumentRef.collection(announcementsCollection.getName()).orderBy('task.dueDate','asc')
-
+    const announcementsDocumentRef = studentsDocumentRef.collection(announcementsCollection.getName()).orderBy('task.dueDate','asc').startAt(new Date());
     const announcementsQuerySnapshot = await announcementsDocumentRef.get();
   
     const announcements =  (await announcementsQuerySnapshot.docs).map((snap) => {

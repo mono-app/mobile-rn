@@ -20,6 +20,21 @@ export default class ClassAPI{
   }
 
   
+  static async setUnarchive(schoolId, classId) {
+    try{
+      const db = firebase.firestore();
+      const classesCollection = new ClassesCollection();
+      const schoolsCollection = new SchoolsCollection();
+      const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+      const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+
+      await classesDocumentRef.update({ isArchive: false });
+      return Promise.resolve(true);
+    }catch(err){ 
+      console.log(err);
+      return Promise.resolve(false); 
+    }
+  }
 
   static async setArchive(schoolId, classId) {
     try{
