@@ -1,4 +1,6 @@
 import firebase from "react-native-firebase";
+import uuid from "uuid/v4"
+import RNFS from "react-native-fs"
 
 export default class StorageAPI{
 
@@ -8,13 +10,20 @@ export default class StorageAPI{
    * @param {String} filePath - local storage path, it will remove file:// bydefault, so include it
    * @returns {String} - a string of download url
    */
-  static uploadFile(storagePath, filePath){
+  static async uploadFile(storagePath, filePath){
+
+    const blob = await RNFS.readFile(filePath,"base64")
+    const filename = uuid()
+    const tempUrl = "/storage/emulated/0/Download/"+filename
+
+    await RNFS.writeFile(tempUrl, blob, "base64")
+
     const storage = firebase.storage();
     const storageRef = storage.ref(storagePath);
-    const cleanFilePath = filePath.substring(7);
-    return storageRef.putFile(cleanFilePath).then(() => {
-      return storageRef.getDownloadURL();
-    });
+    await storageRef.putFile(tempUrl)
+    await RNFS.unlink(tempUrl)
+    const downloadUrl = await storageRef.getDownloadURL()
+    return Promise.resolve(downloadUrl)
   }
 
   /**
