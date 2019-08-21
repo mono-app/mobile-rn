@@ -1,12 +1,14 @@
 import React from "react";
+import Pusher from "pusher-js/react-native";
 import { RTCPeerConnection, RTCSessionDescription, RTCView, mediaDevices } from "react-native-webrtc";
-import { SFU_SERVER_BASE_URL } from "react-native-dotenv";
+import { SFU_SERVER_BASE_URL, PUSHER_API_KEY, PUSHER_CLUSTER } from "react-native-dotenv";
 
 import CurrentUserAPI from "src/api/people/CurrentUser";
 
 export default function RTCListener(props){
   const [ stream, setStream ] = React.useState(null);
   const refPeerConneciton = React.useRef(null);
+  const refPusher = React.useRef(null);
 
   const sendAnswer = async (answerSdp) => {
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
@@ -57,6 +59,17 @@ export default function RTCListener(props){
         }
       }
 
+      const pusher = new Pusher(PUSHER_API_KEY, {
+        cluster: PUSHER_CLUSTER, forceTLS: true
+      });
+      refPusher.current = pusher;
+
+      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+      const channel = pusher.subscribe("mono::rtc");
+      channel.bind(`mono::addicecandidate::${props.roomId}::${currentUserEmail}`, (data) => {
+        console.log(data);
+      })
+
       peerConnection.onnegotiationneeded = (e) => console.log("negotiationneeded", e);
       peerConnection.onaddstream = (e) => { setStream(e.stream); console.log(e.stream); }
       peerConnection.ondatachannel = ({ channel }) => {
@@ -86,7 +99,6 @@ export default function RTCListener(props){
   React.useEffect(() => {
     initialize();
     return async () => {
-      console.log(refPeerConneciton.current)
       if(refPeerConneciton.current !== null){
         await refPeerConneciton.current.close()
         const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
@@ -95,6 +107,8 @@ export default function RTCListener(props){
           body: JSON.stringify({ userId: currentUserEmail })
         });
       }
+
+      if(refPusher.current !== null) refPusher.current.disconnect();
     }
   }, [])
 
