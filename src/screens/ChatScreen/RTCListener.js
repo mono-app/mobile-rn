@@ -1,129 +1,164 @@
 import React from "react";
 import Pusher from "pusher-js/react-native";
+import uuid from "uuid/v4";
 import { RTCPeerConnection, RTCSessionDescription, RTCView, RTCIceCandidate, mediaDevices } from "react-native-webrtc";
 import { SFU_SERVER_BASE_URL, PUSHER_API_KEY, PUSHER_CLUSTER } from "react-native-dotenv";
 
 import CurrentUserAPI from "src/api/people/CurrentUser";
 
 export default function RTCListener(props){
-  const [ stream, setStream ] = React.useState(null);
-  const refLocalStream = React.useRef(null);
-  const refPeerConnection = React.useRef(null);
-  const refPusher = React.useRef(null);
-  const refIceCandidates = React.useRef([]);
+  const [ streams, setStreams ] = React.useState([]);
+  const currentUserEmail = React.useRef(null);
+  const peerConnections = React.useRef({});
+  const pusher = React.useRef(null);
+  const pusherChannel = React.useRef(null);
+  const myToken = React.useRef(uuid())
+  const listeningTo = React.useRef([]);
 
-  const sendAnswer = async (answerSdp) => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+  const generateLog = (userId, message) => console.log(`${myToken.current} ${userId}: ${message}`)
+
+  const negotiate = async (userId) => {
+    generateLog(userId, "negotation start");
+    const { offerSdp } = await (await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/join`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: myToken.current, userId })
+    })).json();
+
+    await peerConnections.current[userId].pc.setRemoteDescription(new RTCSessionDescription(offerSdp));
+    const answerSdp = await peerConnections.current[userId].pc.createAnswer();
+    await peerConnections.current[userId].pc.setLocalDescription(answerSdp);
     await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/answer`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json" },
-      body: JSON.stringify({ answerSdp, userId: currentUserEmail })
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        answerSdp: peerConnections.current[userId].pc.localDescription.toJSON(),  userId, token: myToken.current
+      })
     })
-    return Promise.resolve(true);
+    generateLog(userId, "negotiation complete");
   }
 
-  const join = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const { offerSdp } = await(await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/join`, { 
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: currentUserEmail })
-    })).json()
-    return Promise.resolve(offerSdp);
+  const createPeerConnection = async (userId) => {    
+    const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
+    peerConnections.current[userId] = { 
+      pc: new RTCPeerConnection(configuration), 
+      iceCandidates: []
+    }
+
+    peerConnections.current[userId].pc.onnegotiationneeded = () => { 
+      generateLog(userId, "re-negotiation needed");
+      negotiate(userId); 
+    }
+
+    peerConnections.current[userId].pc.onicecandidate = ({ candidate }) => {
+      if(candidate !== null){
+        fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/trickleIce`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ iceCandidate: candidate, userId, token: myToken.current })
+        })
+      }
+    };
+
+    peerConnections.current[userId].pc.onaddstream = (e) => {
+      const clonedStreams = [...streams];
+      clonedStreams.push(e.stream);
+      setStreams(clonedStreams);
+    }
+
+    peerConnections.current[userId].pc.oniceconnectionstatechange = () => {
+      if(peerConnections.current[userId] === undefined) return;
+      generateLog(userId, `iceConnectionState - ${peerConnections.current[userId].pc.iceConnectionState}`)
+      if(peerConnections.current[userId].pc.iceConnectionState === "connected" && peerConnections.current[userId].pc.remoteDescription){
+        generateLog(userId, `having ${peerConnections.current[userId].iceCandidates.length} RTCIceCandidate`)
+        while(peerConnections.current[userId].iceCandidates.length > 0){
+          const candidate = new RTCIceCandidate(peerConnections.current[userId].iceCandidates.pop());
+          peerConnections.current[userId].pc.addIceCandidate(candidate).then(() => {
+            generateLog(userId, `RTCIceCandidate has been added`)
+          }).catch((err) => console.log(`${userId}: iceCandidate failed - ${err}`));
+        }
+      }
+    }
+
+    await negotiate(userId);
   }
-  
-  const negotiate = async (peerConnection) => {
-    const offerSdp = await join();
-    const offerDescription = new RTCSessionDescription(offerSdp);
-    await peerConnection.setRemoteDescription(offerDescription);
 
-    const answerDescription = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answerDescription);
-    const answerSdp = peerConnection.localDescription.toJSON();
-    await sendAnswer(answerSdp);
-  }
-
-  const initializePusher = async (peerConnection) => {
-    const pusher = new Pusher(PUSHER_API_KEY, { cluster: PUSHER_CLUSTER, forceTLS: true });
-    refPusher.current = pusher;
-    
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const channel = pusher.subscribe("mono.rtc");
-    channel.bind(`mono::renegotiate::${props.roomId}::${currentUserEmail}`, () => {
-      console.log("got negotation request from server");
-      negotiate(peerConnection);
-    })
-
-    channel.bind(`mono::addicecandidate::${props.roomId}::${currentUserEmail}`, (data) => {
-      try{
-        const { candidate } = data;
-        refIceCandidates.current.push(candidate);
-        console.log(`saving iceCandidate to queue, will be used after get remoteConnection. Total iceCandidates in queue is ${refIceCandidates.current.length}`);
-      }catch(err){ console.log(err); }
+  const initPusher = () => {
+    generateLog(currentUserEmail.current, "initializing pusher");
+    pusher.current = new Pusher(PUSHER_API_KEY, { cluster: PUSHER_CLUSTER, forceTLS: true });
+    pusherChannel.current = pusher.current.subscribe("mono.rtc");
+    pusherChannel.current.bind(`mono::addicecandidate::${props.roomId}::${myToken.current}`, (data) => {
+      peerConnections.current[data.userId].iceCandidates.push(data.candidate);
+      generateLog(data.userId, `queueing RTCIceCandidate ${peerConnections.current[data.userId].iceCandidates.length}`);
     });
+
+    pusherChannel.current.bind(`mono::renegotiate::${props.roomId}::${myToken.current}`, (data) => {
+      const { userId } = data;
+      negotiate(userId);
+    });
+
+    pusherChannel.current.bind(`mono::leavingpublisher::${props.roomId}`, (data) => {
+      const { publisherId } = data;
+      if(publisherId === currentUserEmail.current) return ;
+      peerConnections.current[publisherId].pc.close();
+      listeningTo.current.splice(listeningTo.current.indexOf(publisherId));
+      delete peerConnections.current[publisherId];
+      generateLog(currentUserEmail.current, `publisher ${publisherId} is leaving`);
+    })
   }
 
-  const initialize = async () => {
-    try{
-      const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
-      const peerConnection = new RTCPeerConnection(configuration);
-      refPeerConnection.current = peerConnection;
-      await initializePusher(peerConnection);
+  const initPublisher = async () => {
+    generateLog(currentUserEmail.current, "initializing publisher");
+    await createPeerConnection(currentUserEmail.current);
 
-      refLocalStream.current = await mediaDevices.getUserMedia({ audio: true, video: false });
-      peerConnection.addStream(refLocalStream.current);
+    const localStream = await mediaDevices.getUserMedia({ audio: true, video: false });
+    peerConnections.current[currentUserEmail.current].pc.addStream(localStream);
+  }
 
-      peerConnection.onicecandidate = async ({ candidate }) => {
-        if(candidate !== null){
-          console.log("sending ice candidate to remote");
-          const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-          await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/trickleIce`, {
+  const initSubscribers = async () => {
+    generateLog(currentUserEmail.current, "initializing subscribers");
+    pusherChannel.current.bind(`mono::newpublishers::${props.roomId}`, (data) => {
+      generateLog(currentUserEmail.current, "a new publisher event is triggering");
+      const { publishers } = data;
+      const selectedPublishers = publishers.filter((publisherId) => publisherId !== currentUserEmail.current);
+      generateLog(currentUserEmail.current, `got ${publishers.length} publishers, and selected only ${selectedPublishers.length}`);
+      selectedPublishers.forEach((publisherId) => {
+        if(listeningTo.current.includes(publisherId)) return;
+        listeningTo.current.push(publisherId);
+        generateLog(currentUserEmail.current, `generating RTCPeerConnection for ${publisherId}`);
+        createPeerConnection(publisherId).then(() => {
+          fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/subscribe`, {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: currentUserEmail, iceCandidate: candidate })
+            body: JSON.stringify({ token: myToken.current, userId: publisherId })
           })
-        }
-      }
+        });
+      })
+    })
+  }
 
-      peerConnection.onremovestream = () => { setStream(null); console.log("A stream has been removed") }
-      peerConnection.onaddstream = (e) => { 
-        e.stream.onaddtrack = () => console.log("Testing");
-        setStream(e.stream); console.log("A stream has been added"); 
-      }
-
-      peerConnection.onnegotiationneeded = () => { negotiate(peerConnection); console.log("nego needed") }
-      peerConnection.oniceconnectionstatechange = () => {
-        console.log(`iceConnectionState: ${peerConnection.iceConnectionState}`)
-        if(peerConnection.iceConnectionState === "connected" && peerConnection.remoteDescription){
-          // add iceCandidate in queue if any
-          while(refIceCandidates.current.length > 0){
-            const candidate = refIceCandidates.current.pop();
-            const iceCandidate = new RTCIceCandidate(candidate);
-            peerConnection.addIceCandidate(iceCandidate).then(() => {
-              console.log("iceCandidate has been added");
-            }).catch((err) => console.log(err));
-          }
-        }
-      }
-    }catch(err){ console.log(err); }
+  const initMain = async () => {
+    currentUserEmail.current = await CurrentUserAPI.getCurrentUserEmail();
+    await initPusher();
+    await initPublisher();
+    await initSubscribers();
   }
 
   React.useEffect(() => {
-    initialize();
-    return async () => {
-      if(refPeerConnection.current !== null){
-        await refPeerConnection.current.close()
-        const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-        await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/leave`, {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: currentUserEmail })
-        });
-      }
+    initMain()
+    return function cleanup(){
+      if(pusher.current) pusher.current.disconnect()
 
-      if(refPusher.current !== null) refPusher.current.disconnect();
+      fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/leave`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUserEmail.current, token: myToken.current })
+      })
+
+      Object.keys(peerConnections.current).forEach((userId) => {
+        generateLog(userId, `closing`);
+        peerConnections.current[userId].pc.close();
+        delete peerConnections.current[userId];
+      })
     }
   }, [])
 
-  return <RTCView streamURL={stream?stream.toURL():null}/>
+  return streams.map((stream, index) => <RTCView key={index} streamURL={stream?stream.toURL():null}/>)
 }
 
 RTCListener.defaultProps = { onConnected: () => {} }
