@@ -23,7 +23,6 @@ export default HomeTabNavigator = createStackNavigator({
   WebRTC: { screen: WebRTCScreen }
 }, {
   initialRouteName: "Home",
-  defaultNavigationOptions: { headerStyle: { elevation: 0 } },
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
     return { tabBarVisible: (routeName !== "Chat" && routeName !== "WebRTC") }

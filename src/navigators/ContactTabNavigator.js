@@ -11,7 +11,6 @@ export default ContactTabNavigator =  createStackNavigator({
   PeopleInformation: { screen: PeopleInformationScreen }
 }, {
   initialRouteName: "ContactHome",
-  defaultNavigationOptions: { headerStyle: { elevation: 0 }},
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
     return { tabBarVisible: routeName !== "Chat" }
