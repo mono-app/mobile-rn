@@ -1,8 +1,8 @@
 import React from "react";
+import StatusAPI from "src/api/status";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTheme } from "react-native-paper";
 import { withNavigation } from "react-navigation";
-import { useStatus } from "src/api/people";
 
 import QRCode from "react-native-qrcode-svg"
 import AppHeader from "src/components/AppHeader";
@@ -11,12 +11,20 @@ import { View, StyleSheet } from "react-native";
 import { Text, Card } from "react-native-paper";
 
 function MyQRScreen(props){
+  const [ status, setStatus ] = React.useState("");
   const { currentUser, navigation } = props;
-  const status = useStatus(currentUser.email);
   const styles = StyleSheet.create({
     container: { flex: 1, padding: 32, backgroundColor: "#E8EEE8" },
     smallDescription: { fontSize: 12, textAlign: "center", color: "#5E8864" }
   })
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const { content } = await StatusAPI.getLatestStatus(currentUser.email);
+      setStatus(content);
+    }
+    fetchData();
+  }, [])
 
   return(
     <View style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
@@ -29,7 +37,7 @@ function MyQRScreen(props){
                 style={{ paddingHorizontal: 16 }}
                 profilePicture={currentUser.profilePicture} 
                 title={currentUser.applicationInformation.nickName}
-                subtitle={status.content}/>
+                subtitle={status}/>
             </View>
             <View style={{ flexDirection: "row", marginBottom: 32, marginTop: 32, justifyContent: "center" }}>
               <QRCode size={200} value={currentUser.email}/>

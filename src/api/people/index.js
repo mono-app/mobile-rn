@@ -9,24 +9,6 @@ import { StackActions } from "react-navigation";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
-export function useStatus(email){
-  const [ status, setStatus ] = React.useState("");
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const newStatus = await PeopleAPI.getLatestStatus(email);
-      setStatus(newStatus);
-    }
-    fetchData();
-
-    return function cleanup(){
-      Logger.log("clean up status");
-    }
-  }, [])
-
-  return status;
-}
-
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
     this.currentUserEmail = currentUserEmail;
@@ -99,31 +81,6 @@ export default class PeopleAPI{
         return batch.commit();
       }).then(() => profilePictureUrl);
     }
-  }
-
-  /**
-   * 
-   * @param {String} peopleEmail 
-   * @returns {Promise} - `null` if status is not found.
-   */
-  async getLatestStatus(peopleEmail=null){
-    const selectedPeopleEmail = (peopleEmail === null)? this.currentUserEmail: peopleEmail;
-    if(selectedPeopleEmail){
-      const db = firebase.firestore();
-      const userCollection = new UserCollection();
-      const userDocument = new Document(selectedPeopleEmail);
-      const statusCollection = new StatusCollection();
-
-      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      const statusRef = userRef.collection(statusCollection.getName());
-      const querySnapshot = await statusRef.orderBy("timestamp", "desc").limit(1).get();
-      if(querySnapshot.empty) return Promise.resolve(null);
-      else return Promise.resolve(querySnapshot.docs[0].data());
-    }else return Promise.resolve(null);
-  }
-
-  static async getLatestStatus(peopleEmail){
-    return await new PeopleAPI().getLatestStatus(peopleEmail)
   }
 
   /**

@@ -1,8 +1,8 @@
 import { STAGE } from "react-native-dotenv";
 
 class Logger{
-  static log(message){
-    if(STAGE === "DEVELOPMENT") console.log(message);
+  static log(tag, message){
+    if(STAGE === "DEVELOPMENT") console.log(tag, message);
   }
 }
 export default Logger;

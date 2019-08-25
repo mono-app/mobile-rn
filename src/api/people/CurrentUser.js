@@ -48,22 +48,22 @@ export class CurrentUserProvider extends React.Component{
       if(documentSnapshot.exists){
         const userData = documentSnapshot.data();
         userData.email = JSON.parse(JSON.stringify(documentSnapshot.id));
-
-        this.setState({ user: userData });
-        Logger.log(userData);
-          
+        
         if(userData.isCompleteSetup) {
           if(userData.applicationInformation.profilePicture !== undefined){
             userData.profilePicture = JSON.parse(JSON.stringify(userData.applicationInformation.profilePicture.downloadUrl));
           }else userData.profilePicture = "https://picsum.photos/200/200/?random";
         }
+
+        Logger.log("CurrentUserProvider", userData);
+        this.setState({ user: userData });
       }
     });
   };
 
   componentDidMount(){
     this.authListener = firebase.auth().onAuthStateChanged((user) => {
-      Logger.log(`isLoggedIn: ${(user)?true:false}`);
+      Logger.log("CurrentUserProvider", `isLoggedIn: ${(user)?true:false}`);
       const isLoggedIn = (user)? true: false;
       if(isLoggedIn) this.setState({ isLoggedIn });
       else this.setState({ isLoggedIn, user: {} });

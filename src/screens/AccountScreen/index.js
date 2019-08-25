@@ -1,12 +1,8 @@
 import React from "react";
-import firebase from "react-native-firebase";
 import moment from "moment";
-import { withNavigation } from "react-navigation";
+import Logger from "src/api/logger";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
-import CurrentUserAPI from "src/api/people/CurrentUser";
-import Navigator, { StackNavigator } from "src/api/navigator";
-import HeadlineTitle from "src/components/HeadlineTitle";
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
 import { View, StyleSheet, TouchableOpacity } from "react-native";

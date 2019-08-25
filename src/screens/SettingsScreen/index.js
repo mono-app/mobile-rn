@@ -1,50 +1,55 @@
 import React from "react";
-import { withCurrentUser, useCurrentUser } from "src/api/people/CurrentUser";
-import { useStatus } from "src/api/people";
+import Logger from "src/api/logger";
+import StatusAPI from "src/api/status";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
-import SquareAvatar from "src/components/Avatar/Square";
 import AppHeader from "src/components/AppHeader";
 import HeadlineTitle from "src/components/HeadlineTitle";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { View, FlatList, StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 function SettingsScreen(props){
-  const { currentUser, isLoggedIn } = useCurrentUser();
-  const status = useStatus(currentUser.email);
+  const [ status, setStatus ] = React.useState("");
+  const { currentUser, isLoggedIn } = props;
   const styles = StyleSheet.create({
-    profilePicture: { width: 70,  height: 70, borderRadius: 8, marginRight: 16 },
-    listDescriptionContainer: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-    profileDescriptionContainer: { width: 0, flexGrow: 1 },
     profileContainer: {
-      display: "flex", flexDirection: "row", alignItems: "center", padding: 16,
-      paddingTop: 32, paddingBottom: 32, borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
-    },
-    listItemContainer: {
-      borderBottomWidth: 1, borderBottomColor: "#E8EEE8", backgroundColor: "white",
-      flexDirection: "row", padding: 16, alignItems: "center"
-    },
+      backgroundColor: "white", flexDirection: "row", display: "flex",
+      padding: 16, paddingTop: 32, paddingBottom: 32, alignItems: "center",
+      borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
+    }
   });
- 
+
+  const handleStatusPress = () => props.navigation.navigate("StatusChange");
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      Logger.log("SettingsScreen", "get latest status");
+      const { content } = await StatusAPI.getLatestStatus(currentUser.email);
+      setStatus(content);
+    }
+    fetchData();
+  }, [currentUser.statistic.totalStatus])
+
   if(!isLoggedIn) return null;
   return (
     <View style={{ flex: 1 }}>
       <AppHeader/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Settings</HeadlineTitle>
       <ScrollView>
-        <TouchableOpacity style={styles.profileContainer}>
-          <PeopleProfileHeader 
-            style={{ flex: 1, borderBottomWidth: 0 }}
+        <View style={styles.profileContainer}>
+          <PeopleProfileHeader
+            style={{ flex: 1 }}
+            onStatusPress={handleStatusPress}
             profilePicture={currentUser.profilePicture}
             title={currentUser.applicationInformation.nickName}
-            subtitle={status.content}/>
+            subtitle={status}/>
           <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-        </TouchableOpacity>
+        </View>
         <View>
           <FlatList
             data={[
@@ -66,4 +71,4 @@ function SettingsScreen(props){
   )
 }
 
-export default SettingsScreen;
+export default withCurrentUser(SettingsScreen);
