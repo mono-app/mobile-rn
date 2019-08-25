@@ -12,15 +12,11 @@ import { Text } from "react-native-paper";
 export default function PeopleProfileHeader(props){
   const styles = StyleSheet.create({
     profileDescriptionContainer: { width: 0, flexGrow: 1 },
-    profileContainer: {
-      backgroundColor: "white", flexDirection: "row",
-      alignItems: "flex-end", padding: 16, paddingTop: 8,
-      borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
-    }
+    profileContainer: { backgroundColor: "white", flexDirection: "row", alignItems: "flex-end" }
   })
 
   return(
-    <View style={styles.profileContainer}>
+    <View style={[ styles.profileContainer, props.style ]}>
       <SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }}/>
       <View style={styles.profileDescriptionContainer}>
         <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
@@ -33,6 +29,7 @@ export default function PeopleProfileHeader(props){
 PeopleProfileHeader.propTypes = { 
   profilePicture: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  subtitle: PropTypes.string
+  subtitle: PropTypes.string,
+  style: PropTypes.object
 }
-PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "" }
+PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "", style: {} }

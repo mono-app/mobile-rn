@@ -6,6 +6,7 @@ import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import SquareAvatar from "src/components/Avatar/Square";
 import AppHeader from "src/components/AppHeader";
 import HeadlineTitle from "src/components/HeadlineTitle";
+import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
@@ -21,9 +22,8 @@ function SettingsScreen(props){
     listDescriptionContainer: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
     profileDescriptionContainer: { width: 0, flexGrow: 1 },
     profileContainer: {
-      backgroundColor: "white", flexDirection: "row",
-      padding: 16, paddingTop: 32, paddingBottom: 32,
-      borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
+      display: "flex", flexDirection: "row", alignItems: "center", padding: 16,
+      paddingTop: 32, paddingBottom: 32, borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
     },
     listItemContainer: {
       borderBottomWidth: 1, borderBottomColor: "#E8EEE8", backgroundColor: "white",
@@ -37,18 +37,14 @@ function SettingsScreen(props){
       <AppHeader/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Settings</HeadlineTitle>
       <ScrollView>
-        <View style={styles.profileContainer}>
-          <TouchableOpacity>
-            <SquareAvatar size={70} style={{ marginRight: 16 }} uri={currentUser.profilePicture}/>
-          </TouchableOpacity>
-          <View style={styles.profileDescriptionContainer}>
-            <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{currentUser.applicationInformation.nickName}</Text>
-            <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-              <Text style={{ fontSize: 12, marginRight: 16 }}>{status.content}</Text>
-              <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <TouchableOpacity style={styles.profileContainer}>
+          <PeopleProfileHeader 
+            style={{ flex: 1, borderBottomWidth: 0 }}
+            profilePicture={currentUser.profilePicture}
+            title={currentUser.applicationInformation.nickName}
+            subtitle={status.content}/>
+          <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+        </TouchableOpacity>
         <View>
           <FlatList
             data={[

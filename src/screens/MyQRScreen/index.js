@@ -15,15 +15,6 @@ function MyQRScreen(props){
   const status = useStatus(currentUser.email);
   const styles = StyleSheet.create({
     container: { flex: 1, padding: 32, backgroundColor: "#E8EEE8" },
-    profileContainer: {
-      backgroundColor: "white",
-      flexDirection: "row",
-      alignItems: "center",
-      paddingBottom: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: "#E8EEE8"
-    },
-    profileDescriptionContainer: { width: 0, flexGrow: 1 },
     smallDescription: { fontSize: 12, textAlign: "center", color: "#5E8864" }
   })
 
@@ -33,10 +24,13 @@ function MyQRScreen(props){
       <View style={styles.container}>
         <Card>
           <Card.Content>
-            <PeopleProfileHeader 
-              profilePicture={currentUser.profilePicture} 
-              title={currentUser.applicationInformation.nickName}
-              subtitle={status.content}/>
+            <View style={{ paddingBottom: 16, borderBottomColor: "#E8EEE8", borderBottomWidth: 1 }}>
+              <PeopleProfileHeader 
+                style={{ paddingHorizontal: 16 }}
+                profilePicture={currentUser.profilePicture} 
+                title={currentUser.applicationInformation.nickName}
+                subtitle={status.content}/>
+            </View>
             <View style={{ flexDirection: "row", marginBottom: 32, marginTop: 32, justifyContent: "center" }}>
               <QRCode size={200} value={currentUser.email}/>
             </View>
