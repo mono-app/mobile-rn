@@ -1,9 +1,9 @@
 import React from "react";
 import firebase from "react-native-firebase";
 import { View, ActivityIndicator } from "react-native";
-import { StackActions } from "react-navigation";
+import { StackActions, NavigationActions} from "react-navigation";
 
-import Navigator from "src/api/navigator";
+import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 function SplashScreen(props){
@@ -21,15 +21,29 @@ function SplashScreen(props){
       }catch(err){ console.log("User reject notification", err); }
 
       const firebaseUser = firebase.auth().currentUser;
-      const navigator = new Navigator(props.navigation);
-      if(firebaseUser !== null){
-        props.setCurrentUserEmail(firebaseUser.email, props.navigation);
-      }else{
-        navigator.resetTo("SignIn", StackActions);
+      if(firebaseUser !== null) props.setCurrentUserEmail(firebaseUser.email, props.navigation);
+      else {
+        props.navigation.dispatch(StackActions.reset({
+          index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
+          key: null
+        }))
       }
     }
     init();
-  }, [])
+  }, []);
+
+  // assuming user is signed in, then navigate to MainTabNavigator or AccountSetup
+  // withCurrentUser will fetch user data, and useEffect will be triggered if props.currentUser.isCompleteSetup change
+  React.useEffect(() => {
+    if(props.isLoggedIn){
+      const { isCompleteSetup } = props.currentUser;
+      if(isCompleteSetup !== undefined){
+        const navigator = new NavigatorAPI(props.navigation);
+        if(isCompleteSetup) navigator.resetTo("MainTabNavigator")
+        else if(!isCompleteSetup) navigator.resetTo("AccountSetup")
+      }
+    }
+  }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
 
   return(
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>

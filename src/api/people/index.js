@@ -1,13 +1,31 @@
-import SInfo from "react-native-sensitive-info";
+import React from "react";
 import firebase from "react-native-firebase";
 import moment from "moment";
 import uuid from "uuid/v4";
-import { StackActions } from "react-navigation";
-
+import Logger from "src/api/logger";
 import StorageAPI from "src/api/storage";
 import CurrentUserAPI from "src/api/people/CurrentUser";
+import { StackActions } from "react-navigation";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
+
+export function useStatus(email){
+  const [ status, setStatus ] = React.useState("");
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const newStatus = await PeopleAPI.getLatestStatus(email);
+      setStatus(newStatus);
+    }
+    fetchData();
+
+    return function cleanup(){
+      Logger.log("clean up status");
+    }
+  }, [])
+
+  return status;
+}
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -104,6 +122,10 @@ export default class PeopleAPI{
     }else return Promise.resolve(null);
   }
 
+  static async getLatestStatus(peopleEmail){
+    return await new PeopleAPI().getLatestStatus(peopleEmail)
+  }
+
   /**
    * 
    * @param {String} email 
@@ -112,6 +134,7 @@ export default class PeopleAPI{
    */
   async getDetail(email=null, source="default"){
     const selectedPeopleEmail = (email === null)? this.currentUserEmail: email;
+    console.log(selectedPeopleEmail);
     if(selectedPeopleEmail){
       const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
       if(email === currentUserEmail) {
