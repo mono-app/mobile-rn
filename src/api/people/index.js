@@ -16,6 +16,22 @@ export default class PeopleAPI{
 
   /**
    * 
+   * @param {DocumentSnapshot} documentSnapshot 
+   */
+  static normalizePeople(documentSnapshot){
+    const newPeople = documentSnapshot.data();
+    newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
+
+    if(newPeople.isCompleteSetup) {
+      if(newPeople.applicationInformation.profilePicture !== undefined){
+        newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
+      }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
+    }
+    return newPeople;
+  }
+
+  /**
+   * 
    * @param {String} monoId 
    * @param {boolean} includeSelf
    */
@@ -89,28 +105,17 @@ export default class PeopleAPI{
    * @param {String} source - default value `default`, available value `cache`, `server`, `default`
    * @returns {Promise} - object of user in firebase, or null if cannot find
    */
-  async getDetail(email=null, source="default"){
-    const selectedPeopleEmail = (email === null)? this.currentUserEmail: email;
-    console.log(selectedPeopleEmail);
-    if(selectedPeopleEmail){
-      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-      if(email === currentUserEmail) {
-        const userData = await CurrentUserAPI.getDetail();
+  static async getDetail(email=null, source="default"){
+    if(email){
+      const userCollection = new UserCollection();
+      const userDocument = new Document(email);
+      const db = new firebase.firestore();
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      const documentSnapshot = await userRef.get({ source });
+      if(documentSnapshot.exists){
+        const userData = PeopleAPI.normalizePeople(documentSnapshot);
         return Promise.resolve(userData);
-      }else{
-        const userCollection = new UserCollection();
-        const userDocument = new Document(selectedPeopleEmail);
-        const db = new firebase.firestore();
-        const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-        const documentSnapshot = await userRef.get({ source });
-        if(documentSnapshot.exists){
-          const userData = { id: documentSnapshot.id, ...documentSnapshot.data() };
-          const { applicationInformation } = userData;
-          const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture.downloadUrl: "https://picsum.photos/200/200/?random";
-          userData.applicationInformation.profilePicture = profilePicture;
-          return Promise.resolve(userData);
-        }else return Promise.resolve(null);
-      }
+      }else return Promise.resolve(null);
     }else return Promise.resolve(null);
   }
 

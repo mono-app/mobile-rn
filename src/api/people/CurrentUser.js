@@ -1,6 +1,8 @@
 import React from "react";
 import Logger from "src/api/logger";
 import firebase from "react-native-firebase";
+import PeopleAPI from "src/api/people";
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import { UserCollection } from "src/api/database/collection";
 
 const CurrentUserContext = React.createContext();
@@ -15,7 +17,7 @@ export function withCurrentUser(Component){
       </CurrentUserContext.Consumer>
     )
   })
-
+  hoistNonReactStatics(WrapperComponent, Component);
   return WrapperComponent;
 }
 
@@ -46,15 +48,7 @@ export class CurrentUserProvider extends React.Component{
     const userRef = db.collection(userCollection.getName()).doc(email); 
     this.userListener = userRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
-        const userData = documentSnapshot.data();
-        userData.email = JSON.parse(JSON.stringify(documentSnapshot.id));
-        
-        if(userData.isCompleteSetup) {
-          if(userData.applicationInformation.profilePicture !== undefined){
-            userData.profilePicture = JSON.parse(JSON.stringify(userData.applicationInformation.profilePicture.downloadUrl));
-          }else userData.profilePicture = "https://picsum.photos/200/200/?random";
-        }
-
+        const userData = PeopleAPI.normalizePeople(documentSnapshot);
         Logger.log("CurrentUserProvider", userData);
         this.setState({ user: userData });
       }

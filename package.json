@@ -12,6 +12,7 @@
     "babel-plugin-module-resolver": "3.2.0",
     "cache": "2.1.0",
     "clear": "0.1.0",
+    "hoist-non-react-statics": "^3.3.0",
     "moment": "2.24.0",
     "npm": "6.9.0",
     "pusher-js": "5.0.0",
