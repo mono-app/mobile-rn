@@ -18,12 +18,11 @@ export default HomeTabNavigator = createStackNavigator({
   PeopleInformation: { screen: PeopleInformationScreen },
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
-  MyQR: { screen: MyQRScreen },
+  MyQR: { screen: MyQRScreen }
 }, {
   initialRouteName: "Home",
-  defaultNavigationOptions: { headerStyle: { elevation: 0 } },
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: routeName !== "Chat" }
+    return { tabBarVisible: (routeName !== "Chat" && routeName !== "WebRTC") }
   }
 })

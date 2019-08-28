@@ -1,15 +1,18 @@
 import React from "react";
 import moment from "moment";
-import { View } from "react-native";
-import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
-
+import Logger from "src/api/logger";
 import FriendsAPI from "src/api/friends";
 import PeopleAPI from "src/api/people";
-import CurrentUserAPI from "src/api/people/CurrentUser";
+import StatusAPI from "src/api/status";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import ActionButton from "src/screens/PeopleInformationScreen/ActionButton";
+import AppHeader from "src/components/AppHeader";
+import { View } from "react-native";
+import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
+
 
 const INITIAL_STATE = { isLoadingProfile: true, people: null, peopleFriendStatus: null }
 
@@ -18,79 +21,70 @@ const INITIAL_STATE = { isLoadingProfile: true, people: null, peopleFriendStatus
  * 
  * @param {string} peopleId
  */
-export default class PeopleInformationScreen extends React.PureComponent {
-  loadPeopleInformation = async () => {
-    this.setState({ isLoadingProfile: true });
-    const promises = [ new PeopleAPI().getDetail(this.peopleEmail), new PeopleAPI().getLatestStatus(this.peopleEmail) ];
-    const results = await Promise.all(promises);
+function PeopleInformationScreen(props){
+  const { currentUser } = props;
 
-    const status = results[1]? results[1].content: "No Status";
-    const peopleData = results[0];
-    this.setState({ isLoadingProfile: false, people: {
-      source: this.source, profilePicture: peopleData.applicationInformation.profilePicture,
-      joinedFrom: moment.unix(parseInt(peopleData.creationTime) / 1000).format("DD MMMM YYYY"),
-      nickName: peopleData.applicationInformation.nickName, status
-    }})
-  }
-
-  loadPeopleFriendStatus = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const peopleFriendStatus = await new FriendsAPI().getFriendStatus(currentUserEmail, this.peopleEmail);
-    this.setState({ peopleFriendStatus });
-  }
-
-  handleActionButtonComplete = () => this.loadPeopleFriendStatus();
+  const [ isLoadingProfile, setIsLoadingProfile ] = React.useState(true);
+  const [ people, setPeople ] = React.useState(null);
+  const [ peopleFriendStatus, setPeopleFriendStatus ] = React.useState(null);
+  const [ status, setStatus ] = React.useState("");
+  const [ joinedFrom, setJoinedFrom ] = React.useState("");
   
-  constructor(props){
-    super(props);
+  const peopleEmail = props.navigation.getParam("peopleEmail", null);
+  const source = props.navigation.getParam("source", { value: "" });
 
-    this.state = INITIAL_STATE;
-    this.peopleEmail = this.props.navigation.getParam("peopleEmail", null);
-    this.source = this.props.navigation.getParam("source", null);
-    this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
-    this.loadPeopleFriendStatus = this.loadPeopleFriendStatus.bind(this);
-    this.handleActionButtonComplete = this.handleActionButtonComplete.bind(this);
+  const handleActionButtonComplete = () => loadPeopleFriendStatus();
+  const fetchPeopleInformation = async () => {
+    setIsLoadingProfile(true);
+    const peopleData = await PeopleAPI.getDetail(peopleEmail);
+    const status = await StatusAPI.getLatestStatus(peopleEmail);
+    Logger.log("PeopleInformationScreen.fetchPeopleInformation", peopleData)
+
+    setStatus(status.content);
+    setPeople(peopleData);
+    setJoinedFrom(moment.unix(parseInt(peopleData.creationTime) / 1000).format("DD MMMM YYYY"));
+    setIsLoadingProfile(false);
   }
 
-  componentDidMount(){ 
-    this.loadPeopleInformation(); 
-    this.loadPeopleFriendStatus();
+  const fetchPeopleFriendStatus = async () => {
+    const peopleFriendStatus = await new FriendsAPI().getFriendStatus(currentUser.email, peopleEmail);
+    setPeopleFriendStatus(peopleFriendStatus);
   }
 
-  render(){
-    if(this.state.isLoadingProfile){
-      return (
-        <Dialog visible={true}>
-          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-            <ActivityIndicator/>
-            <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
-            </View>
-          </Dialog.Content>
-        </Dialog>
-      )
-    }else return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <PeopleProfileHeader
-          profilePicture={this.state.people.profilePicture}
-          nickName={this.state.people.nickName}
-          status={this.state.people.status}/>
-        <View style={{ marginTop: 16, marginBottom: 16 }}>
-          <PeopleInformationContainer
-            fieldName="Sumber"
-            fieldValue={this.state.people.source.value}/>
-          <PeopleInformationContainer
-            fieldName="Bergabung Sejak"
-            fieldValue={moment(this.state.people.joinedFrom).format("DD MMMM YYYY")}/>
-        </View>
-        <ActionButton 
-          peopleEmail={this.peopleEmail}
-          source={this.source}
-          navigation={this.props.navigation}
-          peopleFriendStatus={this.state.peopleFriendStatus}
-          onComplete={this.handleActionButtonComplete}/>
-      </View>
+  React.useEffect(() => {
+    fetchPeopleInformation();
+    fetchPeopleFriendStatus();
+  }, [])
+
+  if(isLoadingProfile){
+    return (
+      <Dialog visible={true}>
+        <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+          <ActivityIndicator/>
+          <View>
+            <Text>Sedang memuat data</Text>
+            <Caption>Harap tunggu...</Caption>
+          </View>
+        </Dialog.Content>
+      </Dialog>
     )
-  }
+  }else return (
+    <View style={{ flex: 1 }}>
+      <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
+      <PeopleProfileHeader
+        style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}
+        profilePicture={people.profilePicture}
+        title={people.applicationInformation.nickName}
+        subtitle={status}/>
+      <View style={{ marginTop: 16, marginBottom: 16 }}>
+        <PeopleInformationContainer fieldName="Sumber" fieldValue={source.value}/>
+        <PeopleInformationContainer fieldName="Bergabung Sejak" fieldValue={moment(joinedFrom).format("DD MMMM YYYY")}/>
+      </View>
+      <ActionButton 
+        peopleEmail={peopleEmail} source={source}
+        peopleFriendStatus={peopleFriendStatus} onComplete={handleActionButtonComplete}/>
+    </View>
+  )
 }
+PeopleInformationScreen.navigationOptions = { header: null };
+export default withCurrentUser(PeopleInformationScreen);

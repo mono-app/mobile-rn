@@ -1,56 +1,69 @@
 import React from "react";
 import moment from "moment";
-import { View } from "react-native";
-import { Text, withTheme } from "react-native-paper";
+import Logger from "src/api/logger";
+
+import { View, StyleSheet } from "react-native";
+import { Text, withTheme, Caption } from "react-native-paper";
 
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
-class ChatBubble extends React.PureComponent{
-  constructor(props){
-    super(props);
+function ChatBubble(props){
+  const { content, sentTime, isSent, readBy } = props.message;
+  const [ sentTimeString, setSentTimeString ] = React.useState("");
 
-    const { colors } = this.props.theme;
-    this.myBubbleStyle = {
-      container: { display: "flex", flex: 1, flexDirection: "row-reverse", flexWrap: "wrap", marginVertical: 4 },
-      content: { backgroundColor: colors.primary, padding: 8, borderRadius: 8, maxWidth: "80%" },
-      metadataContent: { display: "flex", marginHorizontal: 8, alignSelf: "flex-end", alignItems: "flex-end" },
-      text: { color: "white" }
-    }
+  const myBubble = StyleSheet.create({
+    container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row-reverse" },
+    section: {
+      maxWidth: "90%", backgroundColor: props.theme.colors.primary, paddingHorizontal: 16, paddingVertical: 8,
+      borderRadius: 16, borderBottomEndRadius: 0, display: "flex", flexDirection: "row"
+    },
+    empty: { color: props.theme.colors.primary },
+    contentColor: { color: "rgba(255, 255, 255, 1)" },
+    metadataColor: { color: "rgba(255, 255, 255, .56)" },
+    metadata: {
+      position: "absolute", right: 16, bottom: 0, 
+      flexDirection: "row", display: "flex", alignItems: "center" 
+    },
+  })
 
-    this.peopleBubbleStyle = {
-      container: { display: "flex", flexDirection: "row", marginVertical: 4, flexWrap: "wrap", flex: 1  },
-      content: { backgroundColor: "white", padding: 8, borderRadius: 8, borderWidth: 1, borderColor: "#D3D9D3", maxWidth: "80%" },
-      metadataContent: { display: "flex", marginHorizontal: 8, alignSelf: "flex-end", alignItems: "flex-start" },
-      text: { color: "#161616" }
-    }
-  }
+  const peopleBubble = StyleSheet.create({
+    container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row" },
+    section: {
+      maxWidth: "90%", backgroundColor: "white", paddingHorizontal: 16, paddingVertical: 8,
+      borderRadius: 16, borderBottomStartRadius: 0, display: "flex", flexDirection: "row",
+      borderColor: "rgba(0, 0, 0, .8)", borderWidth: 1
+    },
+    empty: { color: "white" },
+    contentColor: { color: "rgba(0, 0, 0, 1)" },
+    metadataColor: { color: "rgba(0, 0, 0, .56)" },
+    metadata: {
+      position: "absolute", right: 16, bottom: 0, 
+      flexDirection: "row", display: "flex", alignItems: "center" 
+    },
+  })
 
-  render(){
-    const { messageItem } = this.props;
-    const timeString = messageItem.isSent? moment.unix(messageItem.sentTime).format("hh:mm A"): <MaterialIcons name="access-time" size={16}/>
+  const styles = props.bubbleStyle === "myBubble"? myBubble: peopleBubble;
 
-    let readString = null;
-    if(messageItem.read.isRead && this.props.bubbleStyle === "myBubble"){
-      readString = "Read";
-    }else if(messageItem.sentTime && this.props.bubbleStyle === "myBubble"){
-      readString = "Sent"
-    }
-    
-    let selectedStyle = JSON.parse(JSON.stringify(this.myBubbleStyle));
-    if(this.props.bubbleStyle === "peopleBubble") selectedStyle = JSON.parse(JSON.stringify(this.peopleBubbleStyle));
+  React.useEffect(() => {
+    Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
+    if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
+  }, [isSent, sentTime])
 
-    return (
-      <View style={selectedStyle.container}>
-        <View style={selectedStyle.content}>
-          <Text style={selectedStyle.text}>{messageItem.message}</Text>
-        </View>
-        <View style={selectedStyle.metadataContent}>
-          <Text style={{ fontSize: 10, color: "#B9BBBA" }}>{readString}</Text>
-          <Text style={{ fontSize: 10, color: "#B9BBBA" }}>{timeString}</Text>
+  return (
+    <View style={[ styles.container, props.style ]}>
+      <View style={ styles.section}>
+        <Text style={styles.contentColor}>
+          {content}
+          <Text style={styles.empty}>±±±±±±±±±±</Text>     
+        </Text>
+        
+        <View style={styles.metadata}>
+          <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+          {props.bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
         </View>
       </View>
-    )
-  }
+    </View>
+  )
 }
 
 ChatBubble.defaultProps = { bubbleStyle: "myBubble" }

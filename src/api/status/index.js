@@ -1,10 +1,24 @@
 import firebase from "react-native-firebase";
-
 import { StatusCollection, UserCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { DocumentListener } from "src/api/database/listener";
 
 export default class StatusAPI{
+  static async getLatestStatus(peopleEmail=null){
+    if(peopleEmail){
+      const db = firebase.firestore();
+      const userCollection = new UserCollection();
+      const userDocument = new Document(peopleEmail);
+      const statusCollection = new StatusCollection();
+
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      const statusRef = userRef.collection(statusCollection.getName());
+      const querySnapshot = await statusRef.orderBy("timestamp", "desc").limit(1).get();
+      if(querySnapshot.empty) return Promise.resolve(null);
+      else return Promise.resolve(querySnapshot.docs[0].data());
+    }else return Promise.resolve(null);
+  }
+
   /**
    * 
    * @param {String} peopleEmail 

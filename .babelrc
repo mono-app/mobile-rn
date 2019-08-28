@@ -1,7 +1,6 @@
 {
   "plugins": [
-    ["module-resolver", {
-      "root": ["."]
-    }]
-  ]
+    ["module-resolver", {"root": ["."]}]
+  ],
+  "presets": [ "module:metro-react-native-babel-preset", "module:react-native-dotenv" ]
 }

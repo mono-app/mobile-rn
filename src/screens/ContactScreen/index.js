@@ -1,75 +1,47 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import FriendsAPI from "src/api/friends";
+import { withCurrentUser } from "src/api/people/CurrentUser";
+
+import PeopleListItem from "src/components/PeopleListItem";
+import HeadlineTitle from "src/components/HeadlineTitle";
+import AppHeader from "src/components/AppHeader";
+import { View, FlatList } from "react-native";
 import { Searchbar } from "react-native-paper";
 
-import FriendsAPI from "src/api/friends";
-import CurrentUserAPI from "src/api/people/CurrentUser";
+function ContactScreen(props){
+  const { currentUser } = props;
+  const [ peopleList, setPeopleList ] = React.useState([]);
+  const friendsListener = React.useRef(null);
 
-import AppHeader from "src/components/AppHeader";
-import PeopleListItem from "src/components/PeopleListItem";
+  const handleContactPress = (people) => {
+    props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
+  }
 
-const INITIAL_STATE = { isLoading: true, peopleList: [] }
-
-export default class ContactScreen extends React.PureComponent{
-  static navigationOptions = ({ navigation }) => { return {
-    header: <AppHeader title="Kontak-ku" style={{ backgroundColor: "transparent" }}/>
-  }}
-  
-  loadFriends = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
-    this.friendListListener = new FriendsAPI().getFriendsWithRealTimeUpdate(currentUserEmail, friends => {
-      const people = friends.map(friend => {
-        return { id: friend.id, ...friend.data() }
-      });
-      this.setState({ peopleList: people });
+  React.useEffect(() => {
+    friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.email, (friends) => {
+      console.log(friends);
+      setPeopleList(friends);
     })
-  }
-
-  handleContactPress = people => {
-    const peopleEmail = people.id;
-    const source = people.source;
-    this.props.navigation.navigate("PeopleInformation", { peopleEmail, source });
-  }
-
-  constructor(props){
-    super(props);
-
-    this.state = INITIAL_STATE;
-    this.friendListListener = null;
-    this.loadFriends = this.loadFriends.bind(this);
-    this.handleContactPress = this.handleContactPress.bind(this);
-  }
-
-  componentDidMount(){ this.loadFriends(); }
-  componentWillUnmount(){ if(this.friendListListener) this.friendListListener(); }
+    return function cleanup(){
+      if(friendsListener.current) friendsListener.current();
+    }
+  }, [])
   
-  render(){
-    return(
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <View style={{ padding: 16 }}>
-          <Searchbar placeholder="Cari kontak"/>
-        </View>
-        <FlatList
-          style={{ backgroundColor: "white" }}
-          data={this.state.peopleList}
-          renderItem={({ item, index }) => {
-            return (
-              <PeopleListItem 
-                onPress={() => this.handleContactPress(item)}
-                key={index} autoFetch={true} email={item.id}/>
-            )
-          }}/>
+  return(
+    <View style={{ flex: 1 }}>
+      <AppHeader style={{ backgroundColor: "transparent" }}/>
+      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Kontak-ku</HeadlineTitle>
+      <View style={{ padding: 16 }}>
+        <Searchbar placeholder="Cari kontak"/>
       </View>
-    )
-  }
+      <FlatList
+        style={{ backgroundColor: "white" }}
+        data={peopleList}
+        renderItem={({ item, index }) => {
+          return <PeopleListItem key={index} people={item} onPress={handleContactPress}/>
+        }}/>
+    </View>
+  )
 }
-
-const styles = StyleSheet.create({
-  listItemContainer: { 
-    padding: 16,
-    flexDirection: "row", 
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-})
+ContactScreen.navigationOptions = { header: null }
+export default withCurrentUser(ContactScreen);

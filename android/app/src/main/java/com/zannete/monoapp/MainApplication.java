@@ -6,6 +6,7 @@ import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 import com.wix.RNCameraKit.RNCameraKitPackage;
 import com.eko.RNBackgroundDownloaderPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 
@@ -30,6 +31,8 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 
+import com.oney.WebRTCModule.WebRTCModulePackage;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,6 +52,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNCameraKitPackage(),
             new RNBackgroundDownloaderPackage(),
             new AsyncStoragePackage(),
+            new NetInfoPackage(),
           new RNSpinkitPackage(),
           new FastImageViewPackage(),
           new RNFSPackage(),
@@ -65,6 +69,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseNotificationsPackage(),
           new RNFirebaseInstanceIdPackage(),
           new MapsPackage()
+          new RNFirebaseInstanceIdPackage(),
+          new WebRTCModulePackage()  
       );
     }
 

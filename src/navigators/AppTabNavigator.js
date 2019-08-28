@@ -10,5 +10,5 @@ export default AppTabNavigator =  createStackNavigator({
   Classroom: { screen: ClassroomNavigator, navigationOptions: { header: null }},
   News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
 }, {
-  initialRouteName: "Home",
+  initialRouteName: "Home"
 })

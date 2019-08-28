@@ -5,7 +5,7 @@ This is a development repository. Contribution guide is really appreciated.
 Since this is a React Native application, you need to follow this [link](https://facebook.github.io/react-native/docs/getting-started). Please select `React Native CLI`. After the React Native installation has been completed, you can
 
 - Clone this repositories `git clone`
-- Go to the cloned directory and run `npm install` to install any other depedencies.
+- Go to the cloned directory and run `yarn install` to install any other depedencies.
 
 ## Contribution Guideline
 Of course, you need to have a basic understanding of `GitHub`. I personally use `GitKraken` to perform the `commit` and `pull request`. For the features branch, please use `features`. For example `features/add-friend-from-qr-code` is for a new adding friend from QR code feature. 
