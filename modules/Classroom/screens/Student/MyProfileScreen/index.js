@@ -55,7 +55,7 @@ class MyProfileScreen extends React.PureComponent {
   }
   
   loadStatus = async () => {
-    const status = await StatusAPI().getLatestStatus(this.props.currentUser.email);
+    const status = await StatusAPI().getLatestStatus(this.props.currentStudent.email);
     if(!status) status = { content: "Tulis statusmu disini..." };
     this.setState({ status: status.content });
   }

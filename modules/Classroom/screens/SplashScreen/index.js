@@ -8,6 +8,8 @@ import TeacherAPI from "modules/Classroom/api/teacher"
 import StudentAPI from "modules/Classroom/api/student"
 import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
 import SchoolAPI from "modules/Classroom/api/school"
+import { withCurrentUser } from "src/api/people/CurrentUser"
+
 
 
 const INITIAL_STATE = {
@@ -15,10 +17,10 @@ const INITIAL_STATE = {
   schoolList: [],
   filteredSchoolList: [],
   searchText: "",
-  schoolCount: 1,
-  currentUserEmail: ""
+  schoolCount: 1
 };
-export default class SplashClass extends React.PureComponent {
+
+class SplashScreen extends React.PureComponent {
   
   handleBackPress = () => {
     const navigator = new Navigator(this.props.navigation);
@@ -26,13 +28,9 @@ export default class SplashClass extends React.PureComponent {
   }
 
   loadSchools = async () => {
-
     this.setState({schoolList: []});
-    const currentUserEmail = this.props.currentUser.email
 
-    this.setState({currentUserEmail})
-
-    const schoolList = await SchoolAPI.getUserSchools(this.state.currentUserEmail);
+    const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.email);
     this.setState({schoolCount: schoolList.length, schoolList})
     if(schoolList.length==1){
       this.redirectScreen(schoolList[0])
@@ -48,11 +46,11 @@ export default class SplashClass extends React.PureComponent {
     const clonedSchoolId = JSON.parse(JSON.stringify(school.id))
     SchoolAPI.currentSchoolId = clonedSchoolId
 
-    if(await SchoolAdminAPI.isSchoolAdmin(school.id, this.state.currentUserEmail)){
+    if(await SchoolAdminAPI.isSchoolAdmin(school.id, this.props.currentUser.email)){
       this.props.navigation.navigate("Student");
-    }else if(await TeacherAPI.isTeacher(school.id, this.state.currentUserEmail)){
+    }else if(await TeacherAPI.isTeacher(school.id, this.props.currentUser.email)){
       this.props.navigation.navigate("Teacher");
-    }else if (await StudentAPI.isStudent(school.id, this.state.currentUserEmail)) {
+    }else if (await StudentAPI.isStudent(school.id, this.props.currentUser.email)) {
       this.props.navigation.navigate("Student");
     }
   }
@@ -128,7 +126,7 @@ export default class SplashClass extends React.PureComponent {
                 return (
                   <SchoolListItem 
                     onPress={() => this.handleSchoolPress(item)}
-                    currentUserEmail={this.state.currentUserEmail} school={item}/>
+                    currentUserEmail={this.props.currentUser.email} school={item}/>
                 )
               }}
             />
@@ -144,3 +142,4 @@ const styles = StyleSheet.create({
   
 });
 
+export default withCurrentUser(SplashScreen)

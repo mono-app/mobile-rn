@@ -7,6 +7,7 @@ import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import StudentAPI from "modules/Classroom/api/student"
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 
 const INITIAL_STATE = {
@@ -20,7 +21,7 @@ class StudentHomeScreen extends React.PureComponent {
   };
 
   loadProfileInformation = async () => {
-    const currentUserEmail = this.props.currentUser.email
+    const currentUserEmail = this.props.currentStudent.email
     const student = await StudentAPI.getDetail(this.props.currentSchool.id, currentUserEmail)
     if(student.profilePicture){
       this.setState({ profilePicture: student.profilePicture.downloadUrl });
@@ -67,7 +68,6 @@ class StudentHomeScreen extends React.PureComponent {
   async componentDidMount(){
     await this.props.setCurrentSchoolId(this.state.schoolId)
     await this.props.setCurrentStudentEmail(this.props.currentSchool.id, this.props.currentUser.email)
-
   }
 
   render() {
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withCurrentStudent(withTheme(StudentHomeScreen))
+export default withCurrentUser(withCurrentStudent(withTheme(StudentHomeScreen)))
