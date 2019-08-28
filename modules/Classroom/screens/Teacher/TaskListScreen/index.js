@@ -46,7 +46,10 @@ export default class TaskListScreen extends React.PureComponent {
       classId: this.classId,
       subject: this.subject,
       subjectDesc: this.subjectDesc,
-      onDeleteSuccess: () => {this.loadTasks; this.setState({showSnackbarSuccessDeleting: true})}
+      onDeleteSuccess: () => {
+        this.loadTasks()
+        this.setState({showSnackbarSuccessDeleting: true})
+        }
     }
     this.props.navigation.navigate("TaskDetails", payload);
   }

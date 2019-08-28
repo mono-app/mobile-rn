@@ -104,10 +104,21 @@ export default class TeacherAPI {
     return Promise.resolve(teachers)
   }
 
+  static async updateProfilePicture(schoolId, teacherId, storagePath, downloadUrl){
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const teachersCollection = new TeachersCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(teacherId);
+  
+    await teachersDocumentRef.update({ "profilePicture": {storagePath, downloadUrl}})
+    return Promise.resolve(true)
+  }
+
   static async getDetail(schoolId, email, source = "default") {
     const db = new firebase.firestore();
-    const teachersCollection = new TeachersCollection();
     const schoolsCollection = new SchoolsCollection();
+    const teachersCollection = new TeachersCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(email);
     const teachersSnapshot = await teachersDocumentRef.get({ source });

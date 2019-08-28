@@ -7,76 +7,74 @@ import Header from "modules/Classroom/components/Header";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import SchoolAPI from "modules/Classroom/api/school"
 import StudentAPI from "modules/Classroom/api/student"
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+
 
 const INITIAL_STATE = {
   isLoading: false,
-  studentEmail: "",
   profilePicture: "https://picsum.photos/200/200/?random",
   schoolId: "",
-  school: {},
-  userName: ""
 };
 class StudentHomeScreen extends React.PureComponent {
   static navigationOptions = () => {
     return { header: null };
   };
 
-  loadSchoolInformation = async () => {
-    const school = await SchoolAPI.getDetail(this.state.schoolId);
-    this.setState({school})
-  }
-
   loadProfileInformation = async () => {
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
-    const student = await StudentAPI.getDetail(this.state.schoolId, currentUserEmail)
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, currentUserEmail)
+    if(student.profilePicture){
+      this.setState({ profilePicture: student.profilePicture.downloadUrl });
+    }
     this.setState({userName: student.name, studentEmail: currentUserEmail})
   
   }
 
   handleStudentProfilePress = () => {
     payload = {
-      schoolId: this.state.schoolId,
-      studentEmail: this.state.studentEmail
+      schoolId: this.props.currentSchool.id,
+      studentEmail: this.props.currentStudent.email
     }
     this.props.navigation.navigate("MyProfile", payload);
   }
 
   handleClassListPress = () => {
     payload = {
-      schoolId: this.state.schoolId,
-      studentEmail: this.state.studentEmail
+      schoolId: this.props.currentSchool.id,
+      studentEmail: this.props.currentStudent.email
     }
     this.props.navigation.navigate("MyClass", payload);
   }
 
   handleAnnouncementPress = () => {
     payload = {
-      schoolId : this.state.schoolId,
-      studentEmail : this.state.studentEmail
+      schoolId : this.props.currentSchool.id,
+      studentEmail: this.props.currentStudent.email
     }
     this.props.navigation.navigate("Announcement", payload);
   }
-  
+
   constructor(props) {    
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
+    
     this.state = INITIAL_STATE;
-    this.loadSchoolInformation = this.loadSchoolInformation.bind(this);
     this.loadProfileInformation = this.loadProfileInformation.bind(this);
     this.handleStudentProfilePress = this.handleStudentProfilePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
     this.handleAnnouncementPress = this.handleAnnouncementPress.bind(this);
   }
 
-  componentDidMount(){
-    this.loadSchoolInformation();
-    this.loadProfileInformation();
+  async componentDidMount(){
+    await this.props.setCurrentSchoolId(this.state.schoolId)
+    await this.props.setCurrentStudentEmail(this.props.currentSchool.id, await CurrentUserAPI.getCurrentUserEmail())
+
   }
 
   render() {
     return (
       <View style={styles.groupContainer}>
-        <Header navigation={this.props.navigation} title={this.state.school.name} />
+        <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={this.state.profilePicture}/>
           <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
@@ -85,7 +83,7 @@ class StudentHomeScreen extends React.PureComponent {
           <Title style={{marginTop: 22}}>
             Selamat Datang,
           </Title>
-          <Subheading>{this.state.userName}</Subheading>
+          <Subheading>{this.props.currentStudent.name}</Subheading>
         </View>
 
         <View style={{marginBottom: 64}}/>
@@ -150,4 +148,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTheme(StudentHomeScreen)
+export default withCurrentStudent(withTheme(StudentHomeScreen))

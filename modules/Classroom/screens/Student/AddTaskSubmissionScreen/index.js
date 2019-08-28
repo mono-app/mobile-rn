@@ -3,11 +3,6 @@ import { View } from "react-native";
 import { Subheading } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 
-/**
- * Parameter list
- *
- * @param {string} classId
- */
 export default class AddTaskSubmissionScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {

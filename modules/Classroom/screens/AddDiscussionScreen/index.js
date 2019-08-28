@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, View, StyleSheet } from "react-native";
+import { FlatList, View, StyleSheet, PermissionsAndroid } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import TextInput from "src/components/TextInput";
@@ -11,8 +11,8 @@ import DiscussionAPI from "modules/Classroom/api/discussion";
 import DocumentPicker from 'react-native-document-picker';
 import StorageAPI from "src/api/storage"
 import uuid from "uuid/v4"
-import FastImage from "react-native-fast-image";
 import DeleteDialog from "src/components/DeleteDialog";
+import ImagePickerListItem from "src/components/ImagePickerListItem"
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -79,6 +79,10 @@ export default class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleSingleImagePress = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+      return
+    }
     // Pick a single file
     try {
       const res = await DocumentPicker.pick({
@@ -98,13 +102,26 @@ export default class AddDiscussionScreen extends React.PureComponent {
       }
     }
   }
-
-  handleCameraPress = () => {
+  requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+  handleCameraPress = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+      return
+    }
     const payload = {
       onRefresh:(image)=> {
           let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-          clonedImagesPicked.push(image)
-          console.log(clonedImagesPicked)
+          clonedImagesPicked.push({id: uuid(), ...image})
           this.setState({imagesPicked: clonedImagesPicked})
         }
     }
@@ -112,6 +129,10 @@ export default class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleMultipleImagePress = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+      return
+    }
     // Pick multiple files
     try {
       const results = await DocumentPicker.pickMultiple({
@@ -119,7 +140,7 @@ export default class AddDiscussionScreen extends React.PureComponent {
       });
       let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
       for (const res of results) {
-        clonedImagesPicked.push(res)
+        clonedImagesPicked.push({id: uuid(), ...res})
       }
      
       this.setState({imagesPicked: clonedImagesPicked})
@@ -133,15 +154,16 @@ export default class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleDeleteImagePress = (item) => {
-    console.log(item)
     this.setState({selectedImageToDelete: item})
     this.deleteDialog.toggleShow()
   }
 
   onDeletePress = () => {
+    
     const newselectedImageToDelete = this.state.imagesPicked.filter((image) => {
-      return image.uri!= this.state.selectedImageToDelete.uri
+      return image.id!= this.state.selectedImageToDelete.id
     })
+    this.setState({imagesPicked: []})
     this.setState({imagesPicked: newselectedImageToDelete})
     this.deleteDialog.toggleShow()
   }  
@@ -161,11 +183,11 @@ export default class AddDiscussionScreen extends React.PureComponent {
     this.handleDeleteImagePress = this.handleDeleteImagePress.bind(this);
     this.onDeletePress = this.onDeletePress.bind(this);
     this.handleCameraPress = this.handleCameraPress.bind(this);
+    this.requestStoragePermission = this.requestStoragePermission.bind(this);
     this.deleteDialog = null
   }
 
   render() {
-    const window = Dimensions.get("window");
 
     return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
@@ -180,8 +202,8 @@ export default class AddDiscussionScreen extends React.PureComponent {
                 </Text>
           </View>
 
-          <View style={{ padding: 16, backgroundColor: "#fff" }}>
-            <View style={{ marginTop: 16 }}>
+          <View style={{ backgroundColor: "#fff" }}>
+            <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
               <Text style={styles.label}>Topik Diskusi</Text>
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8" }}
@@ -190,7 +212,7 @@ export default class AddDiscussionScreen extends React.PureComponent {
               />
             </View>
             
-            <View style={{ marginTop: 16 }}>
+            <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
               <Text style={styles.label}>Deskripsi</Text>
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
@@ -199,42 +221,40 @@ export default class AddDiscussionScreen extends React.PureComponent {
                 numberOfLines = {5}
                 onChangeText={this.handleDescriptionChange}
               />
-              <Text style={styles.label}>{(this.state.locationCoordinate)?this.state.locationCoordinate.latitude:""}</Text>
             </View>
-
-            { (this.state.imagesPicked && this.state.imagesPicked.length) > 0?(
-              <View style={{ flex: 1, flexDirection: "row", flexWrap:"wrap", marginHorizontal: 8 }}>
-                  {this.state.imagesPicked.map((item, index) => {
-                      return (
-                        <TouchableOpacity onPress={() => this.handleDeleteImagePress(item)} key={index} style={{ height: (window.width/4), width: (window.width/4), padding:4 }}>
-                          <FastImage 
-                            resizeMode="cover"
-                            source={{ uri: item.uri  }} 
-                            style={{ alignSelf: "stretch", flex: 1 }}/>
-                        </TouchableOpacity>
-                      )
-                  })}
-              </View>
-
-            ):<View/>}
-
-            <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginTop:8}}>
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
               <TouchableOpacity onPress={this.handleMultipleImagePress}>
-                <EvilIcons name="image" size={24} style={{ color: "#5E8864",padding:8 }}/>
+                <EvilIcons name="image" size={32} style={{ color: "#5E8864",padding:8 }}/>
               </TouchableOpacity>
               <TouchableOpacity onPress={this.handleCameraPress}>
-                <EvilIcons name="camera" size={24} style={{ color: "#5E8864",padding:8 }}/>
+                <EvilIcons name="camera" size={32} style={{ color: "#5E8864",padding:8 }}/>
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleLocationPress}>
-                <EvilIcons name="location" size={24} style={{ color: "#5E8864",padding:8 }}/>
+              <TouchableOpacity onPress={this.handleLocationPress} style={{flexDirection:"row"}} >
+                <EvilIcons name="location" size={32} style={{ color: (this.state.locationCoordinate)?"#0EAD69":"#5E8864",padding: 8, }}/>
+                <Text style={{alignSelf:"center", color:"#0EAD69"}}>{(this.state.locationCoordinate)?"Location attached.":""}</Text>
               </TouchableOpacity>
                
             </View>
+            <FlatList
+              horizontal={true}
+              style={{ backgroundColor: "white" }}
+              data={this.state.imagesPicked}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                return (
+                  <ImagePickerListItem 
+                    onPress={() => this.handleDeleteImagePress(item)}
+                    image={item}/>
+                )
+              }}
+            />
+          
             <View style={{ paddingVertical: 8 }} />
             <Button
               text="Buat Diskusi"
               isLoading={this.state.isLoading}
               onPress={this.handleSavePress}
+              style={{marginHorizontal: 16}}
             />
           </View>
         </ScrollView>

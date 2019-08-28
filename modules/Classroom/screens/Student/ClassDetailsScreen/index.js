@@ -14,15 +14,10 @@ import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {} };
-
-/**
- * Parameter list
- *
- * @param {string} classId
- */
-export default class ClassDetailsScreen extends React.PureComponent {
+class ClassDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -38,19 +33,19 @@ export default class ClassDetailsScreen extends React.PureComponent {
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const class_ = await ClassAPI.getDetail(this.schoolId, this.classId);
+    const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
     this.setState({ isLoadingProfile: false, class: class_ });
   };
 
   loadTeacherInformation = async () => {
-    const teachers = await TeacherAPI.getClassTeachers(this.schoolId, this.classId);
+    const teachers = await TeacherAPI.getClassTeachers(this.props.currentSchool.id, this.classId);
     const teacher = teachers[0];
     this.setState({teacher});
   }
 
   handleStudentListScreen = () => {
     payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId
     }
     this.props.navigation.navigate("StudentList", payload)
@@ -58,7 +53,7 @@ export default class ClassDetailsScreen extends React.PureComponent {
 
   handleTaskListScreen = () => {
     payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       subject: this.state.class.subject,
       subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
@@ -69,7 +64,7 @@ export default class ClassDetailsScreen extends React.PureComponent {
 
   handleClassFilesScreenPress = () => {
     payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       subject: this.state.class.subject,
       subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
@@ -79,9 +74,7 @@ export default class ClassDetailsScreen extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.schoolId = this.props.navigation.getParam("schoolId", null);
     this.classId = this.props.navigation.getParam("classId", null);
-
     this.state = INITIAL_STATE;
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
@@ -214,3 +207,5 @@ const styles = StyleSheet.create({
     fontWeight: "normal"
   }
 })
+
+export default withCurrentStudent(ClassDetailsScreen)

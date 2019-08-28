@@ -9,15 +9,11 @@ import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import PeopleAPI from "src/api/people";
 import Button from "src/components/Button";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "" }
 
-/**
- * Parameter list
- * 
- * @param {string} studentEmail
- */
-export default class StudentProfileScreen extends React.PureComponent {
+class StudentProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -32,8 +28,8 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
-    console.log(this.schoolId, this.studentEmail)
-    const student = await StudentAPI.getDetail(this.schoolId, this.studentEmail);
+    console.log(this.props.currentSchool.id, this.studentEmail)
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
@@ -49,7 +45,6 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   constructor(props){
     super(props);
-    this.schoolId = this.props.navigation.getParam("schoolId", null);
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.state = INITIAL_STATE;
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
@@ -122,32 +117,4 @@ export default class StudentProfileScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  profileContainer: {
-    backgroundColor: "white",
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 8,
-    paddingBottom: 32,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  },
-  listItemContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8",
-    backgroundColor: "white",
-    flexDirection: "row",
-    padding: 16,
-    alignItems: "center"
-  },
-  listDescriptionContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  label: {
-    fontWeight: "bold"
-  }
-})
+export default withCurrentStudent(StudentProfileScreen)

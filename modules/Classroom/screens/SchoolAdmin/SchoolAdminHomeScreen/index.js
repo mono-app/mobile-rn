@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, PermissionsAndroid } from "react-native";
 import { Text } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
@@ -56,9 +56,24 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
     }
     this.props.navigation.navigate("ArchiveClassList", payload);
   };
-  
-  changeSchoolProfilePicture = async () => {
 
+  requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  changeSchoolProfilePicture = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+      return
+    }
     try {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
@@ -90,6 +105,7 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
     this.handleArchiveClass = this.handleArchiveClass.bind(this);
     this.changeSchoolProfilePicture = this.changeSchoolProfilePicture.bind(this);
+    this.requestStoragePermission = this.requestStoragePermission.bind(this);
   }
 
   componentDidMount(){

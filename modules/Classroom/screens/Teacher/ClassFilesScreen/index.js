@@ -1,10 +1,11 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { ProgressBar,Caption,Searchbar,Text,Dialog,Portal } from "react-native-paper";
+import Icon from 'react-native-vector-icons/FontAwesome';
 import FileListItem from "../../../components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "../../../api/file";
-import {  TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 
@@ -123,11 +124,12 @@ export default class ClassFilesScreen extends React.PureComponent {
             value={this.state.searchText}
             placeholder="Cari Berkas" />
         </View>
-        <View style={{backgroundColor: "#DCDCDC",
+        <View style={{backgroundColor: "#0ead69",
                       padding: 16}}>
-          <TouchableOpacity onPress={this.handleAddFiles}>
-            <Text style={{fontWeight:"bold"}}>
-              + Tambahkan Berkas Lainnya
+          <TouchableOpacity onPress={this.handleAddFiles} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
+          <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
+            <Text style={{fontWeight:"bold", color:"#fff"}}>
+               TAMBAH ARSIP KELAS
             </Text>
           </TouchableOpacity>
         </View>

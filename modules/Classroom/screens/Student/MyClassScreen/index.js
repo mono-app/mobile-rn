@@ -4,10 +4,10 @@ import { Searchbar } from "react-native-paper";
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
-
-export default class MyClassScreen extends React.PureComponent {
+class MyClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -22,13 +22,13 @@ export default class MyClassScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail);
+    const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.email);
     this.setState({ classList, filteredClassList: classList });
    }
 
   handleClassPress = class_ => {
      const payload = {
-       schoolId: this.schoolId,
+       schoolId: this.props.currentSchool.id,
        classId: class_.id
      }
      this.props.navigation.navigate("ClassDetails", payload);
@@ -53,8 +53,6 @@ export default class MyClassScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
@@ -82,7 +80,7 @@ export default class MyClassScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId} class_={item}/>
+                schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />
@@ -90,3 +88,4 @@ export default class MyClassScreen extends React.PureComponent {
     );
   }
 }
+export default withCurrentStudent(MyClassScreen)

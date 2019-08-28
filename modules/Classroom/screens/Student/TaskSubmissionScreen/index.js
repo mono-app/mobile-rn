@@ -8,6 +8,8 @@ import {  TouchableOpacity } from "react-native-gesture-handler";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import CurrentUserAPI from "src/api/people/CurrentUser";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -21,7 +23,7 @@ const INITIAL_STATE = {
   filteredFileList:[] 
 };
 
-export default class TaskSubmissionScreen extends React.PureComponent {
+class TaskSubmissionScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -38,7 +40,7 @@ export default class TaskSubmissionScreen extends React.PureComponent {
   loadFiles = async () => {
     this.setState({ fileList: [], isLoading: true });
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
-    const fileList = await FileAPI.getStudentSubmissionFiles(this.schoolId, this.classId, this.taskId, currentUserEmail);
+    const fileList = await FileAPI.getStudentSubmissionFiles(this.props.currentSchool.id, this.classId, this.taskId, currentUserEmail);
     this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
 
@@ -71,7 +73,7 @@ export default class TaskSubmissionScreen extends React.PureComponent {
     this.setState({isLoading: true})
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
 
-    await FileAPI.deleteStudentSubmissionFile(this.schoolId,this.classId,this.taskId,currentUserEmail, this.state.selectedFile);
+    await FileAPI.deleteStudentSubmissionFile(this.props.currentSchool.id,this.classId,this.taskId,currentUserEmail, this.state.selectedFile);
     this.deleteDialog.toggleShow()
     await this.loadFiles();
     this.setState({isLoading: false})
@@ -100,7 +102,6 @@ export default class TaskSubmissionScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.deleteDialog = null;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");
@@ -125,12 +126,13 @@ export default class TaskSubmissionScreen extends React.PureComponent {
               value={this.state.searchText}
               placeholder="Cari Berkas" />
         </View>
-        <View style={{marginTop: 8,
-                      backgroundColor: "#DCDCDC",
+        
+        <View style={{backgroundColor: "#0ead69",
                       padding: 16}}>
-          <TouchableOpacity onPress={this.handleAddFiles}>
-            <Text style={{fontWeight:"bold"}}>
-              + Tambah File Tugas
+          <TouchableOpacity onPress={this.handleAddFiles} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
+          <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
+            <Text style={{fontWeight:"bold", color:"#fff"}}>
+               TAMBAH FILE TUGAS
             </Text>
           </TouchableOpacity>
         </View>
@@ -167,3 +169,4 @@ export default class TaskSubmissionScreen extends React.PureComponent {
     );
   }
 }
+export default withCurrentStudent(TaskSubmissionScreen)

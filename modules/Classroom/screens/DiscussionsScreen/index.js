@@ -6,6 +6,7 @@ import AppHeader from "src/components/AppHeader";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import CurrentUserAPI from "src/api/people/CurrentUser";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const INITIAL_STATE = { isLoading: true };
 
@@ -89,11 +90,13 @@ export default class DiscussionsScreen extends React.PureComponent {
         <View style={{margin: 16 }}>
             <Searchbar placeholder="Cari Diskusi" />
         </View>
-        <View style={{backgroundColor: "#DCDCDC",
+        
+        <View style={{backgroundColor: "#0ead69",
                       padding: 16}}>
-          <TouchableOpacity onPress={this.handleAddDiscussion}>
-            <Text style={{fontWeight:"bold"}}>
-              + Buat Diskusi Baru
+          <TouchableOpacity onPress={this.handleAddDiscussion} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
+          <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
+            <Text style={{fontWeight:"bold", color:"#fff"}}>
+               BUAT DISKUSI BARU
             </Text>
           </TouchableOpacity>
         </View>

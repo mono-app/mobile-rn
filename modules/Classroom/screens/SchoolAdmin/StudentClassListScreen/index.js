@@ -4,6 +4,7 @@ import { Searchbar, Text } from "react-native-paper";
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
@@ -81,14 +82,17 @@ export default class StudentClassListScreen extends React.PureComponent {
             value={this.state.searchText}
             placeholder="Cari Kelas" />
         </View>
-        <View style={{backgroundColor: "#DCDCDC",
+       
+        <View style={{backgroundColor: "#0ead69",
                       padding: 16}}>
-          <TouchableOpacity onPress={this.handleAddClassPress}>
-            <Text style={{fontWeight:"bold"}}>
-              + Tambahkan kelas
+          <TouchableOpacity onPress={this.handleAddClassPress} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
+          <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
+            <Text style={{fontWeight:"bold", color:"#fff"}}>
+               TAMBAHKAN KELAS
             </Text>
           </TouchableOpacity>
         </View>
+        
         
         <FlatList
           style={{ backgroundColor: "white" }}

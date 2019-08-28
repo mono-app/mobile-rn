@@ -35,10 +35,7 @@ export default class TeacherListItem extends React.Component{
       )
     }
 
-    let { name,nik } = this.props;
-    name = this.state.name;
-    nik = this.state.nik;
-    
+    const { name,nik } = this.state;
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>

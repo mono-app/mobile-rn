@@ -10,8 +10,9 @@ import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import DeleteDialog from "src/components/DeleteDialog";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
+import Button from "src/components/Button";
 
-const INITIAL_STATE = { isLoading: true, task:{}, showSnackbarFailDeleting: false, totalSubmission: 0, totalDiscussion: 0 };
+const INITIAL_STATE = { isFetching: true, isDeleting: false ,task:{}, showSnackbarFailDeleting: false, totalSubmission: 0, totalDiscussion: 0 };
 
 export default class TaskDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -27,6 +28,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
   };
 
   loadTask = async () => {
+    this.setState({ isFetching: true});
     const api = new TaskAPI();
     const task = await api.getDetail(this.schoolId, this.classId, this.taskId);
     const totalSubmission = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
@@ -123,6 +125,8 @@ export default class TaskDetailsScreen extends React.PureComponent {
   }
 
   handleDelete = async () => {
+    this.setState({isDeleting: true})
+    this.deleteDialog.toggleShow()
     const total = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
     
     if(total===0){
@@ -133,6 +137,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
     }else{
       this.setState({showSnackbarFailDeleting: true});
     }
+    this.setState({isDeleting: false})
   }
 
   constructor(props) {
@@ -244,12 +249,12 @@ export default class TaskDetailsScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => {this.deleteDialog.toggleShow()}}>
-              <View style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}>
-                  <Text style={{alignSelf: "center",alignItems:"center", color: "#fff"}}>Hapus Tugas</Text>
-              </View>
-            </TouchableOpacity>
+              <Button
+                text="Hapus Tugas"
+                isLoading={this.state.isDeleting}
+                style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}
+                onPress={() => {this.deleteDialog.toggleShow()}}
+            />
             
           </View>
         </ScrollView>

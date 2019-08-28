@@ -49,11 +49,8 @@ export default class ClassListItem extends React.Component{
       )
     }
 
-    let { subject,info } = this.state;
-    subject = this.state.subject;
-    info = this.state.info;
-    
-
+    const { subject,info } = this.state;
+  
     return(
       <TouchableOpacity onPress={this.props.onPress}>
         <View style={styles.listItemContainer}>

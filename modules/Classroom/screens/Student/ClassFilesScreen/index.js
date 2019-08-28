@@ -6,6 +6,7 @@ import AppHeader from "src/components/AppHeader";
 import FileAPI from "../../../api/file";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -19,7 +20,7 @@ const INITIAL_STATE = {
   filteredFileList:[]  
 };
 
-export default class ClassFilesScreen extends React.PureComponent {
+class ClassFilesScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -34,7 +35,7 @@ export default class ClassFilesScreen extends React.PureComponent {
 
   loadFiles = async () => {
     this.setState({ fileList: [], isLoading: true });
-    const fileList = await FileAPI.getClassFiles(this.schoolId, this.classId);
+    const fileList = await FileAPI.getClassFiles(this.props.currentSchool.id, this.classId);
     this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
 
@@ -81,7 +82,7 @@ export default class ClassFilesScreen extends React.PureComponent {
 
   onDeletePress = async () => {
     this.setState({isLoading: true})
-    await FileAPI.deleteClassFile(this.schoolId,this.classId,this.state.selectedFile);
+    await FileAPI.deleteClassFile(this.props.currentSchool.id,this.classId,this.state.selectedFile);
     this.deleteDialog.toggleShow()
     await this.loadFiles();
     this.setState({isLoading: false})
@@ -106,7 +107,6 @@ export default class ClassFilesScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.deleteDialog = null;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
@@ -189,3 +189,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
+export default withCurrentStudent(ClassFilesScreen)

@@ -36,9 +36,8 @@ export default class TaskListItem extends React.Component{
       )
     }
 
-    let { title,dueDate } = this.props;
+    let { title, dueDate } = this.state;
     title = this.state.title;
-    details = this.state.details;
     dueDate = this.state.dueDate;
     let creationDate = ""
     let creationTime = ""

@@ -31,16 +31,16 @@ export default class MassScoringScreen extends React.PureComponent {
   };
 
   loadStudents = async () => {
-    this.setState({ peopleList: [] });
-
+    this.setState({ peopleList: [], filteredPeopleList: [] });
     const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
     this.setState({ peopleList, filteredPeopleList: peopleList });
+    console.log(peopleList)
   }
 
   handleStudentPress = async student => {
     if(!student.finalScore){
       const newStudent = await StudentAPI.getDetail(this.schoolId, student.id)
-      const info = (newStudent.noInduk)?newStudent.noInduk:"-" +" / "+ newStudent.name
+      const info = (newStudent.noInduk)?newStudent.noInduk+" / "+ newStudent.name:"-" +" / "+ newStudent.name
       this.setState({selectedStudent: student,  selectedStudentInfo: info})
       this.showDialog();
     }
@@ -55,13 +55,17 @@ export default class MassScoringScreen extends React.PureComponent {
   }
 
   saveDialog = async () => {
-    console.log(this.schoolId)
-    console.log(this.classId)
-    console.log(this.state.selectedStudent.id)
-    console.log(this.state.dialogScore)
     await StudentAPI.saveFinalScoreStudent(this.schoolId, this.classId, this.state.selectedStudent.id, {finalScore: this.state.dialogScore})
-    this.setState({dialogVisible: false})
-    this.loadStudents()
+    let clonedFilteredPeopleList = JSON.parse(JSON.stringify(this.state.filteredPeopleList))
+    this.setState({filteredPeopleList:[]})
+
+    clonedFilteredPeopleList = await clonedFilteredPeopleList.map((people) => {
+      if(people.id === this.state.selectedStudent.id){
+        return {...people, finalScore: this.state.dialogScore}
+      }
+      return people
+    })
+    this.setState({filteredPeopleList:clonedFilteredPeopleList, dialogVisible: false})
   }
 
   hideDialog = () => {
@@ -134,7 +138,11 @@ export default class MassScoringScreen extends React.PureComponent {
                 onChangeText={this.handleScoreChange}/>
           
             </Dialog.Content>
-            <Dialog.Actions>
+            <Dialog.Actions>  
+              <ButtonDialog onPress={() => {
+                this.setState({dialogVisible: false})
+              }}>Batal</ButtonDialog>
+
               <ButtonDialog onPress={this.saveDialog}>OK</ButtonDialog>
             </Dialog.Actions>
           </Dialog>

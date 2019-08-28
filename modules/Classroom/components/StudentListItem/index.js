@@ -48,15 +48,12 @@ export default class StudentListItem extends React.Component{
       )
     }
 
-    let { name, noInduk } = this.props;
-    name = this.state.name;
-    noInduk = this.state.noInduk;
-    
+    const { name, noInduk } = this.state;    
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>
         <View>
-        <Text style={{ fontWeight: "700" }}>{(noInduk)?noInduk:"-"} / {name}</Text>
+          <Text style={{ fontWeight: "700" }}>{(noInduk)?noInduk:"-"} / {name}</Text>
         </View>
       </TouchableOpacity>
     )

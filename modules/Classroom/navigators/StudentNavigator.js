@@ -1,6 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
-
+import { CurrentStudentProvider } from "modules/Classroom/api/student/CurrentStudent"
 import StudentHomeScreen from "modules/Classroom/screens/Student/StudentHomeScreen";
 import MyProfileScreen from "modules/Classroom/screens/Student/MyProfileScreen";
 import MyClassScreen from "modules/Classroom/screens/Student/MyClassScreen";
@@ -22,8 +22,9 @@ import GallerySwiperScreen from "modules/Classroom/screens/GallerySwiperScreen"
 import MapsPickerScreen from "modules/Classroom/screens/MapsPickerScreen"
 import StatusChangeScreen from "src/screens/StatusChangeScreen";
 import CameraScreen from "src/screens/CameraScreen";
+import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
 
-export default StudentNavigator = createStackNavigator(
+const MyNavigator = createStackNavigator(
   {
     StudentHome: { screen: StudentHomeScreen },
     MyProfile: { screen: MyProfileScreen },
@@ -46,9 +47,21 @@ export default StudentNavigator = createStackNavigator(
     MapsPicker: {screen: MapsPickerScreen},
     StatusChange: {screen: StatusChangeScreen},
     Camera: {screen: CameraScreen},
+    ShareDiscussion: {screen: ShareDiscussionScreen},
 
   },
   {
     initialRouteName: "StudentHome"
   }
 );
+
+export default class StudentNavigator extends React.PureComponent{
+  static router = MyNavigator.router;
+  render(){
+    return (
+      <CurrentStudentProvider>
+        <MyNavigator navigation={this.props.navigation}/>
+      </CurrentStudentProvider>
+    )
+  }
+}

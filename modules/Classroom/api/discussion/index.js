@@ -17,7 +17,6 @@ export default class DiscussionAPI{
           resImages.push({storagePath,downloadUrl})
         }
         data.images = resImages
-        console.log(data.images)
       }
 
       const db = new firebase.firestore();
@@ -163,6 +162,15 @@ export default class DiscussionAPI{
   static async sendComment(schoolId, classId, taskId, discussionId, data){
     
     try{
+      if(data.images.length>0){
+        let resImages = []
+        for (const res of data.images) {
+          const storagePath = "/modules/classroom/discussions/comments/"+uuid()
+          const downloadUrl = await StorageAPI.uploadFile(storagePath,res.uri)
+          resImages.push({storagePath,downloadUrl})
+        }
+        data.images = resImages
+      }
       const db = firebase.firestore();
       const schoolsCollection = new SchoolsCollection();
       const classesCollection = new ClassesCollection();

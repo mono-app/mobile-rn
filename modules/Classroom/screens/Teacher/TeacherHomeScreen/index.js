@@ -60,6 +60,9 @@ class TeacherHomeScreen extends React.PureComponent {
   loadProfileInformation = async () => {
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
     const teacher = await TeacherAPI.getDetail(this.state.schoolId, currentUserEmail)
+    if(teacher.profilePicture){
+      this.setState({ profilePicture: teacher.profilePicture.downloadUrl });
+    }
     this.setState({userName: teacher.name, teacherEmail: currentUserEmail})
 
   }

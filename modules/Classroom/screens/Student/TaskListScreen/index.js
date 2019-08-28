@@ -2,12 +2,13 @@ import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Text, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
-import TaskListItem from "../../../components/TaskListItem";
+import TaskListItem from "modules/Classroom/components/TaskListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false };
 
-export default class TaskListScreen extends React.PureComponent {
+class TaskListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -23,13 +24,13 @@ export default class TaskListScreen extends React.PureComponent {
   loadTasks = async () => {
     this.setState({ taskList: [] });
 
-    const taskList = await TaskAPI.getActiveTasks(this.schoolId, this.classId);
+    const taskList = await TaskAPI.getActiveTasks(this.props.currentSchool.id, this.classId);
     this.setState({ taskList });
   }
 
   handleTaskPress = (item) => {
     payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       taskId: item.id,
       classId: this.classId,
       subject: this.subject,
@@ -42,7 +43,6 @@ export default class TaskListScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.loadTasks = this.loadTasks.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
@@ -105,3 +105,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
+export default withCurrentStudent(TaskListScreen)

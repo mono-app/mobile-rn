@@ -22,13 +22,13 @@ export default class MyArchiveClassScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getUserArchiveClasses(this.schoolId, this.studentEmail);
+    const classList = await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email);
     this.setState({ classList, filteredClassList: classList });
    }
 
   handleClassPress = class_ => {
      const payload = {
-       schoolId: this.schoolId,
+       schoolId: this.props.currentSchool.id,
        classId: class_.id
      }
      this.props.navigation.navigate("ClassDetails", payload);
@@ -53,8 +53,8 @@ export default class MyArchiveClassScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.props.currentStudent.email = this.props.navigation.getParam("studentEmail", "");
+    this.props.currentSchool.id = this.props.navigation.getParam("schoolId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
@@ -82,7 +82,7 @@ export default class MyArchiveClassScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId} class_={item}/>
+                schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />

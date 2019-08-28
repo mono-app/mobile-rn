@@ -25,7 +25,6 @@ export default class MassScoringListItem extends React.PureComponent{
     const { schoolId, student } = this.props;
 
     this.setState({finalScore: student.finalScore})
-    console.log(student)
 
     if(student.name){
       const { name, noInduk, finalScore } = student  
@@ -50,22 +49,25 @@ export default class MassScoringListItem extends React.PureComponent{
         </ContentLoader>
       )
     }
-    let finalScore = "-"
+    let finalScore = ""
     const name = this.state.name;
     const noInduk = this.state.noInduk;
-    if(this.state.finalScore!==""){
+    if(this.state.finalScore!=""){
       finalScore = this.state.finalScore;
     }
     
     return(
      
-      <TouchableOpacity onPress={this.props.onPress}>
+      <TouchableOpacity onPress={this.props.onPress} disabled={this.state.finalScore}>
         <View style={styles.listItemContainer}>
           <View style={styles.listDescriptionContainer}>
             <Text style={styles.label}>{(noInduk)?noInduk:"-"} / {name}</Text>
             <View style={{flexDirection:"row",textAlign: "right"}}>
               <Text>{finalScore}</Text>
-              {(finalScore)? <Text/>: <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>}
+              {(this.state.finalScore)? 
+              <View/>
+              : 
+              <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>}
             </View>
           </View>
         </View>

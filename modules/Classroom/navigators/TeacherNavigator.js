@@ -30,6 +30,8 @@ import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFiles
 import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
 import GallerySwiperScreen from "modules/Classroom/screens/GallerySwiperScreen"
 import CameraScreen from "src/screens/CameraScreen";
+import MapsPickerScreen from "modules/Classroom/screens/MapsPickerScreen"
+import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
 
 export default TeacherNavigator = createStackNavigator(
   {
@@ -61,6 +63,8 @@ export default TeacherNavigator = createStackNavigator(
     MassScoring: {screen: MassScoringScreen},
     GallerySwiper: {screen: GallerySwiperScreen},
     Camera: {screen: CameraScreen},
+    MapsPicker: {screen: MapsPickerScreen},
+    ShareDiscussion: {screen: ShareDiscussionScreen},
   },
   {
     initialRouteName: "TeacherHome"

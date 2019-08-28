@@ -1,20 +1,20 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Searchbar } from "react-native-paper";
-import StudentListItem from "modules/Classroom/components/StudentListItem";
+import ShareDiscussionListItem from "modules/Classroom/components/ShareDiscussionListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
-import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import Button from "src/components/Button";
 
-const INITIAL_STATE = { isLoading: true, searchText: "", peopleList:[], filteredPeopleList:[] };
+const INITIAL_STATE = { isLoading: true, isShareLoading: false ,searchText: "", peopleList:[], filteredPeopleList:[] };
 
-class StudentListScreen extends React.PureComponent {
+export default class ShareDiscussionScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
         <AppHeader
           navigation={navigation}
-          title="Daftar Murid"
+          title="Bagikan ke"
           style={{ backgroundColor: "transparent" }}
         />
       )
@@ -24,7 +24,7 @@ class StudentListScreen extends React.PureComponent {
   loadStudents = async () => {
     this.setState({ peopleList: [] });
 
-    const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
+    const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
     this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
@@ -38,7 +38,6 @@ class StudentListScreen extends React.PureComponent {
       const filteredPeopleList = clonedPeopleList.filter((people) => {
         return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
-      console.log(filteredPeopleList)
       this.setState({filteredPeopleList})
     } else {
       this.setState({filteredPeopleList: clonedPeopleList})
@@ -46,26 +45,46 @@ class StudentListScreen extends React.PureComponent {
   }
 
   handleStudentPress = people => {
-    const payload = {
-      schoolId: this.props.currentSchool.id,
-      studentEmail: people.id
-    }
-    this.props.navigation.navigate("StudentProfile", payload);
+    const clonedFilteredPeopleList = JSON.parse(JSON.stringify(this.state.filteredPeopleList)) 
+    const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList)) 
+    this.setState({filteredPeopleList: [], peopleList: []})
+
+    const filteredPeopleList = clonedFilteredPeopleList.map((data) => {
+      if(data.id==people.id){
+        if(people.checked){
+          return {...data, checked: false}
+        }else{
+          return {...data, checked: true}
+        }
+      }
+      return {...data}
+    })
+    const peopleList = clonedPeopleList.map((data) => {
+      if(data.id==people.id){
+        if(people.checked){
+          return {...data, checked: false}
+        }else{
+          return {...data, checked: true}
+        }
+      }
+      return {...data}
+    })
+    this.setState({filteredPeopleList, peopleList})
   }
 
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.classId = this.props.navigation.getParam("classId", "");
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.classId = this.props.navigation.getParam("classId", "");
   }
 
   componentDidMount(){
     this.loadStudents();
   }
-
 
   render() {
     return (
@@ -83,15 +102,30 @@ class StudentListScreen extends React.PureComponent {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
-              <StudentListItem 
+              <ShareDiscussionListItem 
                 onPress={() => this.handleStudentPress(item)}
-                schoolId={this.props.currentSchool.id} student={item}/>
+                schoolId={this.schoolId} student={item}/>
             )
           }}
         />
+        <View style={{ backgroundColor: "#fff" }}>
+          <Button
+            text="Bagikan"
+            isLoading={this.state.isShareLoading}
+            style={{marginHorizontal: 16}}
+          />      
+        </View>
       </View>
     );
   }
 }
 
-export default withCurrentStudent(StudentListScreen)
+const styles = StyleSheet.create({
+  listItemContainer: {
+    padding: 16,
+    flexDirection: "row",
+    justifyContent: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8EEE8"
+  }
+});

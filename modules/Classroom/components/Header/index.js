@@ -10,6 +10,7 @@ export default class Header extends React.PureComponent{
   handleBackPress = () => {
     const navigator = new Navigator(this.props.navigation);
     navigator.resetTo("Home", StackActions, {key: "AppTab"});
+    console.log('a')
   }
   
   constructor(props){

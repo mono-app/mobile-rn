@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, PermissionsAndroid } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
@@ -11,15 +11,22 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import uuid from "uuid/v4"
+import DocumentPicker from 'react-native-document-picker';
+import StorageAPI from "src/api/storage";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: {}, status:"", studentEmail:"", totalActiveClass: 0, totalArchiveClass: 0 }
+const INITIAL_STATE = { isLoadingProfile: true, 
+  student: {}, 
+  status:"", 
+  studentEmail:"", 
+  totalActiveClass: 0, 
+  totalArchiveClass: 0,
+  profilePicture: "https://picsum.photos/200/200/?random"
+}
 
-/**
- * Parameter list
- * 
- * @param {string} studentEmail
- */
-export default class MyProfileScreen extends React.PureComponent {
+
+class MyProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -35,26 +42,62 @@ export default class MyProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.schoolId, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.props.currentStudent.email);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail)).length;
-    const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.schoolId, this.studentEmail)).length;
-
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
+    const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
+    if(student.profilePicture){
+      this.setState({ profilePicture: student.profilePicture.downloadUrl });
+    }
     this.setState({ isLoadingProfile: false, student, totalActiveClass, totalArchiveClass });
+   
   }
   
   loadStatus = async () => {
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    console.log(currentUserEmail)
     new PeopleAPI().getLatestStatus(currentUserEmail).then(status => {
       if(!status) status = { content: "Tulis statusmu disini..." };
       this.setState({ status: status.content });
     });
   }
 
- 
+  changeProfilePicture = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+      return
+    }
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+      const storagePath = "/modules/classroom/students/"+uuid()
+      const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
+      await StudentAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentStudent.email ,storagePath, downloadUrl)
+
+      this.setState({profilePicture: downloadUrl})
+      
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
+  }
   
   handleStatusPress = () => {
     const payload = {
@@ -66,16 +109,16 @@ export default class MyProfileScreen extends React.PureComponent {
   
   handleMyClassPress = () => {
     payload = {
-      schoolId: this.schoolId,
-      studentEmail: this.studentEmail
+      schoolId: this.props.currentSchool.id,
+      studentEmail: this.props.currentStudent.email
     }
     this.props.navigation.navigate("MyClass", payload);
   }
 
   handleMyArchiveClassPress = () => {
     payload = {
-      schoolId: this.schoolId,
-      studentEmail: this.studentEmail
+      schoolId: this.props.currentSchool.id,
+      studentEmail: this.props.currentStudent.email
     }
     this.props.navigation.navigate("MyArchiveClass", payload);
   }
@@ -83,12 +126,13 @@ export default class MyProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
-    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.loadStatus = this.loadStatus.bind(this);
     this.handleMyClassPress = this.handleMyClassPress.bind(this);
     this.handleMyArchiveClassPress = this.handleMyArchiveClassPress.bind(this);
+    this.changeProfilePicture = this.changeProfilePicture.bind(this);
+    this.requestStoragePermission = this.requestStoragePermission.bind(this);
+
   }
 
   componentDidMount(){ 
@@ -112,10 +156,12 @@ export default class MyProfileScreen extends React.PureComponent {
     }else return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
-          <PeopleProfileHeader
-            profilePicture="https://picsum.photos/200/200/?random"
-            nickName={this.state.student.name}
-            status= {(this.state.student.noInduk) ?"NIM " +  this.state.student.noInduk: "NIM " + "-"}/>
+          <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
+            <PeopleProfileHeader
+              profilePicture={this.state.profilePicture}
+              nickName={this.state.student.name}
+              status= {(this.state.student.noInduk) ?"NIM " +  this.state.student.noInduk: "NIM " + "-"}/>
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={this.handleStatusPress}>
             <View style={styles.statusContainer}>
@@ -217,3 +263,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
+
+export default withCurrentStudent(MyProfileScreen)

@@ -90,6 +90,19 @@ export default class StudentAPI{
   
   }
 
+  static async updateDiscussionNotification(schoolId, classId, studentId, isAllowNotif){
+   
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const studentsCollection = new StudentsCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const studentsDocumentRef = classesDocumentRef.collection(studentsCollection.getName()).doc(studentId);
+    await studentsDocumentRef.update({discussionNotif: isAllowNotif})
+    return Promise.resolve(true);
+  }
+
   static async getClassStudent(schoolId, classId){
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
@@ -112,7 +125,7 @@ export default class StudentAPI{
   }
 
   static async getDetail(schoolId, email, source = "default") {
-    const db = new firebase.firestore();
+    const db = firebase.firestore();
     const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
@@ -122,9 +135,20 @@ export default class StudentAPI{
 
     return Promise.resolve(data);
   }
+  
+  static async updateProfilePicture(schoolId, studentId, storagePath, downloadUrl){
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const studentsCollection = new StudentsCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(studentId);
+  
+    await studentsDocumentRef.update({ "profilePicture": {storagePath, downloadUrl}})
+    return Promise.resolve(true)
+  }
 
   static async isStudent(schoolId, userEmail){
-    const db = new firebase.firestore();
+    const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const studentsCollection = new StudentsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);

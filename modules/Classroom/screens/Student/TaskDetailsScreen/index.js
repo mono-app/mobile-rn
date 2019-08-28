@@ -9,10 +9,11 @@ import moment from "moment"
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { isFetching: true, task:{}, showSnackbarFailDeleting: false, totalSubmission:0, totalDiscussion: 0 };
 
-export default class TaskDetailsScreen extends React.PureComponent {
+class TaskDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -29,10 +30,10 @@ export default class TaskDetailsScreen extends React.PureComponent {
     this.setState({ isFetching: true});
 
     const api = new TaskAPI();
-    const task = await api.getDetail(this.schoolId, this.classId, this.taskId);
+    const task = await api.getDetail(this.props.currentSchool.id, this.classId, this.taskId);
   
-    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
-    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.schoolId, this.classId, this.taskId);
+    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.props.currentSchool.id, this.classId, this.taskId);
+    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.props.currentSchool.id, this.classId, this.taskId);
 
     this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
   }
@@ -40,7 +41,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleTaskSubmissionPress = () => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       title: this.state.task.title,
@@ -52,7 +53,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleDiscussionPress = () => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       subject: this.subject,
@@ -63,7 +64,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
   
   handleSubmissionTaskPress = () => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       subject: this.subject,
@@ -76,7 +77,6 @@ export default class TaskDetailsScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.loadTask = this.loadTask.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");
@@ -224,3 +224,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
+export default withCurrentStudent(TaskDetailsScreen)

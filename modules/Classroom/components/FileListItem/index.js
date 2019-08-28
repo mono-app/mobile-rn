@@ -40,7 +40,7 @@ export default class FileListItem extends React.PureComponent{
       )
     }
 
-    let { title, creationTime } = this.props;
+    let { title, creationTime } = this.state;
     title = this.state.title;
     creationTime = this.state.creationTime;
     

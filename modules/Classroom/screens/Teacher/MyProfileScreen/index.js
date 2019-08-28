@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, PermissionsAndroid } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
@@ -11,8 +11,17 @@ import PeopleAPI from "src/api/people";
 import ClassAPI from "modules/Classroom/api/class";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import uuid from "uuid/v4"
+import DocumentPicker from 'react-native-document-picker';
+import StorageAPI from "src/api/storage";
 
-const INITIAL_STATE = { isLoadingProfile: true, teacher: null, status:"", totalClass: 0 }
+const INITIAL_STATE = { 
+  isLoadingProfile: true, 
+  teacher: null, 
+  status:"", 
+  totalClass: 0,
+  profilePicture: "https://picsum.photos/200/200/?random" 
+}
 
 /**
  * Parameter list
@@ -41,7 +50,9 @@ export default class MyProfileScreen extends React.PureComponent {
     }
 
     const totalClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.teacherEmail)).length;
-
+    if(teacher.profilePicture){
+      this.setState({ profilePicture: teacher.profilePicture.downloadUrl });
+    }
     this.setState({ isLoadingProfile: false, teacher, totalClass });
    
   }
@@ -81,6 +92,43 @@ export default class MyProfileScreen extends React.PureComponent {
     this.props.navigation.navigate("MyClass", payload);
   }
 
+  
+  changeProfilePicture = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+      return
+    }
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+      const storagePath = "/modules/classroom/teachers/"+uuid()
+      const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
+      await TeacherAPI.updateProfilePicture(this.schoolId, this.teacherEmail ,storagePath, downloadUrl)
+    
+      this.setState({profilePicture: downloadUrl})
+      
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
@@ -115,10 +163,13 @@ export default class MyProfileScreen extends React.PureComponent {
     }else return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
-          <PeopleProfileHeader
-            profilePicture="https://picsum.photos/200/200/?random"
-            nickName={this.state.teacher.name}
-            status= {"NIK" + this.state.teacher.nik}/>
+          <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
+
+            <PeopleProfileHeader
+              profilePicture={this.state.profilePicture}
+              nickName={this.state.teacher.name}
+              status= {"NIK" + this.state.teacher.nik}/>
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={this.handleStatusPress}>
             <View style={ styles.statusContainer }>
