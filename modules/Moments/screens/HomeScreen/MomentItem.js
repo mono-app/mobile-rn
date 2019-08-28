@@ -1,7 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Surface, Caption, Paragraph } from "react-native-paper";
+import { StyleSheet, Dimensions } from "react-native";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
 import MomentsAPI from "modules/Moments/api/moment";
@@ -12,110 +11,69 @@ import TranslateAPI from "src/api/translate";
 import PeopleDetailListener from "src/components/PeopleDetailListener";
 import CircleAvatar from "src/components/Avatar/Circle";
 import PhotoGrid from "modules/Moments/components/PhotoGrid";
+import SquareAvatar from "src/components/Avatar/Square";
+import FastImage from "react-native-fast-image";
+import { View, TouchableOpacity, FlatList } from "react-native";
+import { Text, Surface, Caption } from "react-native-paper";
 
-const INITIAL_STATE = { posterEmail: null, isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
+function MomentImageThumbnail(props){
+  const imageSize = Dimensions.get("window").width/3;
 
-export default class MomentItem extends React.Component{
-  refreshPosterDetail = async () => {
-    this.setState({ isLoading: true });
-
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    this.listener = MomentsAPI.getDetailWithRealTimeUpdate(this.state.id, (momentItem) => {
-      const newMomentItem = JSON.parse(JSON.stringify(momentItem));
-      const { images } = newMomentItem.content;
-      const newImages = images.map((image) => {
-        return { image: {uri: image.downloadUrl }}
-      })
-      newMomentItem.content.images = newImages;
-
-      const { fanEmails } = newMomentItem;
-      let isLiked = false;
-      if(fanEmails !== undefined) isLiked = fanEmails.includes(currentUserEmail);
-      this.setState({ ...newMomentItem, isLoading: false, isLiked });
-    })
-  }
-
-  handlePeopleDetailListenerChange = (peopleData) => this.setState({ poster: peopleData });
-  handleCommentPress = () => this.props.navigation.navigate("Comments",  { momentId: this.state.id });
-  handleLikePress = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    await MomentsAPI.toggleLike(this.state.id, currentUserEmail);
-  }
-
-  constructor(props){
-    super(props);
-
-    this.state = { ...INITIAL_STATE, ...this.props };
-    this.listener = null;
-    this.refreshPosterDetail = this.refreshPosterDetail.bind(this);
-    this.handleLikePress = this.handleLikePress.bind(this);
-    this.handleCommentPress = this.handleCommentPress.bind(this);
-    this.handlePeopleDetailListenerChange = this.handlePeopleDetailListenerChange.bind(this);
-  }
-
-  componentWillUnmount(){ if(this.listener) this.listener(); }
-  componentDidMount(){ this.refreshPosterDetail(); }
-
-  render(){
-    if(this.state.isLoading) return <View/>
-
-    const hasImage = this.state.content.images.length > 0;
-    let timeFromNow = moment(this.state.postTime.seconds * 1000).fromNow();
-    timeFromNow = TranslateAPI.translate(timeFromNow, "ID");
-
-    const { poster } = this.state;
-    let newPoster = JSON.parse(JSON.stringify(poster));
-    if(newPoster === null){
-      newPoster = {};
-      newPoster.applicationInformation = {};
-      newPoster.applicationInformation.nickName = "";
-      newPoster.applicationInformation.profilePicture = "https://picsum.photos/200/200/?random";
-    }
-
-    return(
-      <Surface style={{ elevation: 1, marginTop: 8, marginBottom: 8 }}>
-
-        <PeopleDetailListener peopleEmail={this.state.posterEmail} onChange={this.handlePeopleDetailListenerChange}/>
-
-        <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-          <CircleAvatar size={50} uri={newPoster.applicationInformation.profilePicture}/>
-          <View style={{ marginLeft: 16 }}>
-            <Text style={{ fontWeight: "700" }}>{newPoster.applicationInformation.nickName}</Text>
-            <Caption style={{ marginTop: 0 }}>{timeFromNow}</Caption>
-          </View>
-        </View>
-        <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-          <Paragraph>{this.state.content.message}</Paragraph>
-        </View>
-        {hasImage?(
-          <PhotoGrid navigation={this.props.navigation} images={this.state.content.images}/>
-        ):<View/>}
-        <View style={{ ...styles.leftAlignedContainerWithTopBorder, paddingVertical: 8}}>
-          <Caption style={{ marginRight: 16 }}>{this.state.totalFans} Fans</Caption>
-          <Caption>{this.state.totalComments} Komentar</Caption>
-        </View>
-        <View style={styles.leftAlignedContainerWithTopBorder}>
-          <TouchableOpacity onPress={this.handleLikePress} style={{ flexDirection: "row", alignItems: "center", marginRight: 16 }}>
-            {this.state.isLiked?(
-              <MaterialCommunityIcons name="heart" color="#EF6F6C" size={16} style={{ marginRight: 4 }}/>
-            ):(
-              <MaterialCommunityIcons name="heart-outline" size={16} style={{ marginRight: 4 }}/>
-            )}
-            <Caption>Suka</Caption>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleCommentPress} style={{ flexDirection: "row", alignItems: "center" }}>
-            <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
-            <Caption>Komentar</Caption>
-          </TouchableOpacity>
-        </View>
-      </Surface>
-    )
-  }
+  const styles = StyleSheet.create({
+    imageContainer: { display: "flex", alignItems: "stretch", flex: 1, height: imageSize },
+    imageItem: { 
+      margin: 4, borderRadius: 8, flex:1, aspectRatio: 1, height: "100%" }
+  })
+  return (
+    <TouchableOpacity style={[ styles.imageContainer, props.style ]}>
+      <FastImage style={styles.imageItem} source={props.source} resizeMode="cover"/>
+    </TouchableOpacity>
+  )
 }
 
-const styles = StyleSheet.create({
-  leftAlignedContainerWithTopBorder: { 
-    borderTopColor: "#E8EEE8", borderTopWidth: 1, flexDirection: "row", justifyContent: "flex-start", 
-    alignItems: "center", padding: 16 
-  }
-})
+function MomentItem(props){
+  const styles = StyleSheet.create({
+    surface: { elevation: 16, padding: 16, display: "flex", flexDirection: "column", borderRadius: 4 },
+    profile: { display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 8 },
+    textContainer: { borderBottomColor: "#E8EEE8", borderBottomWidth: 1, paddingBottom: 8 }, 
+    actionContainer: { display: "flex", flexDirection: "row", justifyContent: "space-around", alignItems: "center", paddingTop: 8 },
+    actionItem: { display: "flex", flexDirection: "row", alignItems: "center", padding: 4 },
+    imagesContainer: { display: "flex", flexDirection: "row", marginTop: 4, marginBottom: 4, flexGrow: 1 },
+  })
+
+  return (
+    <Surface style={[ styles.surface, props.style ]}>
+      <View style={styles.profile}>
+        <SquareAvatar size={50} uri={"https://picsum.photos/200"}/>
+        <View style={{ marginLeft: 8 }}>
+          <Text style={{ margin: 0, fontWeight: "bold" }}>Frans Huang</Text>
+          <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
+        </View>
+      </View>
+      <View style={styles.textContainer}>
+        <Text style={{ textAlign: "justify" }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fermentum elit vitae velit sagittis aliquet. Quisque lacus eros, aliquam quis volutpat at, faucibus et orci. Fusce blandit consequat dui, eu pharetra dolor pharetra id. Fusce sit amet enim lorem. Donec blandit ut diam congue vestibulum. Phasellus dolor est, lobortis non mauris vel, vestibulum sodales nisi. Ut blandit ultricies placerat.</Text>
+        <FlatList 
+          style={styles.imagesContainer} data={[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]} horizontal={true}
+          renderItem={({ item }) => {
+            return <MomentImageThumbnail source={{ uri: "https://picsum.photos/1080" }}/>
+          }}/> 
+      </View>
+      <View style={styles.actionContainer}>
+        <TouchableOpacity style={styles.actionItem}>
+          <MaterialCommunityIcons name="thumb-up-outline" size={16} style={{ marginRight: 4 }}/>
+          <Text>Suka</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionItem}>
+          <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
+          <Text>Komentar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionItem}>
+          <MaterialCommunityIcons name="share-variant" size={16} style={{ marginRight: 4 }}/>
+          <Text>Bagikan</Text>
+        </TouchableOpacity>
+      </View>
+    </Surface>
+  );
+}
+
+export default MomentItem;
