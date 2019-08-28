@@ -4,10 +4,11 @@ import { Searchbar } from "react-native-paper";
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
-export default class MyArchiveClassScreen extends React.PureComponent {
+class MyArchiveClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -53,8 +54,6 @@ export default class MyArchiveClassScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.props.currentStudent.email = this.props.navigation.getParam("studentEmail", "");
-    this.props.currentSchool.id = this.props.navigation.getParam("schoolId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
@@ -90,3 +89,4 @@ export default class MyArchiveClassScreen extends React.PureComponent {
     );
   }
 }
+export default withCurrentStudent(MyArchiveClassScreen)

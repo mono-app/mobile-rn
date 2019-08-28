@@ -7,13 +7,14 @@ import ClassAPI from "modules/Classroom/api/class";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
-import PeopleAPI from "src/api/people";
+import StatusAPI from "src/api/status";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import uuid from "uuid/v4"
 import DocumentPicker from 'react-native-document-picker';
 import StorageAPI from "src/api/storage";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 const INITIAL_STATE = { isLoadingProfile: true, 
   student: {}, 
@@ -55,8 +56,10 @@ class MyProfileScreen extends React.PureComponent {
   }
   
   loadStatus = async () => {
-    const status = await StatusAPI().getLatestStatus(this.props.currentStudent.email);
-    if(!status) status = { content: "Tulis statusmu disini..." };
+    let status = await StatusAPI.getLatestStatus(this.props.currentStudent.email);
+    if(!status){
+      status = { content: "Tulis statusmu disini..." };
+    } 
     this.setState({ status: status.content });
   }
 
@@ -105,19 +108,11 @@ class MyProfileScreen extends React.PureComponent {
 
   
   handleMyClassPress = () => {
-    payload = {
-      schoolId: this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
-    }
-    this.props.navigation.navigate("MyClass", payload);
+    this.props.navigation.navigate("MyClass");
   }
 
   handleMyArchiveClassPress = () => {
-    payload = {
-      schoolId: this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
-    }
-    this.props.navigation.navigate("MyArchiveClass", payload);
+    this.props.navigation.navigate("MyArchiveClass");
   }
 
   constructor(props){
@@ -129,7 +124,6 @@ class MyProfileScreen extends React.PureComponent {
     this.handleMyArchiveClassPress = this.handleMyArchiveClassPress.bind(this);
     this.changeProfilePicture = this.changeProfilePicture.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
-
   }
 
   componentDidMount(){ 
@@ -263,4 +257,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default withCurrentStudent(MyProfileScreen)
+export default withCurrentUser(withCurrentStudent(MyProfileScreen))
