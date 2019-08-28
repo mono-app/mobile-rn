@@ -28,21 +28,21 @@ export default class RoomsAPI{
     })
   }
 
-  static async getUnreadCount(roomId){
-    const db = firebase.firestore();
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const roomsCollection = new RoomsCollection();
-    const roomDocument = new Document(roomId);
-    const messagesCollection = new MessagesCollection();
-    const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
-    const messageRef = roomRef.collection(messagesCollection.getName());
-    const querySnapshot = await messageRef.where("read.isRead", "==", false).get();
-    const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
-      if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
-      else return false;
-    }).length;
-    return Promise.resolve(unreadCount);
-  }
+  // static async getUnreadCount(roomId){
+  //   const db = firebase.firestore();
+  //   const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+  //   const roomsCollection = new RoomsCollection();
+  //   const roomDocument = new Document(roomId);
+  //   const messagesCollection = new MessagesCollection();
+  //   const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
+  //   const messageRef = roomRef.collection(messagesCollection.getName());
+  //   const querySnapshot = await messageRef.where("read.isRead", "==", false).get();
+  //   const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
+  //     if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
+  //     else return false;
+  //   }).length;
+  //   return Promise.resolve(unreadCount);
+  // }
 
   /**
    * 

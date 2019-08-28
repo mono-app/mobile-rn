@@ -9,7 +9,6 @@ import FriendRequestListScreen from "src/screens/FriendRequestListScreen";
 import ChatScreen from "src/screens/ChatScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
-import WebRTCScreen from "src/screens/WebRTCScreen";
 
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -19,8 +18,7 @@ export default HomeTabNavigator = createStackNavigator({
   PeopleInformation: { screen: PeopleInformationScreen },
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
-  MyQR: { screen: MyQRScreen },
-  WebRTC: { screen: WebRTCScreen }
+  MyQR: { screen: MyQRScreen }
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {

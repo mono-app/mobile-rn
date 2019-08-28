@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { withTheme } from "react-native-paper";
 import { StyleSheet } from "react-native";
 
@@ -15,7 +16,10 @@ function MicButton(props){
     default: { marginHorizontal: 0 }
   })
 
-  const handlePress = () => setIsActive(!isActive);
+  const handlePress = () => {
+    props.onPress(!isActive);
+    setIsActive(!isActive);
+  }
 
   return (
     <IconButton 
@@ -23,5 +27,6 @@ function MicButton(props){
       color={iconColor} onPress={handlePress}/>
   )
 }
-MicButton.defaultProps = { style: {} }
+MicButton.propTypes = { style: PropTypes.object, onPress: PropTypes.func }
+MicButton.defaultProps = { style: {}, onPress: () => {} }
 export default withTheme(MicButton);
