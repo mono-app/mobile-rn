@@ -23,7 +23,7 @@ export default class Header extends React.PureComponent{
   render(){
     return(
       <Appbar.Header style={{ backgroundColor: "transparent" }}>
-        <Appbar.Content title="All Chats"/>
+        <Appbar.Content></Appbar.Content>
         <Menu
           visible={this.state.isMenuVisible}
           onDismiss={this.handleMenuClose}

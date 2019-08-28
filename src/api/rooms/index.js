@@ -1,13 +1,31 @@
 import firebase from "react-native-firebase";
 
 import CurrentUserAPI from "src/api/people/CurrentUser";
-import { RoomsCollection, RoomUserMappingCollection, MessagesCollection } from "src/api/database/collection";
+import { RoomsCollection, RoomUserMappingCollection, MessagesCollection, Collection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { GetDocument } from "src/api/database/query";
 
 export default class RoomsAPI{
   constructor(){
     this.isRoomExists = this.isRoomExists.bind(this);
+  }
+
+  /**
+   * @param {string} email
+   * @param {Function} callback 
+   */
+  static getRoomsWithRealtimeUpdate(email, callback){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email);
+    
+    return roomsRef.orderBy("lastMessage.sentTime", "asc").onSnapshot((querySnapshot) => {
+      const rooms = querySnapshot.docs.map((documentSnapshot) => {
+        const normalizedRoom = { id: documentSnapshot.id, ...documentSnapshot.data() }
+        return normalizedRoom;
+      })
+      callback(rooms);
+    })
   }
 
   static async getUnreadCount(roomId){
@@ -62,36 +80,24 @@ export class PersonalRoomsAPI extends RoomsAPI{
   static async createRoomIfNotExists(firstPeopleEmail, secondPeopleEmail){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
-    const roomsRef = db.collection(roomsCollection.getName());
-    const userPath = new firebase.firestore.FieldPath("audiences", firstPeopleEmail);
-    const peoplePath = new firebase.firestore.FieldPath("audiences", secondPeopleEmail);
-    const querySnapshot = await roomsRef.where(userPath, "==", true).where(peoplePath, "==", true).get();
 
-    let roomId = null;
+    const userPath = new firebase.firestore.FieldPath("audiencesQuery", firstPeopleEmail);
+    const peoplePath = new firebase.firestore.FieldPath("audiencesQuery", secondPeopleEmail);
+    const roomsRef = db.collection(roomsCollection.getName());
+    const querySnapshot = await roomsRef.where(userPath, "==", true).where(peoplePath, "==", true).get();
+    
     if(querySnapshot.empty){
-      const batch = db.batch();
-      const newRoomRef = roomsRef.doc();
-      
-      const audiencesPayload = {}
+      const audiencesPayload = {};
       audiencesPayload[firstPeopleEmail] = true;
       audiencesPayload[secondPeopleEmail] = true;
-      batch.set(newRoomRef, {
-        audiences: audiencesPayload, type: "private",
-        lastMessage: { message: "", sentTime: null }
-      })
+      const payload = { 
+        audiences: [firstPeopleEmail, secondPeopleEmail], type: "chat",
+        audiencesQuery: audiencesPayload, lastMessage: {message: "", sentTime: null} 
+      }
 
-      const roomUserMapping = new RoomUserMappingCollection();
-      const userDocument = new Document(firstPeopleEmail);
-      const peopleDocument = new Document(secondPeopleEmail);
-      const userMappingRef = db.collection(roomUserMapping.getName()).doc(userDocument.getId());
-      const peopleMappingRef = db.collection(roomUserMapping.getName()).doc(peopleDocument.getId());
-
-      const newRoomId = newRoomRef.id;
-      batch.set(userMappingRef, { rooms: firebase.firestore.FieldValue.arrayUnion(newRoomId) }, { merge: true });
-      batch.set(peopleMappingRef, { rooms: firebase.firestore.FieldValue.arrayUnion(newRoomId) }, { merge: true });
-      await batch.commit();
-      roomId = newRoomRef.id;
-    }else roomId = querySnapshot.docs[0].id;
-    return Promise.resolve(roomId);
+      const roomRef = db.collection(roomsCollection.getName()).doc();
+      await roomRef.set(payload);
+      return Promise.resolve(roomRef.id);
+    }else return Promise.resolve(querySnapshot.docs[0].id);
   }
 }

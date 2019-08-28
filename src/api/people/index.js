@@ -1,17 +1,33 @@
-import SInfo from "react-native-sensitive-info";
+import React from "react";
 import firebase from "react-native-firebase";
 import moment from "moment";
 import uuid from "uuid/v4";
-import { StackActions } from "react-navigation";
-
+import Logger from "src/api/logger";
 import StorageAPI from "src/api/storage";
 import CurrentUserAPI from "src/api/people/CurrentUser";
+import { StackActions } from "react-navigation";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
     this.currentUserEmail = currentUserEmail;
+  }
+
+  /**
+   * 
+   * @param {DocumentSnapshot} documentSnapshot 
+   */
+  static normalizePeople(documentSnapshot){
+    const newPeople = documentSnapshot.data();
+    newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
+
+    if(newPeople.isCompleteSetup) {
+      if(newPeople.applicationInformation.profilePicture !== undefined){
+        newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
+      }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
+    }
+    return newPeople;
   }
 
   /**
@@ -85,52 +101,21 @@ export default class PeopleAPI{
 
   /**
    * 
-   * @param {String} peopleEmail 
-   * @returns {Promise} - `null` if status is not found.
-   */
-  async getLatestStatus(peopleEmail=null){
-    const selectedPeopleEmail = (peopleEmail === null)? this.currentUserEmail: peopleEmail;
-    if(selectedPeopleEmail){
-      const db = firebase.firestore();
-      const userCollection = new UserCollection();
-      const userDocument = new Document(selectedPeopleEmail);
-      const statusCollection = new StatusCollection();
-
-      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      const statusRef = userRef.collection(statusCollection.getName());
-      const querySnapshot = await statusRef.orderBy("timestamp", "desc").limit(1).get();
-      if(querySnapshot.empty) return Promise.resolve(null);
-      else return Promise.resolve(querySnapshot.docs[0].data());
-    }else return Promise.resolve(null);
-  }
-
-  /**
-   * 
    * @param {String} email 
    * @param {String} source - default value `default`, available value `cache`, `server`, `default`
    * @returns {Promise} - object of user in firebase, or null if cannot find
    */
-  async getDetail(email=null, source="default"){
-    const selectedPeopleEmail = (email === null)? this.currentUserEmail: email;
-    if(selectedPeopleEmail){
-      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-      if(email === currentUserEmail) {
-        const userData = await CurrentUserAPI.getDetail();
+  static async getDetail(email=null, source="default"){
+    if(email){
+      const userCollection = new UserCollection();
+      const userDocument = new Document(email);
+      const db = new firebase.firestore();
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      const documentSnapshot = await userRef.get({ source });
+      if(documentSnapshot.exists){
+        const userData = PeopleAPI.normalizePeople(documentSnapshot);
         return Promise.resolve(userData);
-      }else{
-        const userCollection = new UserCollection();
-        const userDocument = new Document(selectedPeopleEmail);
-        const db = new firebase.firestore();
-        const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-        const documentSnapshot = await userRef.get({ source });
-        if(documentSnapshot.exists){
-          const userData = { id: documentSnapshot.id, ...documentSnapshot.data() };
-          const { applicationInformation } = userData;
-          const profilePicture = applicationInformation.profilePicture? applicationInformation.profilePicture.downloadUrl: "https://picsum.photos/200/200/?random";
-          userData.applicationInformation.profilePicture = profilePicture;
-          return Promise.resolve(userData);
-        }else return Promise.resolve(null);
-      }
+      }else return Promise.resolve(null);
     }else return Promise.resolve(null);
   }
 
@@ -142,33 +127,6 @@ export default class PeopleAPI{
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
     this.currentUserEmail = JSON.parse(JSON.stringify(currentUserEmail));
     return Promise.resolve(currentUserEmail);
-  }
-
-  /**
-   * 
-   * @param {function} callback 
-   */
-  static async getRoomsWithRealtimeUpdate(callback){
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const roomsCollection = new RoomsCollection();
-    const searchField = new firebase.firestore.FieldPath("audiences", currentUserEmail);
-    const db = firebase.firestore();
-    const roomsRef = db.collection(roomsCollection.getName()).where(searchField, "==", true);
-    return roomsRef.onSnapshot({ includeMetadataChanges: true }, querySnapshot => {
-      const rooms = querySnapshot.docs.map(documentSnapshot => {
-        return { id: documentSnapshot.id, ...documentSnapshot.data() }
-      })
-
-      rooms.sort((a, b) => {
-        const firstSentItem = a.lastMessage.sentTime? a.lastMessage.sentTime.seconds: moment().unix();
-        const secondSentItem = b.lastMessage.sentTime? b.lastMessage.sentTime.seconds: moment().unix();
-
-        if(firstSentItem > secondSentItem) return -1
-        else if(firstSentItem < secondSentItem) return 1
-        else return 0;
-      });
-      callback(rooms);
-    })
   }
 
   static async setOnlineStatus(peopleEmail, status){

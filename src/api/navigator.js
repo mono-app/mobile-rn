@@ -15,7 +15,7 @@ export default class Navigator{
    * @param {NavigationAction} actions - a redux action
    * @param {Object} options
    */
-  resetTo(routeName, action = StackActions, options = {}){
+  resetTo(routeName, action=StackActions, options = {}){
     this.navigation.dispatch(action.reset({
       index: 0,
       actions: [ NavigationActions.navigate({ routeName })],

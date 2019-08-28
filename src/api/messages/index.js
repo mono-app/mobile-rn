@@ -12,11 +12,26 @@ export default class MessagesAPI{
     this.messagePaginationLimit = 25;
   }
 
+   /**
+   * This function will trigger for offline storage as well
+   * 
+   * @param {string} roomId 
+   * @param {function} callback - a callback for this real-time function. It requires one parameter `messages`
+   */
+  static getMessagesWithRealTimeUpdate(roomId, callback, limit=25){
+    const messagesRef = MessagesAPI.getMessageReference(roomId);
+    const filteredMessagesRef = messagesRef.orderBy("sentTime", "desc").limit(limit);
+    return filteredMessagesRef.onSnapshot({ includeMetadataChanges: true }, (querySnapshot) => {
+      const { messages, lastDocumentSnapshot } = MessagesAPI.normalizeMessage(querySnapshot);
+      callback(messages, lastDocumentSnapshot);
+    })
+  }
+
   /**
    * 
    * @param {String} roomId 
    */
-  getMessageReference(roomId){
+  static getMessageReference(roomId){
     const roomsCollection = new RoomsCollection();
     const messagesCollection = new MessagesCollection();
     const roomDocument = new Document(roomId);
@@ -27,43 +42,38 @@ export default class MessagesAPI{
     return messagesRef;
   }
 
-  getNext(){
-    if(this.lastDocumentSnapshot && this.roomId){
-      const messagesRef = this.getMessageReference(this.roomId);
-      const queryRef = messagesRef.orderBy("sentTime", "desc").startAfter(this.lastDocumentSnapshot);
-      return queryRef.limit(this.messagePaginationLimit).get().then(querySnapshot => {
-        const { messages, lastDocumentSnapshot } = this.parseQuerySnapshotToMessages(querySnapshot);
-        this.lastDocumentSnapshot = lastDocumentSnapshot;
-        return messages
-      })
-    }else return Promise.resolve([]);
+  static async getNext(lastMessageSnapshot, roomId, limit=25){
+    const messagesRef = MessagesAPI.getMessageReference(roomId);
+    const queryRef = messagesRef.orderBy("sentTime", "desc").startAfter(lastMessageSnapshot);
+    const querySnapshot = await queryRef.limit(limit).get();
+    const { messages, lastDocumentSnapshot } = MessagesAPI.normalizeMessage(querySnapshot);
+    return Promise.resolve({ messages, lastDocumentSnapshot });
   }
 
-  parseQuerySnapshotToMessages(querySnapshot){
+  static normalizeMessage(querySnapshot){
     let lastDocumentSnapshot = null;
     const messages = [];
-    querySnapshot.forEach(documentSnapshot => {
+    querySnapshot.forEach((documentSnapshot) => {
       lastDocumentSnapshot = documentSnapshot;
-      const payload = { isSent: documentSnapshot.sentTime !== null, id: documentSnapshot.id, ...documentSnapshot.data() }
+      const messageData = documentSnapshot.data();
+      const payload = { 
+        id: documentSnapshot.id, isSent: messageData.sentTime !== null, 
+        ...messageData
+      }
       messages.push(payload);
     })
     return { messages, lastDocumentSnapshot }
   }
 
-  /**
-   * This function will trigger for ofline storage as well
-   * 
-   * @param {string} roomId 
-   * @param {function} callback - a callback for this real-time function. It requires one parameter `messages`
-   */
-  getMessagesWithRealTimeUpdate(roomId, callback){
-    const messagesRef = this.getMessageReference(roomId);
-    const filteredMessagesRef = messagesRef.orderBy("sentTime", "desc").limit(this.messagePaginationLimit);
-    return filteredMessagesRef.onSnapshot({ includeMetadataChanges: true }, snapshot => {
-      const { messages, lastDocumentSnapshot } = this.parseQuerySnapshotToMessages(snapshot);
-      this.lastDocumentSnapshot = lastDocumentSnapshot;
-      callback(messages, lastDocumentSnapshot);
+  parseQuerySnapshotToMessages(querySnapshot){
+    let lastDocumentSnapshot = null;
+    const messages = [];
+    querySnapshot.forEach((documentSnapshot) => {
+      lastDocumentSnapshot = documentSnapshot;
+      const payload = { isSent: documentSnapshot.sentTime !== null, id: documentSnapshot.id, ...documentSnapshot.data() }
+      messages.push(payload);
     })
+    return { messages, lastDocumentSnapshot }
   }
 
   /**
@@ -74,10 +84,10 @@ export default class MessagesAPI{
    * @returns {Promise} `true` if insert is successful, throw an error if result is not success
    */
   static sendMessage(roomId, senderEmail, message){
-    const sentTime = moment().unix();
+    const localSentTime = firebase.firestore.Timestamp.fromMillis(new moment().valueOf())
+    const sentTime = firebase.firestore.FieldValue.serverTimestamp();
     const payload = { 
-      senderEmail, message, sentTime, serverDeliveredTime: firebase.firestore.FieldValue.serverTimestamp(),
-      read: { isRead: false }
+      senderEmail, content: message, sentTime, readBy: [], localSentTime, type: "text"
     }
     const db = firebase.firestore();
     const batch = db.batch();

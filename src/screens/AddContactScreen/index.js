@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-import CurrentUserAPI from "src/api/people/CurrentUser";
+import CurrentUserAPI, { useCurrentUser } from "src/api/people/CurrentUser";
 
 import AppHeader from "src/components/AppHeader";
 import MonoIDSearch from "./MonoIDSearch";

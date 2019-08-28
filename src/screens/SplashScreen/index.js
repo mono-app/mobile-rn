@@ -1,45 +1,55 @@
 import React from "react";
 import firebase from "react-native-firebase";
 import { View, ActivityIndicator } from "react-native";
-import { StackActions } from "react-navigation";
+import { StackActions, NavigationActions} from "react-navigation";
 
-import PeopleAPI from "src/api/people";
-import Navigator from "src/api/navigator";
+import NavigatorAPI from "src/api/navigator";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
-export default class SplashScreen extends React.Component{
-  static navigationOptions = { header: null };
-  
-  constructor(props){
-    super(props);
-    this.notificationListener = null;
-  }
+function SplashScreen(props){
+  React.useEffect(() => {
+    const init = async () => {
+      // handle notification
+      try{
+        const isNotificationEnabled = await firebase.messaging().hasPermission();
+        if(!isNotificationEnabled) await firebase.messaging().requestPermission();
 
-  async componentDidMount(){
-    // handle notification
-    try{
-      const isNotificationEnabled = await firebase.messaging().hasPermission();
-      if(!isNotificationEnabled) await firebase.messaging().requestPermission();
+        // Creating notification channel for Android
+        const channel = new firebase.notifications.Android.Channel('message-notification', 'Message Notification', firebase.notifications.Android.Importance.Default)
+        firebase.notifications().android.createChannel(channel);
 
-      // Creating notification channel for Android
-      const channel = new firebase.notifications.Android.Channel('message-notification', 'Message Notification', firebase.notifications.Android.Importance.Default)
-      firebase.notifications().android.createChannel(channel);
+      }catch(err){ console.log("User reject notification", err); }
 
-    }catch(err){ console.log("User reject notification", err); }
-
-    const firebaseUser = firebase.auth().currentUser;
-    const navigator = new Navigator(this.props.navigation);
-    if(firebaseUser !== null){
-      new PeopleAPI().handleSignedIn(firebaseUser.email, navigator);
-    }else{
-      navigator.resetTo("SignIn", StackActions);
+      const firebaseUser = firebase.auth().currentUser;
+      if(firebaseUser !== null) props.setCurrentUserEmail(firebaseUser.email, props.navigation);
+      else {
+        props.navigation.dispatch(StackActions.reset({
+          index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
+          key: null
+        }))
+      }
     }
-  }
+    init();
+  }, []);
 
-  render(){
-    return(
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size="large" animating={true} color="#0EAD69"/>
-      </View>
-    )
-  }
+  // assuming user is signed in, then navigate to MainTabNavigator or AccountSetup
+  // withCurrentUser will fetch user data, and useEffect will be triggered if props.currentUser.isCompleteSetup change
+  React.useEffect(() => {
+    if(props.isLoggedIn){
+      const { isCompleteSetup } = props.currentUser;
+      if(isCompleteSetup !== undefined){
+        const navigator = new NavigatorAPI(props.navigation);
+        if(isCompleteSetup) navigator.resetTo("MainTabNavigator")
+        else if(!isCompleteSetup) navigator.resetTo("AccountSetup")
+      }
+    }
+  }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
+
+  return(
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <ActivityIndicator size="large" animating={true} color="#0EAD69"/>
+    </View>
+  )
 }
+
+export default withCurrentUser(SplashScreen);

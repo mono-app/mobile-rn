@@ -1,7 +1,7 @@
 import firebase from "react-native-firebase";
-
-import { FriendRequestCollection, FriendListCollection, PeopleCollection } from "src/api/database/collection";
-import { GetDocument } from "src/api/database/query";
+import Logger from "src/api/logger";
+import PeopleAPI from "src/api/people";
+import { FriendRequestCollection, FriendListCollection, PeopleCollection, UserCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
 export default class FriendsAPI{
@@ -68,16 +68,28 @@ export default class FriendsAPI{
    * @param {function} callback - a callback function that accepts array of friends as its parameters
    * @returns {function} - unsubscribe function from the listener
    */
-  getFriendsWithRealTimeUpdate(peopleEmail, callback){
+  static getFriendsWithRealTimeUpdate(peopleEmail, callback){
     const db = firebase.firestore();
+    const userCollection = new UserCollection();
     const friendListCollection = new FriendListCollection();
     const peopleCollection = new PeopleCollection();
     const userDocument = new Document(peopleEmail);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(peopleCollection.getName());
-    return peopleRef.onSnapshot(querySnapshot => {
-      if(!querySnapshot.empty) callback(querySnapshot.docs);
-      else callback([]);
+    return peopleRef.onSnapshot(async (querySnapshot) => {
+      if(!querySnapshot.empty) {
+        const promises = querySnapshot.docs.map((documentSnapshot) => {
+          const userDocument = new Document(documentSnapshot.id);
+          const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+          return userRef.get();
+        })
+        const friends = await Promise.all(promises);
+        const normalizedFriends = friends.map((documentSnapshot) => {
+          return PeopleAPI.normalizePeople(documentSnapshot);
+        });
+        Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (friends, normalizedFriends));
+        callback(normalizedFriends)
+      }else callback([]);
     })
   }
 

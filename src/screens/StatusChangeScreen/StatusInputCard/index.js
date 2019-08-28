@@ -1,52 +1,39 @@
 import React from "react";
+import PropTypes from "prop-types";
+import StatusAPI from "src/api/status";
+import { useCurrentUser } from "src/api/people/CurrentUser";
+
 import { View, TextInput } from "react-native";
 import { Card, Button } from "react-native-paper";
 
-import PeopleAPI from "src/api/people";
-import StatusAPI from "src/api/status";
+export default function StatusInputCard(props){
+  const [ status, setStatus ] = React.useState("");
+  const [ isLoading, setIsLoading ] = React.useState(false);
+  const { currentUser } = useCurrentUser();
 
-const INITIAL_STATE = { status: "", isLoading: false }
-
-export default class StatusInputCard extends React.Component{
-  handleStatusChange = status => this.setState({ status });
-  handleSavePress = () => {
-    this.setState({ isLoading: true });
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
-      StatusAPI.postStatus(currentUserEmail, this.state.status);
-    }).then(() => {
-      this.setState({ isLoading: false, status: "" });
-      if(this.props.onSaved) this.props.onSaved();
-    }).catch(err => console.log(err));
+  handleStatusChange = (status) => setStatus(status);
+  handleSavePress = async () => {
+    setIsLoading(true);
+    await StatusAPI.postStatus(currentUser.email, status)
+    setStatus("");
+    setIsLoading(false);
+    if(props.onSaved) props.onSaved();
   }
 
-  constructor(props){
-    super(props);
-
-    this.state = INITIAL_STATE;
-    this.statusListener = null;
-    this.handleStatusChange = this.handleStatusChange.bind(this);
-    this.handleSavePress = this.handleSavePress.bind(this);
-  }
-
-  render(){
-    return(
-      <Card elevation={4} style={{ padding: 16, margin: 16 }}>
-        <TextInput
-          multiline={true}
-          textAlignVertical="top"
-          numberOfLines={4}
-          placeholder="Bagikan statusmu sekarang."
-          fontSize={24}
-          value={this.state.status}
-          onChangeText={this.handleStatusChange}/>
-        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-          <Button 
-            mode="text"
-            loading={this.state.isLoading}
-            disabled={this.state.isLoading}
-            onPress={this.handleSavePress}>Simpan</Button>
-        </View>
-      </Card>
-    )
-  }
+  return(
+    <Card elevation={4} style={{ padding: 16, margin: 16 }}>
+      <TextInput
+        textAlignVertical="top" numberOfLines={4} fontSize={24}
+        placeholder="Bagikan statusmu sekarang."
+        value={status} onChangeText={handleStatusChange}
+        multiline/>
+      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+        <Button mode="text"loading={isLoading} disabled={isLoading} onPress={handleSavePress}>
+            Simpan
+        </Button>
+      </View>
+    </Card>
+  )
 }
+StatusInputCard.propTypes = { onSaved: PropTypes.func }
+StatusInputCard.defaultProps = { onSaved: () => {} }

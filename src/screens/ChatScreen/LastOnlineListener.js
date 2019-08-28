@@ -14,7 +14,6 @@ export default class LastOnlineListener extends React.PureComponent{
       const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
       this.listener = userRef.onSnapshot({ includeMetadataChanges: true }, (documentSnapshot => {
         const lastOnline = documentSnapshot.data().lastOnline;
-        console.log(lastOnline);
         if(this.props.onChange) this.props.onChange(lastOnline);
       }))
     }

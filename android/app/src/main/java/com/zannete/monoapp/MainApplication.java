@@ -2,6 +2,7 @@ package com.zannete.monoapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 
@@ -26,6 +27,8 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 
+import com.oney.WebRTCModule.WebRTCModulePackage;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new NetInfoPackage(),
           new RNSpinkitPackage(),
           new FastImageViewPackage(),
           new RNFSPackage(),
@@ -56,7 +60,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseStoragePackage(),
           new RNFirebaseMessagingPackage(),
           new RNFirebaseNotificationsPackage(),
-          new RNFirebaseInstanceIdPackage()
+          new RNFirebaseInstanceIdPackage(),
+          new WebRTCModulePackage()  
       );
     }
 
