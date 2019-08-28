@@ -72,7 +72,7 @@ function ChatScreen(props){
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <ChatHeader navigation={props.navigation} title={headerTitle} subtitle={"Online"}  profilePicture={headerProfilePicture}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop}/>
-      <ChatBottomTextInput onSendPress={handleSendPress}/>
+      <ChatBottomTextInput room={room} onSendPress={handleSendPress}/>
     </KeyboardAvoidingView>
   )
 }

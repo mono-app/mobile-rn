@@ -50,6 +50,7 @@ function MyQRScreen(props){
   )
 }
 
+MyQRScreen.navigationOptions = { header: null }
 export default 
 withNavigation(
   withCurrentUser(

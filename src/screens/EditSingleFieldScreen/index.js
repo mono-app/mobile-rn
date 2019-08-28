@@ -66,4 +66,5 @@ function EditSingleFieldScreen(props){
     </Container>
   )
 }
+EditSingleFieldScreen.navigationOptions = { header: null }
 export default withNavigation(EditSingleFieldScreen);

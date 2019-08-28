@@ -21,28 +21,32 @@ export default class RoomsAPI{
     
     return roomsRef.orderBy("lastMessage.sentTime", "asc").onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => {
-        const normalizedRoom = { id: documentSnapshot.id, ...documentSnapshot.data() }
+        const normalizedRoom = RoomsAPI.normalizeRoom(documentSnapshot);
         return normalizedRoom;
       })
       callback(rooms);
     })
   }
 
-  static async getUnreadCount(roomId){
-    const db = firebase.firestore();
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const roomsCollection = new RoomsCollection();
-    const roomDocument = new Document(roomId);
-    const messagesCollection = new MessagesCollection();
-    const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
-    const messageRef = roomRef.collection(messagesCollection.getName());
-    const querySnapshot = await messageRef.where("read.isRead", "==", false).get();
-    const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
-      if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
-      else return false;
-    }).length;
-    return Promise.resolve(unreadCount);
+  static normalizeRoom(documentSnapshot){
+    return { id: documentSnapshot.id, ...documentSnapshot.data() }
   }
+
+  // static async getUnreadCount(roomId){
+  //   const db = firebase.firestore();
+  //   const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+  //   const roomsCollection = new RoomsCollection();
+  //   const roomDocument = new Document(roomId);
+  //   const messagesCollection = new MessagesCollection();
+  //   const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
+  //   const messageRef = roomRef.collection(messagesCollection.getName());
+  //   const querySnapshot = await messageRef.where("read.isRead", "==", false).get();
+  //   const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
+  //     if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
+  //     else return false;
+  //   }).length;
+  //   return Promise.resolve(unreadCount);
+  // }
 
   /**
    * 
@@ -96,8 +100,8 @@ export class PersonalRoomsAPI extends RoomsAPI{
       }
 
       const roomRef = db.collection(roomsCollection.getName()).doc();
-      await roomRef.set(payload);
-      return Promise.resolve(roomRef.id);
-    }else return Promise.resolve(querySnapshot.docs[0].id);
+      roomRef.set(payload);
+      return Promise.resolve({ id: roomRef.id, ...payload });
+    }else return Promise.resolve(RoomsAPI.normalizeRoom(querySnapshot.docs[0]));
   }
 }

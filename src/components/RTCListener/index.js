@@ -1,12 +1,14 @@
 import React from "react";
 import Pusher from "pusher-js/react-native";
 import uuid from "uuid/v4";
-import { RTCPeerConnection, RTCSessionDescription, RTCView, RTCIceCandidate, mediaDevices } from "react-native-webrtc";
+import Logger from "src/api/logger";
+import { withCurrentUser } from "src/api/people/CurrentUser";
+import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate, mediaDevices } from "react-native-webrtc";
 import { SFU_SERVER_BASE_URL, PUSHER_API_KEY, PUSHER_CLUSTER } from "react-native-dotenv";
 
-import CurrentUserAPI from "src/api/people/CurrentUser";
+import { RTCView } from "react-native-webrtc";
 
-export default function RTCListener(props){
+function RTCListener(props){
   const [ streams, setStreams ] = React.useState([]);
   const currentUserEmail = React.useRef(null);
   const peerConnections = React.useRef({});
@@ -15,8 +17,7 @@ export default function RTCListener(props){
   const myToken = React.useRef(uuid())
   const listeningTo = React.useRef([]);
 
-  const generateLog = (userId, message) => console.log(`${myToken.current} ${userId}: ${message}`)
-
+  const generateLog = (userId, message) => Logger.log("RTCListener", `${myToken.current} ${userId}: ${message}`)
   const negotiate = async (userId) => {
     generateLog(userId, "negotation start");
     const { offerSdp } = await (await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/join`, {
@@ -36,7 +37,14 @@ export default function RTCListener(props){
     generateLog(userId, "negotiation complete");
   }
 
-  const createPeerConnection = async (userId) => {    
+  const closePeerConnection = async (userId) => {
+    if(peerConnections.current[userId] === undefined) return;
+    generateLog(userId, `closing`);
+    await peerConnections.current[userId].pc.close();
+    delete peerConnections.current[userId];
+  }
+
+  const createPeerConnection = async (userId) => {
     const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
     peerConnections.current[userId] = { 
       pc: new RTCPeerConnection(configuration), 
@@ -134,10 +142,8 @@ export default function RTCListener(props){
   }
 
   const initMain = async () => {
-    currentUserEmail.current = await CurrentUserAPI.getCurrentUserEmail();
+    currentUserEmail.current = JSON.parse(JSON.stringify(props.currentUser.email));
     await initPusher();
-    await initPublisher();
-    await initSubscribers();
   }
 
   React.useEffect(() => {
@@ -150,15 +156,28 @@ export default function RTCListener(props){
         body: JSON.stringify({ userId: currentUserEmail.current, token: myToken.current })
       })
 
-      Object.keys(peerConnections.current).forEach((userId) => {
-        generateLog(userId, `closing`);
-        peerConnections.current[userId].pc.close();
-        delete peerConnections.current[userId];
-      })
+      Object.keys(peerConnections.current).forEach((userId) => closePeerConnection(userId))
     }
   }, [])
+
+  React.useEffect(() => {
+    if(props.isPublisher) initPublisher();
+    else closePeerConnection(currentUserEmail.current);
+  }, [ props.isPublisher ])
+
+  React.useEffect(() => {
+    if(props.isSubscriber) initSubscribers();
+    else {
+      const subscribers = Object.keys(peerConnections.current).filter((userId) => userId !== currentUserEmail.current);
+      generateLog(currentUserEmail.current, `Having ${subscribers.length} to unsubscribe`);
+      Object.keys(peerConnections.current).forEach((userId) => {
+        if(userId !== currentUserEmail.current) closePeerConnection(userId)
+      })
+    }
+  }, [ props.isSubscriber ])
 
   return streams.map((stream, index) => <RTCView key={index} streamURL={stream?stream.toURL():null}/>)
 }
 
 RTCListener.defaultProps = { onConnected: () => {} }
+export default withCurrentUser(RTCListener);

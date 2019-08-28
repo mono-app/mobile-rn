@@ -114,4 +114,5 @@ function AccountScreen(props){
     </View>
   )
 }
+AccountScreen.navigationOptions = { header: null } 
 export default withCurrentUser(AccountScreen)

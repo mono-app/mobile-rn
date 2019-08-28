@@ -1,37 +1,30 @@
 import React from "react";
+import { withNavigation } from "react-navigation";
 import { Appbar, Menu } from "react-native-paper";
 
 const INITIAL_STATE = { isMenuVisible: false }
 
-export default class Header extends React.PureComponent{
-  toggleOpen = () => this.setState({ isMenuVisible: !this.state.isMenuVisible })
-  handleMenuClose = () => this.setState({ isMenuVisible: false });
-  handleAddContactPress = () => {
-    this.handleMenuClose();
-    this.props.navigation.navigate("AddContact");
-  }
-  
-  constructor(props){
-    super(props);
+function Header(props){
+  const [ isMenuVisible, setIsMenuVisible ] = React.useState(false);
 
-    this.state = INITIAL_STATE;
-    this.toggleOpen = this.toggleOpen.bind(this);
-    this.handleMenuClose = this.handleMenuClose.bind(this);
-    this.handleAddContactPress = this.handleAddContactPress.bind(this);
+  const toggleOpen = () => setIsMenuVisible(!isMenuVisible);
+  const handleMenuClose = () => setIsMenuVisible(false);
+  const handleAddContactPress = () => {
+    handleMenuClose();
+    props.navigation.navigate("AddContact");
   }
 
-  render(){
-    return(
-      <Appbar.Header style={{ backgroundColor: "transparent" }}>
-        <Appbar.Content></Appbar.Content>
-        <Menu
-          visible={this.state.isMenuVisible}
-          onDismiss={this.handleMenuClose}
-          anchor={<Appbar.Action icon="add" onPress={this.toggleOpen}/>}>
-          <Menu.Item title="New Chat"/>
-          <Menu.Item title="Add Contact" onPress={this.handleAddContactPress}/>
-        </Menu>
-      </Appbar.Header>
-    )
-  }
+  return(
+    <Appbar.Header style={{ backgroundColor: "transparent" }}>
+      <Appbar.Content></Appbar.Content>
+      <Menu
+        visible={isMenuVisible}
+        onDismiss={handleMenuClose}
+        anchor={<Appbar.Action icon="add" onPress={toggleOpen}/>}>
+        <Menu.Item title="New Chat"/>
+        <Menu.Item title="Add Contact" onPress={handleAddContactPress}/>
+      </Menu>
+    </Appbar.Header>
+  )
 }
+export default withNavigation(Header);

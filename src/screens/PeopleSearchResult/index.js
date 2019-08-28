@@ -1,47 +1,30 @@
 import React from "react";
-import { View, FlatList } from "react-native";
 
 import ResultItem from "./ResultItem";
+import AppHeader from "src/components/AppHeader";
+import { View, FlatList } from "react-native";
 
-const INITIAL_STATE = { users: [] };
+function PeopleSearchResult(props){
+  const people = props.navigation.getParam("people", []);
 
-export default class PeopleSearchResult extends React.Component{
-  static navigationOptions = { headerTitle: "Hasil Pencarian Pengguna" }
-
-  handleResultItemPress = (peopleEmail) => {
-    this.props.navigation.navigate("PeopleInformation", { 
-      peopleEmail, source: { id: "MonoID", value: "Mono ID" }
-    });
+  const handleResultItemPress = (email) => {
+    props.navigation.navigate("PeopleInformation", {
+      peopleEmail: email, source: { id: "MonoID", value: "Mono ID" }
+    })
   }
 
-  constructor(props){
-    super(props);
-
-    this.state = INITIAL_STATE;
-    this.people = this.props.navigation.getParam("people", []);
-    this.handleResultItemPress = this.handleResultItemPress.bind(this);
-  }
-
-  render(){
-    return(
-      <View>
-        <FlatList
-          data={this.people}
-          renderItem={ ({ item }) => {
-            let profilePicture = "https://picsum.photos/200/200/?random";
-            if(item.applicationInformation.profilePicture){
-              if(item.applicationInformation.profilePicture.downloadUrl) profilePicture = item.applicationInformation.profilePicture.downloadUrl
-              else profilePicture = item.application.profilePicture;
-            }
-            return (
-              <ResultItem
-                onPress={() => this.handleResultItemPress(item.id)}
-                peopleEmail={item.id}
-                profilePicture={profilePicture}
-                name={item.applicationInformation.nickName}/>
-            )
-          }}/>
-      </View>
-    )
-  }
+  return(
+    <View style={{ flex: 1}}>
+      <AppHeader navigation={props.navigation} title="Hasil Pencarian" style={{ backgroundColor: "transparent" }}/>
+      <FlatList data={people} renderItem={ ({ item, index }) => {
+        return (
+          <ResultItem
+            onPress={handleResultItemPress} peopleEmail={item.email} profilePicture={item.profilePicture}
+            name={item.applicationInformation.nickName} key={index}/>
+        )
+      }}/>
+    </View>
+  )
 }
+PeopleSearchResult.navigationOptions = { header: null }
+export default PeopleSearchResult;

@@ -9,8 +9,6 @@ import HeadlineTitle from 'src/components/HeadlineTitle';
 import PrivateRoom from "src/screens/HomeScreen/PrivateRoom";
 import { View, FlatList } from 'react-native';
 
-INITIAL_STATE = { rooms: [] }
-
 function HomeScreen(props){
   const { currentUser } = props;
   const [ rooms, setRooms ] = React.useState([]);

@@ -4,11 +4,14 @@ import { StyleSheet } from "react-native";
 
 import MicButton from "src/components/ChatBottomTextInput/MicButton";
 import SpeakerButton from "src/components/ChatBottomTextInput/SpeakerButton";
+import RTCListener from "src/components/RTCListener";
 import { View, TextInput } from "react-native";
 import { IconButton, withTheme } from "react-native-paper";
 
 function ChatBottomTextInput(props){
   const [ message, setMessage ] = React.useState(message);
+  const [ isPublisher, setIsPublisher ] = React.useState(false);
+  const [ isSubscriber, setIsSubscriber ] = React.useState(false);
 
   const { colors } = props.theme;
   const styles = StyleSheet.create({
@@ -22,6 +25,8 @@ function ChatBottomTextInput(props){
     }
   })
 
+  const handleMicPress = (isActive) => setIsPublisher(isActive);
+  const handleSpeakerPress = (isActive) => setIsSubscriber(isActive);
   const handleMessageChange = (newMessage) => setMessage(newMessage);
   const handleSendPress = () => {
     const copiedMessage = JSON.parse(JSON.stringify(message));
@@ -31,10 +36,11 @@ function ChatBottomTextInput(props){
 
   return (
     <View style={styles.container}>
-      <MicButton style={{ marginRight: 8 }}/> 
-      <SpeakerButton style={{ marginRight: 8 }}/>
+      <MicButton style={{ marginRight: 8 }} onPress={handleMicPress}/> 
+      <SpeakerButton style={{ marginRight: 8 }} onPress={handleSpeakerPress}/>
       <TextInput style={styles.textInput} value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} autoFocus/>
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} onPress={handleSendPress}/>
+      <RTCListener roomId={props.room.id} isPublisher={isPublisher} isSubscriber={isSubscriber}/>
     </View>
   )
 }
