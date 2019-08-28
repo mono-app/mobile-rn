@@ -21,11 +21,15 @@ export default class RoomsAPI{
     
     return roomsRef.orderBy("lastMessage.sentTime", "asc").onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => {
-        const normalizedRoom = { id: documentSnapshot.id, ...documentSnapshot.data() }
+        const normalizedRoom = RoomsAPI.normalizeRoom(documentSnapshot);
         return normalizedRoom;
       })
       callback(rooms);
     })
+  }
+
+  static normalizeRoom(documentSnapshot){
+    return { id: documentSnapshot.id, ...documentSnapshot.data() }
   }
 
   // static async getUnreadCount(roomId){
@@ -96,8 +100,8 @@ export class PersonalRoomsAPI extends RoomsAPI{
       }
 
       const roomRef = db.collection(roomsCollection.getName()).doc();
-      await roomRef.set(payload);
-      return Promise.resolve(roomRef.id);
-    }else return Promise.resolve(querySnapshot.docs[0].id);
+      roomRef.set(payload);
+      return Promise.resolve({ id: roomRef.id, ...payload });
+    }else return Promise.resolve(RoomsAPI.normalizeRoom(querySnapshot.docs[0]));
   }
 }

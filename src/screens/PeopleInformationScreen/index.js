@@ -70,7 +70,7 @@ function PeopleInformationScreen(props){
     )
   }else return (
     <View style={{ flex: 1 }}>
-      <AppHeader navigation={props.navigation}/>
+      <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
       <PeopleProfileHeader
         style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}
         profilePicture={people.profilePicture}

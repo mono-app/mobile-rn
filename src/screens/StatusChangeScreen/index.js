@@ -46,7 +46,7 @@ function StatusChangeScreen(props){
 
   return(
     <View style={{ flex: 1 }}>
-      <AppHeader navigation={props.navigation}/>
+      <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
       <StatusInputCard/>
       <FlatList
         style={{ marginTop: 16 }} data={status}
@@ -76,5 +76,5 @@ function StatusChangeScreen(props){
     </View>
   )
 }
-
+StatusChangeScreen.navigationOptions = { header: null };
 export default StatusChangeScreen;
