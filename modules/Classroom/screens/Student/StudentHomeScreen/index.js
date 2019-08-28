@@ -4,7 +4,6 @@ import { Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import SchoolAPI from "modules/Classroom/api/school"
 import StudentAPI from "modules/Classroom/api/student"
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
@@ -21,7 +20,7 @@ class StudentHomeScreen extends React.PureComponent {
   };
 
   loadProfileInformation = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const currentUserEmail = this.props.currentUser.email
     const student = await StudentAPI.getDetail(this.props.currentSchool.id, currentUserEmail)
     if(student.profilePicture){
       this.setState({ profilePicture: student.profilePicture.downloadUrl });
@@ -67,7 +66,7 @@ class StudentHomeScreen extends React.PureComponent {
 
   async componentDidMount(){
     await this.props.setCurrentSchoolId(this.state.schoolId)
-    await this.props.setCurrentStudentEmail(this.props.currentSchool.id, await CurrentUserAPI.getCurrentUserEmail())
+    await this.props.setCurrentStudentEmail(this.props.currentSchool.id, this.props.currentUser.email)
 
   }
 

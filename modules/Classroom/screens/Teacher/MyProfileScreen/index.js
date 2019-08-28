@@ -6,8 +6,7 @@ import TeacherAPI from "modules/Classroom/api/teacher";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
-import CurrentUserAPI from "src/api/people/CurrentUser";
-import PeopleAPI from "src/api/people";
+import StatusAPI from "src/api/status";
 import ClassAPI from "modules/Classroom/api/class";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
@@ -58,13 +57,10 @@ export default class MyProfileScreen extends React.PureComponent {
   }
 
   
-  loadStatus = () => {
-    CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
-      return new PeopleAPI().getLatestStatus(currentUserEmail);
-    }).then(status => {
-      if(!status) status = { content: "Tulis statusmu disini..." };
-      this.setState({ status: status.content });
-    })
+  loadStatus = async () => {
+    const status = await StatusAPI().getLatestStatus(this.props.currentUser.email);
+    if(!status) status = { content: "Tulis statusmu disini..." };
+    this.setState({ status: status.content });
   }
 
   handleArchivePress = () => {

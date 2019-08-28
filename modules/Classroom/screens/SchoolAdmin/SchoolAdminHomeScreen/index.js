@@ -6,7 +6,6 @@ import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import StorageAPI from "src/api/storage";
 import uuid from "uuid/v4"
 import DocumentPicker from 'react-native-document-picker';
@@ -30,7 +29,7 @@ export default class SchoolAdminHomeScreen extends React.PureComponent {
   }
 
   loadUserName = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const currentUserEmail = this.props.currentUser.email
 
     const schoolAdmin = await SchoolAdminAPI.getDetail(this.state.schoolId, currentUserEmail)
     this.setState({userName: schoolAdmin.name})

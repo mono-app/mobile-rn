@@ -5,7 +5,6 @@ import DiscussionListItem from "src/components/DiscussionListItem";
 import AppHeader from "src/components/AppHeader";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const INITIAL_STATE = { isLoading: true };
@@ -42,8 +41,7 @@ export default class DiscussionsScreen extends React.PureComponent {
   }
 
   handleLikePress = async (item) => {
-    console.log("like pressed")
-    const currentUserEmail= await CurrentUserAPI.getCurrentUserEmail();
+    const currentUserEmail= this.props.currentUser.email
     await DiscussionAPI.like(this.schoolId, this.classId, this.taskId, item.id, currentUserEmail);
     this.loadDiscussions();
   }

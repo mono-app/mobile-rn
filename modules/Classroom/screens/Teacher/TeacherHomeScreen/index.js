@@ -4,7 +4,6 @@ import { Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import SchoolAPI from "modules/Classroom/api/school"
 import TeacherAPI from "modules/Classroom/api/teacher";
 
@@ -58,7 +57,7 @@ class TeacherHomeScreen extends React.PureComponent {
   }
 
   loadProfileInformation = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const currentUserEmail = this.props.currentUser.email
     const teacher = await TeacherAPI.getDetail(this.state.schoolId, currentUserEmail)
     if(teacher.profilePicture){
       this.setState({ profilePicture: teacher.profilePicture.downloadUrl });

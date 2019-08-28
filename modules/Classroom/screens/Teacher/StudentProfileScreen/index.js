@@ -8,7 +8,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import moment from "moment"
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
-import PeopleAPI from "src/api/people";
+import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
 
 const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "", totalClass:0  }
@@ -44,11 +44,10 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   }
 
-  loadStatus = () => {
-    new PeopleAPI().getLatestStatus(this.studentEmail).then(status => {
-      if(!status) status = { content: "-" };
-      this.setState({ status: status.content });
-    })
+  loadStatus = async () => {
+    const status = await StatusAPI().getLatestStatus(this.studentEmail);
+    if(!status) status = { content: "Tulis statusmu disini..." };
+    this.setState({ status: status.content });
   }
 
   constructor(props){

@@ -14,7 +14,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import StudentAPI from "modules/Classroom/api/student";
 import CommentListItem from "src/components/CommentListItem";
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import DeleteDialog from "src/components/DeleteDialog";
 import ImagePickerListItem from "src/components/ImagePickerListItem"
 import DocumentPicker from 'react-native-document-picker';
@@ -49,7 +48,7 @@ export default class DiscussionCommentScreen extends React.PureComponent {
   loadDiscussion = async () => {
     this.setState({ isLoading: true });
     const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterEmail)
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const currentUserEmail = this.props.currentUser.email
 
     const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserEmail)
     this.setState({ isLoading: false, discussion: this.discussion, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
@@ -79,7 +78,7 @@ export default class DiscussionCommentScreen extends React.PureComponent {
 
   handleSendCommentPress = async () => {
     this.setState({ isLoading:true })
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const currentUserEmail = this.props.currentUser.email
 
     data = {
       comment: this.state.comment,
@@ -172,7 +171,7 @@ export default class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleNotifPress = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    const currentUserEmail = this.props.currentUser.email
 
     if(this.state.discussionNotification == null || this.state.discussionNotification==true){
       await StudentAPI.updateDiscussionNotification(this.schoolId,this.classId,currentUserEmail, false);

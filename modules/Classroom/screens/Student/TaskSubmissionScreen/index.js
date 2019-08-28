@@ -7,7 +7,6 @@ import FileAPI from "modules/Classroom/api/file";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
@@ -39,7 +38,7 @@ class TaskSubmissionScreen extends React.PureComponent {
 
   loadFiles = async () => {
     this.setState({ fileList: [], isLoading: true });
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const currentUserEmail = this.props.currentUser.email
     const fileList = await FileAPI.getStudentSubmissionFiles(this.props.currentSchool.id, this.classId, this.taskId, currentUserEmail);
     this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
@@ -71,7 +70,7 @@ class TaskSubmissionScreen extends React.PureComponent {
 
   onDeletePress = async () => {
     this.setState({isLoading: true})
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const currentUserEmail = this.props.currentUser.email
 
     await FileAPI.deleteStudentSubmissionFile(this.props.currentSchool.id,this.classId,this.taskId,currentUserEmail, this.state.selectedFile);
     this.deleteDialog.toggleShow()

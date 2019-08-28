@@ -7,7 +7,7 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import moment from "moment"
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
-import PeopleAPI from "src/api/people";
+import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
@@ -36,11 +36,10 @@ class StudentProfileScreen extends React.PureComponent {
     this.setState({ isLoadingProfile: false, student });
   }
 
-  loadStatus = () => {
-    new PeopleAPI().getLatestStatus(this.studentEmail).then(status => {
-      if(!status) status = { content: "-" };
-      this.setState({ status: status.content });
-    })
+  loadStatus = async () => {
+    const status = await StatusAPI().getLatestStatus(this.studentEmail);
+    if(!status) status = { content: "Tulis statusmu disini..." };
+    this.setState({ status: status.content });
   }
 
   constructor(props){

@@ -3,13 +3,11 @@ import { StackActions } from "react-navigation";
 import { View,FlatList, StyleSheet } from "react-native";
 import Navigator from "src/api/navigator";
 import { Appbar, Text, ActivityIndicator, Dialog, Searchbar,Caption, Subheading, Headline } from "react-native-paper";
-
 import SchoolListItem from "modules/Classroom/components/SchoolListItem"
 import TeacherAPI from "modules/Classroom/api/teacher"
 import StudentAPI from "modules/Classroom/api/student"
 import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
 import SchoolAPI from "modules/Classroom/api/school"
-import CurrentUserAPI from "src/api/people/CurrentUser";
 
 
 const INITIAL_STATE = {
@@ -30,7 +28,7 @@ export default class SplashClass extends React.PureComponent {
   loadSchools = async () => {
 
     this.setState({schoolList: []});
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const currentUserEmail = this.props.currentUser.email
 
     this.setState({currentUserEmail})
 
