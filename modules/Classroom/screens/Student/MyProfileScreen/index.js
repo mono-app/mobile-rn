@@ -154,10 +154,12 @@ class MyProfileScreen extends React.PureComponent {
       <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
           <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
-            <PeopleProfileHeader
-              profilePicture={this.state.profilePicture}
-              nickName={this.state.student.name}
-              status= {(this.state.student.noInduk) ?"NIM " +  this.state.student.noInduk: "NIM " + "-"}/>
+          <PeopleProfileHeader
+            style={{padding:16}}
+            profilePicture={this.state.profilePicture}
+            title={this.state.student.name}
+            subtitle={(this.state.student.noInduk) ?"NIM " +  this.state.student.noInduk: "NIM " + "-"}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={this.handleStatusPress}>

@@ -11,7 +11,12 @@ import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "" }
+const INITIAL_STATE = { 
+  isLoadingProfile: true, 
+  student: {}, 
+  status: "",
+  profilePicture: "https://picsum.photos/200/200/?random"
+}
 
 class StudentProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -32,6 +37,9 @@ class StudentProfileScreen extends React.PureComponent {
     const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
+    }
+    if(student.profilePicture){
+      this.setState({ profilePicture: student.profilePicture.downloadUrl });
     }
     this.setState({ isLoadingProfile: false, student });
   }
@@ -73,10 +81,10 @@ class StudentProfileScreen extends React.PureComponent {
         <ScrollView>
           <View style={{marginTop: 16}}/>
           <PeopleProfileHeader
+            style={{padding:16}}
             profilePicture="https://picsum.photos/200/200/?random"
-            nickName={this.state.student.name}
-            status= {"NIM " + ((!this.state.student)?this.state.student.noInduk:"-")}/>
-
+            title={this.state.student.name}
+            subtitle= {"NIM: " + ((this.state.student.noInduk)?this.state.student.noInduk:"-")}/>
 
           <View style={{ marginTop:16, paddingHorizontal: 16, paddingVertical:8, backgroundColor: "#fff" }}>
             <Text style={{fontWeight: "bold"}}>Status</Text>

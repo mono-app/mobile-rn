@@ -18,6 +18,7 @@ import DeleteDialog from "src/components/DeleteDialog";
 import ImagePickerListItem from "src/components/ImagePickerListItem"
 import DocumentPicker from 'react-native-document-picker';
 import uuid from "uuid/v4"
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -30,8 +31,7 @@ const INITIAL_STATE = {
   locationCoordinate: null,
   dicussionNotification: {} 
 };
-
-export default class DiscussionCommentScreen extends React.PureComponent {
+class DiscussionCommentScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -397,3 +397,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
+export default withCurrentUser(DiscussionCommentScreen)

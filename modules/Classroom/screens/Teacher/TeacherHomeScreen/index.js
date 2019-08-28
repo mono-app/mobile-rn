@@ -6,6 +6,7 @@ import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import TeacherAPI from "modules/Classroom/api/teacher";
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -160,4 +161,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTheme(TeacherHomeScreen)
+export default withCurrentUser(withTheme(TeacherHomeScreen))

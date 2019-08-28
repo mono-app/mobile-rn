@@ -107,8 +107,9 @@ class ClassDetailsScreen extends React.PureComponent {
         <ScrollView>
           <View style={{  marginTop: 16 }}/>  
           <PeopleProfileHeader
+            style={{padding:16}}
             profilePicture="https://picsum.photos/200/200/?random"
-            nickName={this.state.class.subject}
+            title={this.state.class.subject}
             />
           <View style={{  marginVertical: 16 }}>  
             <PeopleInformationContainer

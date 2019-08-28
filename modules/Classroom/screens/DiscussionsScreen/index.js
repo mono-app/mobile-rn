@@ -6,10 +6,11 @@ import AppHeader from "src/components/AppHeader";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = { isLoading: true };
 
-export default class DiscussionsScreen extends React.PureComponent {
+class DiscussionsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -114,18 +115,4 @@ export default class DiscussionsScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  subjectContainer:{
-    marginTop: 8,
-    backgroundColor: "#fff",
-    flexDirection: "column",
-    padding: 16
-  },
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentUser(DiscussionsScreen)

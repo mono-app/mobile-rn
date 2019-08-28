@@ -9,6 +9,7 @@ import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
 import StorageAPI from "src/api/storage";
 import uuid from "uuid/v4"
 import DocumentPicker from 'react-native-document-picker';
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -18,7 +19,7 @@ const INITIAL_STATE = {
   userName: ""
 };
 
-export default class SchoolAdminHomeScreen extends React.PureComponent {
+class SchoolAdminHomeScreen extends React.PureComponent {
   static navigationOptions = () => {
     return { header: null };
   };
@@ -197,3 +198,4 @@ const styles = StyleSheet.create({
     borderRadius: 12
   }
 });
+export default withCurrentUser(SchoolAdminHomeScreen)

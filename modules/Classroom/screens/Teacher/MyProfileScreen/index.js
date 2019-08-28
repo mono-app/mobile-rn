@@ -13,6 +13,7 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import uuid from "uuid/v4"
 import DocumentPicker from 'react-native-document-picker';
 import StorageAPI from "src/api/storage";
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
@@ -22,12 +23,7 @@ const INITIAL_STATE = {
   profilePicture: "https://picsum.photos/200/200/?random" 
 }
 
-/**
- * Parameter list
- * 
- * @param {string} teacherEmail
- */
-export default class MyProfileScreen extends React.PureComponent {
+class MyProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -272,3 +268,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
+export default withCurrentUser(MyProfileScreen)

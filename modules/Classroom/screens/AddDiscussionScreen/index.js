@@ -6,13 +6,13 @@ import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import Button from "src/components/Button";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import DocumentPicker from 'react-native-document-picker';
 import StorageAPI from "src/api/storage"
 import uuid from "uuid/v4"
 import DeleteDialog from "src/components/DeleteDialog";
 import ImagePickerListItem from "src/components/ImagePickerListItem"
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -24,12 +24,7 @@ const INITIAL_STATE = {
   locationCoordinate: null
 };
 
-/**
- * Parameter list
- *
- * @param {string} classId
- */
-export default class AddDiscussionScreen extends React.PureComponent {
+class AddDiscussionScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -52,7 +47,7 @@ export default class AddDiscussionScreen extends React.PureComponent {
 
   handleSavePress = async () => {
     this.setState({ isLoading: true });
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail()
+    const currentUserEmail = this.props.currentUser.email
     const data = {
       posterEmail: currentUserEmail,
       title: this.state.title,
@@ -303,3 +298,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 });
+export default withCurrentUser(AddDiscussionScreen)
