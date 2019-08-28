@@ -33,21 +33,16 @@ export default class PeopleAPI{
   /**
    * 
    * @param {String} monoId 
-   * @param {boolean} includeSelf
    */
-  async getByMonoId(monoId, includeSelf=false){
+  static async getByMonoId(monoId){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const collectionRef = db.collection(userCollection.getName());
     const queryPath = new firebase.firestore.FieldPath("applicationInformation", "id");
     const userQuery = collectionRef.where(queryPath, "==", monoId);
     const querySnapshot = await userQuery.get();
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const foundPeople = querySnapshot.docs.filter(documentSnapshot => documentSnapshot.id !== currentUserEmail)
-                                          .map(documentSnapshot => { 
-                                            return { id: documentSnapshot.id, ...documentSnapshot.data() }
-                                          });
-    return Promise.resolve(foundPeople);
+    const normalizedPeople = querySnapshot.docs.map((documentSnapshot) => PeopleAPI.normalizePeople(documentSnapshot));
+    return Promise.resolve(normalizedPeople);
   }
 
   /**

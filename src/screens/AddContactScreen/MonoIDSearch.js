@@ -1,57 +1,39 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
+import { StyleSheet } from "react-native";
+import { withNavigation } from "react-navigation";
 
 import PeopleAPI from "src/api/people";
 
 import TextInput from "src/components/TextInput";
+import { View } from "react-native";
+import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
-const INITIAL_STATE = { id: "", isCannotFindPeopleDialogVisible: false };
+function MonoIDSearch(props){
+  const [ id, setId ] = React.useState("");
+  const styles = StyleSheet.create({
+    container: {
+      display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-evenly",
+      padding: 16,  paddingTop: 8, paddingBottom: 8, marginBottom: 8, backgroundColor: "white"
+    }
+  })
 
-export default class MonoIDSearch extends React.Component{
-  handleIdChange = id => this.setState({ id });
-  handleSubmit = async () => {
-    const { id } = this.state;
-    const foundPeople = await new PeopleAPI().getByMonoId(id);
-    if(foundPeople.length > 0){
-      this.props.navigation.navigate("PeopleSearchResult", { people: foundPeople });
-    }else this.setState({ isCannotFindPeopleDialogVisible: true });
+  const handleIdChange = (id) => setId(id);
+  const handleSubmit = async () => {
+    const foundPeople = await PeopleAPI.getByMonoId(id);
+    if(foundPeople.length > 0) {
+      setId("");
+      props.navigation.navigate("PeopleSearchResult", { people: foundPeople });
+    }
   }
 
-  constructor(props){
-    super(props);
-
-    this.state = INITIAL_STATE;
-    this.handleIdChange = this.handleIdChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  render(){
-    return(
-      <View style={styles.container}>
-        <MaterialIcons name="search" size={24} color="#E8EEE8" style={{ marginRight: 8 }}/>
-        <TextInput 
-          placeholder="Mono ID" 
-          returnKeyType="search"
-          style={{ borderWidth: 0, flex: 1, marginBottom: 0 }}
-          value={this.state.id}
-          onChangeText={this.handleIdChange}
-          onSubmitEditing={this.handleSubmit}/>
-      </View>
-    )
-  }
+  return(
+    <View style={styles.container}>
+      <MaterialIcons name="search" size={24} color="#E8EEE8" style={{ marginRight: 8 }}/>
+      <TextInput 
+        placeholder="Mono ID" returnKeyType="search" style={{ borderWidth: 0, flex: 1, marginBottom: 0 }}
+        value={id} onChangeText={handleIdChange} onSubmitEditing={handleSubmit}/>
+    </View>
+  )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    padding: 16, 
-    paddingTop: 8, 
-    paddingBottom: 8,
-    marginBottom: 8, 
-    backgroundColor: "white"
-  }
-})
+export default withNavigation(MonoIDSearch);
