@@ -10,6 +10,24 @@ export default class RoomsAPI{
     this.isRoomExists = this.isRoomExists.bind(this);
   }
 
+  /**
+   * @param {string} email
+   * @param {Function} callback 
+   */
+  static getRoomsWithRealtimeUpdate(email, callback){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email);
+    
+    return roomsRef.orderBy("lastMessage.sentTime", "asc").onSnapshot((querySnapshot) => {
+      const rooms = querySnapshot.docs.map((documentSnapshot) => {
+        const normalizedRoom = { id: documentSnapshot.id, ...documentSnapshot.data() }
+        return normalizedRoom;
+      })
+      callback(rooms);
+    })
+  }
+
   static async getUnreadCount(roomId){
     const db = firebase.firestore();
     const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
@@ -73,8 +91,8 @@ export class PersonalRoomsAPI extends RoomsAPI{
       audiencesPayload[firstPeopleEmail] = true;
       audiencesPayload[secondPeopleEmail] = true;
       const payload = { 
-        audiences: [firstPeopleEmail, secondPeopleEmail], type: "chat", 
-        audiencesQuery: audiencesPayload, lastMessage: {message: "", setTime: null} 
+        audiences: [firstPeopleEmail, secondPeopleEmail], type: "chat",
+        audiencesQuery: audiencesPayload, lastMessage: {message: "", sentTime: null} 
       }
 
       const roomRef = db.collection(roomsCollection.getName()).doc();

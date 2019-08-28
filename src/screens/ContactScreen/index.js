@@ -4,6 +4,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import PeopleListItem from "src/components/PeopleListItem";
 import HeadlineTitle from "src/components/HeadlineTitle";
+import AppHeader from "src/components/AppHeader";
 import { View, FlatList } from "react-native";
 import { Searchbar } from "react-native-paper";
 
@@ -12,11 +13,6 @@ function ContactScreen(props){
   const [ peopleList, setPeopleList ] = React.useState([]);
   const friendsListener = React.useRef(null);
 
-  // handleContactPress = people => {
-  //   const peopleEmail = people.id;
-  //   const source = people.source;
-  //   this.props.navigation.navigate("PeopleInformation", { peopleEmail, source });
-  // }
   const handleContactPress = (people) => {
     props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
   }
@@ -33,6 +29,7 @@ function ContactScreen(props){
   
   return(
     <View style={{ flex: 1 }}>
+      <AppHeader style={{ backgroundColor: "transparent" }}/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Kontak-ku</HeadlineTitle>
       <View style={{ padding: 16 }}>
         <Searchbar placeholder="Cari kontak"/>
@@ -46,5 +43,5 @@ function ContactScreen(props){
     </View>
   )
 }
-
+ContactScreen.navigationOptions = { header: null }
 export default withCurrentUser(ContactScreen);

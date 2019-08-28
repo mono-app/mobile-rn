@@ -38,7 +38,7 @@ function SettingsScreen(props){
   if(!isLoggedIn) return null;
   return (
     <View style={{ flex: 1 }}>
-      <AppHeader/>
+      <AppHeader style={{ backgroundColor: "transparent", elevation: 0 }}/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Settings</HeadlineTitle>
       <ScrollView>
         <View style={styles.profileContainer}>
@@ -70,5 +70,5 @@ function SettingsScreen(props){
     </View>
   )
 }
-
+SettingsScreen.navigationOptions = { header: null }
 export default withCurrentUser(SettingsScreen);

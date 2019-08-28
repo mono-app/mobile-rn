@@ -1,50 +1,35 @@
 import React from "react";
 import firebase from "react-native-firebase";
-import { Badge } from "react-native-paper";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
-import CurrentUserAPI from "src/api/people/CurrentUser";
 import { RoomsCollection, MessagesCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
+import { Badge } from "react-native-paper";
 
-const INITIAL_STATE = { count: null }
+function UnreadCountBadge(props){
+  const { roomId, currentUser } = props;
+  const [ count, setCount ] = React.useState(0);
+  const unreadListener = React.useRef(null);
 
-export default class UnreadCountBadge extends React.PureComponent{
-  loadData = async () => {
-    const { roomId } = this.props;
-    if(roomId && this.listener === null){
-      const db = firebase.firestore();
-      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-      const roomsCollection = new RoomsCollection();
-      const roomDocument = new Document(roomId);
-      const messagesCollection = new MessagesCollection();
-      const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
-      const messageRef = roomRef.collection(messagesCollection.getName());
-      this.listener = messageRef.where("read.isRead", "==", false).onSnapshot(querySnapshot => {
-        const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
-          if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
-          else return false;
-        }).length;
-        this.setState({ count: unreadCount });
-      })
-    }
-  }
+  React.useEffect(() => {
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const messagesCollection = new MessagesCollection();
+    const roomDocument = new Document(roomId);
+    const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
+    const messagesRef = roomRef.collection(messagesCollection.getName());
+    unreadListener.current = messagesRef.where("read.isRead", "==", false).onSnapshot((querySnapshot) => {
+      const unreadCount = querySnapshot.docs.filter((documentSnapshot) => {
+        if(documentSnapshot.data().senderEmail !== currentUser.email) return true;
+        else return false;
+      }).length;
+      setCount(unreadCount);
+    })
+  }, [])
 
-  constructor(props){
-    super(props);
-    
-    this.state = INITIAL_STATE;
-    this.listener = null;
-    this.loadData = this.loadData.bind(this);
-  }
-
-  componentDidMount(){ this.loadData(); }
-  componentDidUpdate(){ this.loadData(); }
-  componentWillUnmount(){ if(this.listener) this.listener(); }
-
-  render(){
-    if(this.state.count === null || this.state.count === 0) return null;
-    else return <Badge style={this.props.style}>{this.state.count}</Badge>
-  }
+  if(count === 0) return null;
+  else return <Badge style={props.style}>{count}</Badge>
 }
 
 UnreadCountBadge.defaultProps = { style: {}, roomId: null }
+export default withCurrentUser(UnreadCountBadge);

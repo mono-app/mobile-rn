@@ -129,33 +129,6 @@ export default class PeopleAPI{
     return Promise.resolve(currentUserEmail);
   }
 
-  /**
-   * 
-   * @param {function} callback 
-   */
-  static async getRoomsWithRealtimeUpdate(callback){
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    const roomsCollection = new RoomsCollection();
-    const searchField = new firebase.firestore.FieldPath("audiences", currentUserEmail);
-    const db = firebase.firestore();
-    const roomsRef = db.collection(roomsCollection.getName()).where(searchField, "==", true);
-    return roomsRef.onSnapshot({ includeMetadataChanges: true }, querySnapshot => {
-      const rooms = querySnapshot.docs.map(documentSnapshot => {
-        return { id: documentSnapshot.id, ...documentSnapshot.data() }
-      })
-
-      rooms.sort((a, b) => {
-        const firstSentItem = a.lastMessage.sentTime? a.lastMessage.sentTime.seconds: moment().unix();
-        const secondSentItem = b.lastMessage.sentTime? b.lastMessage.sentTime.seconds: moment().unix();
-
-        if(firstSentItem > secondSentItem) return -1
-        else if(firstSentItem < secondSentItem) return 1
-        else return 0;
-      });
-      callback(rooms);
-    })
-  }
-
   static async setOnlineStatus(peopleEmail, status){
     const db = firebase.firestore();
     const usersCollection = new UserCollection();

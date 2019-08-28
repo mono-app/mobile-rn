@@ -1,15 +1,26 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { StyleSheet } from "react-native";
 
 import MicButton from "src/components/ChatBottomTextInput/MicButton";
 import SpeakerButton from "src/components/ChatBottomTextInput/SpeakerButton";
 import { View, TextInput } from "react-native";
-import { Surface, IconButton, withTheme } from "react-native-paper";
+import { IconButton, withTheme } from "react-native-paper";
 
 function ChatBottomTextInput(props){
   const [ message, setMessage ] = React.useState(message);
 
   const { colors } = props.theme;
+  const styles = StyleSheet.create({
+    container: { 
+      display: "flex", flexDirection: "row", paddingHorizontal: 16, paddingVertical: 8,
+      borderTopWidth: 1, borderTopColor: "#E8EEE8", alignItems: "center", justifyContent: "center"
+    },
+    textInput: {
+      backgroundColor: "#E8EEE8", borderColor: "#E8EEE8", borderWidth: 1,
+      borderRadius: 32, flexGrow: 1, paddingLeft: 16, paddingRight: 16, paddingVertical: 4
+    }
+  })
 
   const handleMessageChange = (newMessage) => setMessage(newMessage);
   const handleSendPress = () => {
@@ -19,18 +30,12 @@ function ChatBottomTextInput(props){
   }
 
   return (
-    <Surface style={{ margin: 8, marginHorizontal: 16, overflow: "hidden", borderRadius: 32, elevation: 8 }}>
-      <View style={{ paddingHorizontal: 8, backgroundColor: "white", flexDirection: "row", borderTopStartRadius: 32, borderTopEndRadius: 32, borderBottomColor: colors.disabled, borderBottomWidth: 1, overflow: "hidden" }}>
-        <MicButton/> 
-        <SpeakerButton/>
-      </View>
-      <View style={{ flexDirection: "row", padding: 2, paddingHorizontal: 16 , backgroundColor: "white", borderBottomStartRadius: 32, borderBottomEndRadius: 32, overflow: "hidden" }}>
-        <TextInput
-          style={{ flex: 1 }} value={message} placeholder="Tuliskan pesan..." 
-          onChangeText={handleMessageChange} autoFocus/>
-        <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} onPress={handleSendPress}/>
-      </View>
-    </Surface>
+    <View style={styles.container}>
+      <MicButton style={{ marginRight: 8 }}/> 
+      <SpeakerButton style={{ marginRight: 8 }}/>
+      <TextInput style={styles.textInput} value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} autoFocus/>
+      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} onPress={handleSendPress}/>
+    </View>
   )
 }
 

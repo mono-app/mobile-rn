@@ -1,26 +1,27 @@
 import React from "react";
-import { IconButton, withTheme } from "react-native-paper";
+import { withTheme } from "react-native-paper";
+import { StyleSheet } from "react-native";
 
-const INITIAL_STATE = { isActive: false }
+import { IconButton } from "react-native-paper";
 
-class MicButton extends React.PureComponent{
-  handlePress = () => this.setState({ isActive: !this.state.isActive });
+function MicButton(props){
+  const { colors } = props.theme;
+  const [ isActive, setIsActive ] = React.useState(false);
+  
+  const iconName = (isActive)? "mic": "mic-off";
+  const iconColor = (isActive)? colors.primary: colors.disabled;
 
-  constructor(props){
-    super(props);
+  const styles = StyleSheet.create({
+    default: { marginHorizontal: 0 }
+  })
 
-    this.state = INITIAL_STATE;
-    this.handlePress = this.handlePress.bind(this);
-  }
+  const handlePress = () => setIsActive(!isActive);
 
-  render(){
-    const { colors } = this.props.theme;
-    const { isActive } = this.state;
-    const iconName = (isActive)? "mic": "mic-off";
-    const iconColor = (isActive)? colors.primary: colors.disabled;
-
-    return <IconButton icon={iconName} size={24} color={iconColor} onPress={this.handlePress}/>
-  }
+  return (
+    <IconButton 
+      style={[ styles.default, props.style ]} icon={iconName} size={24} 
+      color={iconColor} onPress={handlePress}/>
+  )
 }
-
+MicButton.defaultProps = { style: {} }
 export default withTheme(MicButton);

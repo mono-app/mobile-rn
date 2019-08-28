@@ -16,5 +16,5 @@ export default SettingTabNavigator = createStackNavigator({
   StatusChange: { screen: StatusChangeScreen },
   Gallery: { screen: GalleryScreen }
 }, {
-  initialRouteName: "Home", defaultNavigationOptions: { header: null }
+  initialRouteName: "Home"
 })
