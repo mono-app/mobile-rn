@@ -48,11 +48,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new DocumentPickerPackage(),
-            new RNCameraKitPackage(),
-            new RNBackgroundDownloaderPackage(),
-            new AsyncStoragePackage(),
-            new NetInfoPackage(),
+          new DocumentPickerPackage(),
+          new RNCameraKitPackage(),
+          new RNBackgroundDownloaderPackage(),
+          new AsyncStoragePackage(),
+          new NetInfoPackage(),
           new RNSpinkitPackage(),
           new FastImageViewPackage(),
           new RNFSPackage(),
@@ -68,8 +68,7 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseMessagingPackage(),
           new RNFirebaseNotificationsPackage(),
           new RNFirebaseInstanceIdPackage(),
-          new MapsPackage()
-          new RNFirebaseInstanceIdPackage(),
+          new MapsPackage(),
           new WebRTCModulePackage()  
       );
     }
