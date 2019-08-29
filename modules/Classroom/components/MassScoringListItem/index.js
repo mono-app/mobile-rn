@@ -58,7 +58,7 @@ export default class MassScoringListItem extends React.PureComponent{
     
     return(
      
-      <TouchableOpacity onPress={this.props.onPress} disabled={this.state.finalScore}>
+      <TouchableOpacity onPress={this.props.onPress} disabled={(this.state.finalScore)}>
         <View style={styles.listItemContainer}>
           <View style={styles.listDescriptionContainer}>
             <Text style={styles.label}>{(noInduk)?noInduk:"-"} / {name}</Text>

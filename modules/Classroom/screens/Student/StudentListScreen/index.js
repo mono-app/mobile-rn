@@ -38,7 +38,6 @@ class StudentListScreen extends React.PureComponent {
       const filteredPeopleList = clonedPeopleList.filter((people) => {
         return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
-      console.log(filteredPeopleList)
       this.setState({filteredPeopleList})
     } else {
       this.setState({filteredPeopleList: clonedPeopleList})

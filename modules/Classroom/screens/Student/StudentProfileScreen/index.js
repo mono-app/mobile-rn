@@ -33,7 +33,6 @@ class StudentProfileScreen extends React.PureComponent {
 
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
-    console.log(this.props.currentSchool.id, this.studentEmail)
     const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)

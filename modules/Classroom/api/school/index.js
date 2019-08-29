@@ -26,11 +26,9 @@ export default class SchoolAPI{
 
   static async updateSchoolProfilePicture(schoolId, storagePath, downloadUrl){
     const db = firebase.firestore();
-    const batch = db.batch();
-
     const schoolsCollection = new SchoolsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    await batch.update(schoolsDocumentRef, { "profilePicture": {storagePath, downloadUrl} })
+    await schoolsDocumentRef.update({"profilePicture": {storagePath, downloadUrl} })
     return Promise.resolve(true)
   }
 

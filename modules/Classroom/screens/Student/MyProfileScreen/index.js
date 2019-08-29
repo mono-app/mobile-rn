@@ -75,8 +75,6 @@ class MyProfileScreen extends React.PureComponent {
       const storagePath = "/modules/classroom/students/"+uuid()
       const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
       await StudentAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentStudent.email ,storagePath, downloadUrl)
-
-      this.setState({profilePicture: downloadUrl})
       
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -148,9 +146,10 @@ class MyProfileScreen extends React.PureComponent {
       <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
           <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
+
           <PeopleProfileHeader
             style={{padding:16}}
-            profilePicture={this.state.profilePicture}
+            profilePicture={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }
             title={this.state.student.name}
             subtitle={(this.state.student.noInduk) ?"NIM " +  this.state.student.noInduk: "NIM " + "-"}
             />

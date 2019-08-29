@@ -111,7 +111,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
 
         <View style={styles.logo}>
-          <SquareAvatar size={100} uri={this.state.profilePicture}/>
+          <SquareAvatar size={100} uri={this.props.schoolProfilePicture }/>
           <TouchableOpacity onPress={this.changeSchoolProfilePicture}>
             <Text style={{ fontWeight: "400", fontSize: 16, marginTop: 8, color:"#0ead69" }}>Ubah Logo Sekolah</Text>
           </TouchableOpacity>

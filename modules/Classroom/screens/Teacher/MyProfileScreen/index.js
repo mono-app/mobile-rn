@@ -89,9 +89,7 @@ class MyProfileScreen extends React.PureComponent {
       const storagePath = "/modules/classroom/teachers/"+uuid()
       const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
       await TeacherAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentTeacher.email ,storagePath, downloadUrl)
-    
-      this.setState({profilePicture: downloadUrl})
-      
+          
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -149,9 +147,9 @@ class MyProfileScreen extends React.PureComponent {
 
             <PeopleProfileHeader
               style={{padding:16}}
-              profilePicture={this.state.profilePicture}
+              profilePicture={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : this.state.profilePicture }
               title={this.state.teacher.name}
-              subtitle= {"NIK" + this.state.teacher.nik}/>
+              subtitle= {"NIK: " + this.state.teacher.nik}/>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={this.handleStatusPress}>

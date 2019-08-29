@@ -69,7 +69,6 @@ class ClassProfileScreen extends React.PureComponent {
         this.setState({class: newClass})
       }
     }
-    console.log(payload);
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
 

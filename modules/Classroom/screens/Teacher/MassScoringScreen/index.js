@@ -36,7 +36,6 @@ class MassScoringScreen extends React.PureComponent {
     this.setState({ peopleList: [], filteredPeopleList: [] });
     const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
     this.setState({ peopleList, filteredPeopleList: peopleList });
-    console.log(peopleList)
   }
 
   handleStudentPress = async student => {

@@ -1,7 +1,6 @@
 import React from "react";
 import firebase from "react-native-firebase";
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import SchoolAPI from "modules/Classroom/api/school"
 import { SchoolAdminsCollection, SchoolsCollection } from "src/api/database/collection";
 
 const CurrentSchoolAdminContext = React.createContext();
@@ -12,6 +11,7 @@ export function withCurrentSchoolAdmin(Component){
         {(context) => <Component {...props} ref={ref}
           setCurrentSchoolAdminEmail={context.setCurrentSchoolAdminEmail}
           setCurrentSchoolId={context.setCurrentSchoolId}
+          schoolProfilePicture={(context.school.profilePicture)? context.school.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random"}
           currentSchoolAdmin = {context.schoolAdmin}
           currentSchool = {context.school}
           />}
@@ -28,8 +28,18 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
   };
 
   handleCurrentSchoolId = async (id) => {
-    const school = await SchoolAPI.getDetail(id);
-    this.setState({school})
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(id);
+
+    this.schoolListener = schoolsDocumentRef.onSnapshot((documentSnapshot) => {
+      if(documentSnapshot.exists){
+        const school = documentSnapshot.data();
+
+        this.setState({ school });
+          
+      }
+    });
   }
 
   handleCurrentSchoolAdminEmail = async (schoolId, email) => {
@@ -46,10 +56,6 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
 
         this.setState({ schoolAdmin });
           
-        // if(schoolAdmin.profilePicture !== undefined){
-        //   schoolAdmin.profilePicture = JSON.parse(JSON.stringify(schoolAdmin.profilePicture.downloadUrl));
-        // }else schoolAdmin.profilePicture = "https://picsum.photos/200/200/?random";
-        
       }
     });
   };
@@ -60,8 +66,9 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
     this.state = { 
       school: {}, 
       schoolAdmin: {}, 
+      schoolProfilePicture: "",
       setCurrentSchoolId: this.handleCurrentSchoolId,
-      setCurrentSchoolAdminEmail: this.handleCurrentSchoolAdminEmail 
+      setCurrentSchoolAdminEmail: this.handleCurrentSchoolAdminEmail,
     }
     this.handleCurrentSchoolId = this.handleCurrentSchoolId.bind(this);
     this.handleCurrentSchoolAdminEmail = this.handleCurrentSchoolAdminEmail.bind(this);
@@ -70,6 +77,7 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
  
   componentWillUnmount(){
     if(this.userListener) this.userListener();
+    if(this.schoolListener) this.schoolListener();
   }
 
   render(){

@@ -26,8 +26,6 @@ class TaskArchiveListScreen extends React.PureComponent {
     this.setState({ taskList: [] });
     const taskList = await TaskAPI.getExpiredTasks(this.props.currentSchool.id, this.classId);
     this.setState({ taskList, filteredTaskList: taskList });
-    console.log(this.props.currentSchool.id)
-    console.log(this.classId)
   }
 
   handleTaskSubmissionPress = (task) => {

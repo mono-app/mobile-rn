@@ -67,7 +67,6 @@ class AddDiscussionScreen extends React.PureComponent {
     const payload = {
       onRefresh:(locationCoordinate)=> {
         this.setState({locationCoordinate})
-        console.log(locationCoordinate)
         }
     }
     this.props.navigation.navigate("MapsPicker",payload)
@@ -85,8 +84,6 @@ class AddDiscussionScreen extends React.PureComponent {
       });
     
       const downloadUrl = await StorageAPI.uploadFile("/modules/classroom/discussions/"+uuid(),res.uri)
-
-      console.log(downloadUrl)
 
     } catch (err) {
       console.log(err)

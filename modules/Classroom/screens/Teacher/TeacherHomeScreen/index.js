@@ -59,7 +59,7 @@ class TeacherHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
-          <SquareAvatar size={100} uri={this.state.profilePicture}/>
+          <SquareAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : this.state.profilePicture }/>
           <TouchableOpacity onPress={this.handleTeacherProfilePress} style={{marginTop:16}}>
             <Text style={{ color: this.props.theme.colors.primary }}>Lihat Profile</Text>
           </TouchableOpacity>
