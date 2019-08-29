@@ -4,10 +4,10 @@ import { Searchbar } from "react-native-paper";
 import StudentListItem from "modules/Classroom/components/StudentListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [], searchText: "" };
-
-export default class StudentListScreen extends React.PureComponent {
+class StudentListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -22,13 +22,12 @@ export default class StudentListScreen extends React.PureComponent {
 
   loadStudents = async () => {
     this.setState({peopleList: []})
-    const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
+    const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
     this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
   handleStudentPress = people => {
     const payload = {
-      schoolId: this.schoolId,
       studentEmail: people.id
     }
     this.props.navigation.navigate("StudentProfile", payload);
@@ -53,7 +52,6 @@ export default class StudentListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
@@ -82,7 +80,7 @@ export default class StudentListScreen extends React.PureComponent {
             return (
               <StudentListItem 
                 onPress={() => this.handleStudentPress(item)}
-                schoolId={this.schoolId} student={item}/>
+                schoolId={this.props.currentSchool.id} student={item}/>
             )
           }}
         />
@@ -91,3 +89,4 @@ export default class StudentListScreen extends React.PureComponent {
   }
 }
 
+export default withCurrentTeacher(StudentListScreen)

@@ -11,10 +11,11 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import DeleteDialog from "src/components/DeleteDialog";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import Button from "src/components/Button";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isFetching: true, isDeleting: false ,task:{}, showSnackbarFailDeleting: false, totalSubmission: 0, totalDiscussion: 0 };
 
-export default class TaskDetailsScreen extends React.PureComponent {
+class TaskDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -30,15 +31,15 @@ export default class TaskDetailsScreen extends React.PureComponent {
   loadTask = async () => {
     this.setState({ isFetching: true});
     const api = new TaskAPI();
-    const task = await api.getDetail(this.schoolId, this.classId, this.taskId);
-    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
-    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.schoolId, this.classId, this.taskId);
+    const task = await api.getDetail(this.props.currentSchool.id, this.classId, this.taskId);
+    const totalSubmission = await SubmissionAPI.getTotalSubmission(this.props.currentSchool.id, this.classId, this.taskId);
+    const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.props.currentSchool.id, this.classId, this.taskId);
     this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
   }
 
   handleNamePress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "title", 
@@ -57,7 +58,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
     const payload = {
       isDatetimePicker: true,
       pickerType: "date",
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "dueDate", 
@@ -72,7 +73,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
     const payload = {
       isDatetimePicker: true,
       pickerType: "time",
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "dueDate", 
@@ -86,7 +87,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
   handleDetailPress = e => {
     const payload = {
       isMultiline: true,
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       databaseFieldName: "details", 
@@ -103,7 +104,6 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleTaskSubmissionPress = () => {
     const payload = {
-      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       title: this.state.task.title,
@@ -115,7 +115,7 @@ export default class TaskDetailsScreen extends React.PureComponent {
 
   handleDiscussionPress = () => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: this.taskId,
       subject: this.subject,
@@ -127,10 +127,10 @@ export default class TaskDetailsScreen extends React.PureComponent {
   handleDelete = async () => {
     this.setState({isDeleting: true})
     this.deleteDialog.toggleShow()
-    const total = await SubmissionAPI.getTotalSubmission(this.schoolId, this.classId, this.taskId);
+    const total = await SubmissionAPI.getTotalSubmission(this.props.currentSchool.id, this.classId, this.taskId);
     
     if(total===0){
-      await TaskAPI.deleteTask(this.schoolId, this.classId, this.taskId);
+      await TaskAPI.deleteTask(this.props.currentSchool.id, this.classId, this.taskId);
       const { navigation } = this.props;
       navigation.state.params.onDeleteSuccess();
       navigation.goBack();   
@@ -145,7 +145,6 @@ export default class TaskDetailsScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.loadTask = this.loadTask.bind(this);
     this.deleteDialog = null;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");
@@ -302,3 +301,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
+export default withCurrentTeacher(TaskDetailsScreen)

@@ -4,10 +4,11 @@ import { Text, Searchbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import ArchiveListItem from "modules/Classroom/components/ArchiveListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false, searchText: "", taskList: [], filteredTaskList: [] };
 
-export default class TaskArchiveListScreen extends React.PureComponent {
+class TaskArchiveListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -23,15 +24,14 @@ export default class TaskArchiveListScreen extends React.PureComponent {
 
   loadTasks = async () => {
     this.setState({ taskList: [] });
-    const taskList = await TaskAPI.getExpiredTasks(this.schoolId, this.classId);
+    const taskList = await TaskAPI.getExpiredTasks(this.props.currentSchool.id, this.classId);
     this.setState({ taskList, filteredTaskList: taskList });
-    console.log(this.schoolId)
+    console.log(this.props.currentSchool.id)
     console.log(this.classId)
   }
 
   handleTaskSubmissionPress = (task) => {
     const payload = {
-      schoolId: this.schoolId,
       classId: this.classId,
       taskId: task.id,
       title: task.title,
@@ -43,7 +43,7 @@ export default class TaskArchiveListScreen extends React.PureComponent {
 
   handleDiscussionPress = (task) => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       classId: this.classId,
       taskId: task.id,
       subject: this.subject,
@@ -70,7 +70,6 @@ export default class TaskArchiveListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
@@ -111,11 +110,4 @@ export default class TaskArchiveListScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentTeacher(TaskArchiveListScreen)

@@ -4,10 +4,11 @@ import { Searchbar } from "react-native-paper";
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
-export default class ClassPickerScreen extends React.PureComponent {
+class ClassPickerScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -22,7 +23,7 @@ export default class ClassPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getActiveClasses(this.schoolId);
+    const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
     this.setState({ classList, filteredClassList: classList });
   }
 
@@ -54,7 +55,6 @@ export default class ClassPickerScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
@@ -83,7 +83,7 @@ export default class ClassPickerScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId}  class_={item}/>
+                schoolId={this.props.currentSchool.id}  class_={item}/>
             )
           }}
         />
@@ -92,12 +92,4 @@ export default class ClassPickerScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentTeacher(ClassPickerScreen)

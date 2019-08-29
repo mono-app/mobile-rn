@@ -10,15 +10,12 @@ import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "", totalClass:0  }
 
-/**
- * Parameter list
- * 
- * @param {string} studentEmail
- */
-export default class StudentProfileScreen extends React.PureComponent {
+
+class StudentProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -34,11 +31,11 @@ export default class StudentProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.schoolId, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    const totalClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail)).length;
+    const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentEmail)).length;
 
     this.setState({ isLoadingProfile: false, student, totalClass });
 
@@ -53,7 +50,6 @@ export default class StudentProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", null);
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     
@@ -82,9 +78,10 @@ export default class StudentProfileScreen extends React.PureComponent {
         <ScrollView>
           <View style={{marginTop: 16}}/>
           <PeopleProfileHeader
+            style={{padding:16}}
             profilePicture="https://picsum.photos/200/200/?random"
-            nickName={this.state.student.name}
-            status= {"NIM " + ((!this.state.student)?this.state.student.noInduk:"-")}/>
+            title={this.state.student.name}
+            subtitle= {"NIM " + ((!this.state.student)?this.state.student.noInduk:"-")}/>
 
 
           <View style={{ marginTop:16, paddingHorizontal: 16, paddingVertical:8, backgroundColor: "#fff" }}>
@@ -124,3 +121,4 @@ export default class StudentProfileScreen extends React.PureComponent {
     )
   }
 }
+export default withCurrentTeacher(StudentProfileScreen)

@@ -5,7 +5,6 @@ import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
-import StudentAPI from "modules/Classroom/api/student"
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withCurrentUser } from "src/api/people/CurrentUser"
 
@@ -19,16 +18,6 @@ class StudentHomeScreen extends React.PureComponent {
   static navigationOptions = () => {
     return { header: null };
   };
-
-  loadProfileInformation = async () => {
-    const currentUserEmail = this.props.currentStudent.email
-    const student = await StudentAPI.getDetail(this.props.currentSchool.id, currentUserEmail)
-    if(student.profilePicture){
-      this.setState({ profilePicture: student.profilePicture.downloadUrl });
-    }
-    this.setState({userName: student.name, studentEmail: currentUserEmail})
-  
-  }
 
   handleStudentProfilePress = () => {
     payload = {
@@ -59,7 +48,6 @@ class StudentHomeScreen extends React.PureComponent {
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
     
     this.state = INITIAL_STATE;
-    this.loadProfileInformation = this.loadProfileInformation.bind(this);
     this.handleStudentProfilePress = this.handleStudentProfilePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
     this.handleAnnouncementPress = this.handleAnnouncementPress.bind(this);

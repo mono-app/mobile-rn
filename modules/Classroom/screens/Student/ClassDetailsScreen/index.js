@@ -34,6 +34,9 @@ class ClassDetailsScreen extends React.PureComponent {
     this.setState({ isLoadingProfile: true });
 
     const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
+    if(class_.profilePicture){
+      this.setState({ profilePicture: student.profilePicture.downloadUrl });
+    }
     this.setState({ isLoadingProfile: false, class: class_ });
   };
 

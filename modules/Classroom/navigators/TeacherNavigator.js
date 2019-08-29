@@ -1,5 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
+import { CurrentTeacherProvider } from "modules/Classroom/api/teacher/CurrentTeacher"
 
 import EditSingleFieldScreen from "modules/Classroom/screens/EditSingleFieldScreen";
 import TeacherHomeScreen from "modules/Classroom/screens/Teacher/TeacherHomeScreen";
@@ -33,7 +34,7 @@ import CameraScreen from "src/screens/CameraScreen";
 import MapsPickerScreen from "modules/Classroom/screens/MapsPickerScreen"
 import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
 
-export default TeacherNavigator = createStackNavigator(
+MyNavigator = createStackNavigator(
   {
     TeacherHome: { screen: TeacherHomeScreen },
     EditSingleField: { screen: EditSingleFieldScreen },
@@ -70,3 +71,14 @@ export default TeacherNavigator = createStackNavigator(
     initialRouteName: "TeacherHome"
   }
 );
+
+export default class TeacherNavigator extends React.PureComponent{
+  static router = MyNavigator.router;
+  render(){
+    return (
+      <CurrentTeacherProvider>
+        <MyNavigator navigation={this.props.navigation}/>
+      </CurrentTeacherProvider>
+    )
+  }
+}

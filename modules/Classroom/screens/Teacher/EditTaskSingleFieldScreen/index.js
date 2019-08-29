@@ -28,7 +28,6 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
 
   handleClassPickPress = () => {
     payload = {
-      schoolId: this.schoolId,
       result : (classId, subject, subjectDesc) => {this.setState({classId, subject, subjectDesc})}
     }
     this.props.navigation.navigate("AddTaskClassPicker", payload);

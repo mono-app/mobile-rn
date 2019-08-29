@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Snackbar } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Caption, Snackbar } from "react-native-paper";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import StudentAPI from "modules/Classroom/api/student";
 import ClassAPI from "modules/Classroom/api/class";
@@ -10,10 +10,11 @@ import moment from "moment"
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isLoading: true, showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
-export default class SubmissionDetailsScreen extends React.PureComponent {
+class SubmissionDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -27,11 +28,12 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
   };
 
   loadSubmission = async () => {
+    this.setState({ isLoading: true });
 
-    const promises = [ SubmissionAPI.getDetail(this.schoolId, this.classId, this.taskId, this.submissionId),
-      StudentAPI.getDetail(this.schoolId,this.submissionId),
-      ClassAPI.getDetail(this.schoolId,this.classId),
-      new TaskAPI().getDetail(this.schoolId,this.classId,this.taskId),
+    const promises = [ SubmissionAPI.getDetail(this.props.currentSchool.id, this.classId, this.taskId, this.submissionId),
+      StudentAPI.getDetail(this.props.currentSchool.id,this.submissionId),
+      ClassAPI.getDetail(this.props.currentSchool.id,this.classId),
+      new TaskAPI().getDetail(this.props.currentSchool.id,this.classId,this.taskId),
     ];
 
     Promise.all(promises).then(results => {
@@ -48,13 +50,12 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
         studentInfo = "- / "+name
       }
 
-      this.setState({ studentInfo, submission, class_, task, score: submission.score });
+      this.setState({ studentInfo, submission, class_, task, score: submission.score, isLoading: false });
     })
   }
 
   handleScoringPress = ()=>{
     payload = {
-      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       submissionId: this.submissionId,
@@ -70,7 +71,6 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
 
   handleTaskDownload = () => {
     payload = {
-      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       submissionId: this.submissionId,
@@ -85,7 +85,6 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
@@ -102,6 +101,20 @@ export default class SubmissionDetailsScreen extends React.PureComponent {
   }
 
   render() {
+    if(this.state.isLoading){
+      return(
+        <Dialog visible={true}>
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <ActivityIndicator/>
+            <View>
+              <Text>Sedang memuat data</Text>
+              <Caption>Harap tunggu...</Caption>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      )
+    }
+
     return (
       <View style={{paddingBottom:64}}>
         <ScrollView>
@@ -249,3 +262,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
+export default withCurrentTeacher(SubmissionDetailsScreen)

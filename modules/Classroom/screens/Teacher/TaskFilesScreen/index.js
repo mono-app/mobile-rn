@@ -13,6 +13,7 @@ import FileAPI from "../../../api/file";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import Button from "src/components/Button";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = {
   isLoading: true,
@@ -29,7 +30,7 @@ const INITIAL_STATE = {
   filteredFileList:[]  
 };
 
-export default class TaskFilesScreen extends React.PureComponent {
+class TaskFilesScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -46,7 +47,7 @@ export default class TaskFilesScreen extends React.PureComponent {
     this.setState({ fileList: [], isLoading: true });
 
     const fileList = await FileAPI.getStudentSubmissionFiles(
-      this.schoolId,
+      this.props.currentSchool.id,
       this.classId,
       this.taskId,
       this.submissionId
@@ -109,7 +110,7 @@ export default class TaskFilesScreen extends React.PureComponent {
   onDeletePress = async () => {
     this.setState({ isLoading: true });
     await FileAPI.deleteSubmissionFile(
-      this.schoolId,
+      this.props.currentSchool.id,
       this.classId,
       this.state.selectedFile
     );
@@ -138,7 +139,6 @@ export default class TaskFilesScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.deleteDialog = null;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
@@ -235,3 +235,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
+export default withCurrentTeacher(TaskFilesScreen)

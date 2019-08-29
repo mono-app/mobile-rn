@@ -10,6 +10,7 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import moment from "moment";
 import { StackActions } from "react-navigation";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -23,12 +24,8 @@ const INITIAL_STATE = {
 };
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
-/**
- * Parameter list
- *
- * @param {string} classId
- */
-export default class AddTaskScreen extends React.PureComponent {
+
+class AddTaskScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -59,7 +56,6 @@ export default class AddTaskScreen extends React.PureComponent {
 
   handleClassPickPress = () => {
     payload = {
-      schoolId:this.schoolId,
       result: (classId, subject, subjectDesc) => {
         this.setState({ classId, subject, subjectDesc });
       }
@@ -76,11 +72,10 @@ export default class AddTaskScreen extends React.PureComponent {
   handleSavePress = () => {
     this.setState({ isLoading: true });
 
-    TaskAPI.addTask(this.schoolId, this.state.classId, {title: this.state.taskTitle, dueDate: this.state.dueDate, details: this.state.taskDetail}).then(() => {
+    TaskAPI.addTask(this.props.currentSchool.id, this.state.classId, {title: this.state.taskTitle, dueDate: this.state.dueDate, details: this.state.taskDetail}).then(() => {
       this.setState({ isLoading: false });
 
       payload = {
-        schoolId: this.schoolId,
         classId: this.state.classId,
         subject: this.state.subject,
         subjectDesc: this.state.subjectDesc
@@ -105,7 +100,6 @@ export default class AddTaskScreen extends React.PureComponent {
     INITIAL_STATE.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     INITIAL_STATE.dueDate = moment().toDate();
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.handleTaskTitleChange = this.handleTaskTitleChange.bind(this);
     this.handleTaskDetailChange = this.handleTaskDetailChange.bind(this);
     this.showDateTimePicker = this.showDateTimePicker.bind(this);
@@ -242,3 +236,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 });
+export default withCurrentTeacher(AddTaskScreen)

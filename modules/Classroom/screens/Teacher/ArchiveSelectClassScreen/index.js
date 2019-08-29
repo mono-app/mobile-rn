@@ -4,10 +4,11 @@ import { Searchbar } from "react-native-paper";
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
-export default class ArchiveSelectClassScreen extends React.PureComponent {
+class ArchiveSelectClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -22,14 +23,13 @@ export default class ArchiveSelectClassScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getUserActiveClasses(this.schoolId, this.teacherEmail);
+    const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.email);
     this.setState({ classList, filteredClassList: classList });
   }
 
   handleClassPress = async theClass => {
-    const class_ = await ClassAPI.getDetail(this.schoolId, theClass.id);
+    const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, theClass.id);
     const payload = {
-      schoolId: this.schoolId,
       classId: class_.id,
       subject: class_.subject,
       subjectDesc: class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
@@ -56,8 +56,6 @@ export default class ArchiveSelectClassScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
@@ -85,7 +83,7 @@ export default class ArchiveSelectClassScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId} class_={item}/>
+                schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />
@@ -94,12 +92,4 @@ export default class ArchiveSelectClassScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentTeacher(ArchiveSelectClassScreen)

@@ -5,7 +5,8 @@ import { Text, Button as ButtonDialog, Dialog, Portal, RadioButton} from "react-
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import SubmissionAPI from "../../../api/submission";
+import SubmissionAPI from "modules/Classroom/api/submission";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -15,7 +16,7 @@ const INITIAL_STATE = {
   visible: true,
   checked: 0
 };
-export default class SubmissionScoringScreen extends React.PureComponent {
+class SubmissionScoringScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -40,7 +41,7 @@ export default class SubmissionScoringScreen extends React.PureComponent {
       score: this.state.defaultValue,
       note: this.state.note
     }
-    SubmissionAPI.addScore(this.schoolId, this.classId, this.taskId, this.submissionId, data).then(() => {
+    SubmissionAPI.addScore(this.props.currentSchool.id, this.classId, this.taskId, this.submissionId, data).then(() => {
       const { navigation } = this.props;
       navigation.state.params.onRefresh(this.state.defaultValue);
       navigation.goBack();   
@@ -55,7 +56,6 @@ export default class SubmissionScoringScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
@@ -144,3 +144,4 @@ const styles = StyleSheet.create({
   smallDescription: { fontSize: 12, textAlign: "left", color: "#5E8864" },
   label: { fontSize: 14, textAlign: "left", color: "#000000" }
 });
+export default withCurrentTeacher(SubmissionScoringScreen)

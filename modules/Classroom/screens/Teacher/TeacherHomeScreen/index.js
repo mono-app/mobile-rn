@@ -5,89 +5,59 @@ import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
-import TeacherAPI from "modules/Classroom/api/teacher";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = {
   isLoading: false,
   teacherEmail: "",
-  profilePicture: "https://picsum.photos/200/200/?random",
   schoolId: "",
-  school: {},
   userName: ""
 };
 
 class TeacherHomeScreen extends React.PureComponent {
   static navigationOptions = () => {
     return { header: null };
-  };
-
-  loadSchoolInformation = async () => {
-    const school = await SchoolAPI.getDetail(this.state.schoolId);
-    this.setState({school})
   }
 
   handleAddPress = e => {
-    payload = {
-      schoolId: this.state.schoolId
-    }
-    this.props.navigation.navigate("AddTask", payload);
-  };
+    
+    this.props.navigation.navigate("AddTask");
+  }
 
   handleDataMasterPress = e => {
-    payload = {
-      schoolId: this.state.schoolId
-    }
-    this.props.navigation.navigate("SchoolAdminDataMaster", payload);
-  };
+    this.props.navigation.navigate("SchoolAdminDataMaster");
+  }
 
   handleTeacherProfilePress = e => {
-    payload = {
-      schoolId: this.state.schoolId,
-      teacherEmail: this.state.teacherEmail
-    }
-    this.props.navigation.navigate("MyProfile", payload);
-  };
+    
+    this.props.navigation.navigate("MyProfile");
+  }
 
   handleClassListPress = e => {
-    payload = {
-      schoolId: this.state.schoolId,
-      teacherEmail: this.state.teacherEmail
-    }
-    this.props.navigation.navigate("MyClass", payload);
+   
+    this.props.navigation.navigate("MyClass");
   }
-
-  loadProfileInformation = async () => {
-    const currentUserEmail = this.props.currentUser.email
-    const teacher = await TeacherAPI.getDetail(this.state.schoolId, currentUserEmail)
-    if(teacher.profilePicture){
-      this.setState({ profilePicture: teacher.profilePicture.downloadUrl });
-    }
-    this.setState({userName: teacher.name, teacherEmail: currentUserEmail})
-
-  }
-  
+ 
   constructor(props) {    
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
     this.state = INITIAL_STATE;
-    this.loadSchoolInformation = this.loadSchoolInformation.bind(this);
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
     this.handleTeacherProfilePress = this.handleTeacherProfilePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
-    this.loadProfileInformation = this.loadProfileInformation.bind(this);
   }
 
-  componentDidMount(){
-    this.loadSchoolInformation();
-    this.loadProfileInformation();
+  async componentDidMount(){
+    await this.props.setCurrentSchoolId(this.state.schoolId)
+    await this.props.setCurrentTeacherEmail(this.props.currentSchool.id, this.props.currentUser.email)
   }
 
   render() {
     return (
       <View style={styles.groupContainer}>
-        <Header navigation={this.props.navigation} title={this.state.school.name} />
+        <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={this.state.profilePicture}/>
           <TouchableOpacity onPress={this.handleTeacherProfilePress} style={{marginTop:16}}>
@@ -96,7 +66,7 @@ class TeacherHomeScreen extends React.PureComponent {
           <Title style={{marginTop: 22}}>
             Selamat Datang,
           </Title>
-          <Subheading>{this.state.userName}</Subheading>
+          <Subheading>{this.props.currentTeacher.name}</Subheading>
         </View>
 
         <View style={{marginBottom: 64}}/>
@@ -161,4 +131,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withCurrentUser(withTheme(TeacherHomeScreen))
+export default withCurrentUser(withCurrentTeacher(withTheme(TeacherHomeScreen)))

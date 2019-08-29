@@ -1,13 +1,14 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
-import StudentListItem from "../../../components/StudentListItem";
+import StudentListItem from "modules/Classroom/components/StudentListItem";
 import AppHeader from "src/components/AppHeader";
-import SubmissionAPI from "../../../api/submission";
+import SubmissionAPI from "modules/Classroom/api/submission";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { isLoading: true };
 
-export default class TaskSubmissionListScreen extends React.PureComponent {
+class TaskSubmissionListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -21,14 +22,13 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
   };
 
   loadSubmissions = async () => {
-    const submissionList = await SubmissionAPI.getSubmissions(this.schoolId, this.classId, this.taskId);
+    const submissionList = await SubmissionAPI.getSubmissions(this.props.currentSchool.id, this.classId, this.taskId);
     this.setState({ submissionList });
   }
 
   handleSubmissionPress = submission => {
     const submissionId = submission.id;
     const payload = {
-      schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
       submissionId: submissionId,
@@ -43,7 +43,6 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.title = this.props.navigation.getParam("title", "");
@@ -74,7 +73,7 @@ export default class TaskSubmissionListScreen extends React.PureComponent {
             return (
               <StudentListItem 
                 onPress={() => this.handleSubmissionPress(item)}
-                schoolId={this.schoolId} student={item}/>
+                schoolId={this.props.currentSchool.id} student={item}/>
             )
           }}
         />
@@ -98,3 +97,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
+export default withCurrentTeacher(TaskSubmissionListScreen)

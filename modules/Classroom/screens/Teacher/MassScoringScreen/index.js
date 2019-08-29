@@ -5,6 +5,7 @@ import MassScoringListItem from "../../../components/MassScoringListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "../../../api/student";
 import TextInput from "src/components/TextInput";
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -17,7 +18,8 @@ const INITIAL_STATE = {
   searchText: ""
   };
 
-export default class MassScoringScreen extends React.PureComponent {
+
+class MassScoringScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -32,14 +34,14 @@ export default class MassScoringScreen extends React.PureComponent {
 
   loadStudents = async () => {
     this.setState({ peopleList: [], filteredPeopleList: [] });
-    const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
+    const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
     this.setState({ peopleList, filteredPeopleList: peopleList });
     console.log(peopleList)
   }
 
   handleStudentPress = async student => {
     if(!student.finalScore){
-      const newStudent = await StudentAPI.getDetail(this.schoolId, student.id)
+      const newStudent = await StudentAPI.getDetail(this.props.currentSchool.id, student.id)
       const info = (newStudent.noInduk)?newStudent.noInduk+" / "+ newStudent.name:"-" +" / "+ newStudent.name
       this.setState({selectedStudent: student,  selectedStudentInfo: info})
       this.showDialog();
@@ -55,7 +57,7 @@ export default class MassScoringScreen extends React.PureComponent {
   }
 
   saveDialog = async () => {
-    await StudentAPI.saveFinalScoreStudent(this.schoolId, this.classId, this.state.selectedStudent.id, {finalScore: this.state.dialogScore})
+    await StudentAPI.saveFinalScoreStudent(this.props.currentSchool.id, this.classId, this.state.selectedStudent.id, {finalScore: this.state.dialogScore})
     let clonedFilteredPeopleList = JSON.parse(JSON.stringify(this.state.filteredPeopleList))
     this.setState({filteredPeopleList:[]})
 
@@ -91,7 +93,6 @@ export default class MassScoringScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
@@ -120,7 +121,7 @@ export default class MassScoringScreen extends React.PureComponent {
             return (
               <MassScoringListItem 
                 onPress={() => this.handleStudentPress(item)}
-                schoolId={this.schoolId} student={item}/>
+                schoolId={this.props.currentSchool.id} student={item}/>
             )
           }}
         />
@@ -152,12 +153,4 @@ export default class MassScoringScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentTeacher(MassScoringScreen)

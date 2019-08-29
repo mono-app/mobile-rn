@@ -14,6 +14,7 @@ import uuid from "uuid/v4"
 import DocumentPicker from 'react-native-document-picker';
 import StorageAPI from "src/api/storage";
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
@@ -39,12 +40,12 @@ class MyProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const teacher = await TeacherAPI.getDetail(this.schoolId, this.teacherEmail);
+    const teacher = await TeacherAPI.getDetail(this.props.currentSchool.id, this.props.currentTeacher.email);
     if(teacher.gender){
       teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
     }
 
-    const totalClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.teacherEmail)).length;
+    const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.email)).length;
     if(teacher.profilePicture){
       this.setState({ profilePicture: teacher.profilePicture.downloadUrl });
     }
@@ -60,28 +61,19 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   handleArchivePress = () => {
-    payload = {
-      schoolId: this.schoolId,
-      teacherEmail: this.teacherEmail
-    }
-
-    this.props.navigation.navigate("ArchiveSelectClass", payload)
+    this.props.navigation.navigate("ArchiveSelectClass")
   }
   
   handleStatusPress = () => {
     const payload = {
-      schoolId: this.schoolId,
       onRefresh: this.loadStatus
     }
     this.props.navigation.navigate("StatusChange",payload)
   }
 
   handleClassListPress = e => {
-    payload = {
-      schoolId: this.schoolId,
-      teacherEmail: this.teacherEmail
-    }
-    this.props.navigation.navigate("MyClass", payload);
+   
+    this.props.navigation.navigate("MyClass");
   }
 
   
@@ -96,7 +88,7 @@ class MyProfileScreen extends React.PureComponent {
       });
       const storagePath = "/modules/classroom/teachers/"+uuid()
       const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
-      await TeacherAPI.updateProfilePicture(this.schoolId, this.teacherEmail ,storagePath, downloadUrl)
+      await TeacherAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentTeacher.email ,storagePath, downloadUrl)
     
       this.setState({profilePicture: downloadUrl})
       
@@ -124,8 +116,6 @@ class MyProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.handleStatusPress = this.handleStatusPress.bind(this);
     this.handleArchivePress = this.handleArchivePress.bind(this);
@@ -155,12 +145,13 @@ class MyProfileScreen extends React.PureComponent {
     }else return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
         <ScrollView>
-          <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
+          <TouchableOpacity onPress={this.changeProfilePicture}>
 
             <PeopleProfileHeader
+              style={{padding:16}}
               profilePicture={this.state.profilePicture}
-              nickName={this.state.teacher.name}
-              status= {"NIK" + this.state.teacher.nik}/>
+              title={this.state.teacher.name}
+              subtitle= {"NIK" + this.state.teacher.nik}/>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={this.handleStatusPress}>
@@ -268,4 +259,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
-export default withCurrentUser(MyProfileScreen)
+export default withCurrentUser(withCurrentTeacher(MyProfileScreen))
