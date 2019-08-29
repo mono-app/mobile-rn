@@ -25,6 +25,7 @@ function HomeScreen(props){
     }
   })
 
+  const handleAddMomentPress = () => props.navigation.navigate("AddMoment")
   const handleRefresh = () => fetchMoments();
   const fetchMoments = async () => {
     setIsRefreshing(true);
@@ -36,13 +37,16 @@ function HomeScreen(props){
 
   React.useEffect(() => {
     fetchMoments();
-  }, [])
+    props.navigation.addListener("didFocus", (payload) => {
+      if(payload.action.type === "Navigation/COMPLETE_TRANSITION") fetchMoments();
+    })
+  }, []);
 
   return(
     <View style={styles.container}>
       <Surface style={{ padding: 16, elevation: 4, flexDirection: "row", justifyContent: "space-between" }}>
         <CircleAvatar size={50} uri={currentUser.profilePicture}/>
-        <TouchableOpacity style={styles.addToMomentContainer} onPress={this.handleAddMomentPress}>
+        <TouchableOpacity style={styles.addToMomentContainer} onPress={handleAddMomentPress}>
           <Text>Tambahkan moment</Text>
         </TouchableOpacity>
         <IconButton icon="add-a-photo"  size={24}/>

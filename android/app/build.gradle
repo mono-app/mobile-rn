@@ -142,6 +142,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-document-picker')
     implementation project(':@react-native-community_netinfo')
     implementation project(':react-native-spinkit')
     implementation project(':react-native-fast-image')

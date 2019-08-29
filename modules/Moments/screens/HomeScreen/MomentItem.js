@@ -1,22 +1,14 @@
 import React from "react";
-import moment from "moment";
 import PeopleAPI from "src/api/people";
 import { StyleSheet, Dimensions } from "react-native";
-import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
-import MomentsAPI from "modules/Moments/api/moment";
-import CurrentUserAPI from "src/api/people/CurrentUser";
-import TranslateAPI from "src/api/translate";
-
-import PeopleDetailListener from "src/components/PeopleDetailListener";
-import CircleAvatar from "src/components/Avatar/Circle";
-import PhotoGrid from "modules/Moments/components/PhotoGrid";
 import SquareAvatar from "src/components/Avatar/Square";
 import FastImage from "react-native-fast-image";
 import { View, TouchableOpacity, FlatList } from "react-native";
 import { Text, Surface, Caption } from "react-native-paper";
+import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
-function MomentImageThumbnail(props){
+export function MomentImageThumbnail(props){
   const imageSize = Dimensions.get("window").width/3;
 
   const styles = StyleSheet.create({

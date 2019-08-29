@@ -1,81 +1,82 @@
 import React from "react";
-import { View, TextInput } from "react-native";
-import { Button, IconButton } from "react-native-paper";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import DocumentPicker from 'react-native-document-picker';
+import Logger from "src/api/logger";
 import MomentAPI from "modules/Moments/api/moment";
-import CurrentUserAPI from "src/api/people/CurrentUser";
+import StorageAPI from "src/api/storage";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
-import PeopleInformation from "./ProfileInformation";
-import PhotoGrid from "modules/Moments/components/PhotoGrid";
+import Button from "src/components/Button";
+import CircleAvatar from "src/components/Avatar/Circle";
 import AppHeader from "src/components/AppHeader";
+import { View, TextInput, FlatList } from "react-native";
+import { IconButton, Text, Caption } from "react-native-paper";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { MomentImageThumbnail } from "modules/Moments/screens/HomeScreen/MomentItem";
+import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
-const INITIAL_STATE = { content: "", images: [], isSubmitting: false, isError: false, errorMessage: null };
+function AddMomentScreen(props){
+  const { currentUser } = props;
+  const [ isSubmitting, setIsSubmitting ] = React.useState(false);
+  const [ content, setContent ] = React.useState("");
+  const [ images, setImages ] = React.useState([]);
 
-export default class AddMomentScreen extends React.Component{
-  static navigationOptions = ({ navigation }) => {
-    return { header: <AppHeader title="Menambahkan Moment" navigation={navigation} style={{ backgroundColor: "white" }}/>}
+  const handleContentChange = (content) => setContent(content);
+  const handleSubmitMoment = async () => {
+    setIsSubmitting(true);
+    const payload = { message: content, images }
+    await MomentAPI.publishMoment(currentUser.email, payload);
+    setContent("");
+    setIsSubmitting(false);
+    props.navigation.goBack();
   }
 
-  handleGalleryComplete = images => this.setState({ images });
-  handleGalleryIconPress = () => this.props.navigation.navigate("Gallery", { onComplete: this.handleGalleryComplete});
-  handleContentChange = content => this.setState({ content });
-  handleSubmitMoment = async () => {
-    this.setState({ isSubmitting: true });
-
-    if(this.photoGrid !== null){
-      const imagesPath = this.photoGrid.getImagesPath();
-      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-      const content = { message: this.state.content, images: imagesPath };
-      
-      await MomentAPI.publishMoment(currentUserEmail, content);
-      this.setState({ content: "", images: [], isSubmitting: false });
-      this.props.navigation.goBack();
-    }
-  };
-
-  constructor(props){
-    super(props);
-
-    this.state = INITIAL_STATE;
-    this.photoGrid = null;
-    this.handleContentChange = this.handleContentChange.bind(this);
-    this.handleSubmitMoment = this.handleSubmitMoment.bind(this);
-    this.handleGalleryIconPress = this.handleGalleryIconPress.bind(this);
-    this.handleGalleryComplete = this.handleGalleryComplete.bind(this);
+  const handleGalleryPress = async () => {
+    try{
+      const results = await DocumentPicker.pickMultiple({ type: [DocumentPicker.types.images] });
+      const newImages = results.map((result) => result.uri);
+      const clonnedImages = Array.from(images);
+      clonnedImages.push.apply(clonnedImages, newImages);
+      setImages(clonnedImages)
+    }catch(err){ Logger.log("AddMomentScreen.handleGalleryPress#err", err)}
   }
 
-  render(){
-    return(
-      <KeyboardAwareScrollView>
-        <PeopleInformation/>
+  return(
+    <KeyboardAwareScrollView>
+      <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
 
-        <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
-          <TextInput
-            multiline={true}
-            textAlignVertical="top"
-            numberOfLines={4}
-            placeholder="Apa yang sedang Anda pikirkan?"
-            fontSize={24}
-            value={this.state.content}
-            onChangeText={this.handleContentChange}/>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-            <View style={{ flexDirection: "row" }}>
-              <IconButton size={24} icon="photo-library" color="rgba(0, 0, 0, .54)" onPress={this.handleGalleryIconPress}/>
-              <IconButton size={24} icon="photo-camera" color="rgba(0, 0, 0, .54)"/>
-            </View>
-            <Button 
-              loading={this.state.isSubmitting} 
-              disabled={this.state.isSubmitting} 
-              mode="contained" 
-              onPress={this.handleSubmitMoment}>Publikasi</Button>
+      <View style={{ padding: 16, flexDirection: "row", alignItems: "center" }}>
+        <CircleAvatar size={50} style={{ marginRight: 8 }} uri={currentUser.profilePicture}/>
+        <View style={{ justifyContent: "center" }}>
+          <Text style={{ fontWeight: "bold", margin: 0 }}>{currentUser.applicationInformation.nickName}</Text>
+          <Caption style={{ margin: 0 }}><MaterialIcons size={12} name="lock"/> Hanya teman</Caption>
+        </View>
+      </View>
+
+      <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+        <TextInput
+          textAlignVertical="top" numberOfLines={4} fontSize={24}
+          placeholder="Apa yang sedang Anda pikirkan?"
+          value={content} onChangeText={handleContentChange} multiline/>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <View style={{ flexDirection: "row" }}>
+            <IconButton size={24} icon="photo-library" color="rgba(0, 0, 0, .56)" onPress={handleGalleryPress}/>
+            <IconButton size={24} icon="photo-camera" color="rgba(0, 0, 0, .56)"/>
           </View>
+          <Button isLoading={isSubmitting} disabled={isSubmitting} onPress={handleSubmitMoment} text="Publikasi"/>
         </View>
+      </View>
+      
+      <FlatList 
+        data={images} horizontal
+        renderItem={({ item, index }) => {
+          const style = (index === 0)? { marginLeft: 16, marginRight: 4 }: { marginLeft: 4, marginRight: 4 }
+          return <MomentImageThumbnail source={{ uri: item }} style={style}/>
+        }}>
 
-        <View style={{ marginBottom: 16 }}>
-          <PhotoGrid ref={i => this.photoGrid = i} images={this.state.images}/>
-        </View>
-      </KeyboardAwareScrollView>
-    )
-  }
+      </FlatList>
+    </KeyboardAwareScrollView>
+  )
 }
+
+AddMomentScreen.navigationOptions = { header: null }
+export default withCurrentUser(AddMomentScreen);
