@@ -2,8 +2,6 @@ import React from "react";
 import { withNavigation } from "react-navigation";
 import { Appbar, Menu } from "react-native-paper";
 
-const INITIAL_STATE = { isMenuVisible: false }
-
 function Header(props){
   const [ isMenuVisible, setIsMenuVisible ] = React.useState(false);
 
