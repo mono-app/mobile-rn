@@ -55,7 +55,7 @@ class StudentHomeScreen extends React.PureComponent {
 
   async componentDidMount(){
     await this.props.setCurrentSchoolId(this.state.schoolId)
-    await this.props.setCurrentStudentEmail(this.props.currentSchool.id, this.props.currentUser.email)
+    await this.props.setCurrentStudentEmail(this.state.schoolId, this.props.currentUser.email)
   }
 
   render() {

@@ -102,7 +102,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
 
   async componentDidMount(){
     await this.props.setCurrentSchoolId(this.state.schoolId)
-    await this.props.setCurrentSchoolAdminEmail(this.props.currentSchool.id, this.props.currentUser.email)
+    await this.props.setCurrentSchoolAdminEmail(this.state.schoolId, this.props.currentUser.email)
   }
 
   render() {
@@ -111,7 +111,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
 
         <View style={styles.logo}>
-          <SquareAvatar size={100} uri={this.props.schoolProfilePicture }/>
+          <SquareAvatar size={100} uri={ this.props.schoolProfilePicture }/>
           <TouchableOpacity onPress={this.changeSchoolProfilePicture}>
             <Text style={{ fontWeight: "400", fontSize: 16, marginTop: 8, color:"#0ead69" }}>Ubah Logo Sekolah</Text>
           </TouchableOpacity>

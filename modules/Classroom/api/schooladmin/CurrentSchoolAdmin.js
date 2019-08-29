@@ -35,9 +35,8 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
     this.schoolListener = schoolsDocumentRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
         const school = documentSnapshot.data();
-
+        school.id = JSON.parse(JSON.stringify(documentSnapshot.id));
         this.setState({ school });
-          
       }
     });
   }
@@ -48,14 +47,11 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
     const schoolAdminsCollection = new SchoolAdminsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const schoolAdminsDocumentRef = schoolsDocumentRef.collection(schoolAdminsCollection.getName()).doc(email);
-
     this.userListener = schoolAdminsDocumentRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
         const schoolAdmin = documentSnapshot.data();
         schoolAdmin.email = JSON.parse(JSON.stringify(documentSnapshot.id));
-
         this.setState({ schoolAdmin });
-          
       }
     });
   };
