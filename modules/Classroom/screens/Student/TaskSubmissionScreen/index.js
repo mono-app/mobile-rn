@@ -1,6 +1,7 @@
 import React from "react";
 import { View, FlatList } from "react-native";
-import { ProgressBar,Searchbar,Text,Dialog,Portal } from "react-native-paper";
+import { ProgressBar, Text, Dialog, Portal } from "react-native-paper";
+import MySearchbar from "src/components/MySearchbar"
 import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "modules/Classroom/api/file";
@@ -17,7 +18,6 @@ const INITIAL_STATE = {
   isDeleting: false, 
   selectedFile: null, 
   selectedIndex: -1,
-  searchText: "", 
   fileList:[], 
   filteredFileList:[] 
 };
@@ -82,12 +82,12 @@ class TaskSubmissionScreen extends React.PureComponent {
     this.props.navigation.navigate("AddTaskSubmission")
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredFileList: []})
 
     const clonedFileList = JSON.parse(JSON.stringify(this.state.fileList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
       const filteredFileList = clonedFileList.filter((file) => {
         return file.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
@@ -118,11 +118,9 @@ class TaskSubmissionScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
-        <View style={{marginTop: 8 }}>
-          <Searchbar 
-              onChangeText={searchText => {this.setState({searchText})}}
+        <View style={{margin: 16 }}>
+          <MySearchbar 
               onSubmitEditing={this.handleSearchPress}
-              value={this.state.searchText}
               placeholder="Cari Berkas" />
         </View>
         
@@ -136,7 +134,7 @@ class TaskSubmissionScreen extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <FlatList
-          style={{ backgroundColor: "white", marginTop:8 }}
+          style={{ backgroundColor: "white" }}
           data={this.state.filteredFileList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {

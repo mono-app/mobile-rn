@@ -3,11 +3,14 @@ import { Searchbar } from "react-native-paper";
 
 const INITIAL_STATE = { isVisible: false, searchText: "" }
 
-export default class MySearchBar extends React.PureComponent{
+export default class MySearchbar extends React.PureComponent{
 
   handleChangeText = (searchText) => {
     this.setState({searchText})
-    this.props.onChangeText(searchText)
+  }
+
+  handleOnSubmit = () => {
+    this.props.onSubmitEditing(this.state.searchText)
   }
 
   constructor(props){
@@ -15,6 +18,7 @@ export default class MySearchBar extends React.PureComponent{
 
     this.state = INITIAL_STATE;
     this.handleChangeText = this.handleChangeText.bind(this);
+    this.handleOnSubmit = this.handleOnSubmit.bind(this);
   }
 
   render(){
@@ -22,7 +26,7 @@ export default class MySearchBar extends React.PureComponent{
       <Searchbar 
         style={this.props.style}
         onChangeText={this.handleChangeText}
-        onSubmitEditing={this.props.onSubmitEditing}
+        onSubmitEditing={this.handleOnSubmit}
         value={this.state.searchText}
         placeholder={this.props.placeholder} />
     )

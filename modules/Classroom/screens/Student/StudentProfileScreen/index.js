@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ActivityIndicator, Title, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import StudentAPI from "../../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import moment from "moment"
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";

@@ -1,12 +1,12 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar } from "react-native-paper";
-import TeacherAPI from "../../../api/teacher";
-import TeacherListItem from "../../../components/TeacherListItem";
+import { View, FlatList } from "react-native";
+import MySearchbar from "src/components/MySearchbar"
+import TeacherAPI from "modules/Classroom/api/teacher";
+import TeacherListItem from "modules/Classroom/components/TeacherListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [], searchText: "" };
+const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [] };
 
 class TeacherListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -34,13 +34,12 @@ class TeacherListScreen extends React.PureComponent {
     this.props.navigation.navigate("TeacherProfile", payload);
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredPeopleList: []})
 
     const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
-
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
       const filteredPeopleList = clonedPeopleList.filter((people) => {
         return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
@@ -66,10 +65,8 @@ class TeacherListScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Guru" />
         </View>
         <FlatList

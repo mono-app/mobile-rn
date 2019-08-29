@@ -4,8 +4,7 @@ import {Circle, Rect} from 'react-native-svg'
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import StudentAPI from "../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
 
 const INITIAL_STATE = { name: "", isFetching: false, checked: false }
 

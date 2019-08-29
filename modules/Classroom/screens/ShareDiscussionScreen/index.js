@@ -1,12 +1,12 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar } from "react-native-paper";
+import MySearchbar from "src/components/MySearchbar"
 import ShareDiscussionListItem from "modules/Classroom/components/ShareDiscussionListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import Button from "src/components/Button";
 
-const INITIAL_STATE = { isLoading: true, isShareLoading: false ,searchText: "", peopleList:[], filteredPeopleList:[] };
+const INITIAL_STATE = { isLoading: true, isShareLoading: false , peopleList:[], filteredPeopleList:[] };
 
 export default class ShareDiscussionScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -24,16 +24,16 @@ export default class ShareDiscussionScreen extends React.PureComponent {
   loadStudents = async () => {
     this.setState({ peopleList: [] });
 
-    const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
+    const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
     this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredPeopleList: []})
 
     const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
 
       const filteredPeopleList = clonedPeopleList.filter((people) => {
         return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
@@ -75,11 +75,10 @@ export default class ShareDiscussionScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this.classId = this.props.navigation.getParam("classId", "");
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
-    this.classId = this.props.navigation.getParam("classId", "");
   }
 
   componentDidMount(){
@@ -90,10 +89,8 @@ export default class ShareDiscussionScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Murid" />
         </View>
         <FlatList
@@ -104,7 +101,7 @@ export default class ShareDiscussionScreen extends React.PureComponent {
             return (
               <ShareDiscussionListItem 
                 onPress={() => this.handleStudentPress(item)}
-                schoolId={this.schoolId} student={item}/>
+                schoolId={this.props.currentSchool.id} student={item}/>
             )
           }}
         />

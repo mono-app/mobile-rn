@@ -2,18 +2,18 @@ import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import {
   ProgressBar,
-  Searchbar,
   Text,
   Dialog,
   Portal
 } from "react-native-paper";
-import FileListItem from "../../../components/FileListItem";
+import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
-import FileAPI from "../../../api/file";
+import FileAPI from "modules/Classroom/api/file";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import Button from "src/components/Button";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import MySearchbar from "src/components/MySearchbar"
 
 const INITIAL_STATE = {
   isLoading: true,
@@ -25,7 +25,6 @@ const INITIAL_STATE = {
   selectedIndex: -1,
   totalDownloadedItem: 0,
   totalItemToDownload: 1,
-  searchText: "", 
   fileList:[], 
   filteredFileList:[]  
 };
@@ -119,13 +118,12 @@ class TaskFilesScreen extends React.PureComponent {
     this.setState({ isLoading: false });
   };
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredFileList: []})
 
     const clonedFileList = JSON.parse(JSON.stringify(this.state.fileList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
-
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
       const filteredFileList = clonedFileList.filter((file) => {
         return file.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
@@ -167,10 +165,8 @@ class TaskFilesScreen extends React.PureComponent {
           <Text style={{ fontSize: 18 }}>{this.subjectDesc}</Text>
         </View>
         <View style={{ margin: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Tugas" />
         </View>
         <View style={{ flex: 1, backgroundColor: "white" }}>

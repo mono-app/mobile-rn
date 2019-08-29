@@ -1,13 +1,13 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar } from "react-native-paper";
+import { View, FlatList } from "react-native";
+import MySearchbar from "src/components/MySearchbar"
 import AnnouncementListItem from "modules/Classroom/components/AnnouncementListItem";
 import AppHeader from "src/components/AppHeader";
 import AnnouncementAPI from "modules/Classroom/api/announcement";
 import ClassAPI from "modules/Classroom/api/class";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoading: true, searchText: "", searchText: "", announcementList:[], filteredAnnouncementList:[]  };
+const INITIAL_STATE = { isLoading: true, announcementList:[], filteredAnnouncementList:[]  };
 
 class AnnouncementScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -65,13 +65,12 @@ class AnnouncementScreen extends React.PureComponent {
     }
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredAnnouncementList: []})
 
     const clonedAnnouncementList = JSON.parse(JSON.stringify(this.state.announcementList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
-
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
       const filteredAnnouncementList = clonedAnnouncementList.filter((announcement) => {
         return announcement.searchQuery.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
@@ -98,10 +97,8 @@ class AnnouncementScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Pengumuman" />
         </View>
         <FlatList

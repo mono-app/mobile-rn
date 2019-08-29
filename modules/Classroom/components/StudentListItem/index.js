@@ -3,8 +3,7 @@ import ContentLoader from 'rn-content-loader'
 import {Circle, Rect} from 'react-native-svg'
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
-
-import StudentAPI from "../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
 
 const INITIAL_STATE = { name: "", isFetching: false }
 

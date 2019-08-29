@@ -1,10 +1,11 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { ProgressBar,Caption,Searchbar,Text,Dialog,Portal } from "react-native-paper";
+import { View, FlatList } from "react-native";
+import { ProgressBar, Text, Dialog, Portal } from "react-native-paper";
+import MySearchbar from "src/components/MySearchbar"
 import Icon from 'react-native-vector-icons/FontAwesome';
-import FileListItem from "../../../components/FileListItem";
+import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
-import FileAPI from "../../../api/file";
+import FileAPI from "modules/Classroom/api/file";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
@@ -17,7 +18,6 @@ const INITIAL_STATE = {
   isDeleting: false, 
   selectedFile: null, 
   selectedIndex: -1,
-  searchText: "", 
   fileList:[], 
   filteredFileList:[]  
 };
@@ -80,12 +80,12 @@ class ClassFilesScreen extends React.PureComponent {
     this.props.navigation.navigate("AddClassFiles")
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredFileList: []})
 
     const clonedFileList = JSON.parse(JSON.stringify(this.state.fileList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
       const filteredFileList = clonedFileList.filter((file) => {
         return file.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
@@ -116,10 +116,8 @@ class ClassFilesScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
         <View style={{margin: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Berkas" />
         </View>
         <View style={{backgroundColor: "#0ead69",

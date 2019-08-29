@@ -1,9 +1,10 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar, Button as ButtonDialog, Dialog, Portal, Subheading, Headline  } from "react-native-paper";
-import MassScoringListItem from "../../../components/MassScoringListItem";
+import { View, FlatList } from "react-native";
+import { Button as ButtonDialog, Dialog, Portal, Subheading, Headline  } from "react-native-paper";
+import MySearchbar from "src/components/MySearchbar"
+import MassScoringListItem from "modules/Classroom/components/MassScoringListItem";
 import AppHeader from "src/components/AppHeader";
-import StudentAPI from "../../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
 import TextInput from "src/components/TextInput";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
@@ -14,8 +15,7 @@ const INITIAL_STATE = {
   selectedStudent: {}, 
   selectedStudentInfo: "",
   peopleList: [], 
-  filteredPeopleList: [], 
-  searchText: ""
+  filteredPeopleList: []
   };
 
 
@@ -73,12 +73,12 @@ class MassScoringScreen extends React.PureComponent {
     this.setState({ dialogVisible: false })
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredPeopleList: []})
 
     const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
 
       const filteredPeopleList = clonedPeopleList.filter((people) => {
         return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
@@ -106,10 +106,8 @@ class MassScoringScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Murid" />
         </View>
         <FlatList

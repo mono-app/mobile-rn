@@ -2,7 +2,7 @@ import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Text, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
-import TaskListItem from "../../../components/TaskListItem";
+import TaskListItem from "modules/Classroom/components/TaskListItem";
 import AppHeader from "src/components/AppHeader";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";

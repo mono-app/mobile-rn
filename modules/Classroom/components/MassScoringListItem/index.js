@@ -4,9 +4,9 @@ import { Rect } from 'react-native-svg'
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
-import StudentAPI from "../../api/student";
+import StudentAPI from "modules/Classroom/api/student";
 
-const INITIAL_STATE = { name: "", isFetching: false }
+const INITIAL_STATE = { name: "", isFetching: false, finalScore: "", noInduk: "" }
 
 /**
  * @param {string} name 
@@ -58,7 +58,7 @@ export default class MassScoringListItem extends React.PureComponent{
     
     return(
      
-      <TouchableOpacity onPress={this.props.onPress} disabled={(this.state.finalScore)}>
+      <TouchableOpacity onPress={this.props.onPress} disabled={(this.state.finalScore)? true: false}>
         <View style={styles.listItemContainer}>
           <View style={styles.listDescriptionContainer}>
             <Text style={styles.label}>{(noInduk)?noInduk:"-"} / {name}</Text>

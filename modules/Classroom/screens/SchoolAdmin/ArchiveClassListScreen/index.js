@@ -1,13 +1,14 @@
 import React from "react";
-import { View, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Searchbar, Text } from "react-native-paper";
-import ClassAPI from "../../../api/class";
-import ClassListItem from "../../../components/ClassListItem";
+import { View, FlatList, TouchableOpacity } from "react-native";
+import { Text } from "react-native-paper";
+import MySearchbar from "src/components/MySearchbar"
+import ClassAPI from "modules/classroom/api/class";
+import ClassListItem from "modules/classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]   };
+const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[]   };
 
 class ArchiveClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -44,12 +45,12 @@ class ArchiveClassListScreen extends React.PureComponent {
     this.props.navigation.navigate("ArchiveClassListPicker",  payload);
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredClassList: []})
 
     const clonedClassList = JSON.parse(JSON.stringify(this.state.classList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
 
       const filteredClassList = clonedClassList.filter((class_) => {
         return class_.subject.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
@@ -77,10 +78,8 @@ class ArchiveClassListScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Kelas" />
         </View>
         

@@ -10,7 +10,7 @@ import {
   Subheading
 } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import ClassAPI from "../../../api/class";
+import ClassAPI from "modules/Classroom/api/class";
 import SquareAvatar from "src/components/Avatar/Square";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";

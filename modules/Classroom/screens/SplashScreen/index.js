@@ -2,21 +2,19 @@ import React from "react";
 import { StackActions } from "react-navigation";
 import { View,FlatList, StyleSheet } from "react-native";
 import Navigator from "src/api/navigator";
-import { Appbar, Text, ActivityIndicator, Dialog, Searchbar,Caption, Subheading, Headline } from "react-native-paper";
+import { Appbar, Text, ActivityIndicator, Dialog, Caption, Subheading, Headline } from "react-native-paper";
 import SchoolListItem from "modules/Classroom/components/SchoolListItem"
 import TeacherAPI from "modules/Classroom/api/teacher"
 import StudentAPI from "modules/Classroom/api/student"
 import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
 import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentUser } from "src/api/people/CurrentUser"
-
-
+import MySearchbar from "src/components/MySearchbar"
 
 const INITIAL_STATE = {
   isLoading: false,
   schoolList: [],
   filteredSchoolList: [],
-  searchText: "",
   schoolCount: 1
 };
 
@@ -47,7 +45,7 @@ class SplashScreen extends React.PureComponent {
     SchoolAPI.currentSchoolId = clonedSchoolId
 
     if(await SchoolAdminAPI.isSchoolAdmin(school.id, this.props.currentUser.email)){
-      this.props.navigation.navigate("Teacher");
+      this.props.navigation.navigate("Student");
     }else if(await TeacherAPI.isTeacher(school.id, this.props.currentUser.email)){
       this.props.navigation.navigate("Teacher");
     }else if (await StudentAPI.isStudent(school.id, this.props.currentUser.email)) {
@@ -55,12 +53,12 @@ class SplashScreen extends React.PureComponent {
     }
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredSchoolList: []})
 
     const clonedSchoolList = JSON.parse(JSON.stringify(this.state.schoolList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
 
       const filteredSchoolList = clonedSchoolList.filter((school) => {
         return school.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
@@ -112,11 +110,9 @@ class SplashScreen extends React.PureComponent {
           <Subheading style={{alignSelf: "center"}}>Silahkan pilih asal sekolah</Subheading>
 
           <View style={{ padding: 16 }}>
-            <Searchbar 
+            <MySearchbar 
               style={{backgroundColor: "#E8EEE8"}} 
-              onChangeText={searchText => {this.setState({searchText})}}
               onSubmitEditing={this.handleSearchPress}
-              value={this.state.searchText}
               placeholder="Cari Sekolah" />
             <View style={{marginTop:36}}/>
             <FlatList

@@ -1,12 +1,12 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { Text, Searchbar } from "react-native-paper";
+import { View, FlatList } from "react-native";
+import MySearchbar from "src/components/MySearchbar"
 import TaskAPI from "modules/Classroom/api/task";
 import ArchiveListItem from "modules/Classroom/components/ArchiveListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
-const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false, searchText: "", taskList: [], filteredTaskList: [] };
+const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false, taskList: [], filteredTaskList: [] };
 
 class TaskArchiveListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -50,12 +50,12 @@ class TaskArchiveListScreen extends React.PureComponent {
     this.props.navigation.navigate(`Discussions`, payload);
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredTaskList: []})
 
     const clonedTaskList = JSON.parse(JSON.stringify(this.state.taskList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
       const filteredTaskList = clonedTaskList.filter((task) => {
         return (task.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0)
       })
@@ -84,10 +84,8 @@ class TaskArchiveListScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
   
         <View style={{ margin: 16 }}>
-          <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Tugas" />
         </View>
         <FlatList

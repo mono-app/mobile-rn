@@ -1,12 +1,12 @@
 import React from "react";
 import { View, FlatList } from "react-native";
-import { Searchbar } from "react-native-paper";
 import StudentListItem from "modules/Classroom/components/StudentListItem";
+import MySearchbar from "src/components/MySearchbar"
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
-const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [], searchText: "" };
+const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [] };
 class StudentListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -33,13 +33,12 @@ class StudentListScreen extends React.PureComponent {
     this.props.navigation.navigate("StudentProfile", payload);
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredPeopleList: []})
 
     const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
-
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
       const filteredPeopleList = clonedPeopleList.filter((people) => {
         return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
       })
@@ -66,10 +65,8 @@ class StudentListScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-        <Searchbar 
-            onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            value={this.state.searchText}
             placeholder="Cari Murid" />
         </View>
         <FlatList

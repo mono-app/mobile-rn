@@ -10,6 +10,7 @@ import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import { withTheme } from "react-native-paper";
 
 const INITIAL_STATE = { isFetching: true, task:{}, showSnackbarFailDeleting: false, totalSubmission:0, totalDiscussion: 0 };
 
@@ -176,21 +177,12 @@ class TaskDetailsScreen extends React.PureComponent {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={this.handleSubmissionTaskPress}>
-              <View style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}>
+              <View style={{backgroundColor:this.props.theme.colors.primary, padding: 12, margin:16, borderRadius:8 }}>
                   <Text style={{alignSelf: "center",alignItems:"center", color: "#fff"}}>Kumpulkan Tugas</Text>
               </View>
             </TouchableOpacity>
-            
           </View>
         </ScrollView>
-       
-        <Snackbar
-          visible= {this.state.showSnackbarFailDeleting}
-          onDismiss={() => this.setState({ showSnackbarFailDeleting: false })}
-          style={{backgroundColor:"red"}}
-          duration={Snackbar.DURATION_SHORT}>
-          Tidak bisa menghapus karena sudah ada murid yang mengumpulkan tugas
-        </Snackbar>
       </View>
     );
   }
@@ -224,4 +216,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
-export default withCurrentStudent(TaskDetailsScreen)
+export default withTheme(withCurrentStudent(TaskDetailsScreen))

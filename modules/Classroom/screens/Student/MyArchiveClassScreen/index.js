@@ -1,12 +1,12 @@
 import React from "react";
 import { View, FlatList } from "react-native";
-import { Searchbar } from "react-native-paper";
+import MySearchbar from "src/components/MySearchbar"
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
+const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[] };
 
 class MyArchiveClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -35,12 +35,12 @@ class MyArchiveClassScreen extends React.PureComponent {
      this.props.navigation.navigate("ClassDetails", payload);
   }
 
-  handleSearchPress = () => {
+  handleSearchPress = (searchText) => {
     this.setState({filteredClassList: []})
 
     const clonedClassList = JSON.parse(JSON.stringify(this.state.classList))
-    const newSearchText = JSON.parse(JSON.stringify(this.state.searchText)) 
-    if(this.state.searchText){
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
 
       const filteredClassList = clonedClassList.filter((class_) => {
         return class_.subject.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
@@ -67,10 +67,8 @@ class MyArchiveClassScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={{ padding: 16 }}>
-          <Searchbar 
-              onChangeText={searchText => {this.setState({searchText})}}
+          <MySearchbar 
               onSubmitEditing={this.handleSearchPress}
-              value={this.state.searchText}
               placeholder="Cari Kelas" />
         </View>
         <FlatList

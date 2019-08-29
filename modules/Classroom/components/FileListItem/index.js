@@ -6,8 +6,6 @@ import { Text, Paragraph, Card } from "react-native-paper";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-import FileAPI from "../../api/file";
-
 const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
 
 /**

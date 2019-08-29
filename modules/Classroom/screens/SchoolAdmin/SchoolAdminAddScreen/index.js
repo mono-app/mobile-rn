@@ -1,9 +1,9 @@
 import React from "react";
 import { createAppContainer, createMaterialTopTabNavigator } from "react-navigation";
 import AppHeader from "src/components/AppHeader";
-import AddClassScreen from "../AddClassScreen";
-import AddTeacherScreen from "../AddTeacherScreen";
-import AddStudentScreen from "../AddStudentScreen";
+import AddClassScreen from "modules/Classroom/screens/SchoolAdmin/AddClassScreen";
+import AddTeacherScreen from "modules/Classroom/screens/SchoolAdmin/AddTeacherScreen";
+import AddStudentScreen from "modules/Classroom/screens/SchoolAdmin/AddStudentScreen";
 import { View } from "react-native";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
