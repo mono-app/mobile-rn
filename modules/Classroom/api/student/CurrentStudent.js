@@ -44,6 +44,10 @@ export class CurrentStudentProvider extends React.PureComponent{
         const student = documentSnapshot.data();
         student.email = JSON.parse(JSON.stringify(documentSnapshot.id));
 
+        if(student.gender){
+          student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
+        }
+
         this.setState({ student });
           
         // if(student.profilePicture !== undefined){

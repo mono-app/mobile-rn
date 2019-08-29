@@ -17,9 +17,7 @@ import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 const INITIAL_STATE = { isLoadingProfile: true, 
-  student: {}, 
   status:"", 
-  studentEmail:"", 
   totalActiveClass: 0, 
   totalArchiveClass: 0,
   profilePicture: "https://picsum.photos/200/200/?random"
@@ -39,19 +37,13 @@ class MyProfileScreen extends React.PureComponent {
     };
   };
   
-  loadPeopleInformation = async () => {
+  loadTotalClass = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.props.currentStudent.email);
-    if(student.gender){
-      student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
-    }
     const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
     const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
-    if(student.profilePicture){
-      this.setState({ profilePicture: student.profilePicture.downloadUrl });
-    }
-    this.setState({ isLoadingProfile: false, student, totalActiveClass, totalArchiveClass });
+    
+    this.setState({ isLoadingProfile: false, totalActiveClass, totalArchiveClass });
    
   }
   
@@ -116,7 +108,7 @@ class MyProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
+    this.loadTotalClass = this.loadTotalClass.bind(this);
     this.loadStatus = this.loadStatus.bind(this);
     this.handleMyClassPress = this.handleMyClassPress.bind(this);
     this.handleMyArchiveClassPress = this.handleMyArchiveClassPress.bind(this);
@@ -125,7 +117,7 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   componentDidMount(){ 
-    this.loadPeopleInformation();
+    this.loadTotalClass();
     this.loadStatus();
   }
 
@@ -150,8 +142,8 @@ class MyProfileScreen extends React.PureComponent {
           <PeopleProfileHeader
             style={{padding:16}}
             profilePicture={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }
-            title={this.state.student.name}
-            subtitle={(this.state.student.noInduk) ?"NIM " +  this.state.student.noInduk: "NIM " + "-"}
+            title={this.props.currentStudent.name}
+            subtitle={(this.props.currentStudent.noInduk) ?"NIM " +  this.props.currentStudent.noInduk: "NIM " + "-"}
             />
           </TouchableOpacity>
 
@@ -167,23 +159,23 @@ class MyProfileScreen extends React.PureComponent {
           <View style={{  marginBottom: 16 }}>  
            <PeopleInformationContainer
               fieldName="Bergabung Sejak"
-              fieldValue={(this.state.student.creationTime)?moment(this.state.student.creationTime.seconds * 1000).format("DD MMMM YYYY"): ""}/>
+              fieldValue={(this.props.currentStudent.creationTime)?moment(this.props.currentStudent.creationTime.seconds * 1000).format("DD MMMM YYYY"): ""}/>
           </View>
           
           <View style={{  marginBottom: 16 }}>
             
             <PeopleInformationContainer
               fieldName="Alamat"
-              fieldValue={this.state.student.address}/>
+              fieldValue={this.props.currentStudent.address}/>
             <PeopleInformationContainer
               fieldName="Nomor Telepon"
-              fieldValue={this.state.student.phone}/>
+              fieldValue={this.props.currentStudent.phone}/>
             <PeopleInformationContainer
               fieldName="Email"
-              fieldValue={this.state.student.id}/>
+              fieldValue={this.props.currentStudent.email}/>
             <PeopleInformationContainer
               fieldName="Jenis Kelamin"
-              fieldValue={this.state.student.gender}/>
+              fieldValue={this.props.currentStudent.gender}/>
           </View>
           <View style={{  marginBottom: 16 }}>
             <TouchableOpacity onPress={this.handleMyClassPress}>
