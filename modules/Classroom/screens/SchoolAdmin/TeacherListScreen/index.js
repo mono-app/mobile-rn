@@ -4,10 +4,11 @@ import { Searchbar } from "react-native-paper";
 import TeacherAPI from "../../../api/teacher";
 import TeacherListItem from "../../../components/TeacherListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [], searchText: "" };
 
-export default class TeacherListScreen extends React.PureComponent {
+class TeacherListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -22,13 +23,12 @@ export default class TeacherListScreen extends React.PureComponent {
 
   loadTeachers = async () => {
     this.setState({peopleList: []})
-    const peopleList = await TeacherAPI.getTeachers(this.schoolId);
+    const peopleList = await TeacherAPI.getTeachers(this.props.currentSchool.id);
     this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
   handleTeacherPress = people => {
     const payload = {
-      schoolId: this.schoolId,
       teacherEmail: people.id
     }
     this.props.navigation.navigate("TeacherProfile", payload);
@@ -53,7 +53,6 @@ export default class TeacherListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadTeachers = this.loadTeachers.bind(this);
     this.handleTeacherPress = this.handleTeacherPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
@@ -90,12 +89,4 @@ export default class TeacherListScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentSchoolAdmin(TeacherListScreen)

@@ -1,5 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
+import { CurrentSchoolAdminProvider } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin"
 
 import SchoolAdminHomeScreen from "modules/Classroom/screens/SchoolAdmin/SchoolAdminHomeScreen";
 import SchoolAdminAddScreen from "modules/Classroom/screens/SchoolAdmin/SchoolAdminAddScreen";
@@ -22,7 +23,7 @@ import ArchiveClassListScreen from "modules/Classroom/screens/SchoolAdmin/Archiv
 import ArchiveClassListPickerScreen from "modules/Classroom/screens/SchoolAdmin/ArchiveClassListPickerScreen";
 import ArchiveClassDetailsScreen from "modules/Classroom/screens/SchoolAdmin/ArchiveClassDetailsScreen";
 
-export default SchoolAdminNavigator = createStackNavigator(
+const MyNavigator = createStackNavigator(
   {
     SchoolAdminHome: { screen: SchoolAdminHomeScreen },
     SchoolAdminAdd: { screen: SchoolAdminAddScreen },
@@ -49,3 +50,14 @@ export default SchoolAdminNavigator = createStackNavigator(
     initialRouteName: "SchoolAdminHome"
   }
 );
+
+export default class SchoolAdminNavigator extends React.PureComponent{
+  static router = MyNavigator.router;
+  render(){
+    return (
+      <CurrentSchoolAdminProvider>
+        <MyNavigator navigation={this.props.navigation}/>
+      </CurrentSchoolAdminProvider>
+    )
+  }
+}

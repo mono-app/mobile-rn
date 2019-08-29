@@ -5,6 +5,7 @@ import AddClassScreen from "../AddClassScreen";
 import AddTeacherScreen from "../AddTeacherScreen";
 import AddStudentScreen from "../AddStudentScreen";
 import { View } from "react-native";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = {
   isLoading: false
@@ -35,7 +36,7 @@ const CustomTopNavigator = createAppContainer(
   })
 );
 
-export default class SchoolAdminAddScreen extends React.PureComponent {
+class SchoolAdminAddScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -51,15 +52,16 @@ export default class SchoolAdminAddScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
 
   }
 
   render() {
     return (
       <View style={{flex:1}}>
-        <CustomTopNavigator schoolId={this.schoolId}/>
+        <CustomTopNavigator schoolId={this.props.currentSchool.id}/>
       </View>
     );
   }
 }
+
+export default withCurrentSchoolAdmin(SchoolAdminAddScreen)

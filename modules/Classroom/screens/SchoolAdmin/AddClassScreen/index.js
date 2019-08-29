@@ -6,7 +6,7 @@ import Button from "src/components/Button";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import ClassAPI from "modules/Classroom/api/class";
-import SchoolAPI from "modules/Classroom/api/school";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -17,7 +17,7 @@ const INITIAL_STATE = {
   showSnackbar: false
 
 };
-export default class AddClassScreen extends React.PureComponent {
+class AddClassScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -46,10 +46,11 @@ export default class AddClassScreen extends React.PureComponent {
       room: this.state.room,
       semester: this.state.semester,
       subject: this.state.subject,
-      academicYear: this.state.academicYear
+      academicYear: this.state.academicYear,
+      isArchive: false
     };
     new ClassAPI()
-      .addClass(SchoolAPI.currentSchoolId, classInformation)
+      .addClass(this.props.currentSchool.id, classInformation)
       .then(() => {
         this.setState({ isLoading: false, subject: "" });
         this.showSnackbar();
@@ -144,3 +145,4 @@ const styles = StyleSheet.create({
   smallDescription: { fontSize: 12, textAlign: "left", color: "#5E8864" },
   label: { fontSize: 14, textAlign: "left", color: "#000000" }
 });
+export default withCurrentSchoolAdmin(AddClassScreen)

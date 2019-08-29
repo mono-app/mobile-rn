@@ -4,10 +4,12 @@ import { Searchbar } from "react-native-paper";
 import StudentListItem from "../../../components/StudentListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "../../../api/student";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [], searchText: "" };
 
-export default class StudentListScreen extends React.PureComponent {
+
+class StudentListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -22,13 +24,12 @@ export default class StudentListScreen extends React.PureComponent {
 
   loadStudents = async () => {
     this.setState({peopleList: []})
-    const peopleList = await StudentAPI.getStudents(this.schoolId);
+    const peopleList = await StudentAPI.getStudents(this.props.currentSchool.id);
     this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
   handleStudentPress = people => {
     const payload = {
-      schoolId: this.schoolId,
       studentEmail: people.id
     }
     this.props.navigation.navigate("StudentProfile", payload);
@@ -53,7 +54,6 @@ export default class StudentListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
@@ -90,12 +90,4 @@ export default class StudentListScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentSchoolAdmin(StudentListScreen)

@@ -3,8 +3,9 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-export default class SchoolAdminDataMasterScreen extends React.PureComponent {
+class SchoolAdminDataMasterScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -17,22 +18,13 @@ export default class SchoolAdminDataMasterScreen extends React.PureComponent {
     };
   };
   handleClassPress = e => {
-    payload = {
-      schoolId: this.schoolId
-    }
-    this.props.navigation.navigate("ClassList", payload);
+    this.props.navigation.navigate("ClassList");
   };
   handleTeacherPress = e => {
-    payload = {
-      schoolId: this.schoolId
-    }
-    this.props.navigation.navigate("TeacherList", payload);
+    this.props.navigation.navigate("TeacherList");
   };
   handleStudentPress = e => {
-    payload = {
-      schoolId: this.schoolId
-    }
-    this.props.navigation.navigate("StudentList", payload);
+    this.props.navigation.navigate("StudentList");
   };
 
   constructor(props) {
@@ -40,7 +32,6 @@ export default class SchoolAdminDataMasterScreen extends React.PureComponent {
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleTeacherPress = this.handleTeacherPress.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
   }
 
   render() {
@@ -119,3 +110,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
+export default withCurrentSchoolAdmin(SchoolAdminDataMasterScreen)

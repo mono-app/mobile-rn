@@ -4,10 +4,11 @@ import { Searchbar } from "react-native-paper";
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]  };
 
-export default class ArchiveClassListPickerScreen extends React.PureComponent {
+class ArchiveClassListPickerScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -22,13 +23,13 @@ export default class ArchiveClassListPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getActiveClasses(this.schoolId);
+    const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
     this.setState({ classList, filteredClassList: classList });
   }
 
   handleClassPress = class_ => {
     const classId = class_.id;
-    ClassAPI.setArchive(this.schoolId, classId).then(() => {
+    ClassAPI.setArchive(this.props.currentSchool.id, classId).then(() => {
       this.setState({ isLoading: false });
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
@@ -58,7 +59,6 @@ export default class ArchiveClassListPickerScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.handleSearchPress = this.handleSearchPress.bind(this);
   }
@@ -85,7 +85,7 @@ export default class ArchiveClassListPickerScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-               schoolId={this.schoolId} class_={item}/>
+               schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />
@@ -94,12 +94,4 @@ export default class ArchiveClassListPickerScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentSchoolAdmin(ArchiveClassListPickerScreen)

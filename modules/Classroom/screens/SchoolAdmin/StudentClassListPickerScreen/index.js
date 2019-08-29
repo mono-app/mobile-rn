@@ -5,10 +5,11 @@ import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
-export default class StudentClassListPickerScreen extends React.PureComponent {
+class StudentClassListPickerScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -23,13 +24,13 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getActiveClasses(this.schoolId);
+    const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
     this.setState({ classList, filteredClassList: classList });
   }
 
   handleClassPress = class_ => {
     const classId = class_.id;
-    StudentAPI.addStudentClass(this.studentEmail, this.schoolId, classId).then(() => {
+    StudentAPI.addStudentClass(this.studentEmail, this.props.currentSchool.id, classId).then(() => {
       this.setState({ isLoading: false });
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
@@ -57,7 +58,6 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.studentEmail = this.props.navigation.getParam("studentEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
@@ -87,7 +87,7 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId} class_={item}/>
+                schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />
@@ -96,12 +96,4 @@ export default class StudentClassListPickerScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentSchoolAdmin(StudentClassListPickerScreen)

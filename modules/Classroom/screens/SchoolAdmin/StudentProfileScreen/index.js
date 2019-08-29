@@ -7,15 +7,11 @@ import ClassAPI from "modules/Classroom/api/class";
 import SquareAvatar from "src/components/Avatar/Square";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0  }
 
-/**
- * Parameter list
- * 
- * @param {string} studentEmail
- */
-export default class StudentProfileScreen extends React.PureComponent {
+class StudentProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -31,11 +27,11 @@ export default class StudentProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.schoolId, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail)).length;
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentEmail)).length;
 
     this.setState({ isLoadingProfile: false, student, totalActiveClass });
 
@@ -43,7 +39,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleNamePress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "name", 
@@ -60,7 +56,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleAddressPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "address", 
@@ -77,7 +73,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handlePhonePress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "phone", 
@@ -95,7 +91,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleEmailPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "id", 
@@ -112,7 +108,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleNoIndukPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "noInduk", 
@@ -130,7 +126,7 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleGenderPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "gender", 
@@ -148,7 +144,6 @@ export default class StudentProfileScreen extends React.PureComponent {
 
   handleClassListPress = e => {
     const payload = {
-      schoolId: this.schoolId,
       studentEmail: this.studentEmail
     }
     this.props.navigation.navigate('StudentClassList', payload);
@@ -158,7 +153,6 @@ export default class StudentProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.handleNamePress = this.handleNamePress.bind(this);
@@ -310,3 +304,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
+export default withCurrentSchoolAdmin(StudentProfileScreen)

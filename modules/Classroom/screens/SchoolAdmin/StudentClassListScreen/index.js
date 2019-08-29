@@ -5,10 +5,12 @@ import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
-export default class StudentClassListScreen extends React.PureComponent {
+
+class StudentClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -23,7 +25,7 @@ export default class StudentClassListScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getUserActiveClasses(this.schoolId, this.studentEmail);
+    const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentEmail);
     this.setState({ classList, filteredClassList: classList });
   }
 
@@ -34,7 +36,6 @@ export default class StudentClassListScreen extends React.PureComponent {
 
   handleAddClassPress = () => {
     const payload = {
-      schoolId: this.schoolId,
       studentEmail: this.studentEmail,
       onRefresh: this.loadClasses
     }
@@ -60,7 +61,6 @@ export default class StudentClassListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.studentEmail = this.props.navigation.getParam("studentEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
@@ -102,7 +102,7 @@ export default class StudentClassListScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId} class_={item}/>
+                schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />
@@ -111,12 +111,4 @@ export default class StudentClassListScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  listItemContainer: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8EEE8"
-  }
-});
+export default withCurrentSchoolAdmin(StudentClassListScreen)

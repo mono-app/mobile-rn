@@ -5,10 +5,12 @@ import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[] };
 
-export default class ClassListScreen extends React.PureComponent {
+
+class ClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -23,13 +25,12 @@ export default class ClassListScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getActiveClasses(this.schoolId);
+    const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
     this.setState({ classList, filteredClassList: classList });
   }
 
   handleClassPress = class_ => {
     const payload = {
-      schoolId: this.schoolId,
       classId: class_.id
     }
     this.props.navigation.navigate("ClassProfile", payload);
@@ -54,7 +55,6 @@ export default class ClassListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
@@ -83,7 +83,7 @@ export default class ClassListScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId} class_={item}/>
+                schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />
@@ -92,3 +92,4 @@ export default class ClassListScreen extends React.PureComponent {
   }
 }
 
+export default withCurrentSchoolAdmin(ClassListScreen)

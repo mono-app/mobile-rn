@@ -6,7 +6,7 @@ import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import TeacherAPI from "modules/Classroom/api/teacher";
-import SchoolAPI from "modules/Classroom/api/school";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -14,7 +14,8 @@ const INITIAL_STATE = {
   teacherName: "",
   showSnackbar: false
 };
-export default class AddTeacherScreen extends React.PureComponent {
+
+class AddTeacherScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -38,7 +39,7 @@ export default class AddTeacherScreen extends React.PureComponent {
   handleSavePress = () => {
     this.setState({ isLoading: true });
 
-    TeacherAPI.addTeacher(SchoolAPI.currentSchoolId, this.state.teacherEmail,{name: this.state.teacherName}).then(() => {
+    TeacherAPI.addTeacher(this.props.currentSchool.id, this.state.teacherEmail,{name: this.state.teacherName}).then(() => {
       this.setState({ isLoading: false, teacherEmail: "", teacherName:"" });
       this.showSnackbar()
     }).catch(err => console.log(err));
@@ -107,3 +108,4 @@ const styles = StyleSheet.create({
   smallDescription: { fontSize: 12, textAlign: "left", color: "#5E8864" },
   label: { fontSize: 14, textAlign: "left", color: "#000000" }
 });
+export default withCurrentSchoolAdmin(AddTeacherScreen)

@@ -10,6 +10,7 @@ import StorageAPI from "src/api/storage";
 import uuid from "uuid/v4"
 import DocumentPicker from 'react-native-document-picker';
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -37,24 +38,15 @@ class SchoolAdminHomeScreen extends React.PureComponent {
   }
 
   handleAddPress = e => {
-    payload = {
-      schoolId: this.state.schoolId
-    }
-    this.props.navigation.navigate("SchoolAdminAdd", payload);
+    this.props.navigation.navigate("SchoolAdminAdd");
   };
 
   handleDataMasterPress = e => {
-    payload = {
-      schoolId: this.state.schoolId
-    }
-    this.props.navigation.navigate("SchoolAdminDataMaster", payload);
+    this.props.navigation.navigate("SchoolAdminDataMaster");
   };
 
   handleArchiveClass = e => {
-    payload = {
-      schoolId: this.state.schoolId
-    }
-    this.props.navigation.navigate("ArchiveClassList", payload);
+    this.props.navigation.navigate("ArchiveClassList");
   };
 
   requestStoragePermission = async () => {
@@ -108,15 +100,15 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
   }
 
-  componentDidMount(){
-    this.loadSchoolInformation();
-    this.loadUserName();
+  async componentDidMount(){
+    await this.props.setCurrentSchoolId(this.state.schoolId)
+    await this.props.setCurrentSchoolAdminEmail(this.props.currentSchool.id, this.props.currentUser.email)
   }
 
   render() {
     return (
       <View style={styles.groupContainer}>
-        <Header navigation={this.props.navigation} title={this.state.school.name} />
+        <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
 
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={this.state.profilePicture}/>
@@ -126,7 +118,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
           <Text style={{ fontWeight: "700", marginTop: 16, fontSize: 20 }}>
             Selamat Datang,
           </Text>
-          <Text style={{ fontWeight: "400", fontSize: 16 }}>{this.state.userName}</Text>
+          <Text style={{ fontWeight: "400", fontSize: 16 }}>{this.props.currentSchoolAdmin.name}</Text>
         </View>
 
         <View style={{marginBottom: 64}}/>
@@ -198,4 +190,4 @@ const styles = StyleSheet.create({
     borderRadius: 12
   }
 });
-export default withCurrentUser(SchoolAdminHomeScreen)
+export default withCurrentUser(withCurrentSchoolAdmin(SchoolAdminHomeScreen))

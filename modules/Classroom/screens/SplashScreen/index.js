@@ -47,7 +47,7 @@ class SplashScreen extends React.PureComponent {
     SchoolAPI.currentSchoolId = clonedSchoolId
 
     if(await SchoolAdminAPI.isSchoolAdmin(school.id, this.props.currentUser.email)){
-      this.props.navigation.navigate("Teacher");
+      this.props.navigation.navigate("SchoolAdmin");
     }else if(await TeacherAPI.isTeacher(school.id, this.props.currentUser.email)){
       this.props.navigation.navigate("Teacher");
     }else if (await StudentAPI.isStudent(school.id, this.props.currentUser.email)) {

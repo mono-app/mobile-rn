@@ -5,10 +5,11 @@ import ClassAPI from "../../../api/class";
 import ClassListItem from "../../../components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoading: true, searchText: "", classList:[], filteredClassList:[]   };
 
-export default class ArchiveClassListScreen extends React.PureComponent {
+class ArchiveClassListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -23,13 +24,12 @@ export default class ArchiveClassListScreen extends React.PureComponent {
 
   loadClasses = async () => {
     this.setState({classList: []})
-    const classList = await ClassAPI.getArchiveClasses(this.schoolId);
+    const classList = await ClassAPI.getArchiveClasses(this.props.currentSchool.id);
     this.setState({ classList, filteredClassList: classList });
    }
 
   handleClassPress = class_ => {
     const payload = {
-      schoolId: this.schoolId,
       classId: class_.id,
       onRefresh: this.loadClasses
     }
@@ -38,7 +38,6 @@ export default class ArchiveClassListScreen extends React.PureComponent {
 
   handleAddClassPress = () => {
     const payload = {
-      schoolId: this.schoolId,
       teacherEmail: this.teacherEmail,
       onRefresh: this.loadClasses
     }
@@ -63,7 +62,6 @@ export default class ArchiveClassListScreen extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.state = INITIAL_STATE;
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
@@ -104,7 +102,7 @@ export default class ArchiveClassListScreen extends React.PureComponent {
             return (
               <ClassListItem 
                 onPress={() => this.handleClassPress(item)}
-                schoolId={this.schoolId} class_={item}/>
+                schoolId={this.props.currentSchool.id} class_={item}/>
             )
           }}
         />
@@ -112,4 +110,5 @@ export default class ArchiveClassListScreen extends React.PureComponent {
     );
   }
 }
+export default withCurrentSchoolAdmin(ArchiveClassListScreen)
 

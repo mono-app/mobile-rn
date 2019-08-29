@@ -12,15 +12,12 @@ import ClassAPI from "modules/Classroom/api/class";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import Button from "src/components/Button";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoadingProfile: true, isLoadingButton: false ,class: null };
 
-/**
- * Parameter list
- *
- * @param {string} classId
- */
-export default class ArchiveClassDetailsScreen extends React.PureComponent {
+
+class ArchiveClassDetailsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -36,14 +33,14 @@ export default class ArchiveClassDetailsScreen extends React.PureComponent {
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const class_ = await ClassAPI.getDetail(this.schoolId, this.classId)
+    const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId)
     this.setState({ isLoadingProfile: false, class: class_ });
 
   };
 
   handleUnarchivePress = async () => {
     this.setState({isLoadingButton: true})
-    await ClassAPI.setUnarchive(this.schoolId, this.classId)
+    await ClassAPI.setUnarchive(this.props.currentSchool.id, this.classId)
   
     const { navigation } = this.props;
     navigation.state.params.onRefresh();
@@ -55,7 +52,6 @@ export default class ArchiveClassDetailsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.schoolId = this.props.navigation.getParam("schoolId", null);
     this.classId = this.props.navigation.getParam("classId", null);
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleUnarchivePress = this.handleUnarchivePress.bind(this);
@@ -118,3 +114,4 @@ export default class ArchiveClassDetailsScreen extends React.PureComponent {
     )
   }
 }
+export default withCurrentSchoolAdmin(ArchiveClassDetailsScreen)

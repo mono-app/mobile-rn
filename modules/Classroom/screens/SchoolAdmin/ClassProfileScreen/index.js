@@ -13,15 +13,11 @@ import AppHeader from "src/components/AppHeader";
 import ClassAPI from "../../../api/class";
 import SquareAvatar from "src/components/Avatar/Square";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null };
 
-/**
- * Parameter list
- *
- * @param {string} classId
- */
-export default class ClassProfileScreen extends React.PureComponent {
+class ClassProfileScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -37,14 +33,14 @@ export default class ClassProfileScreen extends React.PureComponent {
   loadClassInformation = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const class_ = await ClassAPI.getDetail(this.schoolId, this.classId);
+    const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
     this.setState({ isLoadingProfile: false, class: class_ });
 
   };
 
   handleSubjectPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "subject", 
@@ -61,7 +57,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleRoomPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "room", 
@@ -79,7 +75,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleAcademicYearPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "academicYear", 
@@ -96,7 +92,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleSemesterPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "semester", 
@@ -114,7 +110,7 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   handleInformationPress = e => {
     const payload = {
-      schoolId: this.schoolId,
+      schoolId: this.props.currentSchool.id,
       databaseCollection: "classes",
       databaseDocumentId: this.classId,
       databaseFieldName: "information", 
@@ -133,7 +129,6 @@ export default class ClassProfileScreen extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", null);
     this.state = INITIAL_STATE;
     this.loadClassInformation = this.loadClassInformation.bind(this);
@@ -267,3 +262,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
+export default withCurrentSchoolAdmin(ClassProfileScreen)
