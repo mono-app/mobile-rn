@@ -2,6 +2,10 @@
   package="com.zannete.monoapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -33,6 +37,10 @@
           <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
         </intent-filter>
       </service>
+
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyBM3r9YjviuC1sJd0BHn2j_kbPi41pPLQE"/>
 
       <activity
         android:name=".MainActivity"

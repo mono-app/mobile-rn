@@ -1,0 +1,128 @@
+import React from "react";
+import { View, FlatList, StyleSheet } from "react-native";
+import MySearchbar from "src/components/MySearchbar"
+import ShareDiscussionListItem from "modules/Classroom/components/ShareDiscussionListItem";
+import AppHeader from "src/components/AppHeader";
+import StudentAPI from "modules/Classroom/api/student";
+import Button from "src/components/Button";
+
+const INITIAL_STATE = { isLoading: true, isShareLoading: false , peopleList:[], filteredPeopleList:[] };
+
+export default class ShareDiscussionScreen extends React.PureComponent {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      header: (
+        <AppHeader
+          navigation={navigation}
+          title="Bagikan ke"
+          style={{ backgroundColor: "transparent" }}
+        />
+      )
+    };
+  };
+
+  loadStudents = async () => {
+    this.setState({ peopleList: [] });
+
+    const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
+    this.setState({ peopleList, filteredPeopleList: peopleList });
+  }
+
+  handleSearchPress = (searchText) => {
+    this.setState({filteredPeopleList: []})
+
+    const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
+
+      const filteredPeopleList = clonedPeopleList.filter((people) => {
+        return people.name.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0
+      })
+      this.setState({filteredPeopleList})
+    } else {
+      this.setState({filteredPeopleList: clonedPeopleList})
+    }
+  }
+
+  handleStudentPress = people => {
+    const clonedFilteredPeopleList = JSON.parse(JSON.stringify(this.state.filteredPeopleList)) 
+    const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList)) 
+    this.setState({filteredPeopleList: [], peopleList: []})
+
+    const filteredPeopleList = clonedFilteredPeopleList.map((data) => {
+      if(data.id==people.id){
+        if(people.checked){
+          return {...data, checked: false}
+        }else{
+          return {...data, checked: true}
+        }
+      }
+      return {...data}
+    })
+    const peopleList = clonedPeopleList.map((data) => {
+      if(data.id==people.id){
+        if(people.checked){
+          return {...data, checked: false}
+        }else{
+          return {...data, checked: true}
+        }
+      }
+      return {...data}
+    })
+    this.setState({filteredPeopleList, peopleList})
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = INITIAL_STATE;
+    this.classId = this.props.navigation.getParam("classId", "");
+    this.loadStudents = this.loadStudents.bind(this);
+    this.handleStudentPress = this.handleStudentPress.bind(this);
+    this.handleSearchPress = this.handleSearchPress.bind(this);
+  }
+
+  componentDidMount(){
+    this.loadStudents();
+  }
+
+  render() {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <View style={{ padding: 16 }}>
+          <MySearchbar 
+            onSubmitEditing={this.handleSearchPress}
+            placeholder="Cari Murid" />
+        </View>
+        <FlatList
+          style={{ backgroundColor: "white" }}
+          data={this.state.filteredPeopleList}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            return (
+              <ShareDiscussionListItem 
+                onPress={() => this.handleStudentPress(item)}
+                schoolId={this.props.currentSchool.id} student={item}/>
+            )
+          }}
+        />
+        <View style={{ backgroundColor: "#fff" }}>
+          <Button
+            text="Bagikan"
+            isLoading={this.state.isShareLoading}
+            style={{marginHorizontal: 16}}
+          />      
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  listItemContainer: {
+    padding: 16,
+    flexDirection: "row",
+    justifyContent: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8EEE8"
+  }
+});

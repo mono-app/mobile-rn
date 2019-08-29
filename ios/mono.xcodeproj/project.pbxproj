@@ -67,6 +67,11 @@
 		6ABF33601BB349B48E7EAFF2 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AB42D0FD9E846468F7577AF /* libRNFS.a */; };
 		54166CDB44C649209C3C5658 /* libFastImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9F90355FE2345DFAF10C3E8 /* libFastImage.a */; };
 		3FA62B034EB34E778F677947 /* libRNSpinkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95322F625DFD4266B5C4DD88 /* libRNSpinkit.a */; };
+		84C6A71789DB4C478520B451 /* libRNCAsyncStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AE47B2AE2A2043B19C39F1F3 /* libRNCAsyncStorage.a */; };
+		3C4E5DE703354231973061B2 /* libRNBackgroundDownloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 373BE26AA78A4EF5ADA1F52A /* libRNBackgroundDownloader.a */; };
+		380541EF245C4B928B6E328B /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CCE836C2594498C8DAE56B0 /* libAirMaps.a */; };
+		6B5AA87383B841908110F9A5 /* libReactNativeCameraKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 685A5D1E4F3141998828616D /* libReactNativeCameraKit.a */; };
+		E059535037F34DDDA69649EE /* libRNDocumentPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EB2E311D6E04261A03D657F /* libRNDocumentPicker.a */; };
 		CF335362954C438AB1B6640F /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1BE68F6AA33401E8207B74F /* libRNCNetInfo.a */; };
 		B014AE558CEA411F896184F3 /* libRNCNetInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */; };
 /* End PBXBuildFile section */
@@ -414,6 +419,16 @@
 		D9F90355FE2345DFAF10C3E8 /* libFastImage.a */ = {isa = PBXFileReference; name = "libFastImage.a"; path = "libFastImage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		0179935BAC114DF4BD80D75E /* RNSpinkit.xcodeproj */ = {isa = PBXFileReference; name = "RNSpinkit.xcodeproj"; path = "../node_modules/react-native-spinkit/ios/RNSpinkit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		95322F625DFD4266B5C4DD88 /* libRNSpinkit.a */ = {isa = PBXFileReference; name = "libRNSpinkit.a"; path = "libRNSpinkit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		07DCA8E30A6945F5A09E0D1B /* RNCAsyncStorage.xcodeproj */ = {isa = PBXFileReference; name = "RNCAsyncStorage.xcodeproj"; path = "../node_modules/@react-native-community/async-storage/ios/RNCAsyncStorage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		AE47B2AE2A2043B19C39F1F3 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; name = "libRNCAsyncStorage.a"; path = "libRNCAsyncStorage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		335031F8C80646C98261925C /* RNBackgroundDownloader.xcodeproj */ = {isa = PBXFileReference; name = "RNBackgroundDownloader.xcodeproj"; path = "../node_modules/react-native-background-downloader/ios/RNBackgroundDownloader.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		373BE26AA78A4EF5ADA1F52A /* libRNBackgroundDownloader.a */ = {isa = PBXFileReference; name = "libRNBackgroundDownloader.a"; path = "libRNBackgroundDownloader.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		80E1FF9638FC46F4947860B1 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; name = "AirMaps.xcodeproj"; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		7CCE836C2594498C8DAE56B0 /* libAirMaps.a */ = {isa = PBXFileReference; name = "libAirMaps.a"; path = "libAirMaps.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		C0AF02084F8940E59B4F6904 /* ReactNativeCameraKit.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeCameraKit.xcodeproj"; path = "../node_modules/react-native-camera-kit/ios/lib/ReactNativeCameraKit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		685A5D1E4F3141998828616D /* libReactNativeCameraKit.a */ = {isa = PBXFileReference; name = "libReactNativeCameraKit.a"; path = "libReactNativeCameraKit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		DEE8C4C3E0B74CE5A48371A2 /* RNDocumentPicker.xcodeproj */ = {isa = PBXFileReference; name = "RNDocumentPicker.xcodeproj"; path = "../node_modules/react-native-document-picker/ios/RNDocumentPicker.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		3EB2E311D6E04261A03D657F /* libRNDocumentPicker.a */ = {isa = PBXFileReference; name = "libRNDocumentPicker.a"; path = "libRNDocumentPicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		14ABA209DDA64215BC87CDD5 /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; name = "RNCNetInfo.xcodeproj"; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		D1BE68F6AA33401E8207B74F /* libRNCNetInfo.a */ = {isa = PBXFileReference; name = "libRNCNetInfo.a"; path = "libRNCNetInfo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */ = {isa = PBXFileReference; name = "libRNCNetInfo-tvOS.a"; path = "libRNCNetInfo-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
@@ -455,6 +470,11 @@
 				6ABF33601BB349B48E7EAFF2 /* libRNFS.a in Frameworks */,
 				54166CDB44C649209C3C5658 /* libFastImage.a in Frameworks */,
 				3FA62B034EB34E778F677947 /* libRNSpinkit.a in Frameworks */,
+				84C6A71789DB4C478520B451 /* libRNCAsyncStorage.a in Frameworks */,
+				3C4E5DE703354231973061B2 /* libRNBackgroundDownloader.a in Frameworks */,
+				380541EF245C4B928B6E328B /* libAirMaps.a in Frameworks */,
+				6B5AA87383B841908110F9A5 /* libReactNativeCameraKit.a in Frameworks */,
+				E059535037F34DDDA69649EE /* libRNDocumentPicker.a in Frameworks */,
 				CF335362954C438AB1B6640F /* libRNCNetInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -659,6 +679,11 @@
 				90D6FB6779C94027915184D7 /* RNFS.xcodeproj */,
 				CD60FF0A031841EF9ADDA4B3 /* FastImage.xcodeproj */,
 				0179935BAC114DF4BD80D75E /* RNSpinkit.xcodeproj */,
+				07DCA8E30A6945F5A09E0D1B /* RNCAsyncStorage.xcodeproj */,
+				335031F8C80646C98261925C /* RNBackgroundDownloader.xcodeproj */,
+				80E1FF9638FC46F4947860B1 /* AirMaps.xcodeproj */,
+				C0AF02084F8940E59B4F6904 /* ReactNativeCameraKit.xcodeproj */,
+				DEE8C4C3E0B74CE5A48371A2 /* RNDocumentPicker.xcodeproj */,
 				14ABA209DDA64215BC87CDD5 /* RNCNetInfo.xcodeproj */,
 			);
 			name = Libraries;
@@ -1341,6 +1366,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1354,6 +1384,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};
@@ -1391,6 +1426,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1404,6 +1444,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};
@@ -1437,6 +1482,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};
@@ -1469,6 +1519,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};
@@ -1514,6 +1569,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1527,6 +1587,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};
@@ -1572,6 +1637,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1585,6 +1655,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};
@@ -1629,6 +1704,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1642,6 +1722,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};
@@ -1686,6 +1771,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1699,6 +1789,11 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-spinkit\ios/**",
+					"$(SRCROOT)\..\node_modules\@react-native-community\async-storage\ios",
+					"$(SRCROOT)\..\node_modules\react-native-background-downloader\ios",
+					"$(SRCROOT)\..\node_modules\react-native-maps\lib\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
+					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 			};

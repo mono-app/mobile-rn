@@ -2,17 +2,21 @@ package com.zannete.monoapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
+import com.wix.RNCameraKit.RNCameraKitPackage;
+import com.eko.RNBackgroundDownloaderPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 
-import com.wix.RNCameraKit.RNCameraKitPackage;
 import org.reactnative.camera.RNCameraPackage;
 import br.com.classapp.RNSensitiveInfo.RNSensitiveInfoPackage;
 import com.horcrux.svg.SvgPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.rnfs.RNFSPackage;
+import com.airbnb.android.react.maps.MapsPackage;
 
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -44,7 +48,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new NetInfoPackage(),
+          new DocumentPickerPackage(),
+          new RNCameraKitPackage(),
+          new RNBackgroundDownloaderPackage(),
+          new AsyncStoragePackage(),
+          new NetInfoPackage(),
           new RNSpinkitPackage(),
           new FastImageViewPackage(),
           new RNFSPackage(),
@@ -53,7 +61,6 @@ public class MainApplication extends Application implements ReactApplication {
           new SvgPackage(),
           new VectorIconsPackage(),
           new RNGestureHandlerPackage(),
-          new RNCameraKitPackage(),
           new RNFirebasePackage(),
           new RNFirebaseFirestorePackage(),
           new RNFirebaseAuthPackage(),
@@ -61,6 +68,7 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseMessagingPackage(),
           new RNFirebaseNotificationsPackage(),
           new RNFirebaseInstanceIdPackage(),
+          new MapsPackage(),
           new WebRTCModulePackage()  
       );
     }

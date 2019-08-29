@@ -1,4 +1,8 @@
 rootProject.name = 'mono'
+include ':react-native-background-downloader'
+project(':react-native-background-downloader').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-downloader/android')
+include ':@react-native-community_async-storage'
+project(':@react-native-community_async-storage').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/async-storage/android')
 include ':@react-native-community_netinfo'
 project(':@react-native-community_netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')
 include ':react-native-spinkit'
@@ -21,6 +25,10 @@ include ':react-native-firebase'
 project(':react-native-firebase').projectDir = new File(rootProject.projectDir, '..\\node_modules\\react-native-firebase\\android')
 include ':rncamerakit'
 project(':rncamerakit').projectDir = new File(rootProject.projectDir, '..\\node_modules\\react-native-camera-kit\\android')
+include ':react-native-document-picker'
+project(':react-native-document-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-document-picker/android')
+include ':react-native-maps'
+project(':react-native-maps').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-maps/lib/android')
 include ':WebRTCModule'
 project(':WebRTCModule').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-webrtc/android')
 include ':app'

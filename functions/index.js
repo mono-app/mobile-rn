@@ -44,3 +44,75 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
   await Promise.all(messagePromises);
   return Promise.resolve(true);
 })
+
+exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/tasks/{taskId}/discussions/{discussionId}").onCreate(async (documentSnapshot, context) => {
+  const discussionDocument = documentSnapshot.data();
+  // console.log(111)
+  // console.log(discussionDocument)
+  const { schoolId, classId, taskId, discussionId  } = context.params;
+
+  // get senderId
+  const senderId = discussionDocument.posterEmail
+
+  // get all teacher audience
+  const db = admin.firestore();
+  const schoolsDocumentRef = db.collection("schools").doc(schoolId);
+  const classesDocumentRef = schoolsDocumentRef.collection("classes").doc(classId);
+  const teachersCollectionRef = classesDocumentRef.collection("teachers");
+
+  const teachersQuerySnapshot = await teachersCollectionRef.get()
+
+  const arrayOfPromise = teachersQuerySnapshot.docs.map(async (snap) => {
+    const schoolsDocumentRef2 = db.collection("schools").doc(schoolId);
+    const teachersDocumentRef = schoolsDocumentRef2.collection("teachers").doc(snap.id);
+    const teachersSnapshot = await teachersDocumentRef.get();
+    const data = Object.assign({id: teachersSnapshot.id}, teachersSnapshot.data())
+
+    return Promise.resolve(data)
+  });
+  const teachers = await Promise.all(arrayOfPromise);
+  
+  // get all student audience
+  const schoolsDocumentRef3 = db.collection("schools").doc(schoolId);
+  const classesDocumentRef2 = schoolsDocumentRef3.collection("classes").doc(classId);
+  let studentsCollectionRef = classesDocumentRef2.collection("students");
+
+  const studentSnapshot = await studentsCollectionRef.get();
+  const arrayOfPromise2 = studentSnapshot.docs.map(async (snap) => {
+    const schoolsDocumentRef4 = db.collection("schools").doc(schoolId);
+    const studentsDocumentRef = schoolsDocumentRef4.collection("students").doc(snap.id);
+    const documentSnapshot = await studentsDocumentRef.get();
+    const student = Object.assign({id: documentSnapshot.id, finalScore: snap.data().finalScore}, documentSnapshot.data())
+
+    return Promise.resolve(student)
+  });
+
+  const students = await Promise.all(arrayOfPromise2);
+
+  let audiencesData = []
+
+  for(const teacher of teachers){
+    if(teacher.tokenInformation && teacher.id !== senderId){
+      audiencesData.push(teacher)
+    }
+  }
+  for(const student of students){
+    if(student.tokenInformation && teacher.id !== senderId){
+      audiencesData.push(student)
+    }
+  }
+  // send notification to teacher and student audience except senderId
+
+  // send notification to all audiences except sender
+  const messagePromises = audiencesData.map(audienceData => {
+    const message = {
+      token: audienceData.tokenInformation.messagingToken,
+      android: { notification: {channelId: "discussion-notification"} },
+      notification: { title: discussionDocument.title, body: discussionDocument.description }
+    }
+    return admin.messaging().send(message);
+  })
+
+  await Promise.all(messagePromises);
+  return Promise.resolve(true);
+})
