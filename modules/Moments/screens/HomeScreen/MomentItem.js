@@ -1,11 +1,11 @@
 import React from "react";
 import moment from "moment";
+import PeopleAPI from "src/api/people";
 import { StyleSheet, Dimensions } from "react-native";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 
 import MomentsAPI from "modules/Moments/api/moment";
 import CurrentUserAPI from "src/api/people/CurrentUser";
-import PeopleAPI from "src/api/people";
 import TranslateAPI from "src/api/translate";
 
 import PeopleDetailListener from "src/components/PeopleDetailListener";
@@ -32,6 +32,8 @@ function MomentImageThumbnail(props){
 }
 
 function MomentItem(props){
+  const { moment } = props;
+  const [ people, setPeople ] = React.useState(null);
   const styles = StyleSheet.create({
     surface: { elevation: 16, padding: 16, display: "flex", flexDirection: "column", borderRadius: 4 },
     profile: { display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 8 },
@@ -41,21 +43,31 @@ function MomentItem(props){
     imagesContainer: { display: "flex", flexDirection: "row", marginTop: 4, marginBottom: 4, flexGrow: 1 },
   })
 
+  const fetchPeople = async () => {
+    const peopleData = await PeopleAPI.getDetail(moment.posterEmail)
+    setPeople(peopleData);
+  }
+
+  React.useEffect(() => {
+    fetchPeople();
+  }, [])
+
+  if(people === null) return null;
   return (
     <Surface style={[ styles.surface, props.style ]}>
       <View style={styles.profile}>
-        <SquareAvatar size={50} uri={"https://picsum.photos/200"}/>
+        <SquareAvatar size={50} uri={people.profilePicture}/>
         <View style={{ marginLeft: 8 }}>
-          <Text style={{ margin: 0, fontWeight: "bold" }}>Frans Huang</Text>
+          <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
           <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
         </View>
       </View>
       <View style={styles.textContainer}>
-        <Text style={{ textAlign: "justify" }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fermentum elit vitae velit sagittis aliquet. Quisque lacus eros, aliquam quis volutpat at, faucibus et orci. Fusce blandit consequat dui, eu pharetra dolor pharetra id. Fusce sit amet enim lorem. Donec blandit ut diam congue vestibulum. Phasellus dolor est, lobortis non mauris vel, vestibulum sodales nisi. Ut blandit ultricies placerat.</Text>
+        <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
         <FlatList 
-          style={styles.imagesContainer} data={[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]} horizontal={true}
+          style={styles.imagesContainer} data={moment.content.images} horizontal={true}
           renderItem={({ item }) => {
-            return <MomentImageThumbnail source={{ uri: "https://picsum.photos/1080" }}/>
+            return <MomentImageThumbnail source={{ uri: item.downloadUrl }}/>
           }}/> 
       </View>
       <View style={styles.actionContainer}>
