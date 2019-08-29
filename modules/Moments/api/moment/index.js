@@ -14,7 +14,7 @@ export default class MomentAPI{
    * @param {String} momentId 
    * @param {String} fanEmail 
    */
-  static toggleLike(momentId, fanEmail){
+  static async toggleLike(momentId, fanEmail){
     const payload = { email: fanEmail, timestamp: firebase.firestore.FieldValue.serverTimestamp() }
     const db = firebase.firestore();
     const batch = db.batch();
@@ -26,7 +26,7 @@ export default class MomentAPI{
     const momentsRef = db.collection(momentsCollection.getName()).doc(momentDocument.getId());
     const fansRef = momentsRef.collection(fansCollection.getName()).doc(fanDocument.getId());
 
-    fansRef.get().then(documentSnapshot => {
+    return fansRef.get().then(documentSnapshot => {
       if(!documentSnapshot.exists){
         batch.set(fansRef, payload);
         batch.update(momentsRef, { fanEmails: firebase.firestore.FieldValue.arrayUnion(fanEmail) });
@@ -51,7 +51,7 @@ export default class MomentAPI{
     const momentDocument = new Document(momentId);
     const momentRef = db.collection(momentsCollection.getName()).doc(momentDocument.getId());
     return momentRef.onSnapshot({ includeMetadataChanges: true }, (documentSnapshot) => {
-      if(documentSnapshot.exists) callback(documentSnapshot.data());
+      if(documentSnapshot.exists) callback(MomentAPI.normalizeMoment(documentSnapshot));
       else callback(null);
     })
   }

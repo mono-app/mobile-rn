@@ -1,9 +1,12 @@
 import React from "react";
 import PeopleAPI from "src/api/people";
+import MomentAPI from "modules/Moments/api/moment";
+import Logger from "src/api/logger";
 import { StyleSheet, Dimensions } from "react-native";
 
 import SquareAvatar from "src/components/Avatar/Square";
 import FastImage from "react-native-fast-image";
+import LikeButton from "modules/Moments/components/MomentItem/LikeButton";
 import { View, TouchableOpacity, FlatList } from "react-native";
 import { Text, Surface, Caption } from "react-native-paper";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
@@ -24,8 +27,9 @@ export function MomentImageThumbnail(props){
 }
 
 function MomentItem(props){
-  const { moment } = props;
+  const [ moment, setMoment ] = React.useState(props.moment);
   const [ people, setPeople ] = React.useState(null);
+  const momentListener = React.useRef(null);
   const styles = StyleSheet.create({
     surface: { elevation: 16, padding: 16, display: "flex", flexDirection: "column", borderRadius: 4 },
     profile: { display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 8 },
@@ -40,8 +44,19 @@ function MomentItem(props){
     setPeople(peopleData);
   }
 
+  const fetchMoment = async () => {
+    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, (newMoment) => {
+      setMoment(newMoment);
+    })
+  }
+
   React.useEffect(() => {
     fetchPeople();
+    fetchMoment();
+    return function cleanup(){
+      Logger.log("MomentItem.cleanup", `cleanup: ${moment.content.message}`);
+      if(momentListener.current) momentListener.current();
+    }
   }, [])
 
   if(people === null) return null;
@@ -63,10 +78,7 @@ function MomentItem(props){
           }}/> 
       </View>
       <View style={styles.actionContainer}>
-        <TouchableOpacity style={styles.actionItem}>
-          <MaterialCommunityIcons name="thumb-up-outline" size={16} style={{ marginRight: 4 }}/>
-          <Text>Suka</Text>
-        </TouchableOpacity>
+        <LikeButton style={styles.actionItem} moment={moment}/>
         <TouchableOpacity style={styles.actionItem}>
           <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
           <Text>Komentar</Text>

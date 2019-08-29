@@ -4,7 +4,7 @@ import Logger from "src/api/logger";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
-import MomentItem from "./MomentItem";
+import MomentItem from "modules/Moments/components/MomentItem";
 import CircleAvatar from "src/components/Avatar/Circle";
 import { View, TouchableOpacity, FlatList } from "react-native";
 import { Text, Surface, IconButton } from "react-native-paper";
@@ -53,7 +53,7 @@ function HomeScreen(props){
       </Surface>
       <FlatList
         data={moments} onRefresh={handleRefresh} refreshing={isRefreshing} style={{ flex: 1 }}
-        renderItem={({ item, index }) => (
+        windowSize={3} initialNumToRender={5} renderItem={({ item, index }) => (
           <MomentItem moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }}/>
         )}/>
     </View>

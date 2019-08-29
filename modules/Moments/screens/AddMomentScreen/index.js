@@ -2,7 +2,6 @@ import React from "react";
 import DocumentPicker from 'react-native-document-picker';
 import Logger from "src/api/logger";
 import MomentAPI from "modules/Moments/api/moment";
-import StorageAPI from "src/api/storage";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import Button from "src/components/Button";
@@ -11,7 +10,7 @@ import AppHeader from "src/components/AppHeader";
 import { View, TextInput, FlatList } from "react-native";
 import { IconButton, Text, Caption } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { MomentImageThumbnail } from "modules/Moments/screens/HomeScreen/MomentItem";
+import { MomentImageThumbnail } from "modules/Moments/components/MomentItem";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 function AddMomentScreen(props){
