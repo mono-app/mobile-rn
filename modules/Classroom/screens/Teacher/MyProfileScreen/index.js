@@ -18,7 +18,6 @@ import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
-  teacher: null, 
   status:"", 
   totalClass: 0,
   profilePicture: "https://picsum.photos/200/200/?random" 
@@ -37,19 +36,12 @@ class MyProfileScreen extends React.PureComponent {
     };
   };
   
-  loadPeopleInformation = async () => {
+  loadTotalClass = async () => {
     this.setState({ isLoadingProfile: true });
 
-    const teacher = await TeacherAPI.getDetail(this.props.currentSchool.id, this.props.currentTeacher.email);
-    if(teacher.gender){
-      teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
-    }
-
     const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.email)).length;
-    if(teacher.profilePicture){
-      this.setState({ profilePicture: teacher.profilePicture.downloadUrl });
-    }
-    this.setState({ isLoadingProfile: false, teacher, totalClass });
+   
+    this.setState({ isLoadingProfile: false, totalClass });
    
   }
 
@@ -114,7 +106,7 @@ class MyProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
+    this.loadTotalClass = this.loadTotalClass.bind(this);
     this.handleStatusPress = this.handleStatusPress.bind(this);
     this.handleArchivePress = this.handleArchivePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
@@ -123,7 +115,7 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   componentDidMount(){ 
-    this.loadPeopleInformation();
+    this.loadTotalClass();
     this.loadStatus();
   }
 
@@ -148,8 +140,8 @@ class MyProfileScreen extends React.PureComponent {
             <PeopleProfileHeader
               style={{padding:16}}
               profilePicture={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : this.state.profilePicture }
-              title={this.state.teacher.name}
-              subtitle= {"NIK: " + this.state.teacher.nik}/>
+              title={this.props.currentTeacher.name}
+              subtitle= {"NIK: " + this.props.currentTeacher.nik}/>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={this.handleStatusPress}>
@@ -165,23 +157,23 @@ class MyProfileScreen extends React.PureComponent {
           <View style={{  marginBottom: 16 }}>  
            <PeopleInformationContainer
               fieldName="Bergabung Sejak"
-              fieldValue={moment(this.state.teacher.creationTime.seconds * 1000).format("DD MMMM YYYY")}/>
+              fieldValue={moment(this.props.currentTeacher.creationTime.seconds * 1000).format("DD MMMM YYYY")}/>
           </View>
           
           <View style={{  marginBottom: 16 }}>
             
             <PeopleInformationContainer
               fieldName="Alamat"
-              fieldValue={this.state.teacher.address}/>
+              fieldValue={this.props.currentTeacher.address}/>
             <PeopleInformationContainer
               fieldName="Nomor Telepon"
-              fieldValue={this.state.teacher.phone}/>
+              fieldValue={this.props.currentTeacher.phone}/>
             <PeopleInformationContainer
               fieldName="Email"
-              fieldValue={this.state.teacher.id}/>
+              fieldValue={this.props.currentTeacher.email}/>
             <PeopleInformationContainer
               fieldName="Jenis Kelamin"
-              fieldValue={this.state.teacher.gender}/>
+              fieldValue={this.props.currentTeacher.gender}/>
           
           </View>
           <View style={{  marginBottom: 16 }}>

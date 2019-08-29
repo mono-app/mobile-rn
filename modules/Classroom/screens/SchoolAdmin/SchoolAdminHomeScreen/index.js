@@ -25,18 +25,6 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     return { header: null };
   };
 
-  loadSchoolInformation = async () => {
-    const school = await SchoolAPI.getDetail(this.state.schoolId);
-    this.setState({school, profilePicture: school.profilePicture.downloadUrl})
-  }
-
-  loadUserName = async () => {
-    const currentUserEmail = this.props.currentUser.email
-
-    const schoolAdmin = await SchoolAdminAPI.getDetail(this.state.schoolId, currentUserEmail)
-    this.setState({userName: schoolAdmin.name})
-  }
-
   handleAddPress = e => {
     this.props.navigation.navigate("SchoolAdminAdd");
   };
@@ -91,8 +79,6 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
     this.state = INITIAL_STATE;
-    this.loadSchoolInformation = this.loadSchoolInformation.bind(this);
-    this.loadUserName = this.loadUserName.bind(this);
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
     this.handleArchiveClass = this.handleArchiveClass.bind(this);

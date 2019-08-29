@@ -43,7 +43,9 @@ export class CurrentTeacherProvider extends React.PureComponent{
       if(documentSnapshot.exists){
         const teacher = documentSnapshot.data();
         teacher.email = JSON.parse(JSON.stringify(documentSnapshot.id));
-
+        if(teacher.gender){
+          teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
+        }
         this.setState({ teacher });
           
         // if(teacher.profilePicture !== undefined){
