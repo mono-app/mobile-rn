@@ -30,7 +30,6 @@ class TaskListScreen extends React.PureComponent {
 
   handleTaskPress = (item) => {
     payload = {
-      schoolId: this.props.currentSchool.id,
       taskId: item.id,
       classId: this.classId,
       subject: this.subject,
