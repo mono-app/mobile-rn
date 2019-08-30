@@ -1,6 +1,6 @@
 import firebase from "react-native-firebase";
 
-import { StudentsCollection, SchoolsCollection, UserMappingCollection, ClassesCollection } from "src/api/database/collection";
+import { StudentsCollection, SchoolsCollection, UserMappingCollection, ClassesCollection, UserCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
 export default class StudentAPI{
@@ -90,16 +90,38 @@ export default class StudentAPI{
   
   }
 
-  static async updateDiscussionNotification(schoolId, classId, studentId, isAllowNotif){
-   
+  static async updateDiscussionNotification(studentId, discussionId, isAllowNotif){
+
     const db = firebase.firestore();
-    const schoolsCollection = new SchoolsCollection();
-    const classesCollection = new ClassesCollection();
-    const studentsCollection = new StudentsCollection();
-    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
-    const studentsDocumentRef = classesDocumentRef.collection(studentsCollection.getName()).doc(studentId);
-    await studentsDocumentRef.update({discussionNotif: isAllowNotif})
+    const userCollection = new UserCollection();
+    const usersDocumentRef = db.collection(userCollection.getName()).doc(studentId);
+
+    if(isAllowNotif){
+      await usersDocumentRef.update({settings: {ignoreNotifications: {discussions: firebase.firestore.FieldValue.arrayRemove({id: discussionId})}}})
+    }else{
+      const docSnapshot = await usersDocumentRef.get()
+      const data = docSnapshot.data()
+
+      if(data.settings && 
+        data.settings.ignoreNotifications && 
+        data.settings.ignoreNotifications.discussions && data.settings.ignoreNotifications.discussions.length>0){
+          let newArray = JSON.parse(JSON.stringify(data.settings.ignoreNotifications.discussions))
+          let allowPush = true
+          for(const obj of newArray){
+            if(obj.id==discussionId){
+              allowPush=false
+              break
+            }
+          }
+          if(allowPush){
+            newArray.push({id: discussionId})
+            await usersDocumentRef.update({settings: {ignoreNotifications: {discussions: newArray}}})
+          }
+         
+      }else{
+        await usersDocumentRef.update({settings: {ignoreNotifications: {discussions: firebase.firestore.FieldValue.arrayUnion({id: discussionId})}}})
+      }
+    }
     return Promise.resolve(true);
   }
 
@@ -124,13 +146,13 @@ export default class StudentAPI{
     return Promise.resolve(studentDocuments);
   }
 
-  static async getDetail(schoolId, email, source = "default") {
+  static async getDetail(schoolId, email) {
     const db = firebase.firestore();
     const studentsCollection = new StudentsCollection();
     const schoolsCollection = new SchoolsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(email);
-    const documentSnapshot = await studentsDocumentRef.get({ source });
+    const documentSnapshot = await studentsDocumentRef.get();
     const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
 
     return Promise.resolve(data);
@@ -157,4 +179,43 @@ export default class StudentAPI{
 
     return Promise.resolve(studentsSnapshot.exists);
   }
+
+
+  static async aa(){
+
+    // ini untuk testing saja
+    // get all student audience
+    const schoolId = "1hZ2DiIYSFa5K26oTe75"
+    const classId = "NWNfzx09U8HpxfXZMAEM"
+    const db = firebase.firestore();
+
+    const schoolsDocumentRef3 = db.collection("schools").doc(schoolId);
+    const classesDocumentRef2 = schoolsDocumentRef3.collection("classes").doc(classId);
+    let studentsCollectionRef = classesDocumentRef2.collection("students");
+
+    const studentSnapshot = await studentsCollectionRef.get();
+    const arrayOfPromise2 = studentSnapshot.docs.map(async (snap) => {
+      const studentsDocumentRef = db.collection("users").doc(snap.id);
+      const documentSnapshot = await studentsDocumentRef.get();
+      const student = Object.assign({id: documentSnapshot.id, finalScore: snap.data().finalScore}, documentSnapshot.data())
+
+      return Promise.resolve(student)
+    });
+
+    const students = await Promise.all(arrayOfPromise2);
+    const messagePromises = students.map(audienceData => {
+      if(audienceData.tokenInformation){
+        const message = {
+          token: audienceData.tokenInformation.messagingToken,
+          android: { notification: {channelId: "discussion-notification"} },
+          notification: { title: "the title", body: "the body"}
+
+        }
+        console.log(message)
+      }
+      
+    })
+
+  }
+
 }

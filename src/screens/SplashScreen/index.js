@@ -5,6 +5,7 @@ import { StackActions, NavigationActions} from "react-navigation";
 
 import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import PeopleAPI from "src/api/people"
 
 function SplashScreen(props){
   React.useEffect(() => {
@@ -17,11 +18,18 @@ function SplashScreen(props){
         // Creating notification channel for Android
         const channel = new firebase.notifications.Android.Channel('message-notification', 'Message Notification', firebase.notifications.Android.Importance.Default)
         firebase.notifications().android.createChannel(channel);
+        firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('discussion-notification', 'Discussion Notification', firebase.notifications.Android.Importance.Default));
 
       }catch(err){ console.log("User reject notification", err); }
 
       const firebaseUser = firebase.auth().currentUser;
-      if(firebaseUser !== null) props.setCurrentUserEmail(firebaseUser.email, props.navigation);
+      if(firebaseUser !== null) {
+        props.setCurrentUserEmail(firebaseUser.email, props.navigation);
+        const fcmToken = await firebase.messaging().getToken();
+        if (fcmToken) {
+            await PeopleAPI.storeMessagingToken(firebaseUser.email,fcmToken)
+        }
+      }
       else {
         props.navigation.dispatch(StackActions.reset({
           index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],

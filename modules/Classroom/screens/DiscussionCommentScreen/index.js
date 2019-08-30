@@ -28,8 +28,7 @@ const INITIAL_STATE = {
   imagesPicked: [],
   selectedImageToDelete: {},
   showDeleteImageDialog: false,
-  locationCoordinate: null,
-  dicussionNotification: {} 
+  locationCoordinate: null
 };
 class DiscussionCommentScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -49,8 +48,8 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.setState({ isLoading: true });
     const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterEmail)
     const currentUserEmail = this.props.currentUser.email
-
     const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserEmail)
+
     this.setState({ isLoading: false, discussion: this.discussion, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
   }
 
@@ -171,16 +170,30 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleNotifPress = async () => {
-    const currentUserEmail = this.props.currentUser.email
+    const isAllowNotification = this.checkNotifAllowed()
 
-    if(this.state.discussionNotification == null || this.state.discussionNotification==true){
-      await StudentAPI.updateDiscussionNotification(this.schoolId,this.classId,currentUserEmail, false);
-      this.setState({dicussionNotification: false})
+    if(isAllowNotification){
+      await StudentAPI.updateDiscussionNotification(this.props.currentUser.email,this.discussion.id, false);
     }else{
-      await StudentAPI.updateDiscussionNotification(this.schoolId,this.classId,currentUserEmail, true);
-      this.setState({dicussionNotification: true})
+      await StudentAPI.updateDiscussionNotification(this.props.currentUser.email,this.discussion.id, true);
     }
 
+  }
+
+  checkNotifAllowed = () => {
+    let isAllowNotification = true
+    if(this.props.currentUser.settings && 
+      this.props.currentUser.settings.ignoreNotifications && 
+      this.props.currentUser.settings.ignoreNotifications.discussions){
+        for(const obj of this.props.currentUser.settings.ignoreNotifications.discussions){
+      
+          if(obj.id==this.discussion.id){
+            isAllowNotification=false
+            break;
+          }
+        }
+    }
+    return isAllowNotification
   }
 
   constructor(props) {
@@ -194,6 +207,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.loadComments = this.loadComments.bind(this);
     this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleSendCommentPress = this.handleSendCommentPress.bind(this);
+    this.checkNotifAllowed = this.checkNotifAllowed.bind(this);
     this.handlePicturePress = this.handlePicturePress.bind(this);
     this.handleLocationPress = this.handleLocationPress.bind(this);
     this.handleMultipleImagePress = this.handleMultipleImagePress.bind(this);
@@ -223,6 +237,9 @@ class DiscussionCommentScreen extends React.PureComponent {
     if(this.state.discussion.images && this.state.discussion.images.length>4){
       remainingImageCount = this.state.discussion.images.length-4;
     }
+
+    const isAllowNotification = this.checkNotifAllowed()
+   
     return (  
 
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
@@ -288,9 +305,9 @@ class DiscussionCommentScreen extends React.PureComponent {
                 <MaterialCommunityIcons name="share" size={16} style={{ marginRight: 4 }}/>
                 <Caption>Bagikan</Caption>
               </TouchableOpacity>
-                {(this.state.discussionNotification==null||this.state.dicussionNotification==false)? 
+                {(isAllowNotification)? 
                   <TouchableOpacity onPress={this.handleNotifPress} style={{ flexDirection: "row", alignItems: "center" }}>
-                    <MaterialCommunityIcons name="bell" size={16} style={{ marginRight: 4 }}/>
+                    <MaterialCommunityIcons name="bell-off" size={16} style={{ marginRight: 4 }}/>
                     <Caption>Matikan</Caption>
                   </TouchableOpacity>
                   : 

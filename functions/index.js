@@ -63,9 +63,8 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
   const teachersQuerySnapshot = await teachersCollectionRef.get()
 
   const arrayOfPromise = teachersQuerySnapshot.docs.map(async (snap) => {
-    const schoolsDocumentRef2 = db.collection("schools").doc(schoolId);
-    const teachersDocumentRef = schoolsDocumentRef2.collection("teachers").doc(snap.id);
-    const teachersSnapshot = await teachersDocumentRef.get();
+    const teacherDocumentRef = db.collection("users").doc(snap.id);
+    const teachersSnapshot = await teacherDocumentRef.get();
     const data = Object.assign({id: teachersSnapshot.id}, teachersSnapshot.data())
 
     return Promise.resolve(data)
@@ -79,8 +78,7 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
 
   const studentSnapshot = await studentsCollectionRef.get();
   const arrayOfPromise2 = studentSnapshot.docs.map(async (snap) => {
-    const schoolsDocumentRef4 = db.collection("schools").doc(schoolId);
-    const studentsDocumentRef = schoolsDocumentRef4.collection("students").doc(snap.id);
+    const studentsDocumentRef = db.collection("users").doc(snap.id);
     const documentSnapshot = await studentsDocumentRef.get();
     const student = Object.assign({id: documentSnapshot.id, finalScore: snap.data().finalScore}, documentSnapshot.data())
 
@@ -92,27 +90,34 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
   let audiencesData = []
 
   for(const teacher of teachers){
-    if(teacher.tokenInformation && teacher.id !== senderId){
+    if(teacher.id !== senderId){
       audiencesData.push(teacher)
     }
   }
   for(const student of students){
-    if(student.tokenInformation && teacher.id !== senderId){
+    if(student.id !== senderId){
       audiencesData.push(student)
     }
   }
   // send notification to teacher and student audience except senderId
 
   // send notification to all audiences except sender
-  const messagePromises = audiencesData.map(audienceData => {
-    const message = {
-      token: audienceData.tokenInformation.messagingToken,
-      android: { notification: {channelId: "discussion-notification"} },
-      notification: { title: discussionDocument.title, body: discussionDocument.description }
-    }
-    return admin.messaging().send(message);
-  })
+  try{
+    const messagePromises = audiencesData.map(audienceData => {
+      if(audienceData.tokenInformation){
+        const message = {
+          token: audienceData.tokenInformation.messagingToken,
+          android: { notification: {channelId: "discussion-notification"} },
+          notification: { title: discussionDocument.title, body: discussionDocument.description }
+        }
+        return admin.messaging().send(message);
+      }
+    })
 
-  await Promise.all(messagePromises);
-  return Promise.resolve(true);
+    await Promise.all(messagePromises);
+    return Promise.resolve(true);
+  }catch(e){
+    return Promise.resolve(e);
+
+  }
 })
