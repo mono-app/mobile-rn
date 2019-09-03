@@ -2,10 +2,8 @@ import firebase from "react-native-firebase";
 import { SchoolsCollection, ClassesCollection, TasksCollection, DiscussionsCollection, LikesCollection, CommentsCollection } from "src/api/database/collection";
 import StorageAPI from "src/api/storage"
 import uuid from "uuid/v4"
-import { withCurrentUser } from "src/api/people/CurrentUser"
 
-class DiscussionAPI{
-
+export default class DiscussionAPI{
 
   static async addDiscussion(schoolId, classId, taskId, data){
     try{
@@ -74,7 +72,7 @@ class DiscussionAPI{
   }
 
   
-  async getDetail(schoolId, classId, taskId, discussionId, callback) {
+  static async getDetail(schoolId, classId, taskId, discussionId, currentUserEmail) {
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
@@ -87,8 +85,6 @@ class DiscussionAPI{
     const discussionsDocumentRef = tasksDocumentRef.collection(discussionsCollection.getName()).doc(discussionId);
    
     const discussionsDocumentSnapshot = await discussionsDocumentRef.get();
-
-    const currentUserEmail = this.props.currentUser.email
 
     const likesDocumentRef = discussionsDocumentRef.collection(likesCollection.getName()).doc(currentUserEmail);
     const likesDocumentSnapshot = await likesDocumentRef.get();
@@ -119,8 +115,7 @@ class DiscussionAPI{
     }
   }
 
-  static async isLikedRealTimeUpdate(schoolId, classId, taskId, discussionId, callback){
-    const currentUserEmail = this.props.currentUser.email
+  static async isLikedRealTimeUpdate(schoolId, classId, taskId, discussionId, currentUserEmail, callback){
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
@@ -193,4 +188,3 @@ class DiscussionAPI{
   }
 
 }
-export default withCurrentUser(DiscussionAPI)

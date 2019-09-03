@@ -8,7 +8,6 @@ import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withCurrentUser } from "src/api/people/CurrentUser"
 
-
 const INITIAL_STATE = {
   isLoading: false,
   profilePicture: "https://picsum.photos/200/200/?random",

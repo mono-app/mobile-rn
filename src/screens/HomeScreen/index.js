@@ -3,11 +3,13 @@ import RoomsAPI from 'src/api/rooms';
 import Logger from 'src/api/logger';
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from 'react-native';
-
+import DiscussionAPI from "modules/Classroom/api/discussion";
+import firebase from "react-native-firebase";
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
 import PrivateRoom from "src/screens/HomeScreen/PrivateRoom";
 import { View, FlatList } from 'react-native';
+import StudentAPI from "modules/Classroom/api/student";
 
 function HomeScreen(props){
   const { currentUser } = props;
@@ -19,7 +21,46 @@ function HomeScreen(props){
   });
 
   React.useEffect(() => {
+    const init = async () => {
+      const notificationOpen = await firebase.notifications().getInitialNotification();
+      if (notificationOpen) {
+          // App was opened by a notification
+          // Get the action triggered by the notification being opened
+          const action = notificationOpen.action;
+          // Get information about the notification that was opened
+          const notification = notificationOpen.notification;
+          const data = notification.data
+          if(data.type=="new-discussion"){
+            const schoolId = data.schoolId
+            const classId = data.classId
+            const taskId = data.taskId
+            const discussionId = data.discussionId
+            const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, currentUser.email)
+            payload = {
+              key:"Classroom",
+              schoolId,
+              classId,
+              taskId,
+              discussion
+            }
+            
+            props.navigation.navigate("DiscussionComment", payload)
+          }else if(data.type=="new-chat"){
+            const roomId = data.roomId
+            console.log("new CHATTTTTTTTTTT")
+            console.log(roomId)
+            const room = await RoomsAPI.getDetail(roomId)
+            payload = {
+              room
+            }
+            props.navigation.navigate("Chat", payload);
+          }
+      }
+    }
+    init()
+
     roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => setRooms(rooms));
+
     return function cleanup(){
       if(roomsListener.current) roomsListener.current();
     }
