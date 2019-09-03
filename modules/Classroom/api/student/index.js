@@ -140,8 +140,9 @@ export default class StudentAPI{
       return Promise.resolve({...student, finalScore: snap.data().finalScore})
     });
 
+    
     const studentDocuments = await Promise.all(arrayOfPromise);
-    studentDocuments.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+    studentDocuments.sort((a, b) => ((a.name && b.name)&&a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
 
     return Promise.resolve(studentDocuments);
   }
@@ -184,38 +185,54 @@ export default class StudentAPI{
   static async aa(){
 
     // ini untuk testing saja
-    // get all student audience
-    const schoolId = "1hZ2DiIYSFa5K26oTe75"
-    const classId = "NWNfzx09U8HpxfXZMAEM"
+    const roomId = "8EgYP0psuW8JzUpY6YX9"
+    const senderEmail = "test.pertama@gmail.com"
+
     const db = firebase.firestore();
+    const roomRef = db.collection("rooms").doc(roomId);
+    const roomSnapshot = await roomRef.get();
+    const roomDocument = roomSnapshot.data();
 
-    const schoolsDocumentRef3 = db.collection("schools").doc(schoolId);
-    const classesDocumentRef2 = schoolsDocumentRef3.collection("classes").doc(classId);
-    let studentsCollectionRef = classesDocumentRef2.collection("students");
-
-    const studentSnapshot = await studentsCollectionRef.get();
-    const arrayOfPromise2 = studentSnapshot.docs.map(async (snap) => {
-      const studentsDocumentRef = db.collection("users").doc(snap.id);
-      const documentSnapshot = await studentsDocumentRef.get();
-      const student = Object.assign({id: documentSnapshot.id, finalScore: snap.data().finalScore}, documentSnapshot.data())
-
-      return Promise.resolve(student)
-    });
-
-    const students = await Promise.all(arrayOfPromise2);
-    const messagePromises = students.map(audienceData => {
-      if(audienceData.tokenInformation){
-        const message = {
-          token: audienceData.tokenInformation.messagingToken,
-          android: { notification: {channelId: "discussion-notification"} },
-          notification: { title: "the title", body: "the body"}
-
-        }
-        console.log(message)
-      }
-      
+    const audiences =  roomDocument.audiences.filter( (audience)=>{
+      return audience !== senderEmail
     })
 
-  }
+    console.log("-------------LETS BEGIN ----------------")
+
+    console.log(audiences)
+
+    // get all audiences messagingToken  
+    const promises = audiences.map(audience => {
+      console.log(audience)
+
+      const userRef = db.collection("users").doc("test.kedua@gmail.com");
+
+      return userRef.get();
+    })
+    const audiencesSnapshot = await Promise.all(promises);
+    console.log(audiencesSnapshot)
+
+    const audiencesData = audiencesSnapshot.map(audienceSnapshot => {
+      const audienceData = audienceSnapshot.data();
+      console.log("audienceData")
+      console.log(audienceData)
+
+      // if(audienceData.tokenInformation){
+      //   if(audienceData.tokenInformation.messagingToken) return audienceData;
+      // }
+    });
+
+
+    // send notification to all audiences except sender
+    // const messagePromises = audiencesData.map(audienceData => {
+    //   const message = {
+    //     token: audienceData.tokenInformation.messagingToken,
+    //     android: { notification: {channelId: "message-notification"} },
+    //     notification: { title: audienceData.applicationInformation.nickName, body: messageDocument.message }
+    //   }
+    //   return admin.messaging().send(message);
+    // })
+
+    }
 
 }

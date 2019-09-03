@@ -28,6 +28,15 @@ export default class RoomsAPI{
     })
   }
 
+  static async getDetail(roomId){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const roomsDocumentRef = db.collection(roomsCollection.getName()).doc(roomId);
+    const documentSnapshot = await roomsDocumentRef.get();
+    const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
+    return Promise.resolve(data);
+  }
+
   static normalizeRoom(documentSnapshot){
     return { id: documentSnapshot.id, ...documentSnapshot.data() }
   }

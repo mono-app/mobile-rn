@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, View, FlatList, StyleSheet, PermissionsAndroid } from "react-native";
-import { Text, Card, Caption, Paragraph } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Card, Caption, Paragraph } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
@@ -22,6 +22,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = { 
   isLoading: true, 
+  isSendingComment: false,
   discussion: {}, 
   comment:"", 
   commentList: [],
@@ -76,7 +77,7 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleSendCommentPress = async () => {
-    this.setState({ isLoading:true })
+    this.setState({ isSendingComment:true })
     const currentUserEmail = this.props.currentUser.email
 
     data = {
@@ -88,7 +89,7 @@ class DiscussionCommentScreen extends React.PureComponent {
 
     await DiscussionAPI.sendComment(this.schoolId, this.classId, this.taskId, this.discussion.id, data)
     await this.loadComments();
-    this.setState({ comment:"", isLoading:false, locationCoordinate: null, imagesPicked: [] })
+    this.setState({ comment:"", isSendingComment:false, locationCoordinate: null, imagesPicked: [] })
   }
 
   handlePicturePress = (images) => {
@@ -225,6 +226,20 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   render() {  
+
+    if(this.state.isLoading){
+      return (
+        <Dialog visible={true}>
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <ActivityIndicator/>
+            <View>
+              <Text>Sedang memuat data</Text>
+              <Caption>Harap tunggu...</Caption>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      )
+    }
     const window = Dimensions.get("window");
     let creationDate = "";  
     let creationTime = "";
@@ -243,6 +258,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     return (  
 
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+      
         <KeyboardAwareScrollView style={{flex:1}}>         
 
           <Card style={{ elevation: 1, marginTop: 8}}>
@@ -361,7 +377,7 @@ class DiscussionCommentScreen extends React.PureComponent {
                 
                 <Button
                   onPress={this.handleSendCommentPress}
-                  isLoading={this.state.isLoading}
+                  isLoading={this.state.isSendingComment}
                   style={{paddingVertical:8,paddingLeft:8,paddingRight:8,marginBottom:0}}
                   text={"Bagikan"}
                 />

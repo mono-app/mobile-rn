@@ -1,23 +1,26 @@
 const functions = require('firebase-functions');
-const admin = require("firebase-admin");
-const serviceAccount = require("./chat-app-fdf76-firebase-adminsdk-zmt06-683706239d.json");
+var admin = require("firebase-admin");
+var serviceAccount = require("./serviceAccountKey.json");
 
 admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://chat-app-fdf76.firebaseio.com",
 })
 
 exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {
   const messageDocument = documentSnapshot.data();
   const { senderEmail } = messageDocument;
-  const { roomId } = context.params;
+  const { roomId, messageId } = context.params;
   
   // get all audiences except sender
   const db = admin.firestore();
   const roomRef = db.collection("rooms").doc(roomId);
   const roomSnapshot = await roomRef.get();
   const roomDocument = roomSnapshot.data();
-  const audiences = Object.keys(roomDocument.audiences).filter(audience => audience !== senderEmail);
-  
+  const audiences =  roomDocument.audiences.filter( (audience)=>{
+    return audience !== senderEmail
+  })
+
   // get all audiences messagingToken  
   const promises = audiences.map(audience => {
     const userRef = db.collection("users").doc(audience);
@@ -36,6 +39,11 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
     const message = {
       token: audienceData.tokenInformation.messagingToken,
       android: { notification: {channelId: "message-notification"} },
+      data: {
+        type: "new-chat",
+        roomId: roomId,
+        messageId: messageId
+      },
       notification: { title: audienceData.applicationInformation.nickName, body: messageDocument.message }
     }
     return admin.messaging().send(message);
@@ -108,6 +116,13 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
         const message = {
           token: audienceData.tokenInformation.messagingToken,
           android: { notification: {channelId: "discussion-notification"} },
+          data: {
+            type: "new-discussion",
+            discussionId: discussionId,
+            schoolId: schoolId,
+            classId: classId,
+            taskId: taskId
+          },
           notification: { title: discussionDocument.title, body: discussionDocument.description }
         }
         return admin.messaging().send(message);
