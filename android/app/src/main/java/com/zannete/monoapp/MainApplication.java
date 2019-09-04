@@ -30,6 +30,7 @@ import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
+import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
 
 import com.oney.WebRTCModule.WebRTCModulePackage;
 
@@ -69,7 +70,9 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseNotificationsPackage(),
           new RNFirebaseInstanceIdPackage(),
           new MapsPackage(),
-          new WebRTCModulePackage()  
+          new WebRTCModulePackage(),
+          new RNGooglePlacesPackage()
+  
       );
     }
 
