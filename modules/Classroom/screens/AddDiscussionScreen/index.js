@@ -65,10 +65,13 @@ class AddDiscussionScreen extends React.PureComponent {
 
   handleLocationPress = () => {
     const payload = {
+      latitude: (this.state.locationCoordinate)?this.state.locationCoordinate.latitude:"",
+      longitude: (this.state.locationCoordinate)?this.state.locationCoordinate.longitude:"",
       onRefresh:(locationCoordinate)=> {
         this.setState({locationCoordinate})
         }
     }
+    console.log(this.state.locationCoordinate)
     this.props.navigation.navigate("MapsPicker",payload)
   }
 

@@ -31,6 +31,7 @@
     "react-native-fs": "2.13.3",
     "react-native-gallery-swiper": "1.22.2",
     "react-native-gesture-handler": "1.1.0",
+    "react-native-google-places": "3.1.2",
     "react-native-keyboard-aware-scroll-view": "0.8.0",
     "react-native-maps": "0.25.0",
     "react-native-material-menu": "0.4.2",
