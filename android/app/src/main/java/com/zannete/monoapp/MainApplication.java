@@ -17,6 +17,7 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.rnfs.RNFSPackage;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;  
 
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -71,8 +72,9 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseInstanceIdPackage(),
           new MapsPackage(),
           new WebRTCModulePackage(),
-          new RNGooglePlacesPackage()
-  
+          new RNGooglePlacesPackage(),
+          new RNFetchBlobPackage()                                                                                         
+
       );
     }
 
