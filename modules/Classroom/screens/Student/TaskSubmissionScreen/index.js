@@ -1,5 +1,5 @@
 import React from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, PermissionsAndroid } from "react-native";
 import { ProgressBar, Text, Dialog, Portal } from "react-native-paper";
 import MySearchbar from "src/components/MySearchbar"
 import FileListItem from "modules/Classroom/components/FileListItem";
@@ -10,6 +10,7 @@ import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import RNFetchBlob from 'react-native-fetch-blob'
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -45,24 +46,40 @@ class TaskSubmissionScreen extends React.PureComponent {
       this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
 
-  handleDownloadPress = item => {
-    this.setState({progressPercentage:0,showProgressbar: true})
-    RNBackgroundDownloader.download({
-        id: item.id,
-        url: item.storage.downloadUrl,
-        destination: `/storage/emulated/0/Download/${item.title}`
-    }).begin((expectedBytes) => {
-        console.log(`Going to download ${expectedBytes} bytes!`);
-
-    }).progress((percent) => {
-        console.log(`Downloaded: ${percent * 100}%`);
-        this.setState({progressPercentage: percent})
-    }).done(() => {
-        console.log('Download is done!');
+  handleDownloadPress = async item => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+    }else{
+      this.setState({progressPercentage:0,showProgressbar: true})
+      RNFetchBlob.config({
+        fileCache : true,
+        // android only options, these options be a no-op on IOS
+        addAndroidDownloads : {
+          // Show notification when response data transmitted
+          useDownloadManager : true,
+          // Title of download notification
+          title : item.title,
+          // Make the file scannable  by media scanner
+          mediaScannable : true,
+          notification : true,
+          path : `/storage/emulated/0/Download/${item.title}`
+        }
+      })
+      .fetch('GET', item.storage.downloadUrl)
+      .progress((received, total) => {
+        console.log('progress', received / total)
+        const percentage = received / total*100
+        this.setState({progressPercentage: percentage})
+      })
+      .then((resp) => {
+        // the path of downloaded file
+        // console.log(resp.path())
         this.setState({showProgressbar:false})
-    }).error((error) => {
-        console.log('Download canceled due to error: ', error);
-    });
+      }).catch((errorMessage, statusCode) => {
+        // error handling
+        
+      })
+    }
   }
 
   handleDeletePress = (item, selectedIndex) => {
@@ -99,6 +116,17 @@ class TaskSubmissionScreen extends React.PureComponent {
     }
   }
 
+  requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
+  }
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
@@ -111,6 +139,7 @@ class TaskSubmissionScreen extends React.PureComponent {
     this.handleDownloadPress = this.handleDownloadPress.bind(this);
     this.onDeletePress = this.onDeletePress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.requestStoragePermission = this.requestStoragePermission.bind(this);
   }
 
   componentDidMount(){
