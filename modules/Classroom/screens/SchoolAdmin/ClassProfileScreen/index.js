@@ -31,11 +31,13 @@ class ClassProfileScreen extends React.PureComponent {
   };
 
   loadClassInformation = async () => {
-    this.setState({ isLoadingProfile: true });
-
+    if(this._isMounted){
+      this.setState({ isLoadingProfile: true });
+    }
     const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
-    this.setState({ isLoadingProfile: false, class: class_ });
-
+    if(this._isMounted){
+      this.setState({ isLoadingProfile: false, class: class_ });
+    }
   };
 
   handleSubjectPress = e => {
@@ -130,6 +132,7 @@ class ClassProfileScreen extends React.PureComponent {
     super(props);
     this.classId = this.props.navigation.getParam("classId", null);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleSubjectPress = this.handleSubjectPress.bind(this);
     this.handleRoomPress = this.handleRoomPress.bind(this);
@@ -139,7 +142,12 @@ class ClassProfileScreen extends React.PureComponent {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.loadClassInformation();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

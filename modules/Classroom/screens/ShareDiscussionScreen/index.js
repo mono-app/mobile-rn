@@ -23,8 +23,7 @@ export default class ShareDiscussionScreen extends React.PureComponent {
 
   loadStudents = async () => {
     this.setState({ peopleList: [] });
-
-    const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
+    const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
     this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
@@ -75,6 +74,7 @@ export default class ShareDiscussionScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
@@ -101,7 +101,7 @@ export default class ShareDiscussionScreen extends React.PureComponent {
             return (
               <ShareDiscussionListItem 
                 onPress={() => this.handleStudentPress(item)}
-                schoolId={this.props.currentSchool.id} student={item}/>
+                student={item}/>
             )
           }}
         />

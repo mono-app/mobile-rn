@@ -34,8 +34,9 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
     this.setState({ isLoadingProfile: true });
 
     const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId)
-    this.setState({ isLoadingProfile: false, class: class_ });
-
+    if(this._isMounted){
+      this.setState({ isLoadingProfile: false, class: class_ });
+    }
   };
 
   handleUnarchivePress = async () => {
@@ -52,15 +53,21 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", null);
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleUnarchivePress = this.handleUnarchivePress.bind(this);
-    
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.loadClassInformation();
   }
+
+  componentWillUnmount() {
+     this._isMounted = false;
+  }
+  
 
   render() {
     if (this.state.isLoadingProfile) {

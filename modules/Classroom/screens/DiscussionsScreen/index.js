@@ -1,6 +1,7 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { Searchbar,Text } from "react-native-paper";
+import { View, FlatList } from "react-native";
+import { Text } from "react-native-paper";
+import MySearchbar from "src/components/MySearchbar"
 import DiscussionListItem from "src/components/DiscussionListItem";
 import AppHeader from "src/components/AppHeader";
 import DiscussionAPI from "modules/Classroom/api/discussion";
@@ -8,7 +9,7 @@ import {  TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentUser } from "src/api/people/CurrentUser"
 
-const INITIAL_STATE = { isLoading: true };
+const INITIAL_STATE = { isLoading: true, discussionList:[], filteredDiscussionList: [] };
 
 class DiscussionsScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -27,7 +28,7 @@ class DiscussionsScreen extends React.PureComponent {
   loadDiscussions = async () => {
     this.setState({ discussionList: [] });
     const discussionList = await DiscussionAPI.getDiscussions(this.schoolId, this.classId, this.taskId);
-    this.setState({ discussionList });
+    this.setState({ discussionList, filteredDiscussionList: discussionList });
   }
 
   handleDiscussionPress = item => {
@@ -47,8 +48,26 @@ class DiscussionsScreen extends React.PureComponent {
     this.loadDiscussions();
   }
 
-  handleSharePress = item => {
+  
+  handleSearchPress = (searchText) => {
+    this.setState({filteredDiscussionList: []})
 
+    const clonedDiscussionList = JSON.parse(JSON.stringify(this.state.discussionList))
+    const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    if(searchText){
+
+      const filteredDiscussionList = clonedDiscussionList.filter((discussion) => {
+        if(discussion.title.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0 || 
+          discussion.description.toLowerCase().indexOf(newSearchText.toLowerCase()) >= 0){
+            return true
+        }else{
+          return false
+        }
+      })
+      this.setState({filteredDiscussionList})
+    } else {
+      this.setState({filteredDiscussionList: clonedDiscussionList})
+    }
   }
 
   handleAddDiscussion = () => {
@@ -69,7 +88,7 @@ class DiscussionsScreen extends React.PureComponent {
     this.loadDiscussions = this.loadDiscussions.bind(this);
     this.handleDiscussionPress = this.handleDiscussionPress.bind(this);
     this.handleLikePress = this.handleLikePress.bind(this);
-    this.handleSharePress = this.handleSharePress.bind(this);
+    this.handleSearchPress = this.handleSearchPress.bind(this);
     this.handleAddDiscussion = this.handleAddDiscussion.bind(this);
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
@@ -87,7 +106,9 @@ class DiscussionsScreen extends React.PureComponent {
     return (  
       <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
         <View style={{margin: 16 }}>
-            <Searchbar placeholder="Cari Diskusi" />
+            <MySearchbar 
+              onSubmitEditing={this.handleSearchPress}
+              placeholder="Cari Diskusi" />
         </View>
         
         <View style={{backgroundColor: "#0ead69",
@@ -100,7 +121,7 @@ class DiscussionsScreen extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <FlatList
-          data={this.state.discussionList}
+          data={this.state.filteredDiscussionList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

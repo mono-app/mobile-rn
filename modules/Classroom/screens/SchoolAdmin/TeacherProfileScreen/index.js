@@ -25,16 +25,18 @@ class TeacherProfileScreen extends React.PureComponent {
   };
 
   loadPeopleInformation = async () => {
-    this.setState({ isLoadingProfile: true });
+    if(this._isMounted){
+      this.setState({ isLoadingProfile: true });
+    }
 
     const teacher = await TeacherAPI.getDetail(this.props.currentSchool.id, this.teacherEmail);
     if(teacher.gender){
       teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
     }
     const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.teacherEmail)).length;
-
-    this.setState({ isLoadingProfile: false, teacher, totalActiveClass });
-    
+    if(this._isMounted){
+      this.setState({ isLoadingProfile: false, teacher, totalActiveClass });
+    }
   }
 
   handleNamePress = e => {
@@ -154,6 +156,7 @@ class TeacherProfileScreen extends React.PureComponent {
     super(props);
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", null);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.handleNamePress = this.handleNamePress.bind(this);
     this.handleAddressPress = this.handleAddressPress.bind(this);
@@ -164,7 +167,12 @@ class TeacherProfileScreen extends React.PureComponent {
   }
 
   componentDidMount(){ 
+    this._isMounted = true
     this.loadPeopleInformation(); 
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
   render(){

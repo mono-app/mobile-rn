@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Snackbar } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Caption, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import DiscussionAPI from "modules/Classroom/api/discussion";
@@ -161,6 +161,20 @@ class TaskDetailsScreen extends React.PureComponent {
   }
 
   render() {
+    if(this.state.isFetching){
+      return (
+        <Dialog visible={true}>
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <ActivityIndicator/>
+            <View>
+              <Text>Sedang memuat data</Text>
+              <Caption>Harap tunggu...</Caption>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      )
+    }
+
     return (
       <View>
         <ScrollView>

@@ -34,7 +34,7 @@ import CameraScreen from "src/screens/CameraScreen";
 import MapsPickerScreen from "modules/Classroom/screens/MapsPickerScreen"
 import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
 
-MyNavigator = createStackNavigator(
+const MyNavigator = createStackNavigator(
   {
     TeacherHome: { screen: TeacherHomeScreen },
     EditSingleField: { screen: EditSingleFieldScreen },
