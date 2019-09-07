@@ -37,19 +37,21 @@ class MyProfileScreen extends React.PureComponent {
   };
   
   loadTotalClass = async () => {
-    this.setState({ isLoadingProfile: true });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: true });
 
     const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.email)).length;
    
-    this.setState({ isLoadingProfile: false, totalClass });
-   
+    if(this._isMounted)
+     this.setState({ isLoadingProfile: false, totalClass });
   }
 
   
   loadStatus = async () => {
     let status = await StatusAPI.getLatestStatus(this.props.currentUser.email);
     if(!status) status = { content: "Tulis statusmu disini..." };
-    this.setState({ status: status.content });
+    if(this._isMounted)
+      this.setState({ status: status.content });
   }
 
   handleArchivePress = () => {
@@ -106,6 +108,7 @@ class MyProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadTotalClass = this.loadTotalClass.bind(this);
     this.handleStatusPress = this.handleStatusPress.bind(this);
     this.handleArchivePress = this.handleArchivePress.bind(this);
@@ -115,8 +118,13 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   componentDidMount(){ 
+    this._isMounted = true
     this.loadTotalClass();
     this.loadStatus();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render(){

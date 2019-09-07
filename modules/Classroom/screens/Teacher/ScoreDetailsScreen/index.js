@@ -27,7 +27,8 @@ class ScoreDetailsScreen extends React.PureComponent {
   };
 
   loadSubmission = async () => {
-    this.setState({ isLoading:true });
+    if(this._isMounted)
+     this.setState({ isLoading:true });
 
     const promises = [ SubmissionAPI.getDetail(this.props.currentSchool.id, this.classId, this.taskId, this.submissionId),
       StudentAPI.getDetail(this.props.currentSchool.id,this.submissionId),
@@ -49,7 +50,8 @@ class ScoreDetailsScreen extends React.PureComponent {
         studentInfo = "- / "+name
       }
 
-      this.setState({ studentInfo, submission, class_, task, score: submission.score, isLoading:false });
+      if(this._isMounted)
+        this.setState({ studentInfo, submission, class_, task, score: submission.score, isLoading:false });
     })
   }
 
@@ -66,6 +68,7 @@ class ScoreDetailsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
@@ -75,7 +78,12 @@ class ScoreDetailsScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadSubmission();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

@@ -45,18 +45,25 @@ class StudentHomeScreen extends React.PureComponent {
   constructor(props) {    
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
-    
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.handleStudentProfilePress = this.handleStudentProfilePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
     this.handleAnnouncementPress = this.handleAnnouncementPress.bind(this);
   }
 
   async componentDidMount(){
-    this.setState({isLoading: true})
+    this._isMounted = true
+    if(this._isMounted)
+     this.setState({isLoading: true})
     await this.props.setCurrentSchoolId(this.state.schoolId)
     await this.props.setCurrentStudentEmail(this.state.schoolId, this.props.currentUser.email)
-    this.setState({isLoading: false})
+    if(this._isMounted)
+      this.setState({isLoading: false})
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

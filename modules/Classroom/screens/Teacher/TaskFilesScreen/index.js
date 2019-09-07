@@ -43,7 +43,8 @@ class TaskFilesScreen extends React.PureComponent {
   };
 
   loadFiles = async () => {
-    this.setState({ fileList: [], isLoading: true });
+    if(this._isMounted)
+      this.setState({ fileList: [], isLoading: true });
 
     const fileList = await FileAPI.getStudentSubmissionFiles(
       this.props.currentSchool.id,
@@ -51,7 +52,8 @@ class TaskFilesScreen extends React.PureComponent {
       this.taskId,
       this.submissionId
     );
-    this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+    if(this._isMounted)
+      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   };
 
   handleDownloadPress = item => {
@@ -137,6 +139,7 @@ class TaskFilesScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.deleteDialog = null;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
@@ -152,7 +155,12 @@ class TaskFilesScreen extends React.PureComponent {
   }
 
   componentDidMount() {
+    this._isMounted = true
     this.loadFiles();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

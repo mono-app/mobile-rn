@@ -22,9 +22,11 @@ class ArchiveSelectClassScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.setState({classList: []})
+    if(this._isMounted)
+      this.setState({classList: []})
     const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.email);
-    this.setState({ classList, filteredClassList: classList });
+    if(this._isMounted)
+      this.setState({ classList, filteredClassList: classList });
   }
 
   handleClassPress = async theClass => {
@@ -56,13 +58,19 @@ class ArchiveSelectClassScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
+    this._isMounted=true
     this.loadClasses();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
