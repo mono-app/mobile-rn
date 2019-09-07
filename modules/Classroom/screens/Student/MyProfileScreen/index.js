@@ -38,12 +38,13 @@ class MyProfileScreen extends React.PureComponent {
   };
   
   loadTotalClass = async () => {
-    this.setState({ isLoadingProfile: true });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: true });
 
     const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
     const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
-    
-    this.setState({ isLoadingProfile: false, totalActiveClass, totalArchiveClass });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: false, totalActiveClass, totalArchiveClass });
    
   }
   
@@ -52,7 +53,8 @@ class MyProfileScreen extends React.PureComponent {
     if(!status){
       status = { content: "Tulis statusmu disini..." };
     } 
-    this.setState({ status: status.content });
+    if(this._isMounted)
+      this.setState({ status: status.content });
   }
 
   changeProfilePicture = async () => {
@@ -108,6 +110,7 @@ class MyProfileScreen extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadTotalClass = this.loadTotalClass.bind(this);
     this.loadStatus = this.loadStatus.bind(this);
     this.handleMyClassPress = this.handleMyClassPress.bind(this);
@@ -117,8 +120,13 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   componentDidMount(){ 
+    this._isMounted = true
     this.loadTotalClass();
     this.loadStatus();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render(){

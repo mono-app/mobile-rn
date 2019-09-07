@@ -34,9 +34,11 @@ class ClassFilesScreen extends React.PureComponent {
   };
 
   loadFiles = async () => {
-    this.setState({ fileList: [], isLoading: true });
+    if(this._isMounted)
+      this.setState({ fileList: [], isLoading: true });
     const fileList = await FileAPI.getClassFiles(this.props.currentSchool.id, this.classId);
-    this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+    if(this._isMounted)
+      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
 
   handleDownloadPress = async item => {
@@ -107,6 +109,7 @@ class ClassFilesScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.deleteDialog = null;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
@@ -118,7 +121,12 @@ class ClassFilesScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadFiles();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

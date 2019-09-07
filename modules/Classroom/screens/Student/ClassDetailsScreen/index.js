@@ -31,19 +31,22 @@ class ClassDetailsScreen extends React.PureComponent {
   };
   
   loadClassInformation = async () => {
-    this.setState({ isLoadingProfile: true });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: true });
 
     const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
-    if(class_.profilePicture){
+    if(class_.profilePicture && this._isMounted){
       this.setState({ profilePicture: student.profilePicture.downloadUrl });
     }
-    this.setState({ isLoadingProfile: false, class: class_ });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: false, class: class_ });
   };
 
   loadTeacherInformation = async () => {
     const teachers = await TeacherAPI.getClassTeachers(this.props.currentSchool.id, this.classId);
     const teacher = teachers[0];
-    this.setState({teacher});
+    if(this._isMounted)
+      this.setState({teacher});
   }
 
   handleStudentListScreen = () => {
@@ -79,14 +82,20 @@ class ClassDetailsScreen extends React.PureComponent {
     super(props);
     this.classId = this.props.navigation.getParam("classId", null);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
     this.handleClassFilesScreenPress = this.handleClassFilesScreenPress.bind(this);
   }
 
   componentDidMount() {
+    this._isMounted = true
     this.loadClassInformation();
     this.loadTeacherInformation();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

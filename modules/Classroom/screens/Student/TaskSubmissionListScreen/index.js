@@ -22,8 +22,11 @@ class TaskSubmissionListScreen extends React.PureComponent {
   };
 
   loadSubmissions = async () => {
+    if(this._isMounted)
+      this.setState({ submissionList: [] });
     const submissionList = await SubmissionAPI.getSubmissions(this.props.currentSchool.id, this.classId, this.taskId);
-    this.setState({ submissionList });
+    if(this._isMounted)
+      this.setState({ submissionList });
   }
 
   handleSubmissionPress = submission => {
@@ -37,6 +40,7 @@ class TaskSubmissionListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.title = this.props.navigation.getParam("title", "");
@@ -47,8 +51,14 @@ class TaskSubmissionListScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadSubmissions();
   }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
 
   render() {
     return (
