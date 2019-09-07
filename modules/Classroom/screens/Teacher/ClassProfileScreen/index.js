@@ -32,14 +32,13 @@ class ClassProfileScreen extends React.PureComponent {
   };
   
   loadClassInformation = async () => {
-    this.setState({ isLoadingProfile: true });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: true });
 
-    const promises = [ClassAPI.getDetail(this.props.currentSchool.id, this.classId)];
+    const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
 
-    Promise.all(promises).then(results => {
-      const class_ = results[0];
-      this.setState({ isLoadingProfile: false, class: class_ });
-    });
+    if(this._isMounted)
+        this.setState({ isLoadingProfile: false, class: class_ });
   };
 
   handleStudentListScreen = () => {
@@ -88,6 +87,7 @@ class ClassProfileScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", null);
     this.loadClassInformation = this.loadClassInformation.bind(this);
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
@@ -97,7 +97,12 @@ class ClassProfileScreen extends React.PureComponent {
   }
 
   componentDidMount() {
+    this._isMounted = true
     this.loadClassInformation();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

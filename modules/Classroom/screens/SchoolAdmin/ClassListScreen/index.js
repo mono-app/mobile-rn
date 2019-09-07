@@ -23,9 +23,13 @@ class ClassListScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.setState({classList: []})
+    if(this._isMounted){
+      this.setState({classList: []})
+    }
     const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
-    this.setState({ classList, filteredClassList: classList });
+    if(this._isMounted){
+      this.setState({ classList, filteredClassList: classList });
+    }
   }
 
   handleClassPress = class_ => {
@@ -54,6 +58,7 @@ class ClassListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
@@ -61,7 +66,12 @@ class ClassListScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true;
     this.loadClasses();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, Dialog, Text, Caption, Snackbar } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import DiscussionAPI from "modules/Classroom/api/discussion";
@@ -28,7 +28,8 @@ class TaskDetailsScreen extends React.PureComponent {
   };
 
   loadTask = async () => {
-    this.setState({ isFetching: true});
+    if(this._isMounted)
+      this.setState({ isFetching: true});
 
     const api = new TaskAPI();
     const task = await api.getDetail(this.props.currentSchool.id, this.classId, this.taskId);
@@ -36,7 +37,8 @@ class TaskDetailsScreen extends React.PureComponent {
     const totalSubmission = await SubmissionAPI.getTotalSubmission(this.props.currentSchool.id, this.classId, this.taskId);
     const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.props.currentSchool.id, this.classId, this.taskId);
 
-    this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
+    if(this._isMounted)
+      this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
   }
 
 
@@ -77,16 +79,22 @@ class TaskDetailsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadTask = this.loadTask.bind(this);
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     this.handleTaskSubmissionPress = this.handleTaskSubmissionPress.bind(this);
+    this.loadTask = this.loadTask.bind(this);
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadTask();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

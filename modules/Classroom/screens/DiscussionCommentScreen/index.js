@@ -101,6 +101,8 @@ class DiscussionCommentScreen extends React.PureComponent {
 
   handleLocationPress = () => {
     const payload = {
+      latitude: (this.state.locationCoordinate)?this.state.locationCoordinate.latitude:"",
+      longitude: (this.state.locationCoordinate)?this.state.locationCoordinate.longitude:"",
       onRefresh:(locationCoordinate)=> {
         this.setState({locationCoordinate})
         }
@@ -258,7 +260,6 @@ class DiscussionCommentScreen extends React.PureComponent {
     return (  
 
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-      
         <KeyboardAwareScrollView style={{flex:1}}>         
 
           <Card style={{ elevation: 1, marginTop: 8}}>

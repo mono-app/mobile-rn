@@ -22,10 +22,12 @@ class TaskListScreen extends React.PureComponent {
   };
 
   loadTasks = async () => {
-    this.setState({ taskList: [] });
+    if(this._isMounted)
+      this.setState({ taskList: [] });
 
     const taskList = await TaskAPI.getActiveTasks(this.props.currentSchool.id, this.classId);
-    this.setState({ taskList });
+    if(this._isMounted)
+      this.setState({ taskList });
   }
 
   handleTaskPress = (item) => {
@@ -41,6 +43,7 @@ class TaskListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadTasks = this.loadTasks.bind(this);
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
@@ -49,8 +52,14 @@ class TaskListScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadTasks();
   }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
 
   render() {
     return (

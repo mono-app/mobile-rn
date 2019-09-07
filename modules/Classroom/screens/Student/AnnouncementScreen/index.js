@@ -23,7 +23,9 @@ class AnnouncementScreen extends React.PureComponent {
   };
 
   loadAnnouncements = async () => {
-    this.setState({ announcementList: [] });
+    if(this._isMounted){
+      this.setState({ announcementList: [] });
+    }
    
     const announcementList = await AnnouncementAPI.getStudentAnnouncements(this.props.currentSchool.id,this.props.currentStudent.email)
    
@@ -36,7 +38,9 @@ class AnnouncementScreen extends React.PureComponent {
       return {...obj, searchQuery}
     })
 
-    this.setState({ announcementList:clonedAnnouncementList, filteredAnnouncementList: clonedAnnouncementList });
+    if(this._isMounted){
+      this.setState({ announcementList:clonedAnnouncementList, filteredAnnouncementList: clonedAnnouncementList });
+    }
   }
 
   handleAnnouncementPress = async item => {
@@ -83,15 +87,20 @@ class AnnouncementScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadAnnouncements = this.loadAnnouncements.bind(this);
     this.handleAnnouncementPress = this.handleAnnouncementPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
+    this._isMounted = true;
     this.loadAnnouncements();
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
 
   render() {
     return (

@@ -8,6 +8,7 @@ import FileAPI from "modules/Classroom/api/file";
 import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import RNFetchBlob from 'react-native-fetch-blob'
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -34,9 +35,11 @@ class ClassFilesScreen extends React.PureComponent {
   };
 
   loadFiles = async () => {
-    this.setState({ fileList: [], isLoading: true });
+    if(this._isMounted)
+      this.setState({ fileList: [], isLoading: true });
     const fileList = await FileAPI.getClassFiles(this.props.currentSchool.id, this.classId);
-    this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+    if(this._isMounted)
+      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   }
 
   handleDownloadPress = async item => {
@@ -44,22 +47,35 @@ class ClassFilesScreen extends React.PureComponent {
       await this.requestStoragePermission()
     }else{
       this.setState({progressPercentage:0,showProgressbar: true})
-      RNBackgroundDownloader.download({
-          id: item.id,
-          url: item.storage.downloadUrl,
-          destination: `/storage/emulated/0/Download/${item.title}`
-      }).begin((expectedBytes) => {
-          console.log(`Going to download ${expectedBytes} bytes!`);
-  
-      }).progress((percent) => {
-          console.log(`Downloaded: ${percent * 100}%`);
-          this.setState({progressPercentage: percent})
-      }).done(() => {
-          console.log('Download is done!');
-          this.setState({showProgressbar:false})
-      }).error((error) => {
-          console.log('Download canceled due to error: ', error);
-      });
+     
+      RNFetchBlob.config({
+        fileCache : true,
+        // android only options, these options be a no-op on IOS
+        addAndroidDownloads : {
+          // Show notification when response data transmitted
+          useDownloadManager : true,
+          // Title of download notification
+          title : item.title,
+          // Make the file scannable  by media scanner
+          mediaScannable : true,
+          notification : true,
+          path : `/storage/emulated/0/Download/${item.title}`
+        }
+      })
+      .fetch('GET', item.storage.downloadUrl)
+      .progress((received, total) => {
+        console.log('progress', received / total)
+        const percentage = received / total*100
+        this.setState({progressPercentage: percentage})
+      })
+      .then((resp) => {
+        // the path of downloaded file
+        // console.log(resp.path())
+        this.setState({showProgressbar:false})
+      }).catch((errorMessage, statusCode) => {
+        // error handling
+        
+      })
     }
   }
 
@@ -107,6 +123,7 @@ class ClassFilesScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this.deleteDialog = null;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
@@ -118,12 +135,17 @@ class ClassFilesScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadFiles();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <View style={styles.subjectContainer}>
               <Text style={{fontWeight: "bold", fontSize: 18}}>
                 {this.subject}

@@ -22,9 +22,13 @@ class TeacherListScreen extends React.PureComponent {
   };
 
   loadTeachers = async () => {
-    this.setState({peopleList: []})
+    if(this._isMounted){
+      this.setState({peopleList: []})
+    }
     const peopleList = await TeacherAPI.getTeachers(this.props.currentSchool.id);
-    this.setState({ peopleList, filteredPeopleList: peopleList });
+    if(this._isMounted){
+      this.setState({ peopleList, filteredPeopleList: peopleList });
+    }
   }
 
   handleTeacherPress = people => {
@@ -52,13 +56,19 @@ class TeacherListScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadTeachers = this.loadTeachers.bind(this);
     this.handleTeacherPress = this.handleTeacherPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadTeachers();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
   render() {

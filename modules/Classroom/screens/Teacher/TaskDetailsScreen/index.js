@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Snackbar } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Caption, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import DiscussionAPI from "modules/Classroom/api/discussion";
@@ -29,12 +29,14 @@ class TaskDetailsScreen extends React.PureComponent {
   };
 
   loadTask = async () => {
-    this.setState({ isFetching: true});
+    if(this._isMounted)
+      this.setState({ isFetching: true});
     const api = new TaskAPI();
     const task = await api.getDetail(this.props.currentSchool.id, this.classId, this.taskId);
     const totalSubmission = await SubmissionAPI.getTotalSubmission(this.props.currentSchool.id, this.classId, this.taskId);
     const totalDiscussion = await DiscussionAPI.getTotalDiscussion(this.props.currentSchool.id, this.classId, this.taskId);
-    this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
+    if(this._isMounted)
+      this.setState({ isFetching: false, task, totalSubmission, totalDiscussion });
   }
 
   handleNamePress = e => {
@@ -143,7 +145,7 @@ class TaskDetailsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
-    this.loadTask = this.loadTask.bind(this);
+    this._isMounted = null
     this.deleteDialog = null;
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
@@ -153,14 +155,34 @@ class TaskDetailsScreen extends React.PureComponent {
     this.handleDetailPress = this.handleDetailPress.bind(this);
     this.handleTaskSubmissionPress = this.handleTaskSubmissionPress.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.loadTask = this.loadTask.bind(this);
   }
 
 
   componentDidMount(){
+    this._isMounted = true
     this.loadTask();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
+    if(this.state.isFetching){
+      return (
+        <Dialog visible={true}>
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <ActivityIndicator/>
+            <View>
+              <Text>Sedang memuat data</Text>
+              <Caption>Harap tunggu...</Caption>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      )
+    }
+
     return (
       <View>
         <ScrollView>

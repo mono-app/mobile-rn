@@ -32,15 +32,17 @@ class StudentProfileScreen extends React.PureComponent {
   };
 
   loadPeopleInformation = async () => {
-    this.setState({ isLoadingProfile: true });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: true });
     const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    if(student.profilePicture){
+    if(student.profilePicture && this._isMounted){
       this.setState({ profilePicture: student.profilePicture.downloadUrl });
     }
-    this.setState({ isLoadingProfile: false, student });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: false, student });
   }
 
   loadStatus = async () => {
@@ -53,13 +55,19 @@ class StudentProfileScreen extends React.PureComponent {
     super(props);
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     
   }
 
   componentDidMount(){ 
+    this._isMounted = true
     this.loadPeopleInformation(); 
     this.loadStatus();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render(){

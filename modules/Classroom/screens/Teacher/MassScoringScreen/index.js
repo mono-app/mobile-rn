@@ -33,9 +33,11 @@ class MassScoringScreen extends React.PureComponent {
   };
 
   loadStudents = async () => {
-    this.setState({ peopleList: [], filteredPeopleList: [] });
+    if(this._isMounted)
+      this.setState({ peopleList: [], filteredPeopleList: [] });
     const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
-    this.setState({ peopleList, filteredPeopleList: peopleList });
+    if(this._isMounted)
+      this.setState({ peopleList, filteredPeopleList: peopleList });
   }
 
   handleStudentPress = async student => {
@@ -92,6 +94,7 @@ class MassScoringScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
@@ -99,7 +102,12 @@ class MassScoringScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadStudents();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

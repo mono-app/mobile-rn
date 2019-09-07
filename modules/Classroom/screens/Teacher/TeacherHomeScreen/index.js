@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Title, withTheme, Subheading } from "react-native-paper";
+import { ActivityIndicator, Caption, Dialog, Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
@@ -43,6 +43,7 @@ class TeacherHomeScreen extends React.PureComponent {
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.handleAddPress = this.handleAddPress.bind(this);
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
     this.handleTeacherProfilePress = this.handleTeacherProfilePress.bind(this);
@@ -50,11 +51,34 @@ class TeacherHomeScreen extends React.PureComponent {
   }
 
   async componentDidMount(){
+    this._isMounted = true
+    if(this._isMounted)
+      this.setState({isLoading: true})
     await this.props.setCurrentSchoolId(this.state.schoolId)
     await this.props.setCurrentTeacherEmail(this.state.schoolId, this.props.currentUser.email)
+    if(this._isMounted)
+      this.setState({isLoading: false})
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
+
   render() {
+    if(this.state.isLoading){
+      return (
+        <Dialog visible={true}>
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <ActivityIndicator/>
+            <View>
+              <Text>Sedang memuat data</Text>
+              <Caption>Harap tunggu...</Caption>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      )
+    }
     return (
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />

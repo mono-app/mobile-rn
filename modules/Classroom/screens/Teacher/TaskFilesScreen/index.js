@@ -1,5 +1,5 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, PermissionsAndroid } from "react-native";
 import {
   ProgressBar,
   Text,
@@ -14,6 +14,7 @@ import DeleteDialog from "src/components/DeleteDialog";
 import Button from "src/components/Button";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import MySearchbar from "src/components/MySearchbar"
+import RNFetchBlob from 'react-native-fetch-blob'
 
 const INITIAL_STATE = {
   isLoading: true,
@@ -43,7 +44,8 @@ class TaskFilesScreen extends React.PureComponent {
   };
 
   loadFiles = async () => {
-    this.setState({ fileList: [], isLoading: true });
+    if(this._isMounted)
+      this.setState({ fileList: [], isLoading: true });
 
     const fileList = await FileAPI.getStudentSubmissionFiles(
       this.props.currentSchool.id,
@@ -51,31 +53,47 @@ class TaskFilesScreen extends React.PureComponent {
       this.taskId,
       this.submissionId
     );
-    this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+    if(this._isMounted)
+      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
   };
 
-  handleDownloadPress = item => {
-    this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:1 , showProgressbar: true });
-    this.doDownload(item)
+  handleDownloadPress = async item => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+    }else{
+      this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:1 , showProgressbar: true });
+      this.doDownload(item)
+    }
   };
 
   doDownload = (item)=>{
-    RNBackgroundDownloader.download({
-      id: item.id,
-      url: item.downloadUrl,
-      destination: `/storage/emulated/0/Download/${item.title}`
-    })
-      .begin(expectedBytes => {
-        console.log(`Going to download ${expectedBytes} bytes!`);
-      })
-      .progress(percent => {
-        console.log(`Downloaded: ${percent * 100}%`);
-        if(this.state.totalItemToDownload==1){
-          this.setState({ progressPercentage: percent});
+    this.setState({progressPercentage:0,showProgressbar: true})
+     
+      RNFetchBlob.config({
+        fileCache : true,
+        // android only options, these options be a no-op on IOS
+        addAndroidDownloads : {
+          // Show notification when response data transmitted
+          useDownloadManager : true,
+          // Title of download notification
+          title : item.title,
+          // Make the file scannable  by media scanner
+          mediaScannable : true,
+          notification : true,
+          path : `/storage/emulated/0/Download/${item.title}`
         }
       })
-      .done(() => {
-        console.log("Download is done!");
+      .fetch('GET', item.storage.downloadUrl)
+      .progress((received, total) => {
+        console.log('progress', received / total)
+        const percentage = received / total*100
+        if(this.state.totalItemToDownload==1){
+          this.setState({ progressPercentage: percentage});
+        }
+      })
+      .then((resp) => {
+        // the path of downloaded file
+        // console.log(resp.path())
         let clonedTotalDownloadedItem = JSON.parse(JSON.stringify(this.state.totalDownloadedItem))
         clonedTotalDownloadedItem += 1
         if(this.state.totalItemToDownload>1){
@@ -85,20 +103,53 @@ class TaskFilesScreen extends React.PureComponent {
         if(clonedTotalDownloadedItem===this.state.totalItemToDownload){
           this.setState({ showProgressbar: false});
         }
+      }).catch((errorMessage, statusCode) => {
+        // error handling
+        
       })
-      .error(error => {
-        console.log("Download canceled due to error: ", error);
-      });
+    // RNBackgroundDownloader.download({
+    //   id: item.id,
+    //   url: item.downloadUrl,
+    //   destination: `/storage/emulated/0/Download/${item.title}`
+    // })
+    //   .begin(expectedBytes => {
+    //     console.log(`Going to download ${expectedBytes} bytes!`);
+    //   })
+    //   .progress(percent => {
+    //     console.log(`Downloaded: ${percent * 100}%`);
+    //     if(this.state.totalItemToDownload==1){
+    //       this.setState({ progressPercentage: percent});
+    //     }
+    //   })
+    //   .done(() => {
+    //     console.log("Download is done!");
+    //     let clonedTotalDownloadedItem = JSON.parse(JSON.stringify(this.state.totalDownloadedItem))
+    //     clonedTotalDownloadedItem += 1
+    //     if(this.state.totalItemToDownload>1){
+    //       this.setState({ progressPercentage: (clonedTotalDownloadedItem/this.state.totalItemToDownload), totalDownloadedItem:clonedTotalDownloadedItem});
+    //     }
+        
+    //     if(clonedTotalDownloadedItem===this.state.totalItemToDownload){
+    //       this.setState({ showProgressbar: false});
+    //     }
+    //   })
+    //   .error(error => {
+    //     console.log("Download canceled due to error: ", error);
+    //   });
   }
 
-  handleDownloadAll = () => {
-    if(this.state.filteredFileList.length==0){
-      return
+  handleDownloadAll = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await this.requestStoragePermission()
+    }else{
+      if(this.state.filteredFileList.length==0){
+        return
+      }
+      this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:this.state.filteredFileList.length , showProgressbar: true });
+      this.state.filteredFileList.map((file) => {
+        this.doDownload(file)
+      });
     }
-    this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:this.state.filteredFileList.length , showProgressbar: true });
-    this.state.filteredFileList.map((file) => {
-      this.doDownload(file)
-    });
   };
 
   handleDeletePress = (item, selectedIndex) => {
@@ -133,10 +184,23 @@ class TaskFilesScreen extends React.PureComponent {
     }
   }
 
+  requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
     this.deleteDialog = null;
+    this._isMounted = null
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.submissionId = this.props.navigation.getParam("submissionId", "");
@@ -148,11 +212,17 @@ class TaskFilesScreen extends React.PureComponent {
     this.handleDownloadAll = this.handleDownloadAll.bind(this);
     this.onDeletePress = this.onDeletePress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.requestStoragePermission = this.requestStoragePermission.bind(this);
 
   }
 
   componentDidMount() {
+    this._isMounted = true
     this.loadFiles();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

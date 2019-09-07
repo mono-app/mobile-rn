@@ -29,7 +29,8 @@ class StudentProfileScreen extends React.PureComponent {
   };
 
   loadPeopleInformation = async () => {
-    this.setState({ isLoadingProfile: true });
+    if(this._isMounted)
+     this.setState({ isLoadingProfile: true });
 
     const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
     if(student.gender){
@@ -37,27 +38,35 @@ class StudentProfileScreen extends React.PureComponent {
     }
     const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentEmail)).length;
 
-    this.setState({ isLoadingProfile: false, student, totalClass });
+    if(this._isMounted)
+      this.setState({ isLoadingProfile: false, student, totalClass });
 
   }
 
   loadStatus = async () => {
     let status = await StatusAPI.getLatestStatus(this.studentEmail);
     if(!status) status = { content: "-" };
-    this.setState({ status: status.content });
+    if(this._isMounted)
+      this.setState({ status: status.content });
   }
 
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     
   }
 
   componentDidMount(){ 
+    this._isMounted = true
     this.loadPeopleInformation(); 
     this.loadStatus();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render(){

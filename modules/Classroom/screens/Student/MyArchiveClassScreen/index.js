@@ -22,9 +22,11 @@ class MyArchiveClassScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    this.setState({classList: []})
+    if(this._isMounted)
+      this.setState({classList: []})
     const classList = await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email);
-    this.setState({ classList, filteredClassList: classList });
+    if(this._isMounted)
+      this.setState({ classList, filteredClassList: classList });
    }
 
   handleClassPress = class_ => {
@@ -54,13 +56,19 @@ class MyArchiveClassScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
   }
 
   componentDidMount(){
+    this._isMounted = true
     this.loadClasses();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

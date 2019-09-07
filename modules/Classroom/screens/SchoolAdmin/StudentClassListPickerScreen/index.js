@@ -23,9 +23,14 @@ class StudentClassListPickerScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
+    if(this._isMounted){
+      this.setState({classList: []})
+    }
     this.setState({classList: []})
     const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
-    this.setState({ classList, filteredClassList: classList });
+    if(this._isMounted){
+      this.setState({ classList, filteredClassList: classList })
+    }
   }
 
   handleClassPress = class_ => {
@@ -58,6 +63,7 @@ class StudentClassListPickerScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.studentEmail = this.props.navigation.getParam("studentEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
@@ -66,7 +72,12 @@ class StudentClassListPickerScreen extends React.PureComponent {
 
 
   componentDidMount(){
+    this._isMounted = true;
     this.loadClasses();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
