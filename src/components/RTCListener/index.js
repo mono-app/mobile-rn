@@ -104,7 +104,11 @@ function RTCListener(props){
 
     pusherChannel.current.bind(`mono::leavingpublisher::${props.roomId}`, (data) => {
       const { publisherId } = data;
+
+      // assuming that I am not listening to this publisher, no need to remove the publisher from my subscription list
+      if(peerConnections.current[publisherId] === undefined) return;
       if(publisherId === currentUserEmail.current) return ;
+
       peerConnections.current[publisherId].pc.close();
       listeningTo.current.splice(listeningTo.current.indexOf(publisherId));
       delete peerConnections.current[publisherId];
@@ -125,26 +129,61 @@ function RTCListener(props){
     pusherChannel.current.bind(`mono::newpublishers::${props.roomId}`, (data) => {
       generateLog(currentUserEmail.current, "a new publisher event is triggering");
       const { publishers } = data;
-      const selectedPublishers = publishers.filter((publisherId) => publisherId !== currentUserEmail.current);
-      generateLog(currentUserEmail.current, `got ${publishers.length} publishers, and selected only ${selectedPublishers.length}`);
-      selectedPublishers.forEach((publisherId) => {
-        if(listeningTo.current.includes(publisherId)) return;
-        listeningTo.current.push(publisherId);
-        generateLog(currentUserEmail.current, `generating RTCPeerConnection for ${publisherId}`);
-        createPeerConnection(publisherId).then(() => {
-          fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/subscribe`, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: myToken.current, userId: publisherId })
-          })
-        });
-      })
+      startListening(publishers);
     })
+
+    const { publishers } = await (await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/publishers`, { method: "GET" })).json()
+    startListening(publishers);
   }
 
   const initMain = async () => {
     currentUserEmail.current = JSON.parse(JSON.stringify(props.currentUser.email));
     await initPusher();
   }
+
+  const startListening = (publishers) => {
+    const selectedPublishers = publishers.filter((publisherId) => publisherId !== currentUserEmail.current);
+    generateLog(currentUserEmail.current, `got ${publishers.length} publishers, and selected only ${selectedPublishers.length}`);
+    selectedPublishers.forEach((publisherId) => {
+      if(listeningTo.current.includes(publisherId)){
+        generateLog(currentUserEmail.current, `already listening to ${publisherId}, ignoring`)
+        return;
+      }
+      listeningTo.current.push(publisherId);
+      generateLog(currentUserEmail.current, `generating RTCPeerConnection for ${publisherId}`);
+      createPeerConnection(publisherId).then(() => {
+        fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/subscribe`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: myToken.current, userId: publisherId })
+        })
+      });
+    })
+  }
+
+  const stopPublishing = async () => {
+    if(peerConnections.current[currentUserEmail.current] === undefined) return;
+    generateLog(currentUserEmail.current, "stop publishing the stream");
+    await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/publisher`, {
+      method: "DELETE", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUserEmail.current, token: myToken.current })
+    })
+    await closePeerConnection(currentUserEmail.current);
+  }
+
+  const stopListening = async () => {
+    const subscribers = Object.keys(peerConnections.current).filter((userId) => userId !== currentUserEmail.current);
+    generateLog(currentUserEmail.current, `Having ${subscribers.length} to unsubscribe`);
+    const subscriberPromises = subscribers.map(async (userId) => {
+      listeningTo.current.splice(listeningTo.current.indexOf(userId));
+      await fetch(`${SFU_SERVER_BASE_URL}/conversation/${props.roomId}/subscribe`, {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, token: myToken.current })
+      })
+      await closePeerConnection(userId)
+    })
+    await Promise.all(subscriberPromises)
+  }
+
 
   React.useEffect(() => {
     initMain()
@@ -162,20 +201,15 @@ function RTCListener(props){
 
   React.useEffect(() => {
     if(props.isPublisher) initPublisher();
-    else closePeerConnection(currentUserEmail.current);
+    else stopPublishing();
   }, [ props.isPublisher ])
 
   React.useEffect(() => {
     if(props.isSubscriber) initSubscribers();
-    else {
-      const subscribers = Object.keys(peerConnections.current).filter((userId) => userId !== currentUserEmail.current);
-      generateLog(currentUserEmail.current, `Having ${subscribers.length} to unsubscribe`);
-      Object.keys(peerConnections.current).forEach((userId) => {
-        if(userId !== currentUserEmail.current) closePeerConnection(userId)
-      })
-    }
+    else stopListening();
   }, [ props.isSubscriber ])
 
+  generateLog(currentUserEmail.current, SFU_SERVER_BASE_URL)
   return streams.map((stream, index) => <RTCView key={index} streamURL={stream?stream.toURL():null}/>)
 }
 

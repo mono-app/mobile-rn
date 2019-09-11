@@ -14,7 +14,6 @@ export default MainNavigator = createStackNavigator({
   PhotoGridPreview: { screen: PhotoGridPreviewScreen }
 }, {
   initialRouteName: "Home",
-  defaultNavigationOptions: { headerStyle: { elevation: 0 } },
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
     return { tabBarVisible: routeName !== "Comments" }

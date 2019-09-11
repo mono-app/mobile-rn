@@ -106,6 +106,8 @@ android {
         applicationId "com.zannete.monoapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        renderscriptTargetApi 23
+        renderscriptSupportModeEnabled true
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -145,6 +147,7 @@ dependencies {
     implementation project(':react-native-randombytes')
     implementation project(':react-native-background-downloader')
     implementation project(':@react-native-community_async-storage')
+    implementation project(':react-native-document-picker')
     implementation project(':@react-native-community_netinfo')
     implementation project(':react-native-spinkit')
     implementation project(':react-native-fast-image')
