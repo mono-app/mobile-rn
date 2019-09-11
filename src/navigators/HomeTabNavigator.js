@@ -9,6 +9,8 @@ import FriendRequestListScreen from "src/screens/FriendRequestListScreen";
 import ChatScreen from "src/screens/ChatScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
+import MapsPickerScreen from "src/screens/MapsPickerScreen"
+import GallerySwiperScreen from "src/screens/GallerySwiperScreen"
 
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -18,11 +20,13 @@ export default HomeTabNavigator = createStackNavigator({
   PeopleInformation: { screen: PeopleInformationScreen },
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
-  MyQR: { screen: MyQRScreen }
+  MyQR: { screen: MyQRScreen },
+  MapsPicker: {screen: MapsPickerScreen},
+  GallerySwiper: {screen: GallerySwiperScreen},
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: (routeName !== "Chat" && routeName !== "WebRTC") }
+    return { tabBarVisible: (routeName !== "Chat" && routeName !== "WebRTC" && routeName !== "MapsPicker"  && routeName !== "GallerySwiper") }
   }
 })

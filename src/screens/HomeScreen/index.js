@@ -15,16 +15,29 @@ function HomeScreen(props){
   const { currentUser } = props;
   const [ rooms, setRooms ] = React.useState([]);
   const roomsListener = React.useRef(null);
+  const notificationOpenedListener = React.useRef(null);
 
   const styles = StyleSheet.create({
     container: { flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }
   });
 
   React.useEffect(() => {
+    StudentAPI.aa()
     const init = async () => {
-      const notificationOpen = await firebase.notifications().getInitialNotification();
+      
+
+    const notificationOpen = await firebase.notifications().getInitialNotification();
       if (notificationOpen) {
-          // App was opened by a notification
+        doNotif(notificationOpen)
+      }
+    }
+  
+    // const notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+    //   doNotif(notificationOpen)
+    // });
+
+    const doNotif = async (notificationOpen) => {
+       // App was opened by a notification
           // Get the action triggered by the notification being opened
           const action = notificationOpen.action;
           // Get information about the notification that was opened
@@ -47,22 +60,21 @@ function HomeScreen(props){
             props.navigation.navigate("DiscussionComment", payload)
           }else if(data.type=="new-chat"){
             const roomId = data.roomId
-            console.log("new CHATTTTTTTTTTT")
-            console.log(roomId)
             const room = await RoomsAPI.getDetail(roomId)
             payload = {
               room
             }
             props.navigation.navigate("Chat", payload);
           }
-      }
     }
+
     init()
 
     roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => setRooms(rooms));
 
     return function cleanup(){
       if(roomsListener.current) roomsListener.current();
+      if(notificationOpenedListener.current) notificationOpenedListener.current();
     }
   }, [])
 

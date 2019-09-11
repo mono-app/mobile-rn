@@ -105,3 +105,7 @@ export class LikesCollection extends Collection{
 export class AnnouncementsCollection extends Collection{
   constructor(){ super("announcements"); }
 }
+
+export class ParticipantsCollection extends Collection{
+  constructor(){ super("participants"); }
+}
