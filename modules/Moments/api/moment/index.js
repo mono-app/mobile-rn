@@ -94,23 +94,28 @@ export default class MomentAPI{
    */
   static async getMoments(email){
     const friends = await FriendsAPI.getFriends(email);
-    const friendsEmail = friends.map(friend => friend.email);
-    friendsEmail.push(email) // to include create moment, so that user can see his/her moment
-
+    const posterEmails = friends.map((friend) => friend.email);
+    posterEmails.push(email); // add myself to poster email to catch the moment created by me
+    
     const db = firebase.firestore();
     const momentsCollection = new MomentsCollection();
     const momentsRef = db.collection(momentsCollection.getName());
-    const queries = friendsEmail.map(friendEmail => {
-      return momentsRef.where("posterEmail", "==", friendEmail).where("privacy", "==", "friends").orderBy("postTime", "desc").get();
-    })
-    const promiseResults = await Promise.all(queries);
-    
-    let documentSnapshots = [];
-    promiseResults.map(promiseResult => documentSnapshots = documentSnapshots.concat(promiseResult.docs));
-    const moments = documentSnapshots.map(documentSnapshot => { 
-      return { id: documentSnapshot.id, ...documentSnapshot.data() }
+    const queries = posterEmails.map((email) => {
+      const posterRef = momentsRef.where("posterEmail", "==", email);
+      const privacyRef = posterRef.where("privacy", "==", "friends");
+      return privacyRef.limit(100).orderBy("postTime", "desc").get();
     });
-    moments.sort((a, b) => (a.postTime > b.postTime)? -1: 1);
+
+    const querySnapshots = await Promise.all(queries);
+    const documentSnapshots = [];
+    querySnapshots.forEach((querySnapshot) => documentSnapshots.push.apply(documentSnapshots, querySnapshot.docs))
+
+    const moments = documentSnapshots.map((documentSnapshot) => MomentAPI.normalizeMoment(documentSnapshot));
+    moments.sort((a, b) => (a.postTime.seconds > b.postTime.seconds)? -1: 1);
     return Promise.resolve(moments);
+  }
+
+  static normalizeMoment(documentSnapshot){
+    return { id: documentSnapshot.id, ...documentSnapshot.data() };
   }
 }

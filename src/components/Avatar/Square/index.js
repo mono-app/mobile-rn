@@ -6,6 +6,6 @@ export default class SquareAvatar extends React.PureComponent{
     const size = this.props.size? this.props.size: 70;
     const radius = this.props.radius? this.props.radius: 8;
     const style = { width: size, height: size, borderRadius: radius, ...this.props.style }
-    return <FastImage style={style} source={{ uri: this.props.uri }}/>
+    return <FastImage style={style} source={{ uri: this.props.uri }} resizeMode="cover"/>
   }
 }

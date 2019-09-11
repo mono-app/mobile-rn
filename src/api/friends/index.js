@@ -6,6 +6,10 @@ import { Document } from "src/api/database/document";
 
 export default class FriendsAPI{
 
+  static normalizeFriend(documentSnapshot){
+    return { email: documentSnapshot.id, ...documentSnapshot.data() }
+  }
+
   async getFriendStatus(userEmail, friendEmail){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
@@ -56,7 +60,10 @@ export default class FriendsAPI{
     if(querySnapshot.empty) return Promise.resolve([]);
     else{
       const friends = [];
-      querySnapshot.forEach(documentSnapshot => friends.push({ email: documentSnapshot.id, ...documentSnapshot.data() }))
+      querySnapshot.forEach((documentSnapshot) => {
+        const normalizedFriend = FriendsAPI.normalizeFriend(documentSnapshot);
+        friends.push(normalizedFriend);
+      })
       return Promise.resolve(friends);
     }
   }

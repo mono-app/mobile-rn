@@ -11,10 +11,9 @@ export default class StorageAPI{
    * @returns {String} - a string of download url
    */
   static async uploadFile(storagePath, filePath){
-
     const blob = await RNFS.readFile(filePath,"base64")
     const filename = uuid()
-    const tempUrl = "/storage/emulated/0/Download/"+filename
+    const tempUrl = `${RNFS.CachesDirectoryPath}/${filename}.png`
 
     await RNFS.writeFile(tempUrl, blob, "base64")
 

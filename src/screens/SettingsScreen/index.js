@@ -62,8 +62,7 @@ function SettingsScreen(props){
             renderItem={({ item, index }) => {
               return (
                 <MenuListItemWithIcon
-                  key={index} icon={item.icon} title={item.title}
-                  onPress={() => props.navigation.navigate(item.navigateTo)} />
+                  key={index} item={item} onPress={() => props.navigation.navigate(item.navigateTo)} />
             )}}/>
           </View>
         </ScrollView>
