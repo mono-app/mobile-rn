@@ -1,5 +1,5 @@
 import firebase from "react-native-firebase";
-import { SchoolsCollection, ClassesCollection, TasksCollection, DiscussionsCollection, LikesCollection, CommentsCollection } from "src/api/database/collection";
+import { SchoolsCollection, ClassesCollection, TasksCollection, DiscussionsCollection, LikesCollection, CommentsCollection, ParticipantsCollection } from "src/api/database/collection";
 import StorageAPI from "src/api/storage"
 import uuid from "uuid/v4"
 
@@ -46,7 +46,7 @@ export default class DiscussionAPI{
     const tasksCollectionRef = classesDocumentRef.collection(tasksCollection.getName()).doc(taskId);
     const discussionsCollectionRef = tasksCollectionRef.collection(discussionsCollection.getName());
 
-    const discussionsQuerySnapshot = await discussionsCollectionRef.get();
+    const discussionsQuerySnapshot = await discussionsCollectionRef.orderBy("creationTime","desc").get();
 
     const discussions = (await discussionsQuerySnapshot.docs).map((snap)=> {
       return {id: snap.id, ...snap.data()}
@@ -71,6 +71,23 @@ export default class DiscussionAPI{
     return Promise.resolve(discussionsQuerySnapshot.size)
   }
 
+  static async getTotalParticipant(schoolId, classId, taskId, discussionId) {
+    const db = new firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const tasksCollection = new TasksCollection();
+    const discussionsCollection = new DiscussionsCollection();
+    const participantsCollection = new ParticipantsCollection();
+    const schoolDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classDocumentRef = schoolDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const tasksDocumentRef = classDocumentRef.collection(tasksCollection.getName()).doc(taskId);
+    const discussionsDocumentRef = tasksDocumentRef.collection(discussionsCollection.getName()).doc(discussionId);
+    const participantCollectionRef = discussionsDocumentRef.collection(participantsCollection.getName());
+
+    const participantQuerySnapshot = await participantCollectionRef.get();
+
+    return Promise.resolve(participantQuerySnapshot.size);
+  }
   
   static async getDetail(schoolId, classId, taskId, discussionId, currentUserEmail) {
     const db = new firebase.firestore();
@@ -172,13 +189,16 @@ export default class DiscussionAPI{
       const tasksCollection = new TasksCollection();
       const discussionsCollection = new DiscussionsCollection();
       const commentsCollection = new CommentsCollection();
+      const participantsCollection = new ParticipantsCollection();
       const schoolDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
       const classDocumentRef = schoolDocumentRef.collection(classesCollection.getName()).doc(classId);
       const tasksDocumentRef = classDocumentRef.collection(tasksCollection.getName()).doc(taskId);
       const discussionsDocumentRef = tasksDocumentRef.collection(discussionsCollection.getName()).doc(discussionId);
       const commentsDocumentRef = discussionsDocumentRef.collection(commentsCollection.getName()).doc();
+      const participantDocumentRef = discussionsDocumentRef.collection(participantsCollection.getName()).doc(data.posterEmail);
 
       await commentsDocumentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), ...data });
+      await participantDocumentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() });
 
       return Promise.resolve(true);
     }catch(err){ 

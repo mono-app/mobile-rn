@@ -185,54 +185,72 @@ export default class StudentAPI{
   static async aa(){
 
     // ini untuk testing saja
-    const roomId = "8EgYP0psuW8JzUpY6YX9"
-    const senderEmail = "test.pertama@gmail.com"
+    const schoolId = "1hZ2DiIYSFa5K26oTe75"
+    const classId = "NWNfzx09U8HpxfXZMAEM"
+    const taskId = "J76mQkaDnBqGqY4SLr7K"
+    //const discussionId = "isiUsKggIRg3pVCVoZVh"
+    const discussionId = "zJEZbx6Mu1iHy1vxQG2P"
 
+    // get senderId
+    const senderId = "test.kedua@gmail.com"
+  
+    // get creator Discussion Email
+    
+  
+    // get all teacher audience
     const db = firebase.firestore();
-    const roomRef = db.collection("rooms").doc(roomId);
-    const roomSnapshot = await roomRef.get();
-    const roomDocument = roomSnapshot.data();
+    const schoolsDocumentRef = db.collection("schools").doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection("classes").doc(classId);
+    const tasksDocumentRef = classesDocumentRef.collection("tasks").doc(taskId)
+    const discussionsDocumentRef = tasksDocumentRef.collection("discussions").doc(discussionId)
+    const participantsCollectionRef = discussionsDocumentRef.collection("participants")
+  
+    // get creator Discussion Email
+  const discussionDocumentSnapshot = await discussionsDocumentRef.get();
+  const creatorEmail = discussionDocumentSnapshot.data().posterEmail
+  const creatorDocumentRef = db.collection("users").doc(creatorEmail);
+  const creatorDocumentSnapshot = await creatorDocumentRef.get();
+  const creator = Object.assign({id: creatorDocumentSnapshot.id}, creatorDocumentSnapshot.data())
 
-    const audiences =  roomDocument.audiences.filter( (audience)=>{
-      return audience !== senderEmail
-    })
 
-    console.log("-------------LETS BEGIN ----------------")
+    const participantsQuerySnapshot = await participantsCollectionRef.get()
+  
+    const arrayOfPromise = participantsQuerySnapshot.docs.map( async (snap) => {
+      const userDocumentRef = db.collection("users").doc(snap.id);
+      const documentSnapshot = await userDocumentRef.get();
+      const user = Object.assign({id: documentSnapshot.id}, documentSnapshot.data())
 
-    console.log(audiences)
-
-    // get all audiences messagingToken  
-    const promises = audiences.map(audience => {
-      console.log(audience)
-
-      const userRef = db.collection("users").doc("test.kedua@gmail.com");
-
-      return userRef.get();
-    })
-    const audiencesSnapshot = await Promise.all(promises);
-    console.log(audiencesSnapshot)
-
-    const audiencesData = audiencesSnapshot.map(audienceSnapshot => {
-      const audienceData = audienceSnapshot.data();
-      console.log("audienceData")
-      console.log(audienceData)
-
-      // if(audienceData.tokenInformation){
-      //   if(audienceData.tokenInformation.messagingToken) return audienceData;
-      // }
+      return Promise.resolve(user)
     });
+    const participants = await Promise.all(arrayOfPromise);
+    
+    participants.push(creator)
+    console.log(participants)
 
+    let audiencesData = []
+  
+    for(const participant of participants){
+      if(participant.id !== senderId){
+        let allow = true
+        if(participant.settings && participant.settings.ignoreNotifications && participant.settings.ignoreNotifications.discussions){
+          // console.log(participant.id)
+          // console.log(participant.settings.ignoreNotifications.discussions)
+          // console.log(discussionId)
 
-    // send notification to all audiences except sender
-    // const messagePromises = audiencesData.map(audienceData => {
-    //   const message = {
-    //     token: audienceData.tokenInformation.messagingToken,
-    //     android: { notification: {channelId: "message-notification"} },
-    //     notification: { title: audienceData.applicationInformation.nickName, body: messageDocument.message }
-    //   }
-    //   return admin.messaging().send(message);
-    // })
-
+          for(var i = 0; i < participant.settings.ignoreNotifications.discussions.length; i++) {
+            if (participant.settings.ignoreNotifications.discussions[i].id === discussionId) {
+              allow = false
+              break;
+            }
+          }
+        }
+        
+        if(allow){
+          audiencesData.push(participant)
+        }
+      }
     }
+    console.log(audiencesData)
+  }
 
 }

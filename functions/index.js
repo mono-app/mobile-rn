@@ -44,7 +44,7 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
         roomId: roomId,
         messageId: messageId
       },
-      notification: { title: audienceData.applicationInformation.nickName, body: messageDocument.message }
+      notification: { title: audienceData.applicationInformation.nickName, body: messageDocument.content }
     }
     return admin.messaging().send(message);
   })
@@ -99,12 +99,28 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
 
   for(const teacher of teachers){
     if(teacher.id !== senderId){
-      audiencesData.push(teacher)
+      let allow = true
+      if(teacher.settings && teacher.settings.ignoreNotifications && teacher.settings.ignoreNotifications.discussions){
+        if(teacher.settings.ignoreNotifications.discussions.some(e => e.id === discussionId)){
+          allow = false
+        }
+      }
+      if(allow){
+        audiencesData.push(teacher)
+      }
     }
   }
   for(const student of students){
     if(student.id !== senderId){
-      audiencesData.push(student)
+      let allow = true
+      if(student.settings && student.settings.ignoreNotifications && student.settings.ignoreNotifications.discussions){
+        if(student.settings.ignoreNotifications.discussions.some(e => e.id === discussionId)){
+          allow = false
+        }
+      }
+      if(allow){
+        audiencesData.push(student)
+      }
     }
   }
   // send notification to teacher and student audience except senderId
@@ -123,7 +139,7 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
             classId: classId,
             taskId: taskId
           },
-          notification: { title: discussionDocument.title, body: discussionDocument.description }
+          notification: { title: "Diskusi Baru", body: discussionDocument.title }
         }
         return admin.messaging().send(message);
       }
@@ -136,3 +152,88 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
 
   }
 })
+
+exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/tasks/{taskId}/discussions/{discussionId}/comments/{commentId}").onCreate(async (documentSnapshot, context) => {
+  const commentDocument = documentSnapshot.data();
+  // console.log(111)
+  // console.log(discussionDocument)
+  const { schoolId, classId, taskId, discussionId, commentId  } = context.params;
+
+  // get senderId
+  const senderId = commentDocument.posterEmail
+
+  const db = admin.firestore();
+
+  // get all teacher audience
+  const schoolsDocumentRef = db.collection("schools").doc(schoolId);
+  const classesDocumentRef = schoolsDocumentRef.collection("classes").doc(classId);
+  const tasksDocumentRef = classesDocumentRef.collection("tasks").doc(taskId)
+  const discussionsDocumentRef = tasksDocumentRef.collection("discussions").doc(discussionId)
+  const participantsCollectionRef = discussionsDocumentRef.collection("participants")
+
+  // get creator Discussion Email
+  const discussionDocumentSnapshot = await discussionsDocumentRef.get();
+  const creatorEmail = discussionDocumentSnapshot.data().posterEmail
+  const creatorDocumentRef = db.collection("users").doc(creatorEmail);
+  const creatorDocumentSnapshot = await creatorDocumentRef.get();
+  const creator = Object.assign({id: creatorDocumentSnapshot.id}, creatorDocumentSnapshot.data())
+
+  const participantsQuerySnapshot = await participantsCollectionRef.get()
+
+  const arrayOfPromise = participantsQuerySnapshot.docs.map( async (snap) => {
+    const userDocumentRef = db.collection("users").doc(snap.id);
+    const documentSnapshot = await userDocumentRef.get();
+    const user = Object.assign({id: documentSnapshot.id}, documentSnapshot.data())
+
+    return Promise.resolve(user)
+  });
+  let participants = await Promise.all(arrayOfPromise);
+  
+  participants.push(creator)
+
+  let audiencesData = []
+
+  for(const participant of participants){
+    if(participant.id !== senderId){
+      let allow = true
+      if(participant.settings && participant.settings.ignoreNotifications && participant.settings.ignoreNotifications.discussions){
+        if(participant.settings.ignoreNotifications.discussions.some(e => e.id === discussionId)){
+          allow = false
+        }
+      }
+      if(allow){
+        audiencesData.push(participant)
+      }
+    }
+  }
+
+  // send notification to all audiences except sender
+  try{
+    const messagePromises = audiencesData.map(audienceData => {
+      if(audienceData.tokenInformation){
+        const message = {
+          token: audienceData.tokenInformation.messagingToken,
+          android: { notification: {channelId: "discussion-notification"} },
+          data: {
+            type: "discussion-comment",
+            discussionId: discussionId,
+            schoolId: schoolId,
+            classId: classId,
+            taskId: taskId
+          },
+          notification: { title: "Komentar Baru Pada Diskusi", body: commentDocument.comment }
+        }
+        return admin.messaging().send(message);
+      }
+    })
+
+    await Promise.all(messagePromises);
+    return Promise.resolve(true);
+  }catch(e){
+    return Promise.resolve(e);
+
+  }
+})
+
+
+

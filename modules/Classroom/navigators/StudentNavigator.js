@@ -18,8 +18,6 @@ import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 import TaskSubmissionScreen from "modules/Classroom/screens/Student/TaskSubmissionScreen"
 import AddTaskSubmissionScreen from "modules/Classroom/screens/Student/AddTaskSubmissionScreen"
 import AnnouncementScreen from "modules/Classroom/screens/Student/AnnouncementScreen"
-import GallerySwiperScreen from "modules/Classroom/screens/GallerySwiperScreen"
-import MapsPickerScreen from "modules/Classroom/screens/MapsPickerScreen"
 import StatusChangeScreen from "src/screens/StatusChangeScreen";
 import CameraScreen from "src/screens/CameraScreen";
 import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
@@ -43,8 +41,6 @@ const MyNavigator = createStackNavigator(
     TaskSubmission: {screen: TaskSubmissionScreen},
     AddTaskSubmission: {screen: AddTaskSubmissionScreen},
     Announcement: {screen: AnnouncementScreen},
-    GallerySwiper: {screen: GallerySwiperScreen},
-    MapsPicker: {screen: MapsPickerScreen},
     StatusChange: {screen: StatusChangeScreen},
     Camera: {screen: CameraScreen},
     ShareDiscussion: {screen: ShareDiscussionScreen},

@@ -24,6 +24,7 @@ const INITIAL_STATE = {
   isLoading: true, 
   isSendingComment: false,
   discussion: {}, 
+  totalParticipant: 0 ,
   comment:"", 
   commentList: [],
   imagesPicked: [],
@@ -32,31 +33,25 @@ const INITIAL_STATE = {
   locationCoordinate: null
 };
 class DiscussionCommentScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title={navigation.getParam("discussion", "").title}
-          subtitle="0 partisipan"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header:null
     };
   };
-
   loadDiscussion = async () => {
     this.setState({ isLoading: true });
     const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterEmail)
     const currentUserEmail = this.props.currentUser.email
     const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserEmail)
+    const totalParticipant = await DiscussionAPI.getTotalParticipant(this.schoolId, this.classId, this.taskId, this.discussion.id);
 
-    this.setState({ isLoading: false, discussion: this.discussion, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
+    this.setState({ isLoading: false, discussion: this.discussion,totalParticipant, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
   }
 
   loadComments = async () => {
     this.setState({ isLoading:true, commentList: [] })
     const commentList = await DiscussionAPI.getComments(this.schoolId, this.classId, this.taskId, this.discussion.id);
+
     this.setState({ commentList, isLoading:false })
   }
 
@@ -260,6 +255,13 @@ class DiscussionCommentScreen extends React.PureComponent {
     return (  
 
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+
+          navigation={this.props.navigation}
+          title={this.props.navigation.getParam("discussion", "").title}
+          subtitle={this.state.totalParticipant+" partisipan"}
+          style={{ backgroundColor: "#fff" }}
+        />
         <KeyboardAwareScrollView style={{flex:1}}>         
 
           <Card style={{ elevation: 1, marginTop: 8}}>
