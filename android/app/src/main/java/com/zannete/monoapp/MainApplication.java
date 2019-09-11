@@ -2,8 +2,10 @@ package com.zannete.monoapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
-import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
+import com.oney.WebRTCModule.WebRTCModulePackage;
+import com.bitgo.randombytes.RandomBytesPackage;
 import com.wix.RNCameraKit.RNCameraKitPackage;
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 import com.eko.RNBackgroundDownloaderPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
@@ -33,8 +35,6 @@ import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
 
-import com.oney.WebRTCModule.WebRTCModulePackage;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,8 +50,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new DocumentPickerPackage(),
+          new WebRTCModulePackage(),
+          new RandomBytesPackage(),
           new RNCameraKitPackage(),
+          new DocumentPickerPackage(),
           new RNBackgroundDownloaderPackage(),
           new AsyncStoragePackage(),
           new NetInfoPackage(),
@@ -71,10 +73,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseNotificationsPackage(),
           new RNFirebaseInstanceIdPackage(),
           new MapsPackage(),
-          new WebRTCModulePackage(),
           new RNGooglePlacesPackage(),
           new RNFetchBlobPackage()                                                                                         
-
       );
     }
 

@@ -74,6 +74,10 @@
 		E059535037F34DDDA69649EE /* libRNDocumentPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EB2E311D6E04261A03D657F /* libRNDocumentPicker.a */; };
 		CF335362954C438AB1B6640F /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1BE68F6AA33401E8207B74F /* libRNCNetInfo.a */; };
 		B014AE558CEA411F896184F3 /* libRNCNetInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */; };
+		10E711DDF3C14EF9854B1D6F /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B8585CA49F2441FA444DFFA /* libRNFetchBlob.a */; };
+		2960A21374934657A1D22BF4 /* libRNGooglePlaces.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97FF99815B2C42769BDAB470 /* libRNGooglePlaces.a */; };
+		9FAA6DB0F89B40019739A33E /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D49096361197471885C3671D /* libRNRandomBytes.a */; };
+		B20BE4A55267425790A9E6DC /* libRCTWebRTC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DD9B4C08B7D486EBB9C06E9 /* libRCTWebRTC.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -432,6 +436,14 @@
 		14ABA209DDA64215BC87CDD5 /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; name = "RNCNetInfo.xcodeproj"; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		D1BE68F6AA33401E8207B74F /* libRNCNetInfo.a */ = {isa = PBXFileReference; name = "libRNCNetInfo.a"; path = "libRNCNetInfo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */ = {isa = PBXFileReference; name = "libRNCNetInfo-tvOS.a"; path = "libRNCNetInfo-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		6BC07E55A27447E0A1038431 /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; name = "RNFetchBlob.xcodeproj"; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		5B8585CA49F2441FA444DFFA /* libRNFetchBlob.a */ = {isa = PBXFileReference; name = "libRNFetchBlob.a"; path = "libRNFetchBlob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		592D4B9D669944FABF9A4543 /* RNGooglePlaces.xcodeproj */ = {isa = PBXFileReference; name = "RNGooglePlaces.xcodeproj"; path = "../node_modules/react-native-google-places/ios/RNGooglePlaces.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		97FF99815B2C42769BDAB470 /* libRNGooglePlaces.a */ = {isa = PBXFileReference; name = "libRNGooglePlaces.a"; path = "libRNGooglePlaces.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		4D15583F016F414A811BA217 /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; name = "RNRandomBytes.xcodeproj"; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		D49096361197471885C3671D /* libRNRandomBytes.a */ = {isa = PBXFileReference; name = "libRNRandomBytes.a"; path = "libRNRandomBytes.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		B906E14251844A339CB94B41 /* RCTWebRTC.xcodeproj */ = {isa = PBXFileReference; name = "RCTWebRTC.xcodeproj"; path = "../node_modules/react-native-webrtc/ios/RCTWebRTC.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		3DD9B4C08B7D486EBB9C06E9 /* libRCTWebRTC.a */ = {isa = PBXFileReference; name = "libRCTWebRTC.a"; path = "libRCTWebRTC.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -476,6 +488,10 @@
 				6B5AA87383B841908110F9A5 /* libReactNativeCameraKit.a in Frameworks */,
 				E059535037F34DDDA69649EE /* libRNDocumentPicker.a in Frameworks */,
 				CF335362954C438AB1B6640F /* libRNCNetInfo.a in Frameworks */,
+				10E711DDF3C14EF9854B1D6F /* libRNFetchBlob.a in Frameworks */,
+				2960A21374934657A1D22BF4 /* libRNGooglePlaces.a in Frameworks */,
+				9FAA6DB0F89B40019739A33E /* libRNRandomBytes.a in Frameworks */,
+				B20BE4A55267425790A9E6DC /* libRCTWebRTC.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -685,6 +701,10 @@
 				C0AF02084F8940E59B4F6904 /* ReactNativeCameraKit.xcodeproj */,
 				DEE8C4C3E0B74CE5A48371A2 /* RNDocumentPicker.xcodeproj */,
 				14ABA209DDA64215BC87CDD5 /* RNCNetInfo.xcodeproj */,
+				6BC07E55A27447E0A1038431 /* RNFetchBlob.xcodeproj */,
+				592D4B9D669944FABF9A4543 /* RNGooglePlaces.xcodeproj */,
+				4D15583F016F414A811BA217 /* RNRandomBytes.xcodeproj */,
+				B906E14251844A339CB94B41 /* RCTWebRTC.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1371,6 +1391,10 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1390,6 +1414,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Debug;
@@ -1431,6 +1459,10 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1450,6 +1482,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Release;
@@ -1488,6 +1524,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Debug;
@@ -1525,6 +1565,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Release;
@@ -1574,6 +1618,10 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1593,6 +1641,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Debug;
@@ -1642,6 +1694,10 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1661,6 +1717,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Release;
@@ -1709,6 +1769,10 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1728,6 +1792,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Debug;
@@ -1776,6 +1844,10 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1795,6 +1867,10 @@
 					"$(SRCROOT)\..\node_modules\react-native-camera-kit\ios\lib\ReactNativeCameraKit",
 					"$(SRCROOT)\..\node_modules\react-native-document-picker\ios\RNDocumentPicker",
 					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
+					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-google-places\ios",
+					"$(SRCROOT)\..\node_modules\react-native-randombytes",
+					"$(SRCROOT)\..\node_modules\react-native-webrtc\ios\RCTWebRTC/**",
 				);
 			};
 			name = Release;
