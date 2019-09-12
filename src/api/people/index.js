@@ -74,24 +74,21 @@ export default class PeopleAPI{
    * @param {String} peopleEmail 
    * @param {String} storagePath - Firebase Storage Path
    */
-  changeProfilePicture(peopleEmail=null, imagePath){
-    const selectedPeopleEmail = (peopleEmail === null)? this.currentUserEmail: peopleEmail;
-    if(selectedPeopleEmail){
-      let profilePictureUrl = null;
-      const storagePath = `/main/profilePicture/${uuid()}.png`;
-      return StorageAPI.uploadFile(storagePath, imagePath).then(downloadUrl => {
-        profilePictureUrl = `${downloadUrl}`;
-        const db = firebase.firestore();
-        const batch = db.batch();
+  static changeProfilePicture(peopleEmail, imagePath){
+    let profilePictureUrl = null;
+    const storagePath = `/main/profilePicture/${uuid()}.png`;
+    return StorageAPI.uploadFile(storagePath, imagePath).then((downloadUrl) => {
+      profilePictureUrl = `${downloadUrl}`;
+      const db = firebase.firestore();
+      const batch = db.batch();
 
-        const userCollection = new UserCollection();
-        const userDocument = new Document(selectedPeopleEmail);
-        const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-        batch.update(userRef, { "applicationInformation.profilePicture": {storagePath, downloadUrl} })
-        batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
-        return batch.commit();
-      }).then(() => profilePictureUrl);
-    }
+      const userCollection = new UserCollection();
+      const userDocument = new Document(peopleEmail);
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      batch.update(userRef, { "applicationInformation.profilePicture": {storagePath, downloadUrl} })
+      batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
+      return batch.commit();
+    }).then(() => profilePictureUrl);
   }
 
   /**
