@@ -131,7 +131,9 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
       if(audienceData.tokenInformation){
         const message = {
           token: audienceData.tokenInformation.messagingToken,
-          android: { notification: {channelId: "discussion-notification"} },
+          android: { 
+            notification: {channelId: "discussion-notification"},
+        },
           data: {
             type: "new-discussion",
             discussionId: discussionId,
@@ -213,7 +215,9 @@ exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2")
       if(audienceData.tokenInformation){
         const message = {
           token: audienceData.tokenInformation.messagingToken,
-          android: { notification: {channelId: "discussion-notification"} },
+          android: { 
+            notification: {channelId: "discussion-notification"}
+          },
           data: {
             type: "discussion-comment",
             discussionId: discussionId,

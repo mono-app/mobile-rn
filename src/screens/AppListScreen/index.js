@@ -20,7 +20,8 @@ function AppListScreen(props){
   }
 
   const fetchData = async () => {
-    const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.email);
+    setData([]);
+    const schoolList = await SchoolAPI.getUserSchools(props.currentUser.email);
     if(schoolList.length>0){
       data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom" })
     }

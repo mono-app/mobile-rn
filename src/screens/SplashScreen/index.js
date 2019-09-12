@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "react-native-firebase";
 import { View, ActivityIndicator } from "react-native";
 import { StackActions, NavigationActions} from "react-navigation";
-
+import NotificationListener from "src/components/NotificationListener"
 import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people"
@@ -55,6 +55,7 @@ function SplashScreen(props){
 
   return(
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <NotificationListener/>
       <ActivityIndicator size="large" animating={true} color="#0EAD69"/>
     </View>
   )
