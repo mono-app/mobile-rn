@@ -1,6 +1,8 @@
 import React from "react";
 import Logger from "src/api/logger";
 import StatusAPI from "src/api/status";
+import PeopleAPI from "src/api/people";
+import DocumentPicker from "react-native-document-picker";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
@@ -25,6 +27,12 @@ function SettingsScreen(props){
   });
 
   const handleStatusPress = () => props.navigation.navigate("StatusChange");
+  const handleProfilePicturePress = async () => {
+    try{
+      const result = await DocumentPicker.pick({ type: [DocumentPicker.types.images] });
+      await PeopleAPI.changeProfilePicture(currentUser.email, result.uri);
+    }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
+  }
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +53,7 @@ function SettingsScreen(props){
           <PeopleProfileHeader
             style={{ flex: 1 }}
             onStatusPress={handleStatusPress}
+            onProfilePicturePress={handleProfilePicturePress}
             profilePicture={currentUser.profilePicture}
             title={currentUser.applicationInformation.nickName}
             subtitle={status}/>
