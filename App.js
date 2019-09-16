@@ -4,7 +4,6 @@ import { AppState } from "react-native";
 import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
-import NotificationListener from "src/components/NotificationListener"
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
 

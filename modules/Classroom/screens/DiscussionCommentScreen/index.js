@@ -1,7 +1,8 @@
 import React from "react";
-import { Dimensions, View, FlatList, StyleSheet, PermissionsAndroid } from "react-native";
+import { Dimensions, View, FlatList, StyleSheet, PermissionsAndroid, Platform, Linking } from "react-native";
 import { ActivityIndicator, Dialog, Text, Card, Caption, Paragraph } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
+import Header from "modules/Classroom/components/Header";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import SquareAvatar from "src/components/Avatar/Square";
@@ -194,6 +195,17 @@ class DiscussionCommentScreen extends React.PureComponent {
     return isAllowNotification
   }
 
+  handleLocationAttachedPress = () => {
+    const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
+    const latLng = `${this.state.discussion.location.latitude},${this.state.discussion.location.longitude}`;
+    const label = 'Location Attached';
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`
+    });
+    Linking.openURL(url); 
+  }
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
@@ -201,6 +213,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
     this.discussion = this.props.navigation.getParam("discussion", "");
+    this.isFromNotification = this.props.navigation.getParam("isFromNotification", false)
     this.loadDiscussion = this.loadDiscussion.bind(this);
     this.loadComments = this.loadComments.bind(this);
     this.handleCommentChange = this.handleCommentChange.bind(this);
@@ -214,6 +227,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.handleCameraPress = this.handleCameraPress.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
     this.handleSharePress = this.handleSharePress.bind(this);
+    this.handleLocationAttachedPress = this.handleLocationAttachedPress.bind(this);
     this.deleteDialog = null
   }
 
@@ -255,13 +269,24 @@ class DiscussionCommentScreen extends React.PureComponent {
     return (  
 
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        <AppHeader
+        {(this.isFromNotification)? 
+         <Header
+         navigation={this.props.navigation}
+         title={this.props.navigation.getParam("discussion", "").title}
+         subtitle={this.state.totalParticipant+" partisipan"}
+         style={{ backgroundColor: "#fff" }}
+       />
 
+        : 
+        <AppHeader
           navigation={this.props.navigation}
           title={this.props.navigation.getParam("discussion", "").title}
           subtitle={this.state.totalParticipant+" partisipan"}
           style={{ backgroundColor: "#fff" }}
         />
+
+        }
+        
         <KeyboardAwareScrollView style={{flex:1}}>         
 
           <Card style={{ elevation: 1, marginTop: 8}}>
@@ -279,10 +304,10 @@ class DiscussionCommentScreen extends React.PureComponent {
                 </Paragraph>
               </View>
               <View style={{ paddingHorizontal: 4, marginTop: 8}}>
-                {(this.state.discussion.location)? 
-                  <TouchableOpacity style={{flexDirection:"row"}} >
+                {(this.state.discussion.location&&this.state.discussion.location.latitude)? 
+                  <TouchableOpacity style={{flexDirection:"row"}} onPress={this.handleLocationAttachedPress} >
                     <EvilIcons name="location" size={24} style={{ color: (this.state.discussion)?"#0EAD69":"#5E8864",padding: 8, }}/>
-                    <Text style={{alignSelf:"center", color:"#0EAD69",marginRight: 8}}>{(this.state.discussion.location)?"Location attached.":""}</Text>
+                    <Text style={{alignSelf:"center", color:"#0EAD69",marginRight: 8}}>Location attached.</Text>
                   </TouchableOpacity>
                   : <View/>}
               </View>
