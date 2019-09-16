@@ -20,9 +20,9 @@ export default class Header extends React.PureComponent{
 
   render(){
     return(
-      <Appbar.Header style={{ backgroundColor: "white" }}>
+      <Appbar.Header style={{...this.props.style, backgroundColor: "white"}}>
           <Appbar.BackAction onPress={this.handleBackPress}/>
-        <Appbar.Content title={this.props.title}/>
+        <Appbar.Content title={this.props.title} subtitle={this.props.subtitle}/>
       </Appbar.Header>
     )
   }

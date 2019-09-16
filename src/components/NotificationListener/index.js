@@ -3,7 +3,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser"
 import firebase from "react-native-firebase";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import RoomsAPI from 'src/api/rooms';
-import { withNavigation } from "react-navigation";
+import { withNavigation,StackActions,NavigationActions } from "react-navigation";
 
 class NotificationListener extends React.PureComponent {
   
@@ -22,13 +22,24 @@ class NotificationListener extends React.PureComponent {
          const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, this.props.currentUser.email)
          payload = {
            key:"Classroom",
+           isFromNotification: true,
            schoolId,
            classId,
            taskId,
            discussion
          }
-         
+        //  console.log(payload)
+        //  const sa = StackActions.reset({
+        //   index: 0,
+        //   key:"HomeTab",
+        //   actions: [ 
+        //     NavigationActions.navigate({ routeName: "Home"}),
+        //     ]
+        // })
+        //  //this.props.navigation.navigate("DiscussionComment", payload)
+        //  this.props.navigation.dispatch(sa)
          this.props.navigation.navigate("DiscussionComment", payload)
+          
        }else if(data.type=="new-chat"){
          const roomId = data.roomId
          const room = await RoomsAPI.getDetail(roomId)
@@ -48,13 +59,11 @@ class NotificationListener extends React.PureComponent {
   async componentDidMount(){
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
       this.doNotif(notificationOpen)
-      console.log('notifListener')
     });
 
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
       this.doNotif(notificationOpen)
-      console.log("open")
     }
   }
   

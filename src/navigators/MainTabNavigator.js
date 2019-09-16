@@ -3,7 +3,7 @@ import { Text } from "react-native";
 import { createBottomTabNavigator } from "react-navigation";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
-
+import NotificationListener from "src/components/NotificationListener"
 import HomeTabNavigator from "./HomeTabNavigator.js";
 import ContactTabNavigator from "./ContactTabNavigator";
 import SettingTabNavigator from "./SettingTabNavigator.js";
@@ -11,7 +11,7 @@ import AppTabNavigator from "./AppTabNavigator";
 
 import { default as MomentTabNavigator } from "modules/Moments/navigators/MainNavigator";
 
-export default MainTabNavigator = createBottomTabNavigator({
+const MainTabNavigator = createBottomTabNavigator({
   HomeTab: HomeTabNavigator,
   ContactTab: ContactTabNavigator,
   AppTab: AppTabNavigator,
@@ -50,3 +50,16 @@ export default MainTabNavigator = createBottomTabNavigator({
     }
   })
 })
+
+export default class MainNavigator extends React.PureComponent {
+  static router = MainTabNavigator.router
+
+  render(){
+    return(
+    <React.Fragment>
+      <MainTabNavigator navigation={this.props.navigation}/>
+      <NotificationListener/>
+    </React.Fragment>
+    )
+  }
+}
