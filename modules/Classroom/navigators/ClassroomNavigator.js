@@ -4,7 +4,6 @@ import SchoolAdminNavigator from "./SchoolAdminNavigator";
 import TeacherNavigator from "./TeacherNavigator";
 import StudentNavigator from "./StudentNavigator";
 import NotificationNavigator from "./NotificationNavigator";
-import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionCommentScreen"
 
 export default ClassroomNavigator = createSwitchNavigator(
   {
@@ -12,7 +11,6 @@ export default ClassroomNavigator = createSwitchNavigator(
     SchoolAdmin : { screen: SchoolAdminNavigator },
     Teacher : { screen: TeacherNavigator },
     Student : { screen: StudentNavigator },
-    DiscussionComment: {screen: DiscussionCommentScreen},
     NotificationClassroom: {screen: NotificationNavigator},
   },
   {

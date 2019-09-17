@@ -22,6 +22,10 @@ function ChatList(props){
     if(currentPosition >= (listHeight - threshold)) props.onReachTop();
   }
 
+  const handleDiscussionSharePress = (item) => {
+    console.log(item)
+  }
+
   return (
     <FlatList 
       style={{ flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }} 
@@ -31,6 +35,8 @@ function ChatList(props){
         const bubbleStyle = (currentUser.email !== item.senderEmail)? "peopleBubble": "myBubble";
         if(item.type === "text") {
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
+        }else if(item.type === "discussion-share"){
+          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionSharePress(item)} message={item}/>
         }
       }}/>
   )

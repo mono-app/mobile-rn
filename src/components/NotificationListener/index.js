@@ -21,7 +21,7 @@ class NotificationListener extends React.PureComponent {
          const discussionId = data.discussionId
          const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, this.props.currentUser.email)
          payload = {
-           key:"Classroom",
+           key:"NotificationClassroom",
            isFromNotification: true,
            schoolId,
            classId,
