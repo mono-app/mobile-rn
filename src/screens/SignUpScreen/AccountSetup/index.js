@@ -5,6 +5,7 @@ import { StackActions } from "react-navigation";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import SInfo from "react-native-sensitive-info";
 import firebase from "react-native-firebase";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import Button from "../../../components/Button";
 import Navigator from "../../../api/navigator";
@@ -15,18 +16,18 @@ const INITIAL_STATE = {
   nickName: ""
 }
 
-export default class AccountSetup extends React.Component{
+class AccountSetup extends React.PureComponent{
   static navigationOptions = { title: "Account Setup" }
 
   handleCompleteClick = () => {
     SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
-      console.log(currentUserEmail);
+      console.log(this.props.currentUser.email);
       const applicationInformation = this.applicationInformationCard.getState();
       const personalInformation = this.personalInformationCard.getState();
 
       const db = firebase.firestore();
       console.log(personalInformation, applicationInformation);
-      return db.collection("users").doc(currentUserEmail).update({
+      return db.collection("users").doc(this.props.currentUser.email).update({
         personalInformation, applicationInformation,
         isCompleteSetup: true
       })
@@ -86,3 +87,4 @@ const styles = StyleSheet.create({
     paddingTop: 8
   }
 })
+export default withCurrentUser(AccountSetup);

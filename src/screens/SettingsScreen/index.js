@@ -41,7 +41,7 @@ function SettingsScreen(props){
       setStatus(content);
     }
     fetchData();
-  }, [currentUser.statistic.totalStatus])
+  }, [(currentUser.statistic && currentUser.statistic.totalStatus)?currentUser.statistic.totalStatus:0])
 
   if(!isLoggedIn) return null;
   return (
