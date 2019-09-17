@@ -3,21 +3,25 @@ import DocumentPicker from 'react-native-document-picker';
 import Logger from "src/api/logger";
 import MomentAPI from "modules/Moments/api/moment";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
+import ImagePickerListItem from "src/components/ImagePickerListItem"
 import Button from "src/components/Button";
 import CircleAvatar from "src/components/Avatar/Circle";
 import AppHeader from "src/components/AppHeader";
-import { View, TextInput, FlatList } from "react-native";
+import { View, TextInput, FlatList, PermissionsAndroid } from "react-native";
 import { IconButton, Text, Caption } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MomentImageThumbnail } from "modules/Moments/components/MomentItem";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
+import uuid from "uuid/v4"
+import DeleteDialog from "src/components/DeleteDialog";
 
 function AddMomentScreen(props){
   const { currentUser } = props;
   const [ isSubmitting, setIsSubmitting ] = React.useState(false);
   const [ content, setContent ] = React.useState("");
   const [ images, setImages ] = React.useState([]);
+  const [ selectedImageToDelete, setSelectedImageToDelete ] = React.useState(null);
+  const [deleteDialog, setDeleteDialog] = React.useState(null);
 
   const handleContentChange = (content) => setContent(content);
   const handleSubmitMoment = async () => {
@@ -29,15 +33,67 @@ function AddMomentScreen(props){
     props.navigation.goBack();
   }
 
+  const requestStoragePermission = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
+      );
+     
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
   const handleGalleryPress = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await requestStoragePermission()
+      return
+    }
     try{
       const results = await DocumentPicker.pickMultiple({ type: [DocumentPicker.types.images] });
-      const newImages = results.map((result) => result.uri);
       const clonnedImages = Array.from(images);
-      clonnedImages.push.apply(clonnedImages, newImages);
+      for (const res of results) {
+        clonnedImages.push({id: uuid(), ...res})
+      }
       setImages(clonnedImages)
     }catch(err){ Logger.log("AddMomentScreen.handleGalleryPress#err", err)}
   }
+
+  const handleCameraPress = async () => {
+    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
+      await requestStoragePermission()
+      return
+    }
+    const payload = {
+      onRefresh:(image)=> {
+          const clonnedImages = Array.from(images);
+          clonnedImages.push({id: uuid(), ...image});
+          setImages(clonnedImages)
+
+        }
+    }
+    props.navigation.navigate("CameraMoment",payload)
+  }
+
+  const handleDeleteImagePress = (item) => {
+    setSelectedImageToDelete(item)
+    if(deleteDialog)
+      deleteDialog.toggleShow()
+  }
+
+  onDeletePress = () => {
+    
+    const newselectedImageToDelete = images.filter((image) => {
+      return image.id!= selectedImageToDelete.id
+    })
+
+    setImages([])
+
+    setImages(newselectedImageToDelete)
+    if(deleteDialog)
+      deleteDialog.toggleShow()
+  }  
 
   return(
     <KeyboardAwareScrollView>
@@ -59,7 +115,7 @@ function AddMomentScreen(props){
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <View style={{ flexDirection: "row" }}>
             <IconButton size={24} icon="photo-library" color="rgba(0, 0, 0, .56)" onPress={handleGalleryPress}/>
-            <IconButton size={24} icon="photo-camera" color="rgba(0, 0, 0, .56)"/>
+            <IconButton size={24} icon="photo-camera" color="rgba(0, 0, 0, .56)" onPress={handleCameraPress}/>
           </View>
           <Button isLoading={isSubmitting} disabled={isSubmitting} onPress={handleSubmitMoment} text="Publikasi"/>
         </View>
@@ -67,12 +123,19 @@ function AddMomentScreen(props){
       
       <FlatList 
         data={images} horizontal
+        keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
           const style = (index === 0)? { marginLeft: 16, marginRight: 4 }: { marginLeft: 4, marginRight: 4 }
-          return <MomentImageThumbnail source={{ uri: item }} style={style}/>
+          return <ImagePickerListItem 
+                    onPress={() => handleDeleteImagePress(item)}
+                    image={item}/>
         }}>
 
       </FlatList>
+      <DeleteDialog 
+          ref ={i => setDeleteDialog(i)}
+          title= {"Apakah anda ingin menghapus gambar ini?"}
+          onDeletePress={this.onDeletePress}/>
     </KeyboardAwareScrollView>
   )
 }

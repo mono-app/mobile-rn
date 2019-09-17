@@ -163,7 +163,8 @@ class DiscussionCommentScreen extends React.PureComponent {
   handleSharePress = () => {
     const payload = {
       schoolId: this.schoolId,
-      classId: this.classId
+      classId: this.classId,
+      discussion: this.state.discussion
     }
     this.props.navigation.navigate("ShareDiscussion", payload)
   }

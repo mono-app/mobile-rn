@@ -4,11 +4,11 @@ import {
 } from "react-native";
 import { StackActions, NavigationEvents, NavigationActions } from "react-navigation";
 import { 
-  Portal, Dialog, Paragraph, Button as MaterialButton 
+  Portal, Dialog, Paragraph, Button as MaterialButton, Snackbar 
 } from "react-native-paper";
 import firebase from "react-native-firebase";
 import moment from "moment"
-
+import VerifyPhoneAPI from "src/api/verifyphone"
 import TextInput from "../../components/TextInput";
 import Button from "../../components/Button";
 
@@ -18,6 +18,9 @@ const INITIAL_STATE = {
   showDialog: false,
   otp: "", 
   phoneNumber: "",
+  otpRequestId: "",
+  showSnackbarFailVerification: false,
+  isVerificationLoading: false
 }
 
 export default class VerifyPhoneScreen extends React.Component{
@@ -26,12 +29,29 @@ export default class VerifyPhoneScreen extends React.Component{
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({n: 2}));
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
   handleOTPChange = otp => {this.setState({otp, isInsertingOTP: true});}
-  handleAskOTP = () => this.setState({isAskingOTP: true})
+  handleAskOTP = async () => {
+    const response = await VerifyPhoneAPI.sendCode(this.state.phoneNumber)
+
+    
+    if(response){
+      const otpRequestId = response
+      this.setState({isAskingOTP: true, otpRequestId})
+    }
+  }
   handleDismissDialog = () => this.setState({showDialog: false});
   handleVerifyClick = async () => {
-    const email = this.props.navigation.getParam("email", null);
-    const password = this.props.navigation.getParam("password", null);
-    firebase.auth().createUserWithEmailAndPassword(email, password);
+    this.setState({isVerificationLoading: true})
+
+    
+    const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
+    if(response){
+      const email = this.props.navigation.getParam("email", null);
+      const password = this.props.navigation.getParam("password", null);
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+    }else{
+      this.setState({showSnackbarFailVerification:true})
+    }
+    this.setState({isVerificationLoading: false})
   }
 
   handleContinueClick = () => {
@@ -64,7 +84,7 @@ export default class VerifyPhoneScreen extends React.Component{
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-
+    
     this.authListener = null;
     this.databaseListener = null;
     this.handleBackToSignIn = this.handleBackToSignIn.bind(this);
@@ -92,9 +112,9 @@ export default class VerifyPhoneScreen extends React.Component{
           onDidFocus={this.handleScreenDidFocus}
           onwillBlue={this.handleScreenWillBlur}/>
         <Text style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Text>
-        <Text style={{ fontSize: 12, marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 08xxxxxxxxx</Text>
+        <Text style={{ fontSize: 12, marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Text>
         <TextInput 
-          placeholder="Nomor HP-mu"
+          placeholder="Contoh: 6281215288888"
           textContentType="telephoneNumber"
           keyboardType="number-pad"
           editable={!this.state.isAskingOTP}
@@ -108,7 +128,7 @@ export default class VerifyPhoneScreen extends React.Component{
               keyboardType="number-pad"
               value={this.state.otp}
               onChangeText={this.handleOTPChange}/>
-            <Button onPress={this.handleVerifyClick} text="Verifikasi"/>
+            <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} text="Verifikasi"/>
           </View>
         ):(<Button onPress={this.handleAskOTP} text="Minta Kode Verifikasi"/>)
         }
@@ -126,6 +146,13 @@ export default class VerifyPhoneScreen extends React.Component{
             </Dialog.Actions>
           </Dialog>
         </Portal>
+        <Snackbar
+          visible= {this.state.showSnackbarFailVerification}
+          onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
+          style={{backgroundColor:"red"}}
+          duration={Snackbar.DURATION_SHORT}>
+          Kode Verifikasi Salah
+        </Snackbar>
       </View>
     )
   }

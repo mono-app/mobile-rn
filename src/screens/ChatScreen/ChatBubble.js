@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import Logger from "src/api/logger";
 
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, withTheme, Caption } from "react-native-paper";
 
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
@@ -50,19 +50,21 @@ function ChatBubble(props){
   }, [isSent, sentTime])
 
   return (
-    <View style={[ styles.container, props.style ]}>
-      <View style={ styles.section}>
-        <Text style={styles.contentColor}>
-          {content}
-          <Text style={styles.empty}>±±±±±±±±±±</Text>     
-        </Text>
-        
-        <View style={styles.metadata}>
-          <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
-          {props.bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
+    <TouchableOpacity onPress={props.onPress} disabled={(!props.clickable)? true: false} >
+      <View style={[ styles.container, props.style ]}>
+        <View style={ styles.section}>
+          <Text style={styles.contentColor}>
+            {content}
+            <Text style={styles.empty}>±±±±±±±±±±</Text>     
+          </Text>
+          
+          <View style={styles.metadata}>
+            <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+            {props.bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 

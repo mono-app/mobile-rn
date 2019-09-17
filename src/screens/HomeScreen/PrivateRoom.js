@@ -45,7 +45,7 @@ function PrivateRoom(props){
     else dateTimeString = sentTime.format("DD MMMM YYYY");
   }
 
-  if(isLoading) return null;
+  if(isLoading || !people) return null;
   return(
     <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
       <View style={{ marginRight: 16 }}>

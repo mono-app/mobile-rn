@@ -5,10 +5,13 @@ import ShareDiscussionListItem from "modules/Classroom/components/ShareDiscussio
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import Button from "src/components/Button";
+import { withCurrentUser } from "src/api/people/CurrentUser"
+import { PersonalRoomsAPI } from "src/api/rooms";
+import MessagesAPI from "src/api/messages";
 
 const INITIAL_STATE = { isLoading: true, isShareLoading: false , peopleList:[], filteredPeopleList:[] };
 
-export default class ShareDiscussionScreen extends React.PureComponent {
+class ShareDiscussionScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       header: (
@@ -24,7 +27,10 @@ export default class ShareDiscussionScreen extends React.PureComponent {
   loadStudents = async () => {
     this.setState({ peopleList: [] });
     const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
-    this.setState({ peopleList, filteredPeopleList: peopleList });
+    const peopleListWithoutMe = await peopleList.filter((people) => {
+        return people.id !== this.props.currentUser.email
+      })
+    this.setState({ peopleList: peopleListWithoutMe, filteredPeopleList: peopleListWithoutMe });
   }
 
   handleSearchPress = (searchText) => {
@@ -71,14 +77,32 @@ export default class ShareDiscussionScreen extends React.PureComponent {
     this.setState({filteredPeopleList, peopleList})
   }
 
+  handleSharePress = async () => {
+    this.setState({isShareLoading: true})
+    const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
+    for(let i=0;i<clonedPeopleList.length;i++){
+      if(clonedPeopleList[i].checked){
+        const peopleEmail = clonedPeopleList[i].id
+        const message = "Share Discussion, \nTitle: "+this.discussion.title
+        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail);
+        MessagesAPI.sendMessage(room.id, this.props.currentUser.email, message, "discussion-share", {discussion: this.discussion});
+      }
+    }
+
+    this.setState({isShareLoading:false})
+    this.props.navigation.goBack()
+  }
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
+    this.discussion = this.props.navigation.getParam("discussion", {});
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleSharePress = this.handleSharePress.bind(this);
   }
 
   componentDidMount(){
@@ -110,6 +134,7 @@ export default class ShareDiscussionScreen extends React.PureComponent {
             text="Bagikan"
             isLoading={this.state.isShareLoading}
             style={{marginHorizontal: 16}}
+            onPress={this.handleSharePress}
           />      
         </View>
       </View>
@@ -126,3 +151,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
+export default withCurrentUser(ShareDiscussionScreen)
