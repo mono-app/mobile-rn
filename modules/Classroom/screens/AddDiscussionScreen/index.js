@@ -11,7 +11,7 @@ import DocumentPicker from 'react-native-document-picker';
 import StorageAPI from "src/api/storage"
 import uuid from "uuid/v4"
 import DeleteDialog from "src/components/DeleteDialog";
-import ImagePickerListItem from "src/components/ImagePickerListItem"
+import ImageListItem from "src/components/ImageListItem"
 import { withCurrentUser } from "src/api/people/CurrentUser"
 
 const INITIAL_STATE = {
@@ -237,7 +237,7 @@ class AddDiscussionScreen extends React.PureComponent {
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
                 return (
-                  <ImagePickerListItem 
+                  <ImageListItem 
                     onPress={() => this.handleDeleteImagePress(item)}
                     image={item}/>
                 )

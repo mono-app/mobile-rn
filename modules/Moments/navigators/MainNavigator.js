@@ -7,7 +7,7 @@ import CommentsScreen from "modules/Moments/screens/CommentsScreen";
 import PhotoGridPreviewScreen from "modules/Moments/screens/PhotoGridPreviewScreen";
 import CameraScreen from "src/screens/CameraScreen";
 import QuickCameraScreen from "modules/Moments/screens/QuickCameraScreen";
-
+import GallerySwiperScreen from "src/screens/GallerySwiperScreen"
 
 export default MainNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -17,10 +17,12 @@ export default MainNavigator = createStackNavigator({
   PhotoGridPreview: { screen: PhotoGridPreviewScreen },
   CameraMoment: {screen: CameraScreen},
   QuickCameraMoment: {screen: QuickCameraScreen},
+  GallerySwiper: {screen: GallerySwiperScreen},
+
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: routeName !== "Comments" && routeName !== "QuickCameraMoment" }
+    return { tabBarVisible: routeName !== "Comments" && routeName !== "QuickCameraMoment"&& routeName !== "GallerySwiper" }
   }
 })

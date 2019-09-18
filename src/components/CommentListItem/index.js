@@ -1,8 +1,8 @@
 import React from "react";
 import moment from "moment";
-import { Dimensions, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Card, Caption, Paragraph } from "react-native-paper";
-import FastImage from "react-native-fast-image";
+import { Dimensions, View, FlatList } from "react-native";
+import { Text, Caption, Paragraph } from "react-native-paper";
+import ImageListItem from "src/components/ImageListItem"
 import SquareAvatar from "src/components/Avatar/Square";
 
 const INITIAL_STATE = { posterEmail: null, comment: {}, isLoading: true }
@@ -15,10 +15,15 @@ export default class CommentListItem extends React.Component{
     this.setState({ isLoading: false, comment });
   }
 
+  handleOnImagePress = (index) => {
+    this.props.onImagePress(index)
+  }
+
   constructor(props){
     super(props);
     this.state = { ...INITIAL_STATE, ...this.props };
     this.refreshDetail = this.refreshDetail.bind(this);
+    this.handleOnImagePress = this.handleOnImagePress.bind(this);
   }
 
   componentDidMount(){ this.refreshDetail(); }
@@ -51,33 +56,47 @@ export default class CommentListItem extends React.Component{
             <Paragraph>{comment.comment} 
             </Paragraph>
           </View>
+          
 
           { hasImage?(
-            <TouchableOpacity onPress={this.props.onImagePress}>
-              <View style={{ flex: 1, flexDirection: "row", marginHorizontal: 4 }}>
-                  {comment.images.map((item, index) => {
-                    if((index >= 0 && index < 3)) {
-                      return (
-                        <FastImage 
-                          key={index} 
-                          resizeMode="cover"
-                          source={{ uri: item.downloadUrl  }} 
-                          style={{ height: (window.width/4), width: (window.width/4), flex:1, margin:4, borderRadius: 8 }}/>
+            <FlatList
+            horizontal={true}
+            style={{ backgroundColor: "white" }}
+            data={comment.images}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => {
+              return (
+                <ImageListItem 
+                  onPress={() => this.handleOnImagePress(index)}
+                  image={item}/>
+              )
+            }}
+          />
+            // <TouchableOpacity onPress={this.props.onImagePress}>
+            //   <View style={{ flex: 1, flexDirection: "row", marginHorizontal: 4 }}>
+            //       {comment.images.map((item, index) => {
+            //         if((index >= 0 && index < 3)) {
+            //           return (
+            //             <FastImage 
+            //               key={index} 
+            //               resizeMode="cover"
+            //               source={{ uri: item.downloadUrl  }} 
+            //               style={{ height: (window.width/4), width: (window.width/4), flex:1, margin:4, borderRadius: 8 }}/>
                           
-                      )
-                    }else if(index === 3) return (
-                      <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), margin:4}}>
-                        <FastImage source={{ uri: item.downloadUrl }} style={{ alignSelf: "stretch", flex: 1, borderRadius: 8 }} resizeMode="cover"/>
-                        {(remainingImageCount>0)? 
-                          <View style={{ borderRadius: 8, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, .7)", alignItems: "center", justifyContent: "center" }}>
-                            <Text style={{ color: "white" }}>+ {remainingImageCount}</Text>
-                          </View>
-                          :<View/>}
-                      </View>
-                    );
-                  })}
-              </View>
-            </TouchableOpacity>
+            //           )
+            //         }else if(index === 3) return (
+            //           <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), margin:4}}>
+            //             <FastImage source={{ uri: item.downloadUrl }} style={{ alignSelf: "stretch", flex: 1, borderRadius: 8 }} resizeMode="cover"/>
+            //             {(remainingImageCount>0)? 
+            //               <View style={{ borderRadius: 8, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, .7)", alignItems: "center", justifyContent: "center" }}>
+            //                 <Text style={{ color: "white" }}>+ {remainingImageCount}</Text>
+            //               </View>
+            //               :<View/>}
+            //           </View>
+            //         );
+            //       })}
+            //   </View>
+            // </TouchableOpacity>
 
           ):<View/>}
       

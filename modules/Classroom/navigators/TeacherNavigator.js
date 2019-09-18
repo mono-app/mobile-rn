@@ -30,6 +30,7 @@ import ArchiveSelectClassScreen from "modules/Classroom/screens/Teacher/ArchiveS
 import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFilesScreen"
 import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
 import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
+import DiscussionNavigatorObj from "./DiscussionNavigatorObj"
 
 const MyNavigator = createStackNavigator(
   {
@@ -50,16 +51,14 @@ const MyNavigator = createStackNavigator(
     ClassFiles: {screen: ClassFilesScreen},
     SubmissionDetails: {screen: SubmissionDetailsScreen},
     SubmissionScoring: {screen: SubmissionScoringScreen},
-    Discussions: {screen: DiscussionsScreen},
-    DiscussionComment: {screen: DiscussionCommentScreen},
-    AddDiscussion: {screen: AddDiscussionScreen},
     ScoreDetails: {screen: ScoreDetailsScreen},
     TaskFiles: {screen: TaskFilesScreen},
     TaskArchiveList: {screen: TaskArchiveListScreen},
     ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
     AddClassFiles: {screen: AddClassFilesScreen},
     MassScoring: {screen: MassScoringScreen},
-    ShareDiscussion: {screen: ShareDiscussionScreen},
+    ...DiscussionNavigatorObj
+
   },
   {
     initialRouteName: "TeacherHome"

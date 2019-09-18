@@ -4,7 +4,7 @@ import FastImage from "react-native-fast-image";
 
 const INITIAL_STATE = { image: {}}
 
-export default class ImagePickerListItem extends React.Component{
+export default class ImageListItem extends React.Component{
 
   refreshDetail = async () => {
     const { image } = this.props;
@@ -25,7 +25,7 @@ export default class ImagePickerListItem extends React.Component{
       <TouchableOpacity onPress={this.props.onPress} style={{ height: (window.width/3), width: (window.width/3), padding:4 }}>
         <FastImage 
           resizeMode="cover"
-          source={{ uri: this.state.image.uri  }} 
+          source={{ uri: (this.state.image.uri)?this.state.image.uri :this.state.image.downloadUrl  }} 
           style={{ alignSelf: "stretch", flex: 1 }}/>
 
       </TouchableOpacity>

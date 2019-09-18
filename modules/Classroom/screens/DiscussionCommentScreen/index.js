@@ -16,7 +16,7 @@ import { default as MaterialCommunityIcons } from "react-native-vector-icons/Mat
 import StudentAPI from "modules/Classroom/api/student";
 import CommentListItem from "src/components/CommentListItem";
 import DeleteDialog from "src/components/DeleteDialog";
-import ImagePickerListItem from "src/components/ImagePickerListItem"
+import ImageListItem from "src/components/ImageListItem"
 import DocumentPicker from 'react-native-document-picker';
 import uuid from "uuid/v4"
 import { withCurrentUser } from "src/api/people/CurrentUser"
@@ -88,8 +88,9 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.setState({ comment:"", isSendingComment:false, locationCoordinate: null, imagesPicked: [] })
   }
 
-  handlePicturePress = (images) => {
+  handlePicturePress = (images,index) => {
     payload = {
+      index,
       images: images
     }
     this.props.navigation.navigate("GallerySwiper", payload);
@@ -164,6 +165,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     const payload = {
       schoolId: this.schoolId,
       classId: this.classId,
+      taskId: this.taskId,
       discussion: this.state.discussion
     }
     this.props.navigation.navigate("ShareDiscussion", payload)
@@ -312,9 +314,26 @@ class DiscussionCommentScreen extends React.PureComponent {
                   </TouchableOpacity>
                   : <View/>}
               </View>
+              <View style={{marginTop: 8}}>
+                <FlatList
+                    horizontal={true}
+                    style={{ backgroundColor: "white" }}
+                    data={this.state.discussion.images}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item, index }) => {
+                      return (
+                        <ImageListItem 
+                          onPress={() => {this.handlePicturePress(this.state.discussion.images,index)}}
+                          image={item}/>
+                      )
+                    }}
+                  />
+              </View>
 
-              <TouchableOpacity onPress={() => {this.handlePicturePress(this.state.discussion.images)}} style={{marginTop: 8}}>
+              {/* <TouchableOpacity onPress={() => {this.handlePicturePress(this.state.discussion.images)}} style={{marginTop: 8}}>
               { (this.state.discussion.images && this.state.discussion.images.length) > 0?(
+                 
+
                 <View style={{ flex: 1, flexDirection: "row", marginHorizontal: 8 }}>
                     {this.state.discussion.images.map((item, index) => {
                       if((index >= 0 && index < 3)) {
@@ -340,7 +359,7 @@ class DiscussionCommentScreen extends React.PureComponent {
                 </View>
 
               ):<View/>}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }}>
                 <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
@@ -386,7 +405,7 @@ class DiscussionCommentScreen extends React.PureComponent {
                   keyExtractor={(item) => item.id}
                   renderItem={({ item }) => {
                     return (
-                      <ImagePickerListItem 
+                      <ImageListItem 
                         onPress={() => this.handleDeleteImagePress(item)}
                         image={item}/>
                     )
@@ -419,7 +438,7 @@ class DiscussionCommentScreen extends React.PureComponent {
               renderItem={({ item }) => {
                 return (
                   <CommentListItem 
-                   comment={item} onImagePress={()=>{this.handlePicturePress(item.images)}} 
+                   comment={item} onImagePress={(idx)=>{this.handlePicturePress(item.images, idx)}} 
                    />
                 )
               }}

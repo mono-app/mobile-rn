@@ -61,7 +61,7 @@ function HomeScreen(props){
         refreshing={isRefreshing} 
         style={{ flex: 1 }}
         windowSize={3} initialNumToRender={5} renderItem={({ item, index }) => (
-          <MomentItem moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }}/>
+          <MomentItem moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} navigation={props.navigation}/>
         )}/>
     </View>
   )

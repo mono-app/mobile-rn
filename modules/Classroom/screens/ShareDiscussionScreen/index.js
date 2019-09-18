@@ -85,7 +85,10 @@ class ShareDiscussionScreen extends React.PureComponent {
         const peopleEmail = clonedPeopleList[i].id
         const message = "Share Discussion, \nTitle: "+this.discussion.title
         const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail);
-        MessagesAPI.sendMessage(room.id, this.props.currentUser.email, message, "discussion-share", {discussion: this.discussion});
+        const schoolId = this.schoolId
+        const classId = this.classId
+        const taskId = this.taskId
+        MessagesAPI.sendMessage(room.id, this.props.currentUser.email, message, "discussion-share", {discussion: {...this.discussion, schoolId, classId, taskId}});
       }
     }
 
@@ -98,6 +101,7 @@ class ShareDiscussionScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
+    this.taskId = this.props.navigation.getParam("taskId", "");
     this.discussion = this.props.navigation.getParam("discussion", {});
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
