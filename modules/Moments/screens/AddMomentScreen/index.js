@@ -22,6 +22,7 @@ function AddMomentScreen(props){
   const [ images, setImages ] = React.useState([]);
   const [ selectedImageToDelete, setSelectedImageToDelete ] = React.useState(null);
   const [deleteDialog, setDeleteDialog] = React.useState(null);
+  const [ initialImage, setinitialImage] = React.useState(props.navigation.getParam("cameraPic",null ));
 
   const handleContentChange = (content) => setContent(content);
   const handleSubmitMoment = async () => {
@@ -94,6 +95,15 @@ function AddMomentScreen(props){
     if(deleteDialog)
       deleteDialog.toggleShow()
   }  
+
+  React.useEffect(() => {
+    if(initialImage){
+      const clonnedImages = Array.from(images);
+      clonnedImages.push({id: uuid(), ...initialImage});
+      setImages(clonnedImages)
+      console.log(clonnedImages)
+    }
+  }, [])
 
   return(
     <KeyboardAwareScrollView>

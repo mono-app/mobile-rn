@@ -29,7 +29,6 @@ import TaskArchiveListScreen from "modules/Classroom/screens/Teacher/TaskArchive
 import ArchiveSelectClassScreen from "modules/Classroom/screens/Teacher/ArchiveSelectClassScreen"
 import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFilesScreen"
 import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
-import CameraScreen from "src/screens/CameraScreen";
 import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
 
 const MyNavigator = createStackNavigator(
@@ -60,7 +59,6 @@ const MyNavigator = createStackNavigator(
     ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
     AddClassFiles: {screen: AddClassFilesScreen},
     MassScoring: {screen: MassScoringScreen},
-    Camera: {screen: CameraScreen},
     ShareDiscussion: {screen: ShareDiscussionScreen},
   },
   {

@@ -50,10 +50,10 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   loadComments = async () => {
-    this.setState({ isLoading:true, commentList: [] })
+    this.setState({ commentList: [] })
     const commentList = await DiscussionAPI.getComments(this.schoolId, this.classId, this.taskId, this.discussion.id);
 
-    this.setState({ commentList, isLoading:false })
+    this.setState({ commentList })
   }
 
   handleCommentChange = comment => {

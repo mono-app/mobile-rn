@@ -149,7 +149,7 @@ export default class VerifyPhoneScreen extends React.Component{
         <Snackbar
           visible= {this.state.showSnackbarFailVerification}
           onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
-          style={{backgroundColor:"red"}}
+          style={{backgroundColor:"red",flex: 1}}
           duration={Snackbar.DURATION_SHORT}>
           Kode Verifikasi Salah
         </Snackbar>
