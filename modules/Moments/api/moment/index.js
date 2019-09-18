@@ -65,7 +65,7 @@ export default class MomentAPI{
     const promises = [];
     content.images.forEach((image, index) => {
       const stringRef = `/modules/moments/${uuid()}.png`;
-      promises.push(StorageAPI.uploadFile(stringRef, image));
+      promises.push(StorageAPI.uploadFile(stringRef, image.uri));
       content.images[index] = { storagePath: stringRef, downloadUrl: null }
     })
 

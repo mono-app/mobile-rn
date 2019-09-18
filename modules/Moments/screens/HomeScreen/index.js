@@ -26,6 +26,7 @@ function HomeScreen(props){
   })
 
   const handleAddMomentPress = () => props.navigation.navigate("AddMoment")
+  const handleQuickCameraPress = () => props.navigation.navigate("QuickCameraMoment")
   const handleRefresh = () => fetchMoments();
   const fetchMoments = async () => {
     setIsRefreshing(true);
@@ -49,12 +50,18 @@ function HomeScreen(props){
         <TouchableOpacity style={styles.addToMomentContainer} onPress={handleAddMomentPress}>
           <Text>Tambahkan moment</Text>
         </TouchableOpacity>
-        <IconButton icon="add-a-photo"  size={24}/>
+        <TouchableOpacity onPress={handleQuickCameraPress}>
+          <IconButton icon="add-a-photo"  size={24}/>
+        </TouchableOpacity>
       </Surface>
       <FlatList
-        data={moments} onRefresh={handleRefresh} refreshing={isRefreshing} style={{ flex: 1 }}
+        data={moments} 
+        keyExtractor={(item) => item.id}
+        onRefresh={handleRefresh} 
+        refreshing={isRefreshing} 
+        style={{ flex: 1 }}
         windowSize={3} initialNumToRender={5} renderItem={({ item, index }) => (
-          <MomentItem moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }}/>
+          <MomentItem moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} navigation={props.navigation}/>
         )}/>
     </View>
   )

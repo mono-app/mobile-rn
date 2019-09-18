@@ -23,26 +23,32 @@ function App(){
     }
   };
 
-  // const handleAppStateChange = async (nextAppState) => {
-  //   const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-  //   if(nextAppState === "active"){
-  //     await PeopleAPI.setOnlineStatus(currentUserEmail, "Online");
-  //   }else if(nextAppState === "background" || nextAppState === "inactive"){
-  //     await PeopleAPI.setOnlineStatus(currentUserEmail, "Offline");
-  //   }
-  // }
+  const handleAppStateChange = async (nextAppState) => {
+   // const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
+    if(nextAppState === "active"){
+    //  await PeopleAPI.setOnlineStatus(currentUserEmail, "Online");
+    }
 
-  // React.useEffect(() => {
-  //   CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
-  //     return PeopleAPI.setOnlineStatus(currentUserEmail, "Online");
-  //   })
-  //   firebase.firestore().settings({ persistence: true });
-  //   AppState.addEventListener("change", handleAppStateChange);
+    if(nextAppState === "background" || nextAppState === "inactive"){
+    //  await PeopleAPI.setOnlineStatus(currentUserEmail, "Offline");
+    }
+    
+    if(nextAppState === "inactive"){
 
-  //   return function cleanup(){
-  //     AppState.removeEventListener("change", handleAppStateChange) 
-  //   }
-  // })
+    }
+  }
+
+  React.useEffect(() => {
+    // CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
+    //   return PeopleAPI.setOnlineStatus(currentUserEmail, "Online");
+    // })
+    firebase.firestore().settings({ persistence: true });
+    AppState.addEventListener("change", handleAppStateChange);
+
+    return function cleanup(){
+      AppState.removeEventListener("change", handleAppStateChange) 
+    }
+  })
 
   return(
     <PaperProvider theme={theme}>

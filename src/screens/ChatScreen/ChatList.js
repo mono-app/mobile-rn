@@ -2,9 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
+import DiscussionAPI from "modules/Classroom/api/discussion";
 import ChatBubble from "src/screens/ChatScreen/ChatBubble";
 import { FlatList } from "react-native";
+import { StackActions, NavigationActions } from 'react-navigation';
 
 function ChatList(props){
   const { messages, currentUser } = props;
@@ -22,8 +23,25 @@ function ChatList(props){
     if(currentPosition >= (listHeight - threshold)) props.onReachTop();
   }
 
-  const handleDiscussionSharePress = (item) => {
-    console.log(item)
+  const handleDiscussionSharePress = async (item) => {
+    const schoolId = item.details.discussion.schoolId
+    const classId = item.details.discussion.classId
+    const taskId = item.details.discussion.taskId
+    const discussionId = item.details.discussion.id
+   
+    const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, currentUser.email)
+    // params: payload, key: "NotificationClassroom" 
+    
+    payload = {
+      isFromNotification: false,
+      schoolId,
+      classId,
+      taskId,
+      discussion
+    }
+   
+    props.navigation.navigate("DiscussionComment", payload)
+
   }
 
   return (

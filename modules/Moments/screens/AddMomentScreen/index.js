@@ -3,7 +3,7 @@ import DocumentPicker from 'react-native-document-picker';
 import Logger from "src/api/logger";
 import MomentAPI from "modules/Moments/api/moment";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-import ImagePickerListItem from "src/components/ImagePickerListItem"
+import ImageListItem from "src/components/ImageListItem"
 import Button from "src/components/Button";
 import CircleAvatar from "src/components/Avatar/Circle";
 import AppHeader from "src/components/AppHeader";
@@ -22,6 +22,7 @@ function AddMomentScreen(props){
   const [ images, setImages ] = React.useState([]);
   const [ selectedImageToDelete, setSelectedImageToDelete ] = React.useState(null);
   const [deleteDialog, setDeleteDialog] = React.useState(null);
+  const [ initialImage, setinitialImage] = React.useState(props.navigation.getParam("cameraPic",null ));
 
   const handleContentChange = (content) => setContent(content);
   const handleSubmitMoment = async () => {
@@ -95,6 +96,15 @@ function AddMomentScreen(props){
       deleteDialog.toggleShow()
   }  
 
+  React.useEffect(() => {
+    if(initialImage){
+      const clonnedImages = Array.from(images);
+      clonnedImages.push({id: uuid(), ...initialImage});
+      setImages(clonnedImages)
+      console.log(clonnedImages)
+    }
+  }, [])
+
   return(
     <KeyboardAwareScrollView>
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
@@ -126,7 +136,7 @@ function AddMomentScreen(props){
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
           const style = (index === 0)? { marginLeft: 16, marginRight: 4 }: { marginLeft: 4, marginRight: 4 }
-          return <ImagePickerListItem 
+          return <ImageListItem 
                     onPress={() => handleDeleteImagePress(item)}
                     image={item}/>
         }}>

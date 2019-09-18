@@ -20,7 +20,7 @@ export function MomentImageThumbnail(props){
       margin: 4, borderRadius: 8, flex:1, aspectRatio: 1, height: "100%" }
   })
   return (
-    <TouchableOpacity style={[ styles.imageContainer, props.style ]}>
+    <TouchableOpacity style={[ styles.imageContainer, props.style ]} onPress={props.onPress}>
       <FastImage style={styles.imageItem} source={props.source} resizeMode="cover"/>
     </TouchableOpacity>
   )
@@ -38,6 +38,15 @@ function MomentItem(props){
     actionItem: { display: "flex", flexDirection: "row", alignItems: "center", padding: 4 },
     imagesContainer: { display: "flex", flexDirection: "row", marginTop: 4, marginBottom: 4, flexGrow: 1 },
   })
+
+  
+  const handlePicturePress = (index) => {
+    payload = {
+      index,
+      images: moment.content.images
+    }
+    props.navigation.navigate("GallerySwiper", payload);
+  }
 
   const fetchPeople = async () => {
     const peopleData = await PeopleAPI.getDetail(moment.posterEmail)
@@ -73,8 +82,8 @@ function MomentItem(props){
         <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
         <FlatList 
           style={styles.imagesContainer} data={moment.content.images} horizontal={true}
-          renderItem={({ item }) => {
-            return <MomentImageThumbnail source={{ uri: item.downloadUrl }}/>
+          renderItem={({ item, index }) => {
+            return <MomentImageThumbnail source={{ uri: item.downloadUrl }} onPress={() => handlePicturePress(index)}/>
           }}/> 
       </View>
       <View style={styles.actionContainer}>

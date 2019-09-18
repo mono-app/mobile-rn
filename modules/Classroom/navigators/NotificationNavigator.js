@@ -1,11 +1,8 @@
-import React from "react";
 import { createStackNavigator } from "react-navigation";
-import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionCommentScreen"
-import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
+import DiscussionNavigatorObj from "modules/Classroom/navigators/DiscussionNavigatorObj"
 
 export default NotificationNavigator = createStackNavigator(
   {
-    DiscussionComment: {screen: DiscussionCommentScreen},
-    ShareDiscussion: {screen: ShareDiscussionScreen},
+    ...DiscussionNavigatorObj
   }
 );
