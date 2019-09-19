@@ -14,6 +14,7 @@ import { MomentImageThumbnail } from "modules/Moments/components/MomentItem";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import uuid from "uuid/v4"
 import DeleteDialog from "src/components/DeleteDialog";
+import ImagePicker from 'react-native-image-picker';
 
 function AddMomentScreen(props){
   const { currentUser } = props;
@@ -71,10 +72,20 @@ function AddMomentScreen(props){
           const clonnedImages = Array.from(images);
           clonnedImages.push({id: uuid(), ...image});
           setImages(clonnedImages)
-
         }
     }
-    props.navigation.navigate("CameraMoment",payload)
+    const options = {
+      mediaType: 'photo',
+    };
+    // Launch Camera:
+    ImagePicker.launchCamera(options, (response) => {
+      // Same code as in above section!
+      //console.log(response)
+      const clonnedImages = Array.from(images);
+      clonnedImages.push({id: uuid(), ...response});
+      setImages(clonnedImages)
+    });
+     //props.navigation.navigate("CameraMoment",payload)
   }
 
   const handleDeleteImagePress = (item) => {

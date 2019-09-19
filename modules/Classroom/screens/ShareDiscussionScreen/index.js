@@ -93,7 +93,9 @@ class ShareDiscussionScreen extends React.PureComponent {
     }
 
     this.setState({isShareLoading:false})
-    this.props.navigation.goBack()
+    const {navigation} = this.props
+    navigation.state.params.onComplete()
+    navigation.goBack()
   }
 
   constructor(props) {

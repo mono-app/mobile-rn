@@ -23,6 +23,6 @@ export default MainNavigator = createStackNavigator({
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: routeName !== "Comments" && routeName !== "QuickCameraMoment"&& routeName !== "GallerySwiper" }
+    return { tabBarVisible: routeName !== "Comments" && routeName !== "QuickCameraMoment" && routeName !== "GallerySwiper" && routeName !== "CameraMoment" }
   }
 })

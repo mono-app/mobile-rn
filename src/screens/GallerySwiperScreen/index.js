@@ -6,7 +6,7 @@ const INITIAL_STATE = { images: [] };
 
 export default class GallerySwiperScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => { return {
-    header: <AppHeader navigation={navigation} style={{ backgroundColor: "transparent" }}/>
+    header: <AppHeader navigation={navigation} style={{ backgroundColor: "#000" }}/>
   }}
   loadImages = async () => {
     const dimensions = {width: 1080, height: 1920}
@@ -23,6 +23,7 @@ export default class GallerySwiperScreen extends React.PureComponent {
     this.images = this.props.navigation.getParam("images", []);
     this.initialIndex = this.props.navigation.getParam("index", 0);
     console.log(this.initialIndex)
+    console.log(this.images)
   }
 
   componentDidMount(){
