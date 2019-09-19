@@ -2,6 +2,7 @@ package com.zannete.monoapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.oney.WebRTCModule.WebRTCModulePackage;
 import com.bitgo.randombytes.RandomBytesPackage;
@@ -51,6 +52,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ImageResizerPackage(),
             new ImagePickerPackage(),
           new WebRTCModulePackage(),
           new RandomBytesPackage(),
