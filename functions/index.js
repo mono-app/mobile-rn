@@ -34,19 +34,24 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
     }
   });
 
+  let tempTokenArray = []
+
   // send notification to all audiences except sender
   const messagePromises = audiencesData.map(audienceData => {
-    const message = {
-      token: audienceData.tokenInformation.messagingToken,
-      android: { notification: {channelId: "message-notification"} },
-      data: {
-        type: "new-chat",
-        roomId: roomId,
-        messageId: messageId
-      },
-      notification: { title: audienceData.applicationInformation.nickName, body: messageDocument.content }
+    if(!tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
+      const message = {
+        token: audienceData.tokenInformation.messagingToken,
+        android: { notification: {channelId: "message-notification"} },
+        data: {
+          type: "new-chat",
+          roomId: roomId,
+          messageId: messageId
+        },
+        notification: { title: audienceData.applicationInformation.nickName, body: messageDocument.content }
+      }
+      tempTokenArray.push(audienceData.tokenInformation.messagingToken)
+      return admin.messaging().send(message);
     }
-    return admin.messaging().send(message);
   })
 
   await Promise.all(messagePromises);
@@ -124,11 +129,11 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
     }
   }
   // send notification to teacher and student audience except senderId
-
+  let tempTokenArray = []
   // send notification to all audiences except sender
   try{
     const messagePromises = audiencesData.map(audienceData => {
-      if(audienceData.tokenInformation){
+      if(audienceData.tokenInformation && !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
         const message = {
           token: audienceData.tokenInformation.messagingToken,
           android: { 
@@ -143,6 +148,7 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
           },
           notification: { title: "Diskusi Baru", body: discussionDocument.title }
         }
+        tempTokenArray.push(audienceData.tokenInformation.messagingToken)
         return admin.messaging().send(message);
       }
     })
@@ -208,11 +214,11 @@ exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2")
       }
     }
   }
-
+  let tempTokenArray = []
   // send notification to all audiences except sender
   try{
     const messagePromises = audiencesData.map(audienceData => {
-      if(audienceData.tokenInformation){
+      if(audienceData.tokenInformation && !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
         const message = {
           token: audienceData.tokenInformation.messagingToken,
           android: { 
@@ -227,6 +233,7 @@ exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2")
           },
           notification: { title: "Komentar Baru Pada Diskusi", body: commentDocument.comment }
         }
+        tempTokenArray.push(audienceData.tokenInformation.messagingToken)
         return admin.messaging().send(message);
       }
     })
