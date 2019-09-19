@@ -8,15 +8,15 @@ import MapsPickerScreen from "src/screens/MapsPickerScreen"
 import GallerySwiperScreen from "src/screens/GallerySwiperScreen"
 import CameraScreen from "src/screens/CameraScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
+import DiscussionNavigatorObj from "modules/Classroom/navigators/DiscussionNavigatorObj"
 
 export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen },
   Classroom: { screen: ClassroomNavigator, navigationOptions: { header: null }},
   News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
-  MapsPicker: {screen: MapsPickerScreen},
-  GallerySwiper: {screen: GallerySwiperScreen},
   Camera: {screen: CameraScreen},
-  ...DiscussionClassroomNotifNavigatorObj
+  ...DiscussionClassroomNotifNavigatorObj,
+  
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
