@@ -6,6 +6,7 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people";
+import VerifyPhoneAPI from "src/api/verifyphone"
 
 import AppNavigator from "/src/navigators/AppNavigator";
 
@@ -34,7 +35,7 @@ function App(){
     }
     
     if(nextAppState === "inactive"){
-
+      VerifyPhoneAPI.cancelRequest()
     }
   }
 
