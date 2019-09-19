@@ -14,14 +14,13 @@ class NotificationListener extends React.PureComponent {
        // Get information about the notification that was opened
        const notification = notificationOpen.notification;
        const data = notification.data
-       if(data.type=="new-discussion"){
+       if(data.type=="new-discussion" || data.type=="discussion-comment"){
          const schoolId = data.schoolId
          const classId = data.classId
          const taskId = data.taskId
          const discussionId = data.discussionId
          const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, this.props.currentUser.email)
          payload = {
-           key:"NotificationClassroom",
            isFromNotification: true,
            schoolId,
            classId,
@@ -38,7 +37,7 @@ class NotificationListener extends React.PureComponent {
         // })
         //  //this.props.navigation.navigate("DiscussionComment", payload)
         //  this.props.navigation.dispatch(sa)
-         this.props.navigation.navigate("DiscussionComment", payload)
+         this.props.navigation.navigate( "DiscussionComment", payload)
           
        }else if(data.type=="new-chat"){
          const roomId = data.roomId

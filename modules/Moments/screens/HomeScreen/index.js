@@ -33,10 +33,12 @@ function HomeScreen(props){
       mediaType: 'photo',
     };
     ImagePicker.launchCamera(options, (response) => {
-      const payload = {
-        cameraPic: response
+      if(response.uri){
+        const payload = {
+          cameraPic: response
+        }
+        props.navigation.navigate("AddMoment", payload)
       }
-      props.navigation.navigate("AddMoment", payload)
     });
 
   }

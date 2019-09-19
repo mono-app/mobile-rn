@@ -125,9 +125,11 @@ class DiscussionCommentScreen extends React.PureComponent {
       mediaType: 'photo',
     };
     ImagePicker.launchCamera(options, (response) => {
-      let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-          clonedImagesPicked.push({id: uuid(), ...response})
-          this.setState({imagesPicked: clonedImagesPicked})
+      if(response.uri){
+        let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+        clonedImagesPicked.push({id: uuid(), ...response})
+        this.setState({imagesPicked: clonedImagesPicked})
+      }
     });
     //this.props.navigation.navigate("Camera",payload)
   }
@@ -289,7 +291,13 @@ class DiscussionCommentScreen extends React.PureComponent {
     return (  
 
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-        {(this.isFromNotification)? 
+        <AppHeader
+            navigation={this.props.navigation}
+            title={this.props.navigation.getParam("discussion", "").title}
+            subtitle={this.state.totalParticipant+" partisipan"}
+            style={{ backgroundColor: "#fff" }}
+        />
+        {/* {(this.isFromNotification)? 
          <Header
          navigation={this.props.navigation}
          title={this.props.navigation.getParam("discussion", "").title}
@@ -305,7 +313,7 @@ class DiscussionCommentScreen extends React.PureComponent {
           style={{ backgroundColor: "#fff" }}
         />
 
-        }
+        } */}
         
         <KeyboardAwareScrollView style={{flex:1}}>         
 

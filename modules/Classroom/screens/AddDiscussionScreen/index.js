@@ -125,9 +125,11 @@ class AddDiscussionScreen extends React.PureComponent {
       mediaType: 'photo',
     };
     ImagePicker.launchCamera(options, (response) => {
-      let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-      clonedImagesPicked.push({id: uuid(), ...response})
-      this.setState({imagesPicked: clonedImagesPicked})
+      if(response.uri){
+        let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+        clonedImagesPicked.push({id: uuid(), ...response})
+        this.setState({imagesPicked: clonedImagesPicked})
+      }
     });
     //this.props.navigation.navigate("Camera",payload)
   }

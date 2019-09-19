@@ -17,7 +17,6 @@ const MainTabNavigator = createBottomTabNavigator({
   AppTab: AppTabNavigator,
   MomentsTab: MomentTabNavigator,
   SettingsTab: SettingTabNavigator,
-
 }, {
   initialRouteName: "HomeTab",
   tabBarOptions: { 
