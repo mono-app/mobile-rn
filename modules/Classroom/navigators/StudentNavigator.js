@@ -12,14 +12,10 @@ import ClassFilesScreen from "modules/Classroom/screens/Student/ClassFilesScreen
 import TaskListScreen from "modules/Classroom/screens/Student/TaskListScreen"
 import TaskDetailsScreen from "modules/Classroom/screens/Student/TaskDetailsScreen"
 import TaskSubmissionListScreen from "modules/Classroom/screens/Student/TaskSubmissionListScreen"
-import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
-import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionCommentScreen"
-import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 import TaskSubmissionScreen from "modules/Classroom/screens/Student/TaskSubmissionScreen"
 import AddTaskSubmissionScreen from "modules/Classroom/screens/Student/AddTaskSubmissionScreen"
 import AnnouncementScreen from "modules/Classroom/screens/Student/AnnouncementScreen"
 import StatusChangeScreen from "src/screens/StatusChangeScreen";
-import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
 import DiscussionNavigatorObj from "modules/Classroom/navigators/DiscussionNavigatorObj"
 
 const MyNavigator = createStackNavigator(
