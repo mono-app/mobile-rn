@@ -56,6 +56,16 @@ export default class MomentAPI{
     })
   }
 
+  static async getDetail(momentId){
+    const db = firebase.firestore();
+    const momentsCollection = new MomentsCollection();
+    const momentDocument = new Document(momentId);
+    const momentRef = db.collection(momentsCollection.getName()).doc(momentDocument.getId());
+    const momentDocumentSnapshot = await momentRef.get();
+    const data = { id: momentDocumentSnapshot.id, ...momentDocumentSnapshot.data() };
+    return Promise.resolve(data);
+  }
+
   /**
    * 
    * @param {String} posterEmail - 

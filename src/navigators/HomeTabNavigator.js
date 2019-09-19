@@ -10,6 +10,7 @@ import ChatScreen from "src/screens/ChatScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
+import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
 
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -20,11 +21,12 @@ export default HomeTabNavigator = createStackNavigator({
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
   MyQR: { screen: MyQRScreen },
-  ...DiscussionClassroomNotifNavigatorObj
+  ...DiscussionClassroomNotifNavigatorObj,
+  ...MomentNavigatorObj
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: (routeName !== "Chat" && routeName !== "WebRTC" && routeName !== "GallerySwiper" && routeName !== "MapsPicker") }
+    return { tabBarVisible: (routeName !== "MomentComments" && routeName !== "Chat" && routeName !== "WebRTC" && routeName !== "GallerySwiper" && routeName !== "MapsPicker") }
   }
 })

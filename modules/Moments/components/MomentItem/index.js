@@ -27,6 +27,7 @@ export function MomentImageThumbnail(props){
 }
 
 function MomentItem(props){
+  const _isMounted = React.useRef(true);
   const [ moment, setMoment ] = React.useState(props.moment);
   const [ people, setPeople ] = React.useState(null);
   const momentListener = React.useRef(null);
@@ -50,25 +51,31 @@ function MomentItem(props){
 
   const fetchPeople = async () => {
     const peopleData = await PeopleAPI.getDetail(moment.posterEmail)
-    setPeople(peopleData);
+    if(_isMounted.current)
+      setPeople(peopleData);
   }
 
   const fetchMoment = async () => {
     momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, (newMoment) => {
-      setMoment(newMoment);
+      if(_isMounted.current)
+        setMoment(newMoment);
     })
   }
 
   React.useEffect(() => {
+
     fetchPeople();
     fetchMoment();
     return function cleanup(){
+      _isMounted.current=false
       Logger.log("MomentItem.cleanup", `cleanup: ${moment.content.message}`);
       if(momentListener.current) momentListener.current();
+
     }
   }, [])
 
-  if(people === null) return null;
+  if(people === null||!moment||!moment.content) return null;
+  const imageSize = (Dimensions.get("window").width/3) + 10;
   return (
     <Surface style={[ styles.surface, props.style ]}>
       <View style={styles.profile}>
@@ -80,19 +87,25 @@ function MomentItem(props){
       </View>
       <View style={styles.textContainer}>
         <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
-        <FlatList 
-          style={styles.imagesContainer} data={moment.content.images} horizontal={true}
-          renderItem={({ item, index }) => {
-            return <MomentImageThumbnail source={{ uri: item.downloadUrl }} onPress={() => handlePicturePress(index)}/>
-          }}/> 
+        {(moment.content.images.length>0)?
+          <View style={{height: imageSize}}>
+            <FlatList 
+              style={styles.imagesContainer} data={moment.content.images} horizontal={true}
+              renderItem={({ item, index }) => {
+                return <MomentImageThumbnail source={{ uri: item.downloadUrl }} onPress={() => handlePicturePress(index)}/>
+              }}/> 
+          </View>
+          : <View/>}
+       
+
       </View>
       <View style={styles.actionContainer}>
         <LikeButton style={styles.actionItem} moment={moment}/>
-        <TouchableOpacity style={styles.actionItem}>
+        <TouchableOpacity style={styles.actionItem} onPress={props.onCommentPress}>
           <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
           <Text>Komentar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionItem}>
+        <TouchableOpacity style={styles.actionItem} onPress={props.onSharePress}>
           <MaterialCommunityIcons name="share-variant" size={16} style={{ marginRight: 4 }}/>
           <Text>Bagikan</Text>
         </TouchableOpacity>

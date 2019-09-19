@@ -52,6 +52,7 @@ export default class FriendsAPI{
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const peopleCollection = new PeopleCollection();
+    const userCollection = new UserCollection();
     const userDocument = new Document(peopleEmail);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(peopleCollection.getName());
@@ -59,12 +60,14 @@ export default class FriendsAPI{
     
     if(querySnapshot.empty) return Promise.resolve([]);
     else{
-      const friends = [];
-      querySnapshot.forEach((documentSnapshot) => {
-        const normalizedFriend = FriendsAPI.normalizeFriend(documentSnapshot);
-        friends.push(normalizedFriend);
-      })
-      return Promise.resolve(friends);
+      const arrayOfPromise = querySnapshot.docs.map(async (snap) => {
+        const user = await PeopleAPI.getDetail(snap.id);
+        return Promise.resolve({...user, source: snap.data().source})
+      });
+
+      const userDocuments = await Promise.all(arrayOfPromise);
+      userDocuments.sort((a, b) => ((a.name && b.name)&&a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+      return Promise.resolve(userDocuments);
     }
   }
 

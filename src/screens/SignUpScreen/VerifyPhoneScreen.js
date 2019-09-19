@@ -32,9 +32,9 @@ export default class VerifyPhoneScreen extends React.Component{
   handleAskOTP = async () => {
     const response = await VerifyPhoneAPI.sendCode(this.state.phoneNumber)
 
-    
     if(response){
       const otpRequestId = response
+      VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
       this.setState({isAskingOTP: true, otpRequestId})
     }
   }
@@ -45,6 +45,8 @@ export default class VerifyPhoneScreen extends React.Component{
     
     const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
     if(response){
+      VerifyPhoneAPI.currentNexmoRequestId = null
+
       const email = this.props.navigation.getParam("email", null);
       const password = this.props.navigation.getParam("password", null);
       await firebase.auth().createUserWithEmailAndPassword(email, password);

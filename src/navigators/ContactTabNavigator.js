@@ -5,16 +5,18 @@ import ContactScreen from "src/screens/ContactScreen";
 import ChatScreen from "src/screens/ChatScreen";
 import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
+import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
 
 export default ContactTabNavigator =  createStackNavigator({
   ContactHome: { screen: ContactScreen },
   Chat: { screen: ChatScreen },
   PeopleInformation: { screen: PeopleInformationScreen },
   ...DiscussionClassroomNotifNavigatorObj,
+  ...MomentNavigatorObj
 }, {
   initialRouteName: "ContactHome",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: routeName !== "Chat" && routeName !== "MapsPicker" && routeName !== "GallerySwiper"}
+    return { tabBarVisible: routeName !== "MomentComments" && routeName !== "Chat" && routeName !== "MapsPicker" && routeName !== "GallerySwiper"}
   }
 })

@@ -10,6 +10,7 @@ import { View, TouchableOpacity, FlatList } from "react-native";
 import { Text, Surface, IconButton } from "react-native-paper";
 
 function HomeScreen(props){
+  const _isMounted = React.useRef(true);
   const { currentUser } = props;
   const [ moments, setMoments ] = React.useState([]);
   const [ isRefreshing, setIsRefreshing ] = React.useState(false);
@@ -44,11 +45,28 @@ function HomeScreen(props){
   }
   const handleRefresh = () => fetchMoments();
   const fetchMoments = async () => {
-    setIsRefreshing(true);
+    if(_isMounted.current)
+      setIsRefreshing(true);
     const moments = await MomentsAPI.getMoments(currentUser.email)
     Logger.log("Moments.HomeScreen.fetchMoment", moments);
-    setMoments(moments);
-    setIsRefreshing(false);
+    if(_isMounted.current){
+      setMoments(moments);
+      setIsRefreshing(false);
+    }
+  }
+  const handleCommentPress = (item) => {
+    payload = {
+      momentId: item.id
+    }
+    props.navigation.navigate("MomentComments",payload)
+  }
+
+  const handleSharePress = (item) => {
+    payload = {
+      moment: item,
+      onComplete: ()=>{}
+    }
+    props.navigation.navigate("ShareMoment",payload)
   }
 
   React.useEffect(() => {
@@ -56,6 +74,9 @@ function HomeScreen(props){
     props.navigation.addListener("didFocus", (payload) => {
       if(payload.action.type === "Navigation/COMPLETE_TRANSITION") fetchMoments();
     })
+    return () => {
+      _isMounted.current = false;
+    };
   }, []);
 
   return(
@@ -76,7 +97,13 @@ function HomeScreen(props){
         refreshing={isRefreshing} 
         style={{ flex: 1 }}
         windowSize={3} initialNumToRender={5} renderItem={({ item, index }) => (
-          <MomentItem moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} navigation={props.navigation}/>
+          <MomentItem 
+          moment={item} 
+          style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} 
+          navigation={props.navigation}
+          onCommentPress={() => handleCommentPress(item)}
+          onSharePress={() => handleSharePress(item)}
+          />
         )}/>
     </View>
   )

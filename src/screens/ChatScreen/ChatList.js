@@ -23,7 +23,7 @@ function ChatList(props){
     if(currentPosition >= (listHeight - threshold)) props.onReachTop();
   }
 
-  const handleDiscussionSharePress = async (item) => {
+  const handleDiscussionPress = async (item) => {
     const schoolId = item.details.discussion.schoolId
     const classId = item.details.discussion.classId
     const taskId = item.details.discussion.taskId
@@ -44,6 +44,16 @@ function ChatList(props){
 
   }
 
+  const handleMomentPress = async (item) => {
+        
+    payload = {
+      momentId: item.details.moment.id,
+    }
+   
+    props.navigation.navigate("MomentComments", payload)
+
+  }
+
   return (
     <FlatList 
       style={{ flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }} 
@@ -54,7 +64,9 @@ function ChatList(props){
         if(item.type === "text") {
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
         }else if(item.type === "discussion-share"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionSharePress(item)} message={item}/>
+          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
+        }else if(item.type === "moment-share"){
+          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentPress(item)} message={item}/>
         }
       }}/>
   )

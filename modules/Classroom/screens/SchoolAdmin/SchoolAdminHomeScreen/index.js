@@ -11,6 +11,7 @@ import uuid from "uuid/v4"
 import DocumentPicker from 'react-native-document-picker';
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import ImageCompress from "src/api/ImageCompress"
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -59,7 +60,9 @@ class SchoolAdminHomeScreen extends React.PureComponent {
         type: [DocumentPicker.types.images],
       });
       const storagePath = "/modules/classroom/schools/"+uuid()
-      const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
+      const compressedRes = await ImageCompress.compress(res.uri, res.size)
+
+      const downloadUrl = await StorageAPI.uploadFile(storagePath, compressedRes.uri)
 
       await SchoolAPI.updateSchoolProfilePicture(this.state.schoolId, storagePath, downloadUrl)
 
