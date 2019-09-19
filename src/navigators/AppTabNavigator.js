@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator, createSwitchNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation";
 
 import AppListScreen from "../screens/AppListScreen";
 import ClassroomNavigator from "modules/Classroom/navigators/ClassroomNavigator";
@@ -7,6 +7,7 @@ import NewsNavigator from "modules/News/navigators/NewsNavigator";
 import MapsPickerScreen from "src/screens/MapsPickerScreen"
 import GallerySwiperScreen from "src/screens/GallerySwiperScreen"
 import CameraScreen from "src/screens/CameraScreen";
+import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
 
 export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen },
@@ -15,10 +16,11 @@ export default AppTabNavigator =  createStackNavigator({
   MapsPicker: {screen: MapsPickerScreen},
   GallerySwiper: {screen: GallerySwiperScreen},
   Camera: {screen: CameraScreen},
+  ...DiscussionClassroomNotifNavigatorObj
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: (routeName !== "MapsPicker"  && routeName !== "GallerySwiper" && routeName !== "Camera") }
+    return { tabBarVisible: (routeName !== "MapsPicker"  && routeName !== "GallerySwiper") }
   }
 })

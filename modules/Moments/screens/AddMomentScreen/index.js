@@ -79,11 +79,11 @@ function AddMomentScreen(props){
     };
     // Launch Camera:
     ImagePicker.launchCamera(options, (response) => {
-      // Same code as in above section!
-      //console.log(response)
-      const clonnedImages = Array.from(images);
-      clonnedImages.push({id: uuid(), ...response});
-      setImages(clonnedImages)
+      if(response.uri){
+        const clonnedImages = Array.from(images);
+        clonnedImages.push({id: uuid(), ...response});
+        setImages(clonnedImages)
+      }
     });
      //props.navigation.navigate("CameraMoment",payload)
   }
