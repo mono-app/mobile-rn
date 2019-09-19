@@ -3,7 +3,7 @@ import MomentsAPI from "modules/Moments/api/moment";
 import Logger from "src/api/logger";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
+import ImagePicker from 'react-native-image-picker';
 import MomentItem from "modules/Moments/components/MomentItem";
 import CircleAvatar from "src/components/Avatar/Circle";
 import { View, TouchableOpacity, FlatList } from "react-native";
@@ -26,7 +26,20 @@ function HomeScreen(props){
   })
 
   const handleAddMomentPress = () => props.navigation.navigate("AddMoment")
-  const handleQuickCameraPress = () => props.navigation.navigate("QuickCameraMoment")
+  const handleQuickCameraPress = () => {
+    // props.navigation.navigate("QuickCameraMoment")
+
+    const options = {
+      mediaType: 'photo',
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      const payload = {
+        cameraPic: response
+      }
+      props.navigation.navigate("AddMoment", payload)
+    });
+
+  }
   const handleRefresh = () => fetchMoments();
   const fetchMoments = async () => {
     setIsRefreshing(true);

@@ -1,9 +1,12 @@
 import React from 'react';
-import { AppRegistry, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import AppHeader from "src/components/AppHeader";
 
 export default class CameraScreen extends React.PureComponent {
-  
+  static navigationOptions = ({ navigation }) => { return {
+    header: <AppHeader navigation={navigation} style={{ backgroundColor: "#000" }}/>
+  }}
   takePicture = async() => {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };

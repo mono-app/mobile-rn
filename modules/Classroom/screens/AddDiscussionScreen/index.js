@@ -13,6 +13,7 @@ import uuid from "uuid/v4"
 import DeleteDialog from "src/components/DeleteDialog";
 import ImageListItem from "src/components/ImageListItem"
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import ImagePicker from 'react-native-image-picker';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -113,14 +114,22 @@ class AddDiscussionScreen extends React.PureComponent {
       await this.requestStoragePermission()
       return
     }
-    const payload = {
-      onRefresh:(image)=> {
-          let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-          clonedImagesPicked.push({id: uuid(), ...image})
-          this.setState({imagesPicked: clonedImagesPicked})
-        }
-    }
-    this.props.navigation.navigate("Camera",payload)
+    // const payload = {
+    //   onRefresh:(image)=> {
+    //       let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+    //       clonedImagesPicked.push({id: uuid(), ...image})
+    //       this.setState({imagesPicked: clonedImagesPicked})
+    //     }
+    // }
+    const options = {
+      mediaType: 'photo',
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+      clonedImagesPicked.push({id: uuid(), ...response})
+      this.setState({imagesPicked: clonedImagesPicked})
+    });
+    //this.props.navigation.navigate("Camera",payload)
   }
 
   handleMultipleImagePress = async () => {

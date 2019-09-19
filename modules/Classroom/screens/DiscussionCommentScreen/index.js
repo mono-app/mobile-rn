@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, View, FlatList, StyleSheet, PermissionsAndroid, Platform, Linking } from "react-native";
-import { ActivityIndicator, Dialog, Text, Card, Caption, Paragraph } from "react-native-paper";
+import { ActivityIndicator, Dialog, Text, Card, Caption, Paragraph, Snackbar } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import Header from "modules/Classroom/components/Header";
 import DiscussionAPI from "modules/Classroom/api/discussion";
@@ -20,6 +20,7 @@ import ImageListItem from "src/components/ImageListItem"
 import DocumentPicker from 'react-native-document-picker';
 import uuid from "uuid/v4"
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import ImagePicker from 'react-native-image-picker';
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -31,7 +32,8 @@ const INITIAL_STATE = {
   imagesPicked: [],
   selectedImageToDelete: {},
   showDeleteImageDialog: false,
-  locationCoordinate: null
+  locationCoordinate: null,
+  showShareSuccessSnackbar: false
 };
 class DiscussionCommentScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -112,14 +114,22 @@ class DiscussionCommentScreen extends React.PureComponent {
       await this.requestStoragePermission()
       return
     }
-    const payload = {
-      onRefresh:(image)=> {
-          let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-          clonedImagesPicked.push({id: uuid(), ...image})
+    // const payload = {
+    //   onRefresh:(image)=> {
+    //       let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+    //       clonedImagesPicked.push({id: uuid(), ...image})
+    //       this.setState({imagesPicked: clonedImagesPicked})
+    //     }
+    // }
+    const options = {
+      mediaType: 'photo',
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
+          clonedImagesPicked.push({id: uuid(), ...response})
           this.setState({imagesPicked: clonedImagesPicked})
-        }
-    }
-    this.props.navigation.navigate("Camera",payload)
+    });
+    //this.props.navigation.navigate("Camera",payload)
   }
 
   handleMultipleImagePress = async () => {
@@ -161,12 +171,18 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.deleteDialog.toggleShow()
   }  
 
+  showShareDialogSuccess = () => {
+    console.log("asdfasdf")
+    this.setState({showShareSuccessSnackbar: true})
+  }
+
   handleSharePress = () => {
     const payload = {
       schoolId: this.schoolId,
       classId: this.classId,
       taskId: this.taskId,
-      discussion: this.state.discussion
+      discussion: this.state.discussion,
+      onComplete: this.showShareDialogSuccess
     }
     this.props.navigation.navigate("ShareDiscussion", payload)
   }
@@ -231,6 +247,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
     this.handleSharePress = this.handleSharePress.bind(this);
     this.handleLocationAttachedPress = this.handleLocationAttachedPress.bind(this);
+    this.showShareDialogSuccess = this.showShareDialogSuccess.bind(this);
     this.deleteDialog = null
   }
 
@@ -449,6 +466,13 @@ class DiscussionCommentScreen extends React.PureComponent {
           ref ={i => this.deleteDialog = i}
           title= {"Apakah anda ingin menghapus gambar ini?"}
           onDeletePress={this.onDeletePress}/>
+          <Snackbar
+          visible= {this.state.showShareSuccessSnackbar}
+          onDismiss={() => this.setState({ showShareSuccessSnackbar: false })}
+          style={{backgroundColor:"#0ead69"}}
+          duration={Snackbar.DURATION_SHORT}>
+          Berhasil membagikan
+        </Snackbar>
       </View>
 
     );
