@@ -253,4 +253,32 @@ export default class StudentAPI{
     console.log(audiencesData)
   }
 
+  static async bb(){
+    // get all audiences except sender
+    const db = firebase.firestore();
+    const roomId = "8EgYP0psuW8JzUpY6YX9"
+    const senderEmail = "test.pertama@gmail.com"
+    const roomRef = db.collection("rooms").doc(roomId);
+    const roomSnapshot = await roomRef.get();
+    const roomDocument = roomSnapshot.data();
+    const audiences =  roomDocument.audiences.filter( (audience)=>{
+      return audience !== senderEmail
+    })
+
+    // get all audiences messagingToken  
+    const promises = audiences.map(audience => {
+      const userRef = db.collection("users").doc(audience);
+      return userRef.get();
+    })
+    const audiencesSnapshot = await Promise.all(promises);
+    const audiencesData = audiencesSnapshot.map(audienceSnapshot => {
+      const audienceData = audienceSnapshot.data();
+      
+      if(audienceData.tokenInformation){
+        if(audienceData.tokenInformation.messagingToken) return audienceData;
+      }
+    });
+
+  }
+
 }
