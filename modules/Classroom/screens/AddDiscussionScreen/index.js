@@ -14,6 +14,7 @@ import DeleteDialog from "src/components/DeleteDialog";
 import ImageListItem from "src/components/ImageListItem"
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import ImagePicker from 'react-native-image-picker';
+import ImageCompress from "src/api/ImageCompress"
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -124,10 +125,11 @@ class AddDiscussionScreen extends React.PureComponent {
     const options = {
       mediaType: 'photo',
     };
-    ImagePicker.launchCamera(options, (response) => {
+    ImagePicker.launchCamera(options, async (response) => {
       if(response.uri){
+        const compressedRes = await ImageCompress.compress(response.uri, response.fileSize)
         let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-        clonedImagesPicked.push({id: uuid(), ...response})
+        clonedImagesPicked.push({id: uuid(), ...compressedRes})
         this.setState({imagesPicked: clonedImagesPicked})
       }
     });
@@ -146,7 +148,9 @@ class AddDiscussionScreen extends React.PureComponent {
       });
       let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
       for (const res of results) {
-        clonedImagesPicked.push({id: uuid(), ...res})
+        const compressedRes = await ImageCompress.compress(res.uri, res.size)
+
+        clonedImagesPicked.push({id: uuid(), ...compressedRes})
       }
      
       this.setState({imagesPicked: clonedImagesPicked})

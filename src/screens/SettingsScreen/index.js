@@ -14,6 +14,7 @@ import { View, FlatList, StyleSheet } from "react-native";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import ImageCompress from "src/api/ImageCompress"
 
 function SettingsScreen(props){
   const [ status, setStatus ] = React.useState("");
@@ -30,7 +31,9 @@ function SettingsScreen(props){
   const handleProfilePicturePress = async () => {
     try{
       const result = await DocumentPicker.pick({ type: [DocumentPicker.types.images] });
-      await PeopleAPI.changeProfilePicture(currentUser.email, result.uri);
+      const compressedRes = await ImageCompress.compress(result.uri, result.size)
+
+      await PeopleAPI.changeProfilePicture(currentUser.email, compressedRes.uri);
     }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
   }
 

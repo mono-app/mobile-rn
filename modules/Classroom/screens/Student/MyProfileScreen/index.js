@@ -15,6 +15,7 @@ import DocumentPicker from 'react-native-document-picker';
 import StorageAPI from "src/api/storage";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import ImageCompress from "src/api/ImageCompress"
 
 const INITIAL_STATE = { isLoadingProfile: true, 
   status:"", 
@@ -67,7 +68,9 @@ class MyProfileScreen extends React.PureComponent {
         type: [DocumentPicker.types.images],
       });
       const storagePath = "/modules/classroom/students/"+uuid()
-      const downloadUrl = await StorageAPI.uploadFile(storagePath, res.uri)
+      const compressedRes = await ImageCompress.compress(res.uri, res.size)
+
+      const downloadUrl = await StorageAPI.uploadFile(storagePath, compressedRes.uri)
       await StudentAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentStudent.email ,storagePath, downloadUrl)
       
     } catch (err) {

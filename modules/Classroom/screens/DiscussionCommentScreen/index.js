@@ -21,6 +21,7 @@ import DocumentPicker from 'react-native-document-picker';
 import uuid from "uuid/v4"
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import ImagePicker from 'react-native-image-picker';
+import ImageCompress from "src/api/ImageCompress"
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -124,10 +125,12 @@ class DiscussionCommentScreen extends React.PureComponent {
     const options = {
       mediaType: 'photo',
     };
-    ImagePicker.launchCamera(options, (response) => {
+    ImagePicker.launchCamera(options, async (response) => {
       if(response.uri){
+        const compressedRes = await ImageCompress.compress(response.uri, response.fileSize)
+
         let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-        clonedImagesPicked.push({id: uuid(), ...response})
+        clonedImagesPicked.push({id: uuid(), ...compressedRes})
         this.setState({imagesPicked: clonedImagesPicked})
       }
     });
@@ -146,7 +149,8 @@ class DiscussionCommentScreen extends React.PureComponent {
       });
       let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
       for (const res of results) {
-        clonedImagesPicked.push({id: uuid(), ...res})
+        const compressedRes = await ImageCompress.compress(res.uri, res.size)
+        clonedImagesPicked.push({id: uuid(), ...compressedRes})
       }
      
       this.setState({imagesPicked: clonedImagesPicked})
@@ -353,38 +357,8 @@ class DiscussionCommentScreen extends React.PureComponent {
                       )
                     }}
                   />
-              </View>
+             </View>
 
-              {/* <TouchableOpacity onPress={() => {this.handlePicturePress(this.state.discussion.images)}} style={{marginTop: 8}}>
-              { (this.state.discussion.images && this.state.discussion.images.length) > 0?(
-                 
-
-                <View style={{ flex: 1, flexDirection: "row", marginHorizontal: 8 }}>
-                    {this.state.discussion.images.map((item, index) => {
-                      if((index >= 0 && index < 3)) {
-                        return (
-                          <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), padding:4 }}>
-                            <FastImage 
-                              resizeMode="cover"
-                              source={{ uri: item.downloadUrl  }} 
-                              style={{ alignSelf: "stretch", flex: 1, borderRadius: 8 }}/>
-                          </View>
-                        )
-                      }else if(index === 3) return (
-                        <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), padding:4 }}>
-                          <FastImage source={{ uri: item.downloadUrl }} style={{ alignSelf: "stretch", flex: 1, borderRadius: 8 }} resizeMode="cover"/>
-                          {(remainingImageCount>0)? 
-                            <View style={{ borderRadius: 8,margin:4, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, .7)", alignItems: "center", justifyContent: "center" }}>
-                              <Text style={{ color: "white" }}>+ {remainingImageCount}</Text>
-                            </View>
-                            :<View/>}
-                        </View>
-                      );
-                    })}
-                </View>
-
-              ):<View/>}
-            </TouchableOpacity> */}
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }}>
                 <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>

@@ -10,13 +10,15 @@ import AppHeader from "src/components/AppHeader";
 import { View, TextInput, FlatList, PermissionsAndroid } from "react-native";
 import { IconButton, Text, Caption } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { MomentImageThumbnail } from "modules/Moments/components/MomentItem";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import uuid from "uuid/v4"
 import DeleteDialog from "src/components/DeleteDialog";
 import ImagePicker from 'react-native-image-picker';
+import ImageCompress from "src/api/ImageCompress"
 
 function AddMomentScreen(props){
+  const _isMounted = React.useRef(true);
+
   const { currentUser } = props;
   const [ isSubmitting, setIsSubmitting ] = React.useState(false);
   const [ content, setContent ] = React.useState("");
@@ -25,13 +27,21 @@ function AddMomentScreen(props){
   const [deleteDialog, setDeleteDialog] = React.useState(null);
   const [ initialImage, setinitialImage] = React.useState(props.navigation.getParam("cameraPic",null ));
 
-  const handleContentChange = (content) => setContent(content);
+  const handleContentChange = (content) => {
+    if(_isMounted.current)
+      setContent(content);
+  
+  }
   const handleSubmitMoment = async () => {
-    setIsSubmitting(true);
+    if(_isMounted.current)
+      setIsSubmitting(true);
     const payload = { message: content, images }
     await MomentAPI.publishMoment(currentUser.email, payload);
-    setContent("");
-    setIsSubmitting(false);
+    if(_isMounted.current)
+    {
+      setContent("");
+      setIsSubmitting(false)
+    }
     props.navigation.goBack();
   }
 
@@ -56,9 +66,11 @@ function AddMomentScreen(props){
       const results = await DocumentPicker.pickMultiple({ type: [DocumentPicker.types.images] });
       const clonnedImages = Array.from(images);
       for (const res of results) {
-        clonnedImages.push({id: uuid(), ...res})
+        const compressedRes = await ImageCompress.compress(res.uri, res.size)
+        clonnedImages.push({id: uuid(), ...compressedRes})
       }
-      setImages(clonnedImages)
+      if(_isMounted.current)
+        setImages(clonnedImages)
     }catch(err){ Logger.log("AddMomentScreen.handleGalleryPress#err", err)}
   }
 
@@ -71,25 +83,29 @@ function AddMomentScreen(props){
       onRefresh:(image)=> {
           const clonnedImages = Array.from(images);
           clonnedImages.push({id: uuid(), ...image});
-          setImages(clonnedImages)
+          if(_isMounted.current)
+            setImages(clonnedImages)
         }
     }
     const options = {
       mediaType: 'photo',
     };
     // Launch Camera:
-    ImagePicker.launchCamera(options, (response) => {
+    ImagePicker.launchCamera(options, async (response) => {
       if(response.uri){
+        const compressedRes = await ImageCompress.compress(response.uri, response.fileSize)
         const clonnedImages = Array.from(images);
-        clonnedImages.push({id: uuid(), ...response});
-        setImages(clonnedImages)
+        clonnedImages.push({id: uuid(), ...compressedRes});
+        if(_isMounted.current)
+          setImages(clonnedImages)
       }
     });
      //props.navigation.navigate("CameraMoment",payload)
   }
 
   const handleDeleteImagePress = (item) => {
-    setSelectedImageToDelete(item)
+    if(_isMounted.current)
+      setSelectedImageToDelete(item)
     if(deleteDialog)
       deleteDialog.toggleShow()
   }
@@ -99,21 +115,33 @@ function AddMomentScreen(props){
     const newselectedImageToDelete = images.filter((image) => {
       return image.id!= selectedImageToDelete.id
     })
-
-    setImages([])
-
-    setImages(newselectedImageToDelete)
+    if(_isMounted.current)
+    {
+      setImages([])
+      setImages(newselectedImageToDelete)
+    }
+      
     if(deleteDialog)
       deleteDialog.toggleShow()
   }  
 
   React.useEffect(() => {
-    if(initialImage){
-      const clonnedImages = Array.from(images);
-      clonnedImages.push({id: uuid(), ...initialImage});
-      setImages(clonnedImages)
-      console.log(clonnedImages)
+    const init = async () => {
+      if(initialImage){
+        const fileSize = (initialImage.size)?initialImage.size : initialImage.fileSize
+        
+        const compressedRes = await ImageCompress.compress(initialImage.uri, fileSize)
+  
+        const clonnedImages = Array.from(images);
+        clonnedImages.push({id: uuid(), ...compressedRes});
+        if(_isMounted.current)
+          setImages(clonnedImages)
+      }
     }
+    init()
+    return () => {
+      _isMounted.current = false;
+    };
   }, [])
 
   return(

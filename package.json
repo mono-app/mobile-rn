@@ -33,6 +33,7 @@
     "react-native-gesture-handler": "1.1.0",
     "react-native-google-places": "3.1.2",
     "react-native-image-picker": "0.28.1",
+    "react-native-image-resizer": "^1.0.1",
     "react-native-keyboard-aware-scroll-view": "0.8.0",
     "react-native-maps": "0.25.0",
     "react-native-material-menu": "0.4.2",

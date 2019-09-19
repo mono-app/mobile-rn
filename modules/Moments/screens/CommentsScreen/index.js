@@ -1,25 +1,51 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
-import CurrentUserAPI from "src/api/people/CurrentUser";
+import { withCurrentUser } from "src/api/people/CurrentUser"
 import CommentsAPI from "modules/Moments/api/comments";
-
 import BottomTextInput from "src/components/BottomTextInput";
 import CommentItem from "./CommentItem";
+import { ActivityIndicator, Text, Dialog, Caption } from "react-native-paper";
 
-const INITIAL_STATE = { comments: [] }
+import PeopleAPI from "src/api/people";
+import MomentAPI from "modules/Moments/api/moment";
 
-export default class CommentsScreen extends React.Component{
+const INITIAL_STATE = { comments: [], moment: {}, people: {} }
+
+class CommentsScreen extends React.PureComponent{
   static navigationOptions = { headerTitle: "Komentar" };
 
   handleSendPress = async (comment) => {
     if(this.momentId){
       const copiedComment = JSON.parse(JSON.stringify(comment));
-      const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
       if(this.txtComment) this.txtComment.clear();
-      await CommentsAPI.postComment(this.momentId, copiedComment, currentUserEmail);
+      await CommentsAPI.postComment(this.momentId, copiedComment, this.props.currentUser.email);
+      
+      setTimeout(() => this.commentFlatList.scrollToEnd(), 200)
     }
+  }
+
+  loadData = async () =>{
+    const moment = await MomentAPI.getDetail(this.momentId)
+    const people = await PeopleAPI.getDetail(moment.posterEmail)
+   
+    this.setState({moment, people})
+  }
+
+  handleSharePress = (item) => {
+    payload = {
+      moment: item,
+      onComplete: ()=>{}
+    }
+    this.props.navigation.navigate("ShareMoment",payload)
+  }
+  
+  handlePicturePress = (index) => {
+    payload = {
+      index,
+      images: this.state.moment.content.images
+    }
+    this.props.navigation.navigate("GallerySwiper", payload);
   }
 
   constructor(props){
@@ -28,33 +54,81 @@ export default class CommentsScreen extends React.Component{
     this.state = INITIAL_STATE;
     this.txtComment = null;
     this.keyboardAwareScrollView = null;
+    this.commentFlatList = null
     this.listener = null;
+    this.momentListener = null;
     this.momentId = this.props.navigation.getParam("momentId", null);
+    this.handleSendPress = this.handleSendPress.bind(this)
+    this.loadData = this.loadData.bind(this)
+    this.handleSharePress = this.handleSharePress.bind(this)
+    this.handlePicturePress = this.handlePicturePress.bind(this)
   }
 
-  componentDidMount(){
+  async componentDidMount(){
+    await this.loadData()
     if(this.keyboardAwareScrollView !== null) this.keyboardAwareScrollView.scrollToEnd(true);
     this.listener = CommentsAPI.getCommentsWithRealTimeUpdate(this.momentId, comments => {
-      this.setState({ comments })
+      if(comments.length>0){
+        this.setState({ comments })
+      }else{
+        this.setState({ comments: [0] })
+      }
     })
+    this.momentListener = MomentAPI.getDetailWithRealTimeUpdate(this.momentId, (newMoment) => {
+      const clonedComments = JSON.parse(JSON.stringify(this.state.comments))
+      this.setState({moment:newMoment, comments: clonedComments});
+    })
+
   }
 
-  componentWillUnmount(){ if(this.listener) this.listener(); }
+  componentWillUnmount(){ 
+    if(this.listener) this.listener(); 
+    if(this.momentListener) this.momentListener(); 
+    
+  }
   
   render(){
+    if(!this.state.people.applicationInformation || !this.state.moment.content){
+      return (
+        <Dialog visible={true}>
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <ActivityIndicator/>
+            <View>
+              <Text>Sedang memuat data</Text>
+              <Caption>Harap tunggu...</Caption>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      )
+    }
     return(
-      <KeyboardAwareScrollView ref={i => this.keyboardAwareScrollView = i} contentContainerStyle={{ flex: 1 }}>
-        
-        <FlatList
-          data={this.state.comments}
-          renderItem={({ item }) => {
-            return <CommentItem {...item}/>
-          }}/>
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
 
-        <BottomTextInput 
-          ref={i => this.txtComment = i}
-          onSendPress={this.handleSendPress}/>
-      </KeyboardAwareScrollView>
+        <KeyboardAwareScrollView ref={i => this.keyboardAwareScrollView = i} contentContainerStyle={{ flex: 1 }}>
+          
+          <FlatList
+            ref={i=> this.commentFlatList = i}
+            data={this.state.comments}
+            renderItem={({ item, index }) => {
+              return <CommentItem 
+                {...item} 
+                index={index} 
+                people={this.state.people} 
+                moment={this.state.moment}
+                onSharePress={this.handleSharePress}
+                onPicturePress={this.handlePicturePress}
+              />
+            }}/>
+
+          <BottomTextInput 
+            ref={i => this.txtComment = i}
+            autoFocus={false}
+            onSendPress={this.handleSendPress}
+            />
+        </KeyboardAwareScrollView>
+      </View>
     )
   }
 }
+
+export default withCurrentUser(CommentsScreen);
