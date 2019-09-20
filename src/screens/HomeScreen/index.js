@@ -40,6 +40,7 @@ function HomeScreen(props){
       {/* <FriendRequestNotification/> */}
       <FlatList
         data={rooms}
+        keyExtractor={(item) => item.id}
         renderItem={({item}) => {
           if(item.type === "chat"){
             if(item.audiences.length === 2) return <PrivateRoom room={item} onPress={handleRoomPress}/>

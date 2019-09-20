@@ -21,12 +21,10 @@ class AccountSetup extends React.PureComponent{
 
   handleCompleteClick = () => {
     SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
-      console.log(this.props.currentUser.email);
       const applicationInformation = this.applicationInformationCard.getState();
       const personalInformation = this.personalInformationCard.getState();
 
       const db = firebase.firestore();
-      console.log(personalInformation, applicationInformation);
       return db.collection("users").doc(this.props.currentUser.email).update({
         personalInformation, applicationInformation,
         isCompleteSetup: true

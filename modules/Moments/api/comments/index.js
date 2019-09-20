@@ -22,7 +22,7 @@ export default class CommentsAPI{
     listener.setListenerOptions({ includeMetadataChanges: true })
     return listener.listenFromReference(commentsRef, querySnapshot => {
       const comments = [];
-      querySnapshot.forEach(documentSnapshot => comments.push(documentSnapshot.data()));
+      querySnapshot.forEach(documentSnapshot => comments.push({id: documentSnapshot.id, ...documentSnapshot.data()}));
       callback(comments);
     })
   }

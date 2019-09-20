@@ -25,7 +25,7 @@ function ResultItem(props){
     fetchStatus();
   }, [status])
 
-  console.log(props);
+
   return(
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.userContainer}>

@@ -58,8 +58,9 @@ function ChatList(props){
     <FlatList 
       style={{ flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }} 
       onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
+      keyExtractor={(item) => item.id}
       data={messages} inverted={true}
-      renderItem={({ item, index }) => {
+      renderItem={({ item }) => {
         const bubbleStyle = (currentUser.email !== item.senderEmail)? "peopleBubble": "myBubble";
         if(item.type === "text") {
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>

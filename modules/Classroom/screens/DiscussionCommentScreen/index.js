@@ -2,11 +2,9 @@ import React from "react";
 import { Dimensions, View, FlatList, StyleSheet, PermissionsAndroid, Platform, Linking } from "react-native";
 import { ActivityIndicator, Dialog, Text, Card, Caption, Paragraph, Snackbar } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
-import Header from "modules/Classroom/components/Header";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import SquareAvatar from "src/components/Avatar/Square";
-import FastImage from "react-native-fast-image";
 import moment from "moment";
 import TextInput from "src/components/TextInput";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
@@ -43,24 +41,27 @@ class DiscussionCommentScreen extends React.PureComponent {
     };
   };
   loadDiscussion = async () => {
-    this.setState({ isLoading: true });
+    if(this._isMounted)
+      this.setState({ isLoading: true });
     const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterEmail)
     const currentUserEmail = this.props.currentUser.email
     const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserEmail)
     const totalParticipant = await DiscussionAPI.getTotalParticipant(this.schoolId, this.classId, this.taskId, this.discussion.id);
-
-    this.setState({ isLoading: false, discussion: this.discussion,totalParticipant, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
+    if(this._isMounted)
+      this.setState({ isLoading: false, discussion: this.discussion,totalParticipant, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
   }
 
   loadComments = async () => {
-    this.setState({ commentList: [] })
+    if(this._isMounted)
+      this.setState({ commentList: [] })
     const commentList = await DiscussionAPI.getComments(this.schoolId, this.classId, this.taskId, this.discussion.id);
-
-    this.setState({ commentList })
+    if(this._isMounted)
+      this.setState({ commentList })
   }
 
   handleCommentChange = comment => {
-    this.setState({ comment })
+    if(this._isMounted)
+      this.setState({ comment })
   }
 
   requestStoragePermission = async () => {
@@ -76,7 +77,8 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleSendCommentPress = async () => {
-    this.setState({ isSendingComment:true })
+    if(this._isMounted)
+      this.setState({ isSendingComment:true })
     const currentUserEmail = this.props.currentUser.email
 
     data = {
@@ -88,7 +90,8 @@ class DiscussionCommentScreen extends React.PureComponent {
 
     await DiscussionAPI.sendComment(this.schoolId, this.classId, this.taskId, this.discussion.id, data)
     await this.loadComments();
-    this.setState({ comment:"", isSendingComment:false, locationCoordinate: null, imagesPicked: [] })
+    if(this._isMounted)
+      this.setState({ comment:"", isSendingComment:false, locationCoordinate: null, imagesPicked: [] })
   }
 
   handlePicturePress = (images,index) => {
@@ -104,7 +107,8 @@ class DiscussionCommentScreen extends React.PureComponent {
       latitude: (this.state.locationCoordinate)?this.state.locationCoordinate.latitude:"",
       longitude: (this.state.locationCoordinate)?this.state.locationCoordinate.longitude:"",
       onRefresh:(locationCoordinate)=> {
-        this.setState({locationCoordinate})
+        if(this._isMounted)
+          this.setState({locationCoordinate})
         }
     }
     this.props.navigation.navigate("MapsPicker",payload)
@@ -115,13 +119,7 @@ class DiscussionCommentScreen extends React.PureComponent {
       await this.requestStoragePermission()
       return
     }
-    // const payload = {
-    //   onRefresh:(image)=> {
-    //       let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-    //       clonedImagesPicked.push({id: uuid(), ...image})
-    //       this.setState({imagesPicked: clonedImagesPicked})
-    //     }
-    // }
+   
     const options = {
       mediaType: 'photo',
     };
@@ -131,10 +129,10 @@ class DiscussionCommentScreen extends React.PureComponent {
 
         let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
         clonedImagesPicked.push({id: uuid(), ...compressedRes})
-        this.setState({imagesPicked: clonedImagesPicked})
+        if(this._isMounted)
+          this.setState({imagesPicked: clonedImagesPicked})
       }
     });
-    //this.props.navigation.navigate("Camera",payload)
   }
 
   handleMultipleImagePress = async () => {
@@ -152,8 +150,8 @@ class DiscussionCommentScreen extends React.PureComponent {
         const compressedRes = await ImageCompress.compress(res.uri, res.size)
         clonedImagesPicked.push({id: uuid(), ...compressedRes})
       }
-     
-      this.setState({imagesPicked: clonedImagesPicked})
+      if(this._isMounted)
+        this.setState({imagesPicked: clonedImagesPicked})
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -164,7 +162,8 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleDeleteImagePress = (item) => {
-    this.setState({selectedImageToDelete: item})
+    if(this._isMounted)
+      this.setState({selectedImageToDelete: item})
     this.deleteDialog.toggleShow()
   }
 
@@ -172,14 +171,17 @@ class DiscussionCommentScreen extends React.PureComponent {
     const newselectedImageToDelete = this.state.imagesPicked.filter((image) => {
       return image.id!= this.state.selectedImageToDelete.id
     })
-    this.setState({imagesPicked: []})
-    this.setState({imagesPicked: newselectedImageToDelete})
+    if(this._isMounted){
+      this.setState({imagesPicked: []})
+      this.setState({imagesPicked: newselectedImageToDelete})
+    }
+   
     this.deleteDialog.toggleShow()
   }  
 
   showShareDialogSuccess = () => {
-    console.log("asdfasdf")
-    this.setState({showShareSuccessSnackbar: true})
+    if(this._isMounted)
+      this.setState({showShareSuccessSnackbar: true})
   }
 
   handleSharePress = () => {
@@ -234,6 +236,7 @@ class DiscussionCommentScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null;
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.classId = this.props.navigation.getParam("classId", "");
     this.taskId = this.props.navigation.getParam("taskId", "");
@@ -258,8 +261,13 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true;
     this.loadDiscussion();
     this.loadComments();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {  
@@ -291,7 +299,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     }
 
     const isAllowNotification = this.checkNotifAllowed()
-   
+
     return (  
 
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
@@ -301,24 +309,7 @@ class DiscussionCommentScreen extends React.PureComponent {
             subtitle={this.state.totalParticipant+" partisipan"}
             style={{ backgroundColor: "#fff" }}
         />
-        {/* {(this.isFromNotification)? 
-         <Header
-         navigation={this.props.navigation}
-         title={this.props.navigation.getParam("discussion", "").title}
-         subtitle={this.state.totalParticipant+" partisipan"}
-         style={{ backgroundColor: "#fff" }}
-       />
-
-        : 
-        <AppHeader
-          navigation={this.props.navigation}
-          title={this.props.navigation.getParam("discussion", "").title}
-          subtitle={this.state.totalParticipant+" partisipan"}
-          style={{ backgroundColor: "#fff" }}
-        />
-
-        } */}
-        
+       
         <KeyboardAwareScrollView style={{flex:1}}>         
 
           <Card style={{ elevation: 1, marginTop: 8}}>
@@ -348,7 +339,7 @@ class DiscussionCommentScreen extends React.PureComponent {
                     horizontal={true}
                     style={{ backgroundColor: "white" }}
                     data={this.state.discussion.images}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.storagePath}
                     renderItem={({ item, index }) => {
                       return (
                         <ImageListItem 

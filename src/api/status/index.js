@@ -54,7 +54,7 @@ export default class StatusAPI{
     listener.setListenerOptions({ includeMetadataChanges: true });
     return listener.listenFromReference(statusRef, querySnapshot => {
       const status = [];
-      querySnapshot.forEach(documentSnapshot => status.push(documentSnapshot.data()));
+      querySnapshot.forEach(documentSnapshot => status.push({id:documentSnapshot.id, ...documentSnapshot.data()}));
       callback(status);
     })
   }

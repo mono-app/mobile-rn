@@ -79,14 +79,7 @@ function AddMomentScreen(props){
       await requestStoragePermission()
       return
     }
-    const payload = {
-      onRefresh:(image)=> {
-          const clonnedImages = Array.from(images);
-          clonnedImages.push({id: uuid(), ...image});
-          if(_isMounted.current)
-            setImages(clonnedImages)
-        }
-    }
+   
     const options = {
       mediaType: 'photo',
     };
@@ -100,7 +93,6 @@ function AddMomentScreen(props){
           setImages(clonnedImages)
       }
     });
-     //props.navigation.navigate("CameraMoment",payload)
   }
 
   const handleDeleteImagePress = (item) => {

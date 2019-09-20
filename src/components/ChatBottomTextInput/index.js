@@ -9,7 +9,7 @@ import { View, TextInput } from "react-native";
 import { IconButton, withTheme } from "react-native-paper";
 
 function ChatBottomTextInput(props){
-  const [ message, setMessage ] = React.useState(message);
+  const [ message, setMessage ] = React.useState("");
   const [ isPublisher, setIsPublisher ] = React.useState(false);
   const [ isSubscriber, setIsSubscriber ] = React.useState(false);
 
@@ -30,7 +30,9 @@ function ChatBottomTextInput(props){
   const handleMessageChange = (newMessage) => setMessage(newMessage);
   const handleSendPress = () => {
     const copiedMessage = JSON.parse(JSON.stringify(message));
-    props.onSendPress(copiedMessage);
+    if(copiedMessage.trim() && props.editable ){
+      props.onSendPress(copiedMessage);
+    }
     setMessage("");
   }
 
@@ -38,8 +40,8 @@ function ChatBottomTextInput(props){
     <View style={styles.container}>
       <MicButton style={{ marginRight: 8 }} onPress={handleMicPress}/> 
       <SpeakerButton style={{ marginRight: 8 }} onPress={handleSpeakerPress}/>
-      <TextInput style={styles.textInput} value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} autoFocus/>
-      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} onPress={handleSendPress}/>
+      <TextInput style={styles.textInput} autoFocus value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
+      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
       <RTCListener roomId={props.room.id} isPublisher={isPublisher} isSubscriber={isSubscriber}/>
     </View>
   )

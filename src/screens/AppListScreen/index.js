@@ -12,6 +12,8 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import SchoolAPI from "modules/Classroom/api/school";
 
 function AppListScreen(props){  
+
+  const _isMounted = React.useRef(true);
   const [ data, setData ] = React.useState([]);
 
   const handleItemPress = (item) => {
@@ -20,23 +22,28 @@ function AppListScreen(props){
   }
 
   const fetchData = async () => {
-    setData([]);
+    if(_isMounted.current)
+      setData([]);
     const schoolList = await SchoolAPI.getUserSchools(props.currentUser.email);
     if(schoolList.length>0){
       data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom" })
     }
     data.push({ title: "News", icon: <MaterialCommunityIcons name="newspaper" size={24}/>, navigateTo: "News" })
-    setData(data);
+    if(_isMounted.current)
+      setData(data);
   }
 
   React.useEffect(() => {
     fetchData();
+    return () => {
+      _isMounted.current = false;
+    };
   }, [])
 
   return(
     <View style={{ flex: 1 }}>
       <AppHeader style={{ backgroundColor: "transparent" }}/>
-      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Applikasi</HeadlineTitle>
+      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Aplikasi</HeadlineTitle>
       <FlatList
         data={data}
         renderItem={({ item, index }) => {

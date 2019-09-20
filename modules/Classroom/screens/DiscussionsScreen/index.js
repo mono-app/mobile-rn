@@ -26,9 +26,11 @@ class DiscussionsScreen extends React.PureComponent {
   };
 
   loadDiscussions = async () => {
-    this.setState({ discussionList: [] });
+    if(this._isMounted)
+      this.setState({ discussionList: [] });
     const discussionList = await DiscussionAPI.getDiscussions(this.schoolId, this.classId, this.taskId);
-    this.setState({ discussionList, filteredDiscussionList: discussionList });
+    if(this._isMounted)
+      this.setState({ discussionList, filteredDiscussionList: discussionList });
   }
 
   handleDiscussionPress = item => {
@@ -50,7 +52,8 @@ class DiscussionsScreen extends React.PureComponent {
 
   
   handleSearchPress = (searchText) => {
-    this.setState({filteredDiscussionList: []})
+    if(this._isMounted)
+      this.setState({filteredDiscussionList: []})
 
     const clonedDiscussionList = JSON.parse(JSON.stringify(this.state.discussionList))
     const newSearchText = JSON.parse(JSON.stringify(searchText)) 
@@ -64,9 +67,11 @@ class DiscussionsScreen extends React.PureComponent {
           return false
         }
       })
-      this.setState({filteredDiscussionList})
+      if(this._isMounted)
+        this.setState({filteredDiscussionList})
     } else {
-      this.setState({filteredDiscussionList: clonedDiscussionList})
+      if(this._isMounted)
+        this.setState({filteredDiscussionList: clonedDiscussionList})
     }
   }
 
@@ -85,6 +90,7 @@ class DiscussionsScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null;
     this.loadDiscussions = this.loadDiscussions.bind(this);
     this.handleDiscussionPress = this.handleDiscussionPress.bind(this);
     this.handleLikePress = this.handleLikePress.bind(this);
@@ -99,7 +105,12 @@ class DiscussionsScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true;
     this.loadDiscussions();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

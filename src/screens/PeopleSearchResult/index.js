@@ -16,7 +16,10 @@ function PeopleSearchResult(props){
   return(
     <View style={{ flex: 1}}>
       <AppHeader navigation={props.navigation} title="Hasil Pencarian" style={{ backgroundColor: "transparent" }}/>
-      <FlatList data={people} renderItem={ ({ item, index }) => {
+      <FlatList 
+      data={people} 
+      keyExtractor={(item) => item.email}
+      renderItem={ ({ item, index }) => {
         return (
           <ResultItem
             onPress={handleResultItemPress} peopleEmail={item.email} profilePicture={item.profilePicture}

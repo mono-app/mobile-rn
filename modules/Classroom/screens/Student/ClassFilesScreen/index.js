@@ -64,13 +64,12 @@ class ClassFilesScreen extends React.PureComponent {
       })
       .fetch('GET', item.storage.downloadUrl)
       .progress((received, total) => {
-        console.log('progress', received / total)
         const percentage = received / total*100
         this.setState({progressPercentage: percentage})
       })
       .then((resp) => {
         // the path of downloaded file
-        // console.log(resp.path())
+     
         this.setState({showProgressbar:false})
       }).catch((errorMessage, statusCode) => {
         // error handling

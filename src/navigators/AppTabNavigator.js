@@ -1,26 +1,31 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
 
-import AppListScreen from "../screens/AppListScreen";
+import AppListScreen from "src/screens/AppListScreen";
 import ClassroomNavigator from "modules/Classroom/navigators/ClassroomNavigator";
 import NewsNavigator from "modules/News/navigators/NewsNavigator";
-import MapsPickerScreen from "src/screens/MapsPickerScreen"
-import GallerySwiperScreen from "src/screens/GallerySwiperScreen"
+import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
 import CameraScreen from "src/screens/CameraScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
-import DiscussionNavigatorObj from "modules/Classroom/navigators/DiscussionNavigatorObj"
+import ChatScreen from "src/screens/ChatScreen";
+import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
+import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
 
 export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen },
   Classroom: { screen: ClassroomNavigator, navigationOptions: { header: null }},
   News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
   Camera: {screen: CameraScreen},
+  Chat: { screen: ChatScreen },
+  AddDiscussion: {screen: AddDiscussionScreen},
+  Discussions: {screen: DiscussionsScreen},
+  ...MomentNavigatorObj,
   ...DiscussionClassroomNotifNavigatorObj,
   
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: (routeName !== "MapsPicker"  && routeName !== "GallerySwiper") }
+    return { tabBarVisible: (routeName !== "MapsPicker"  && routeName !== "GallerySwiper" && routeName !== "Chat") }
   }
 })

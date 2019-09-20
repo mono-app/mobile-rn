@@ -26,12 +26,14 @@ class ShareMomentScreen extends React.PureComponent {
   };
 
   loadFriends = async () => {
-    this.setState({ peopleList: [] });
+    if(this._isMounted)
+      this.setState({ peopleList: [] });
     const peopleList = await FriendsAPI.getFriends(this.props.currentUser.email);
     const peopleListWithoutMe = await peopleList.filter((people) => {
         return people.email !== this.props.currentUser.email
       })
-    this.setState({ peopleList: peopleListWithoutMe, filteredPeopleList: peopleListWithoutMe });
+    if(this._isMounted)
+      this.setState({ peopleList: peopleListWithoutMe, filteredPeopleList: peopleListWithoutMe });
   }
 
   handleSearchPress = (searchText) => {
@@ -101,6 +103,7 @@ class ShareMomentScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
+    this._isMounted = null;
     this.moment = this.props.navigation.getParam("moment", {});
     this.loadFriends = this.loadFriends.bind(this);
     this.handleFriendPress = this.handleFriendPress.bind(this);
@@ -109,7 +112,13 @@ class ShareMomentScreen extends React.PureComponent {
   }
 
   componentDidMount(){
+    this._isMounted = true;
+
     this.loadFriends();
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
