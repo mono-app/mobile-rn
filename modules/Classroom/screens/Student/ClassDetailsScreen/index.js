@@ -113,82 +113,84 @@ class ClassDetailsScreen extends React.PureComponent {
           </Dialog.Content>
         </Dialog>
       );
-    } else 
-    return (
-      <View style={{ backgroundColor: "#E8EEE8" }}>
-        <ScrollView>
-          <View style={{  marginTop: 16 }}/>  
-          <PeopleProfileHeader
-            style={{padding:16}}
-            profilePicture="https://picsum.photos/200/200/?random"
-            title={this.state.class.subject}
-            />
-          <View style={{  marginVertical: 16 }}>  
+    } else {
+      if(!this.state.class || !this.state.teacher) return null
+      return (
+        <View style={{ backgroundColor: "#E8EEE8" }}>
+          <ScrollView>
+            <View style={{  marginTop: 16 }}/>  
+            <PeopleProfileHeader
+              style={{padding:16}}
+              profilePicture="https://picsum.photos/200/200/?random"
+              title={this.state.class.subject}
+              />
+            <View style={{  marginVertical: 16 }}>  
+              <PeopleInformationContainer
+                fieldName="Ruangan"
+                fieldValue={this.state.class.room}/>
+              <PeopleInformationContainer
+                fieldName="Semester"
+                fieldValue={this.state.class.semester}/>
             <PeopleInformationContainer
-              fieldName="Ruangan"
-              fieldValue={this.state.class.room}/>
-            <PeopleInformationContainer
-              fieldName="Semester"
-              fieldValue={this.state.class.semester}/>
-           <PeopleInformationContainer
-              fieldName="Tahun Ajaran"
-              fieldValue={this.state.class.academicYear}/>
-            <PeopleInformationContainer
-              fieldName="Guru"
-              fieldValue={this.state.teacher.name}/>
-          </View>
-          
-          <View style={{  padding: 16, backgroundColor: "#fff" }}>
-            <Text style={{fontWeight: "bold"}}>Informasi Kelas</Text>
-            <View style={{flexDirection:"row"}}>
-              <Text>{this.state.class.information}</Text>
+                fieldName="Tahun Ajaran"
+                fieldValue={this.state.class.academicYear}/>
+              <PeopleInformationContainer
+                fieldName="Guru"
+                fieldValue={this.state.teacher.name}/>
             </View>
-          </View>
+            
+            <View style={{  padding: 16, backgroundColor: "#fff" }}>
+              <Text style={{fontWeight: "bold"}}>Informasi Kelas</Text>
+              <View style={{flexDirection:"row"}}>
+                <Text>{this.state.class.information}</Text>
+              </View>
+            </View>
 
-          <View style={{  marginVertical: 16 }}>
-            <TouchableOpacity onPress={this.handleStudentListScreen}>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <View style={{flexDirection:"row"}}>
-                    <FontAwesome name="users" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Daftar Murid</Text>
-                  </View>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.handleClassFilesScreenPress}>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <View style={{flexDirection:"row"}}>
-                    <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Berkas</Text>
-                  </View>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+            <View style={{  marginVertical: 16 }}>
+              <TouchableOpacity onPress={this.handleStudentListScreen}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <View style={{flexDirection:"row"}}>
+                      <FontAwesome name="users" size={24} style={{marginRight:16, width: 30}}/>
+                      <Text style={styles.label}>Daftar Murid</Text>
+                    </View>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.handleTaskListScreen}>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <View style={{flexDirection:"row"}}>
-                    <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Daftar Tugas</Text>
-                  </View>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleClassFilesScreenPress}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <View style={{flexDirection:"row"}}>
+                      <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
+                      <Text style={styles.label}>Berkas</Text>
+                    </View>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </View>
-    )
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleTaskListScreen}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <View style={{flexDirection:"row"}}>
+                      <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
+                      <Text style={styles.label}>Daftar Tugas</Text>
+                    </View>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+      )
+    }
   }
 }
 const styles = StyleSheet.create({

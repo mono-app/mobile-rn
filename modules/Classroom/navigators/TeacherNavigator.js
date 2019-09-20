@@ -57,7 +57,6 @@ const MyNavigator = createStackNavigator(
     ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
     AddClassFiles: {screen: AddClassFilesScreen},
     MassScoring: {screen: MassScoringScreen},
-    ...DiscussionNavigatorObj
 
   },
   {

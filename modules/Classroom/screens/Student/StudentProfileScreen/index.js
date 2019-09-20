@@ -10,9 +10,11 @@ import PeopleInformationContainer from "src/components/PeopleProfile/Information
 import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import { PersonalRoomsAPI } from "src/api/rooms";
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
+  isLoadingButtonChat: false,
   student: {}, 
   status: "",
   profilePicture: "https://picsum.photos/200/200/?random"
@@ -51,12 +53,21 @@ class StudentProfileScreen extends React.PureComponent {
     this.setState({ status: status.content });
   }
 
+  handleStartChatPress = async () => {
+    this.setState({ isLoadingButtonChat: true });
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentStudent.email, this.studentEmail);
+    this.setState({ isLoadingButtonChat: false });
+    this.props.navigation.navigate("Chat", {room} );
+  }
+
   constructor(props){
     super(props);
     this.studentEmail = this.props.navigation.getParam("studentEmail", null);
     this.state = INITIAL_STATE;
     this._isMounted = null
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
+    this.loadStatus = this.loadStatus.bind(this);
+    this.handleStartChatPress = this.handleStartChatPress.bind(this);
     
   }
 
@@ -124,7 +135,12 @@ class StudentProfileScreen extends React.PureComponent {
               fieldName="Jumlah Kelas"
               fieldValue="-"/>
           </View>
-          <Button text="Mulai Percakapan" style={{margin: 16}}></Button>
+          <Button 
+          disabled={(this.props.currentStudent.email===this.studentEmail)?true:false}
+          text="Mulai Percakapan" 
+          isLoading={this.state.isLoadingButtonChat} 
+          style={{margin: 16}} 
+          onPress={this.handleStartChatPress}></Button>
         </ScrollView>
       </View>
     )

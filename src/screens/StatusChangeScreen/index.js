@@ -49,7 +49,9 @@ function StatusChangeScreen(props){
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
       <StatusInputCard/>
       <FlatList
-        style={{ marginTop: 16 }} data={status}
+        style={{ marginTop: 16 }} 
+        data={status}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           if(item.type === "dateSeparator"){
             return (

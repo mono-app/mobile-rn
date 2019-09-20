@@ -35,7 +35,6 @@ const MyNavigator = createStackNavigator(
     AddTaskSubmission: {screen: AddTaskSubmissionScreen},
     Announcement: {screen: AnnouncementScreen},
     StatusChange: {screen: StatusChangeScreen},
-    ...DiscussionNavigatorObj
   },
   {
     initialRouteName: "StudentHome"

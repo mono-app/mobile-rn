@@ -48,7 +48,7 @@ export default class CameraScreen extends React.PureComponent {
             buttonNegative: 'Cancel',
           }}
           onGoogleVisionBarcodesDetected={({ barcodes }) => {
-            console.log(barcodes);
+
           }}
         />
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>

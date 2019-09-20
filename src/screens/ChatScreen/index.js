@@ -9,13 +9,15 @@ import PeopleAPI from "src/api/people";
 import ChatList from "src/screens/ChatScreen/ChatList";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatHeader from "src/screens/ChatScreen/ChatHeader";
-import { KeyboardAvoidingView } from "react-native";
+import { KeyboardAvoidingView, View } from "react-native";
 
 function ChatScreen(props){
   const { currentUser } = props;
   const room = props.navigation.getParam("room", null);
+  const _isMounted = React.useRef(true);
   const [ messages, setMessages ] = React.useState([]);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
+  const [ isUserRegistered, setUserRegistered ] = React.useState(false);
   const [ headerProfilePicture, setHeaderProfilePicture ] = React.useState("");
   const [ isLoadingNewMessage, setIsLoadingNewMessage ] = React.useState(false);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
@@ -26,34 +28,69 @@ function ChatScreen(props){
     Logger.log("ChatScreen.handleChatListReactTop", `Getting new messages ${isLoadingNewMessage}`)
     if(!isLoadingNewMessage){
       try{
-        setIsLoadingNewMessage(true);
+        if(_isMounted.current)
+          setIsLoadingNewMessage(true);
         const newData = await MessagesAPI.getNext(lastMessageSnapshot, room.id);
         const combinedMessages = messages.concat(newData.messages);
         Logger.log("ChatScreen.handleChatListReachTop#combineMessages", combinedMessages);
         Logger.log("ChatScreen.handleChatListReachTop#newData", newData);
-        setMessages(combinedMessages);
-        setLastMessageSnapshot(newData.lastDocumentSnapshot);
+        if(_isMounted.current){
+          setMessages(combinedMessages);
+          setLastMessageSnapshot(newData.lastDocumentSnapshot);
+        }
+        
       }catch(err){
         Logger.log("ChatScreen.handleChatListReachTop#err", err);
-      }finally{ setIsLoadingNewMessage(false) }
+      }finally{ 
+        if( _isMounted.current)
+          setIsLoadingNewMessage(false) 
+      }
     }
   }
 
-  const fetchPeople = async () => {
+  const fetchPeople = async () => {   
     const audiences = room.audiences.filter((audience) => audience !== currentUser.email);
+    
     const results = await Promise.all(audiences.map((audience) => PeopleAPI.getDetail(audience)));
     Logger.log("ChatScreen#results", results);
 
-    const headerTitle = results.map((audienceData) => audienceData.applicationInformation.nickName).join(", ");
-    if(audiences.length === 1) setHeaderProfilePicture(results[0].profilePicture);
-    setHeaderTitle(headerTitle);
+    const headerTitle = results.map((audienceData) => {
+      if(audienceData){
+        if(audienceData.applicationInformation){
+          if( _isMounted.current)
+            setUserRegistered(true)
+          return audienceData.applicationInformation.nickName
+        }else if(audienceData.email){
+          if( _isMounted.current)
+            setUserRegistered(true)
+          return audienceData.email
+        }else{
+          return "user not registered"
+        }
+      }else{
+        return "user not registered"
+      }
+    }).join(", ");
+    if(audiences.length === 1) {
+      if(results[0] && results[0].profilePicture){
+        if( _isMounted.current)
+          setHeaderProfilePicture(results[0].profilePicture);
+      }else{
+        if( _isMounted.current)
+          setHeaderProfilePicture("https://picsum.photos/200/200/?random")           
+      }
+    }
+    if( _isMounted.current)
+      setHeaderTitle(headerTitle);
   }
 
   const initMessages = () => {
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
       Logger.log("ChatScreen.initMessages", messages);
-      setMessages(messages);
-      setLastMessageSnapshot(snapshot);
+      if( _isMounted.current){
+        setMessages(messages);
+        setLastMessageSnapshot(snapshot);
+      }
     })
   }
  
@@ -61,6 +98,7 @@ function ChatScreen(props){
     fetchPeople();
     initMessages();
     return function cleanup(){
+      _isMounted.current = false
       if(messagesListener.current) messagesListener.current();
     }
   }, []);
@@ -72,7 +110,9 @@ function ChatScreen(props){
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <ChatHeader navigation={props.navigation} title={headerTitle} subtitle={"Online"}  profilePicture={headerProfilePicture}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop} navigation={props.navigation} room={room}/>
-      <ChatBottomTextInput room={room} onSendPress={handleSendPress}/>
+      <ChatBottomTextInput room={room}
+        editable={isUserRegistered}
+        onSendPress={handleSendPress}/>
     </KeyboardAvoidingView>
   )
 }

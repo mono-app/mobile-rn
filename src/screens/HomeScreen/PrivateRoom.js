@@ -45,26 +45,29 @@ function PrivateRoom(props){
     else dateTimeString = sentTime.format("DD MMMM YYYY");
   }
 
-  if(isLoading || !people) return null;
-  return(
-    <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
-      <View style={{ marginRight: 16 }}>
-        <CircleAvatar size={50} uri={people.profilePicture}/>
-      </View>
-      <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>
-        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-          <Text>{people.applicationInformation.nickName}</Text>
-          <Caption>{dateTimeString}</Caption>
+  if(people && people.applicationInformation && !isLoading){
+    return(
+      <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
+        <View style={{ marginRight: 16 }}>
+          <CircleAvatar size={50} uri={people.profilePicture}/>
         </View>
-        <View style={{ display: "flex", flexDirection: "row" }}>
-          <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={1}>
-            {room.lastMessage.message}
-          </Caption>
-          <UnreadCountBadge roomId={room.id}/>
+        <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>
+          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+            <Text>{people.applicationInformation.nickName}</Text>
+            <Caption>{dateTimeString}</Caption>
+          </View>
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={1}>
+              {room.lastMessage.message}
+            </Caption>
+            <UnreadCountBadge roomId={room.id}/>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  )
+      </TouchableOpacity>
+    )
+  }else{
+    return null
+  }
 }
 
 PrivateRoom.propTypes = { onPress: PropTypes.func }

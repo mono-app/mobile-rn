@@ -22,8 +22,6 @@ export default class GallerySwiperScreen extends React.PureComponent {
     this.loadImages = this.loadImages.bind(this)
     this.images = this.props.navigation.getParam("images", []);
     this.initialIndex = this.props.navigation.getParam("index", 0);
-    console.log(this.initialIndex)
-    console.log(this.images)
   }
 
   componentDidMount(){

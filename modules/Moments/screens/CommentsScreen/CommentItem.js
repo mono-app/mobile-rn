@@ -53,6 +53,7 @@ export default class CommentItem extends React.PureComponent{
               <FlatList 
                 style={styles.imagesContainer} 
                 data={this.props.moment.content.images} 
+                keyExtractor={(item) => (item.uri)?item.uri :item.downloadUrl}
                 horizontal={true}
                 renderItem={({ item, index }) => {
                   return <ImageListItem 

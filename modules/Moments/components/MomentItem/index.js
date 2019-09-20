@@ -90,7 +90,10 @@ function MomentItem(props){
         {(moment.content.images.length>0)?
           <View style={{height: imageSize}}>
             <FlatList 
-              style={styles.imagesContainer} data={moment.content.images} horizontal={true}
+              style={styles.imagesContainer} 
+              data={moment.content.images} 
+              horizontal={true}
+              keyExtractor={(item) => item.downloadUrl}
               renderItem={({ item, index }) => {
                 return <MomentImageThumbnail source={{ uri: item.downloadUrl }} onPress={() => handlePicturePress(index)}/>
               }}/> 

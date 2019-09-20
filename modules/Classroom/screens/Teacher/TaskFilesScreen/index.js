@@ -85,7 +85,6 @@ class TaskFilesScreen extends React.PureComponent {
       })
       .fetch('GET', item.storage.downloadUrl)
       .progress((received, total) => {
-        console.log('progress', received / total)
         const percentage = received / total*100
         if(this.state.totalItemToDownload==1){
           this.setState({ progressPercentage: percentage});
@@ -93,7 +92,6 @@ class TaskFilesScreen extends React.PureComponent {
       })
       .then((resp) => {
         // the path of downloaded file
-        // console.log(resp.path())
         let clonedTotalDownloadedItem = JSON.parse(JSON.stringify(this.state.totalDownloadedItem))
         clonedTotalDownloadedItem += 1
         if(this.state.totalItemToDownload>1){
@@ -107,35 +105,7 @@ class TaskFilesScreen extends React.PureComponent {
         // error handling
         
       })
-    // RNBackgroundDownloader.download({
-    //   id: item.id,
-    //   url: item.downloadUrl,
-    //   destination: `/storage/emulated/0/Download/${item.title}`
-    // })
-    //   .begin(expectedBytes => {
-    //     console.log(`Going to download ${expectedBytes} bytes!`);
-    //   })
-    //   .progress(percent => {
-    //     console.log(`Downloaded: ${percent * 100}%`);
-    //     if(this.state.totalItemToDownload==1){
-    //       this.setState({ progressPercentage: percent});
-    //     }
-    //   })
-    //   .done(() => {
-    //     console.log("Download is done!");
-    //     let clonedTotalDownloadedItem = JSON.parse(JSON.stringify(this.state.totalDownloadedItem))
-    //     clonedTotalDownloadedItem += 1
-    //     if(this.state.totalItemToDownload>1){
-    //       this.setState({ progressPercentage: (clonedTotalDownloadedItem/this.state.totalItemToDownload), totalDownloadedItem:clonedTotalDownloadedItem});
-    //     }
-        
-    //     if(clonedTotalDownloadedItem===this.state.totalItemToDownload){
-    //       this.setState({ showProgressbar: false});
-    //     }
-    //   })
-    //   .error(error => {
-    //     console.log("Download canceled due to error: ", error);
-    //   });
+  
   }
 
   handleDownloadAll = async () => {

@@ -73,7 +73,6 @@ class AddDiscussionScreen extends React.PureComponent {
         this.setState({locationCoordinate})
         }
     }
-    console.log(this.state.locationCoordinate)
     this.props.navigation.navigate("MapsPicker",payload)
   }
 
@@ -115,13 +114,7 @@ class AddDiscussionScreen extends React.PureComponent {
       await this.requestStoragePermission()
       return
     }
-    // const payload = {
-    //   onRefresh:(image)=> {
-    //       let clonedImagesPicked = JSON.parse(JSON.stringify(this.state.imagesPicked))
-    //       clonedImagesPicked.push({id: uuid(), ...image})
-    //       this.setState({imagesPicked: clonedImagesPicked})
-    //     }
-    // }
+   
     const options = {
       mediaType: 'photo',
     };
@@ -133,7 +126,6 @@ class AddDiscussionScreen extends React.PureComponent {
         this.setState({imagesPicked: clonedImagesPicked})
       }
     });
-    //this.props.navigation.navigate("Camera",payload)
   }
 
   handleMultipleImagePress = async () => {

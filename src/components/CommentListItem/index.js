@@ -30,6 +30,7 @@ export default class CommentListItem extends React.Component{
 
   render(){
     const window = Dimensions.get("window");
+    const imageSize = (window.width/3) + 10;
 
     if(this.state.isLoading) return <View/>
     const { comment } = this.state;
@@ -41,7 +42,7 @@ export default class CommentListItem extends React.Component{
     }
     
     let timeFromNow = moment(comment.creationTime.seconds*1000).format("DD MMMM YYYY HH:mm");
-  
+    
 
     return(
       <View style={{ marginTop: 8, borderBottomWidth:1, borderBottomColor: "#E8EEE8"}}>
@@ -59,45 +60,21 @@ export default class CommentListItem extends React.Component{
           
 
           { hasImage?(
-            <FlatList
-            horizontal={true}
-            style={{ backgroundColor: "white" }}
-            data={comment.images}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => {
-              return (
-                <ImageListItem 
-                  onPress={() => this.handleOnImagePress(index)}
-                  image={item}/>
-              )
-            }}
-          />
-            // <TouchableOpacity onPress={this.props.onImagePress}>
-            //   <View style={{ flex: 1, flexDirection: "row", marginHorizontal: 4 }}>
-            //       {comment.images.map((item, index) => {
-            //         if((index >= 0 && index < 3)) {
-            //           return (
-            //             <FastImage 
-            //               key={index} 
-            //               resizeMode="cover"
-            //               source={{ uri: item.downloadUrl  }} 
-            //               style={{ height: (window.width/4), width: (window.width/4), flex:1, margin:4, borderRadius: 8 }}/>
-                          
-            //           )
-            //         }else if(index === 3) return (
-            //           <View key={index} style={{ alignSelf: "stretch", flex: 1, height: (window.width/4), margin:4}}>
-            //             <FastImage source={{ uri: item.downloadUrl }} style={{ alignSelf: "stretch", flex: 1, borderRadius: 8 }} resizeMode="cover"/>
-            //             {(remainingImageCount>0)? 
-            //               <View style={{ borderRadius: 8, position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0, 0, 0, .7)", alignItems: "center", justifyContent: "center" }}>
-            //                 <Text style={{ color: "white" }}>+ {remainingImageCount}</Text>
-            //               </View>
-            //               :<View/>}
-            //           </View>
-            //         );
-            //       })}
-            //   </View>
-            // </TouchableOpacity>
-
+            <View style={{height: imageSize}}>
+              <FlatList
+              horizontal={true}
+              style={{ backgroundColor: "white" }}
+              data={comment.images}
+              keyExtractor={(item) => item.storagePath}
+              renderItem={({ item, index }) => {
+                return (
+                  <ImageListItem 
+                    onPress={() => this.handleOnImagePress(index)}
+                    image={item}/>
+                )
+              }}
+            />
+          </View>
           ):<View/>}
       
       </View>

@@ -225,7 +225,6 @@ export default class StudentAPI{
     const participants = await Promise.all(arrayOfPromise);
     
     participants.push(creator)
-    console.log(participants)
 
     let audiencesData = []
   
@@ -233,10 +232,7 @@ export default class StudentAPI{
       if(participant.id !== senderId){
         let allow = true
         if(participant.settings && participant.settings.ignoreNotifications && participant.settings.ignoreNotifications.discussions){
-          // console.log(participant.id)
-          // console.log(participant.settings.ignoreNotifications.discussions)
-          // console.log(discussionId)
-
+         
           for(var i = 0; i < participant.settings.ignoreNotifications.discussions.length; i++) {
             if (participant.settings.ignoreNotifications.discussions[i].id === discussionId) {
               allow = false
@@ -250,7 +246,6 @@ export default class StudentAPI{
         }
       }
     }
-    console.log(audiencesData)
   }
 
   static async bb(){

@@ -28,13 +28,13 @@ class CommentsScreen extends React.PureComponent{
   loadData = async () =>{
     const moment = await MomentAPI.getDetail(this.momentId)
     const people = await PeopleAPI.getDetail(moment.posterEmail)
-   
-    this.setState({moment, people})
+    if(this._isMounted)
+      this.setState({moment, people})
   }
 
-  handleSharePress = (item) => {
+  handleSharePress = () => {
     payload = {
-      moment: item,
+      moment: this.state.moment,
       onComplete: ()=>{}
     }
     this.props.navigation.navigate("ShareMoment",payload)
@@ -52,6 +52,7 @@ class CommentsScreen extends React.PureComponent{
     super(props);
 
     this.state = INITIAL_STATE;
+    this._isMounted = null;
     this.txtComment = null;
     this.keyboardAwareScrollView = null;
     this.commentFlatList = null
@@ -65,26 +66,30 @@ class CommentsScreen extends React.PureComponent{
   }
 
   async componentDidMount(){
+    this._isMounted = true;
     await this.loadData()
     if(this.keyboardAwareScrollView !== null) this.keyboardAwareScrollView.scrollToEnd(true);
     this.listener = CommentsAPI.getCommentsWithRealTimeUpdate(this.momentId, comments => {
       if(comments.length>0){
-        this.setState({ comments })
+        if(this._isMounted)
+          this.setState({ comments })
       }else{
-        this.setState({ comments: [0] })
+        if(this._isMounted)
+          this.setState({ comments: {id: "-1"} })
       }
     })
     this.momentListener = MomentAPI.getDetailWithRealTimeUpdate(this.momentId, (newMoment) => {
       const clonedComments = JSON.parse(JSON.stringify(this.state.comments))
-      this.setState({moment:newMoment, comments: clonedComments});
+      if(this._isMounted)
+        this.setState({moment:newMoment, comments: clonedComments});
     })
 
   }
 
   componentWillUnmount(){ 
+    this._isMounted = false;
     if(this.listener) this.listener(); 
     if(this.momentListener) this.momentListener(); 
-    
   }
   
   render(){
@@ -109,6 +114,7 @@ class CommentsScreen extends React.PureComponent{
           <FlatList
             ref={i=> this.commentFlatList = i}
             data={this.state.comments}
+            keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => {
               return <CommentItem 
                 {...item} 

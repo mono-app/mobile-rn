@@ -29,7 +29,8 @@ export class CurrentStudentProvider extends React.PureComponent{
 
   handleCurrentSchoolId = async (id) => {
     const school = await SchoolAPI.getDetail(id);
-    this.setState({school})
+    if(this._isMounted)
+      this.setState({school})
   }
 
   handleCurrentStudentEmail = async (schoolId, email) => {
@@ -47,8 +48,8 @@ export class CurrentStudentProvider extends React.PureComponent{
         if(student.gender){
           student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
         }
-
-        this.setState({ student });
+        if(this._isMounted)
+          this.setState({ student });
           
         // if(student.profilePicture !== undefined){
         //   student.profilePicture = JSON.parse(JSON.stringify(student.profilePicture.downloadUrl));
@@ -60,6 +61,7 @@ export class CurrentStudentProvider extends React.PureComponent{
 
   constructor(props){
     super(props);
+    this._isMounted = null
     this.userListener = null;
     this.state = { 
       school: {}, 
@@ -71,8 +73,12 @@ export class CurrentStudentProvider extends React.PureComponent{
     this.handleCurrentStudentEmail = this.handleCurrentStudentEmail.bind(this);
   }
 
+  componentDidMount(){
+    this._isMounted=true
+  }
  
   componentWillUnmount(){
+    this._isMounted = false
     if(this.userListener) this.userListener();
   }
 

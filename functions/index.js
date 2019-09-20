@@ -60,8 +60,6 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
 
 exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/tasks/{taskId}/discussions/{discussionId}").onCreate(async (documentSnapshot, context) => {
   const discussionDocument = documentSnapshot.data();
-  // console.log(111)
-  // console.log(discussionDocument)
   const { schoolId, classId, taskId, discussionId  } = context.params;
 
   // get senderId
@@ -163,8 +161,6 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
 
 exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/tasks/{taskId}/discussions/{discussionId}/comments/{commentId}").onCreate(async (documentSnapshot, context) => {
   const commentDocument = documentSnapshot.data();
-  // console.log(111)
-  // console.log(discussionDocument)
   const { schoolId, classId, taskId, discussionId, commentId  } = context.params;
 
   // get senderId

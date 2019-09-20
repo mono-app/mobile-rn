@@ -19,7 +19,7 @@ function ContactScreen(props){
 
   React.useEffect(() => {
     friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.email, (friends) => {
-      console.log(friends);
+
       setPeopleList(friends);
     })
     return function cleanup(){
@@ -37,6 +37,7 @@ function ContactScreen(props){
       <FlatList
         style={{ backgroundColor: "white" }}
         data={peopleList}
+        keyExtractor={(item) => item.email}
         renderItem={({ item, index }) => {
           return <PeopleListItem key={index} people={item} onPress={handleContactPress}/>
         }}/>

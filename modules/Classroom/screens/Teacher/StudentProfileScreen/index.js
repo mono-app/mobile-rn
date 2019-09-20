@@ -11,8 +11,14 @@ import PeopleInformationContainer from "src/components/PeopleProfile/Information
 import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { PersonalRoomsAPI } from "src/api/rooms";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: {}, status: "", totalClass:0  }
+const INITIAL_STATE = { 
+  isLoadingProfile: true, 
+  isLoadingButtonChat: false,
+  student: {}, 
+  status: "", 
+  totalClass:0  }
 
 
 class StudentProfileScreen extends React.PureComponent {
@@ -48,6 +54,13 @@ class StudentProfileScreen extends React.PureComponent {
     if(!status) status = { content: "-" };
     if(this._isMounted)
       this.setState({ status: status.content });
+  }
+  
+  handleStartChatPress = async () => {
+    this.setState({ isLoadingButtonChat: true });
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentTeacher.email, this.studentEmail);
+    this.setState({ isLoadingButtonChat: false });
+    this.props.navigation.navigate("Chat", {room} );
   }
 
   constructor(props){
@@ -92,19 +105,20 @@ class StudentProfileScreen extends React.PureComponent {
             title={this.state.student.name}
             subtitle= {"NIM " + ((!this.state.student)?this.state.student.noInduk:"-")}/>
 
-
           <View style={{ marginTop:16, paddingHorizontal: 16, paddingVertical:8, backgroundColor: "#fff" }}>
             <Text style={{fontWeight: "bold"}}>Status</Text>
             <View style={{flexDirection:"row"}}>
             <Text>{this.state.status}</Text>
             </View>
           </View>
-
           
           <View style={{  marginVertical: 16 }}>
-             <PeopleInformationContainer
-              fieldName="Bergabung Sejak"
-              fieldValue={moment(this.state.student.creationTime.seconds * 1000).format("DD MMMM YYYY")}/>
+            {(this.state.student.creationTime)? 
+                <PeopleInformationContainer
+                fieldName="Bergabung Sejak"
+                fieldValue={moment(this.state.student.creationTime.seconds * 1000).format("DD MMMM YYYY")}/>
+              : <View/>}
+            
             <PeopleInformationContainer
               fieldName="Alamat"
               fieldValue={this.state.student.address}/>
@@ -124,7 +138,12 @@ class StudentProfileScreen extends React.PureComponent {
               fieldName="Jumlah Kelas"
               fieldValue={this.state.totalClass}/>
           </View>
-          <Button text="Mulai Percakapan" style={{margin: 16}}></Button>
+          <Button 
+            disabled={(this.props.currentTeacher.email===this.studentEmail)?true:false}
+            text="Mulai Percakapan" 
+            isLoading={this.state.isLoadingButtonChat} 
+            style={{margin: 16}} 
+            onPress={this.handleStartChatPress}></Button>
         </ScrollView>
       </View>
     )
