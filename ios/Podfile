@@ -24,7 +24,6 @@ def shared_pods
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
   pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
-  pod 'react-native-camera-kit', :path => '../node_modules/react-native-camera-kit'
   pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
   pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
@@ -41,6 +40,7 @@ end
 
 target 'mono' do
   shared_pods
+
 end
 
 target 'monoTests' do

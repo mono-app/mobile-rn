@@ -1,28 +1,26 @@
 package com.zannete.monoapp;
 
 import android.app.Application;
-import com.facebook.react.ReactApplication;
-import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
-import com.oney.WebRTCModule.WebRTCModulePackage;
-import com.wix.RNCameraKit.RNCameraKitPackage;
-import fr.bamlab.rnimageresizer.ImageResizerPackage;
-import com.imagepicker.ImagePickerPackage;
-import com.oney.WebRTCModule.WebRTCModulePackage;
-import com.wix.RNCameraKit.RNCameraKitPackage;
-import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-import com.reactnativecommunity.netinfo.NetInfoPackage;
-import com.react.rnspinkit.RNSpinkitPackage;
-import com.dylanvann.fastimage.FastImageViewPackage;
-
 import org.reactnative.camera.RNCameraPackage;
 import com.horcrux.svg.SvgPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.rnfs.RNFSPackage;
 import com.airbnb.android.react.maps.MapsPackage;
-import com.RNFetchBlob.RNFetchBlobPackage;  
+import com.RNFetchBlob.RNFetchBlobPackage; 
+import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
+import fr.bamlab.rnimageresizer.ImageResizerPackage;
+import com.imagepicker.ImagePickerPackage;
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 
+import com.react.rnspinkit.RNSpinkitPackage;
+import com.dylanvann.fastimage.FastImageViewPackage;
+
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
+
+import com.facebook.react.ReactApplication;
+import com.oney.WebRTCModule.WebRTCModulePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -51,22 +49,16 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNGooglePlacesPackage(),
-            new WebRTCModulePackage(),
-            new RNCameraKitPackage(),
-            new ImageResizerPackage(),
-            new ImagePickerPackage(),
           new WebRTCModulePackage(),
-          new RNCameraKitPackage(),
+          new ImageResizerPackage(),
+          new ImagePickerPackage(),
           new DocumentPickerPackage(),
-          new RNBackgroundDownloaderPackage(),
           new AsyncStoragePackage(),
           new NetInfoPackage(),
           new RNSpinkitPackage(),
           new FastImageViewPackage(),
           new RNFSPackage(),
           new RNCameraPackage(),
-          new RNSensitiveInfoPackage(),
           new SvgPackage(),
           new VectorIconsPackage(),
           new RNGestureHandlerPackage(),
