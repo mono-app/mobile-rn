@@ -5,7 +5,6 @@ import AccountScreen from "src/screens/AccountScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import EditSingleFieldScreen from "src/screens/EditSingleFieldScreen";
 import StatusChangeScreen from "src/screens/StatusChangeScreen";
-import GalleryScreen from "src/screens/GalleryScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
 
 export default SettingTabNavigator = createStackNavigator({
@@ -15,7 +14,6 @@ export default SettingTabNavigator = createStackNavigator({
   EditSingleField: { screen: EditSingleFieldScreen },
   SettingEditSingleFieldScreen: { screen: EditSingleFieldScreen },
   StatusChange: { screen: StatusChangeScreen },
-  Gallery: { screen: GalleryScreen },
   ...DiscussionClassroomNotifNavigatorObj
 }, {
   initialRouteName: "Home",

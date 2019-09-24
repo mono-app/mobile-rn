@@ -26,7 +26,7 @@ export default class ImageListItem extends React.Component{
         <FastImage 
           resizeMode="cover"
           source={{ uri: (this.state.image.uri)?this.state.image.uri :this.state.image.downloadUrl  }} 
-          style={{ alignSelf: "stretch", flex: 1 }}/>
+          style={{ alignSelf: "stretch", flex: 1, borderRadius: 8}}/>
 
       </TouchableOpacity>
     )

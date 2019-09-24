@@ -56,7 +56,6 @@ class StudentHomeScreen extends React.PureComponent {
     this._isMounted = true
     if(this._isMounted)
      this.setState({isLoading: true})
-    await this.props.setCurrentSchoolId(this.state.schoolId)
     await this.props.setCurrentStudentEmail(this.state.schoolId, this.props.currentUser.email)
     if(this._isMounted)
       this.setState({isLoading: false})

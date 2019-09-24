@@ -10,7 +10,6 @@ export function withCurrentSchoolAdmin(Component){
       <CurrentSchoolAdminContext.Consumer>
         {(context) => <Component {...props} ref={ref}
           setCurrentSchoolAdminEmail={context.setCurrentSchoolAdminEmail}
-          setCurrentSchoolId={context.setCurrentSchoolId}
           schoolProfilePicture={(context.school.profilePicture)? context.school.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random"}
           currentSchoolAdmin = {context.schoolAdmin}
           currentSchool = {context.school}
@@ -26,26 +25,29 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
   static navigationOptions = () => {
     return { header: null };
   };
+  // handleCurrentSchoolId = async (id) => {
+  //   const db = firebase.firestore();
+  //   const schoolsCollection = new SchoolsCollection();
+  //   const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(id);
 
-  handleCurrentSchoolId = async (id) => {
-    const db = firebase.firestore();
-    const schoolsCollection = new SchoolsCollection();
-    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(id);
-
-    this.schoolListener = schoolsDocumentRef.onSnapshot((documentSnapshot) => {
-      if(documentSnapshot.exists){
-        const school = documentSnapshot.data();
-        school.id = JSON.parse(JSON.stringify(documentSnapshot.id));
-        this.setState({ school });
-      }
-    });
-  }
+  //   this.schoolListener = schoolsDocumentRef.onSnapshot((documentSnapshot) => {
+  //     if(documentSnapshot.exists){
+  //       const school = documentSnapshot.data();
+  //       school.id = JSON.parse(JSON.stringify(documentSnapshot.id));
+  //       this.setState({ school });
+  //     }
+  //   });
+  // }
 
   handleCurrentSchoolAdminEmail = async (schoolId, email) => {
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const schoolAdminsCollection = new SchoolAdminsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const documentSnapshot = await schoolsDocumentRef.get();
+    const school = { id: documentSnapshot.id, ...documentSnapshot.data() };
+    this.setState({ school });
+
     const schoolAdminsDocumentRef = schoolsDocumentRef.collection(schoolAdminsCollection.getName()).doc(email);
     this.userListener = schoolAdminsDocumentRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
@@ -63,10 +65,8 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
       school: {}, 
       schoolAdmin: {}, 
       schoolProfilePicture: "",
-      setCurrentSchoolId: this.handleCurrentSchoolId,
       setCurrentSchoolAdminEmail: this.handleCurrentSchoolAdminEmail,
     }
-    this.handleCurrentSchoolId = this.handleCurrentSchoolId.bind(this);
     this.handleCurrentSchoolAdminEmail = this.handleCurrentSchoolAdminEmail.bind(this);
   }
 

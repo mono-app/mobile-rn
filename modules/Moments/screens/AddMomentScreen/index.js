@@ -163,8 +163,10 @@ function AddMomentScreen(props){
       </View>
       
       <FlatList 
-        data={images} horizontal
+        data={images}
         keyExtractor={(item) => item.id}
+        numColumns={3}
+
         renderItem={({ item, index }) => {
           const style = (index === 0)? { marginLeft: 16, marginRight: 4 }: { marginLeft: 4, marginRight: 4 }
           return <ImageListItem 
