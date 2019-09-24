@@ -140,8 +140,6 @@ PODS:
     - React
     - react-native-camera/RCT (= 1.13.1)
     - react-native-camera/RN (= 1.13.1)
-  - react-native-camera-kit (8.0.0):
-    - React
   - react-native-camera/RCT (1.13.1):
     - React
   - react-native-camera/RN (1.13.1):
@@ -242,7 +240,6 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - react-native-camera (from `../node_modules/react-native-camera`)
-  - react-native-camera-kit (from `../node_modules/react-native-camera-kit`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
@@ -307,8 +304,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
-  react-native-camera-kit:
-    :path: "../node_modules/react-native-camera-kit"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
   react-native-fast-image:
@@ -372,7 +367,6 @@ SPEC CHECKSUMS:
   Protobuf: 67fb42ba613def994e61854de2b3164f13790cc4
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
   react-native-camera: b322bc25f47536219473c6d00c666d221f7f2695
-  react-native-camera-kit: 26f0f70ed9036161b0bfb8b849000d1633d04f06
   react-native-document-picker: c36bf5f067a581657ecaf7124dcd921a8be19061
   react-native-fast-image: 3390cc968d598f0c6b5c710df138f4b653a87231
   react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
@@ -392,6 +386,6 @@ SPEC CHECKSUMS:
   SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 42ee3d16060578873ffc0fea5a57aa2cb119d00b
+PODFILE CHECKSUM: 904517ee678ce5cadfed91abfa2356b68aa5438e
 
 COCOAPODS: 1.8.0
