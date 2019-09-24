@@ -20,7 +20,6 @@ function HomeScreen(props){
 
 
   React.useEffect(() => {
-    
     roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => setRooms(rooms));
 
     return function cleanup(){
