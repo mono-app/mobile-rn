@@ -2,8 +2,8 @@ import React from "react";
 import { View, FlatList, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import MySearchbar from "src/components/MySearchbar"
-import ClassAPI from "modules/classroom/api/class";
-import ClassListItem from "modules/classroom/components/ClassListItem";
+import ClassAPI from "modules/Classroom/api/class";
+import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
