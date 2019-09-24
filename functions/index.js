@@ -243,4 +243,35 @@ exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2")
 })
 
 
+exports.sendNotificationForNewFriendRequest = functions.region("asia-east2").firestore.document("/friendRequest/{friendRequestId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
+  const { friendRequestId, peopleId  } = context.params;
+
+  const db = admin.firestore();
+
+  const friendRequestFromRef = db.collection("users").doc(peopleId);
+  const friendRequestFromSnapshot = await friendRequestFromRef.get();
+  const friendRequestFrom = Object.assign({id: friendRequestFromSnapshot.id}, friendRequestFromSnapshot.data())
+
+  const friendRequestToRef = db.collection("users").doc(friendRequestId);
+  const friendRequestToSnapshot = await friendRequestToRef.get();
+  const friendRequestTo = Object.assign({id: friendRequestToSnapshot.id}, friendRequestToSnapshot.data())
+
+  if(friendRequestTo.tokenInformation){
+    const message = {
+      token: friendRequestTo.tokenInformation.messagingToken,
+      android: { 
+        notification: {channelId: "friendrequest-notification"}
+      },
+      data: {
+        type: "friend-request",
+        friendRequestFromUserId: peopleId,
+      },
+      notification: { title: friendRequestFrom.applicationInformation.nickName+ " ingin berteman denganmu" }
+    }
+    admin.messaging().send(message);
+  }
+
+})
+
+
 

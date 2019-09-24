@@ -9,7 +9,7 @@ import { default as MaterialCommunityIcons } from "react-native-vector-icons/Mat
 
 function LikeButton(props){
   const { moment, currentUser } = props;
-  const totalFans = (moment.fanEmails)? moment.fanEmails.length: 0;
+  const totalFans = (moment.totalFans)? moment.totalFans: 0;
 
   const handleLikePress = () => MomentAPI.toggleLike(moment.id, currentUser.email);
   
@@ -17,7 +17,11 @@ function LikeButton(props){
     <TouchableOpacity style={[ props.style ]} onPress={handleLikePress}>
       <MaterialCommunityIcons name="thumb-up-outline" size={16} style={{ marginRight: 4 }}/>
       <Text>
-        Suka {totalFans > 0?`(${totalFans})`: (totalFans > 100)? "(99+)": ""}
+        Suka  { totalFans > 0?
+                (totalFans > 99)? "(99+)":
+                `(${totalFans})`
+                : ""
+              }
       </Text>
     </TouchableOpacity>
   )

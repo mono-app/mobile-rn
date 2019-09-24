@@ -128,4 +128,18 @@ export default class MomentAPI{
   static normalizeMoment(documentSnapshot){
     return { id: documentSnapshot.id, ...documentSnapshot.data() };
   }
+
+  static async delete(momentId){
+    try{
+      const db = firebase.firestore();
+      const momentsCollection = new MomentsCollection();
+      const momentRef = db.collection(momentsCollection.getName()).doc(momentId);
+      await momentRef.delete();
+      return Promise.resolve(true);
+    }catch(err){
+      console.log(err);
+      return Promise.resolve(false);
+    }
+  }
+
 }

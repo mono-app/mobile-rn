@@ -7,7 +7,7 @@ import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
 import PrivateRoom from "src/screens/HomeScreen/PrivateRoom";
 import { View, FlatList } from 'react-native';
-import StudentAPI from "modules/Classroom/api/student";
+import FriendRequestNotification from 'src/screens/HomeScreen/Notifications/FriendRequest'
 
 function HomeScreen(props){
   const { currentUser } = props;
@@ -37,7 +37,7 @@ function HomeScreen(props){
     <View style={styles.container}>
       <Header/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Chats</HeadlineTitle>
-      {/* <FriendRequestNotification/> */}
+      <FriendRequestNotification navigation={props.navigation}/> 
       <FlatList
         data={rooms}
         keyExtractor={(item) => item.id}

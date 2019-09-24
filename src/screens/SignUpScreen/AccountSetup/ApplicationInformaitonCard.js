@@ -8,7 +8,10 @@ const INITIAL_STATE = { nickName: "", id: "" }
 
 export default class ApplicationInformationCard extends React.Component{
   handleNickNameChange = nickName => this.setState({nickName});
-  handleIdChange = id => this.setState({id});
+  handleIdChange = id => {
+    const lowerId = id.toLowerCase()
+    this.setState({id: lowerId})
+  }
 
   constructor(props){
     super(props);
