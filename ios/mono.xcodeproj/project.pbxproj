@@ -330,6 +330,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				3C212D363754BDE42B2CDDCF /* [CP] Copy Pods Resources */,
+				4C0A3A74D7C7B0EB24E2604A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -577,6 +578,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-monoTests/Pods-monoTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4C0A3A74D7C7B0EB24E2604A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-monoTests/Pods-monoTests-frameworks.sh",
+				"${PODS_ROOT}/../../node_modules/react-native-webrtc/ios/WebRTC.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-monoTests/Pods-monoTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5AEEA935A9421F0149BE385D /* [CP] Check Pods Manifest.lock */ = {
