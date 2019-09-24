@@ -1,17 +1,12 @@
 import React from "react";
 import MomentsAPI from "modules/Moments/api/moment";
 import Logger from "src/api/logger";
-import { StyleSheet } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
 import MomentItem from "modules/Moments/components/MomentItem";
 import Header from "modules/Moments/screens/HomeScreen/Header";
-import { FlatList, SafeAreaView } from "react-native";
-import CircleAvatar from "src/components/Avatar/Circle";
-import { View, TouchableOpacity, FlatList } from "react-native";
-import { Text, Surface, IconButton, Snackbar } from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 import DeleteDialog from "src/components/DeleteDialog";
-import MomentAPI from "modules/Moments/api/moment";
 
 function HomeScreen(props){
   const _isMounted = React.useRef(true);
@@ -33,11 +28,6 @@ function HomeScreen(props){
   const handleCommentPress = (item) => {
     payload = { momentId: item.id }
     props.navigation.navigate("MomentComments", payload)
-  }
-
-  const handleSharePress = (item) => {
-    payload = { moment: item, onComplete: () => {} }
-    props.navigation.navigate("ShareMoment", payload)
   }
 
   const fetchMoments = async () => {
@@ -65,7 +55,7 @@ function HomeScreen(props){
 
   const handleDeleteMomentYes = () => {
     deleteDialog.current.toggleShow()
-    MomentAPI.delete(selectedMoment.current.id).then(result => {
+    MomentsAPI.delete(selectedMoment.current.id).then(result => {
       if(result){
         setSnackbarDeleteSuccess(true)
       }
@@ -98,7 +88,6 @@ function HomeScreen(props){
           onDeleteMomentPress={() => handleDeleteMomentPress(item)}
           />
         )}/>
-  </SafeAreaView>
         <DeleteDialog 
           ref ={i => deleteDialog.current = i}
           title= {"Apakah anda ingin menghapus gambar ini?"}
@@ -110,7 +99,7 @@ function HomeScreen(props){
           duration={Snackbar.DURATION_SHORT}>
           Berhasil Menghapus
         </Snackbar>
-    </View>
+  </SafeAreaView>
   )
 }
 
