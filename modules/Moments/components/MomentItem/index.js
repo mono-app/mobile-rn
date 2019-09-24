@@ -3,17 +3,17 @@ import PeopleAPI from "src/api/people";
 import MomentAPI from "modules/Moments/api/moment";
 import Logger from "src/api/logger";
 import { StyleSheet, Dimensions } from "react-native";
-
 import SquareAvatar from "src/components/Avatar/Square";
 import FastImage from "react-native-fast-image";
 import LikeButton from "modules/Moments/components/MomentItem/LikeButton";
 import { View, TouchableOpacity, FlatList } from "react-native";
-import { Text, Surface, Caption } from "react-native-paper";
+import { Menu, Text, Surface, Caption } from "react-native-paper";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 export function MomentImageThumbnail(props){
   const imageSize = Dimensions.get("window").width/3;
-
+ 
   const styles = StyleSheet.create({
     imageContainer: { display: "flex", alignItems: "stretch", flex: 1, height: imageSize },
     imageItem: { 
@@ -30,6 +30,8 @@ function MomentItem(props){
   const _isMounted = React.useRef(true);
   const [ moment, setMoment ] = React.useState(props.moment);
   const [ people, setPeople ] = React.useState(null);
+  const [ isMenuVisible, setIsMenuVisible ] = React.useState(false);
+  
   const momentListener = React.useRef(null);
   const styles = StyleSheet.create({
     surface: { elevation: 16, padding: 16, display: "flex", flexDirection: "column", borderRadius: 4 },
@@ -40,7 +42,8 @@ function MomentItem(props){
     imagesContainer: { display: "flex", flexDirection: "row", marginTop: 4, marginBottom: 4, flexGrow: 1 },
   })
 
-  
+  const toggleOpen = () => setIsMenuVisible(!isMenuVisible);
+  const handleMenuClose = () => setIsMenuVisible(false);
   const handlePicturePress = (index) => {
     payload = {
       index,
@@ -62,6 +65,11 @@ function MomentItem(props){
     })
   }
 
+  const handleDeleteMomentPress = ()=> {
+    handleMenuClose()
+    props.onDeleteMomentPress()
+  }
+
   React.useEffect(() => {
 
     fetchPeople();
@@ -76,14 +84,37 @@ function MomentItem(props){
 
   if(people === null||!moment||!moment.content) return null;
   const imageSize = (Dimensions.get("window").width/3) + 10;
+  let totalComments = ""
+  if(moment.totalComments){
+    if(moment.totalComments>=99){
+      totalComments = "99+"
+    }else{
+      totalComments = moment.totalComments
+    }
+  }
   return (
     <Surface style={[ styles.surface, props.style ]}>
-      <View style={styles.profile}>
-        <SquareAvatar size={50} uri={people.profilePicture}/>
-        <View style={{ marginLeft: 8 }}>
-          <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
-          <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
+      <View style={{justifyContent: "space-between", flexDirection:"row"}}>
+        <View style={styles.profile}>
+          <SquareAvatar size={50} uri={people.profilePicture}/>
+          <View style={{ marginLeft: 8 }}>
+            <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
+            <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
+          </View>
+        
         </View>
+        {(people.email===props.currentUser.email)?  
+        <Menu
+          visible={isMenuVisible}
+          onDismiss={handleMenuClose}
+          anchor={<TouchableOpacity   onPress={toggleOpen}>
+            <MaterialCommunityIcons name="dots-vertical" size={24} style={{padding:4}}/>
+          </TouchableOpacity>}>
+          <Menu.Item title="Delete Moment" onPress={handleDeleteMomentPress}/>
+        </Menu>
+        :
+        <View/>
+        }
       </View>
       <View style={styles.textContainer}>
         <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
@@ -100,13 +131,12 @@ function MomentItem(props){
           </View>
           : <View/>}
        
-
       </View>
       <View style={styles.actionContainer}>
         <LikeButton style={styles.actionItem} moment={moment}/>
         <TouchableOpacity style={styles.actionItem} onPress={props.onCommentPress}>
           <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
-          <Text>Komentar</Text>
+          <Text>{totalComments?`(${totalComments})`: ""} Komentar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionItem} onPress={props.onSharePress}>
           <MaterialCommunityIcons name="share-variant" size={16} style={{ marginRight: 4 }}/>
@@ -117,4 +147,4 @@ function MomentItem(props){
   );
 }
 
-export default MomentItem;
+export default withCurrentUser(MomentItem);
