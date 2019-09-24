@@ -5,7 +5,6 @@ import MySearchbar from "src/components/MySearchbar"
 import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "modules/Classroom/api/file";
-import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import RNFetchBlob from 'react-native-fetch-blob'

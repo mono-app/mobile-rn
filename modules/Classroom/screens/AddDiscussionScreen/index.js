@@ -238,7 +238,7 @@ class AddDiscussionScreen extends React.PureComponent {
                
             </View>
             <FlatList
-              horizontal={true}
+              numColumns={3}
               style={{ backgroundColor: "white" }}
               data={this.state.imagesPicked}
               keyExtractor={(item) => item.id}

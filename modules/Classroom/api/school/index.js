@@ -24,6 +24,32 @@ export default class SchoolAPI{
     return Promise.resolve(schools)
   }
 
+  static async getUserRole(schoolId, userEmail){
+    const db = firebase.firestore();
+    const userMappingCollection = new UserMappingCollection();
+    const schoolsCollection = new SchoolsCollection();
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userEmail);
+    const schoolsDocumentRef = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
+
+    const schoolSnapshot = await schoolsDocumentRef.get();
+
+
+    return Promise.resolve(schoolSnapshot.data().role)
+  }
+
+  static async getTotalUserSchools(userEmail){
+    const db = firebase.firestore();
+    const userMappingCollection = new UserMappingCollection();
+    const schoolsCollection = new SchoolsCollection();
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userEmail);
+    const schoolsCollectionRef = userMappingDocumentRef.collection(schoolsCollection.getName());
+
+    const schoolSnapshot = await schoolsCollectionRef.get();
+
+   
+    return Promise.resolve(schoolSnapshot.size)
+  }
+
   static async updateSchoolProfilePicture(schoolId, storagePath, downloadUrl){
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
