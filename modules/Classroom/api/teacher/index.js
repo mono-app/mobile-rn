@@ -22,7 +22,7 @@ export default class TeacherAPI {
        const userMappingCollection = new UserMappingCollection();
        const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(teacherEmail);
        const schoolsDocumentRef2 = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
-       await schoolsDocumentRef2.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() });
+       await schoolsDocumentRef2.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role:"teacher" });
  
       return Promise.resolve(true);
     } catch (err) {

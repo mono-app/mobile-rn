@@ -18,7 +18,7 @@ export default class StudentAPI{
       const userMappingCollection = new UserMappingCollection();
       const userMappingRef = db.collection(userMappingCollection.getName()).doc(studentEmail);
       const userMappingSchoolRef = userMappingRef.collection(schoolsCollection.getName()).doc(schoolId);
-      await userMappingSchoolRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() });
+      await userMappingSchoolRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role:"student" });
 
       
       return Promise.resolve(true);

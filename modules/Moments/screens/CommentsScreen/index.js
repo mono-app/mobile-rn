@@ -50,7 +50,6 @@ class CommentsScreen extends React.PureComponent{
 
   constructor(props){
     super(props);
-
     this.state = INITIAL_STATE;
     this._isMounted = null;
     this.txtComment = null;
@@ -75,7 +74,7 @@ class CommentsScreen extends React.PureComponent{
           this.setState({ comments })
       }else{
         if(this._isMounted)
-          this.setState({ comments: {id: "-1"} })
+          this.setState({ comments: [{id: "-1"}] })
       }
     })
     this.momentListener = MomentAPI.getDetailWithRealTimeUpdate(this.momentId, (newMoment) => {

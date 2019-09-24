@@ -6,7 +6,6 @@ import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "modules/Classroom/api/file";
 import {  TouchableOpacity } from "react-native-gesture-handler";
-import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";

@@ -9,7 +9,6 @@ import {
 import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "modules/Classroom/api/file";
-import RNBackgroundDownloader from "react-native-background-downloader";
 import DeleteDialog from "src/components/DeleteDialog";
 import Button from "src/components/Button";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";

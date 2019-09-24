@@ -11,7 +11,6 @@ export function withCurrentStudent(Component){
       <CurrentStudentContext.Consumer>
         {(context) => <Component {...props} ref={ref}
           setCurrentStudentEmail={context.setCurrentStudentEmail}
-          setCurrentSchoolId={context.setCurrentSchoolId}
           currentStudent = {context.student}
           currentSchool = {context.school}
           />}
@@ -27,17 +26,16 @@ export class CurrentStudentProvider extends React.PureComponent{
     return { header: null };
   };
 
-  handleCurrentSchoolId = async (id) => {
-    const school = await SchoolAPI.getDetail(id);
-    if(this._isMounted)
-      this.setState({school})
-  }
-
   handleCurrentStudentEmail = async (schoolId, email) => {
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const studentsCollection = new StudentsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+
+    const documentSnapshot = await schoolsDocumentRef.get();
+    const school = { id: documentSnapshot.id, ...documentSnapshot.data() };
+    this.setState({ school });
+
     const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(email);
 
     this.userListener = studentsDocumentRef.onSnapshot((documentSnapshot) => {
@@ -66,10 +64,8 @@ export class CurrentStudentProvider extends React.PureComponent{
     this.state = { 
       school: {}, 
       student: {}, 
-      setCurrentSchoolId: this.handleCurrentSchoolId,
       setCurrentStudentEmail: this.handleCurrentStudentEmail 
     }
-    this.handleCurrentSchoolId = this.handleCurrentSchoolId.bind(this);
     this.handleCurrentStudentEmail = this.handleCurrentStudentEmail.bind(this);
   }
 

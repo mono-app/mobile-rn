@@ -127,7 +127,7 @@ class ShareMomentScreen extends React.PureComponent {
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Murid" />
+            placeholder="Cari Teman" />
         </View>
         {(this.state.peopleList.length==0)?<Text style={{backgroundColor:"#fff", padding:16, textAlign:"center"}}>Kamu tidak memiliki teman</Text>:<View/>}
         
