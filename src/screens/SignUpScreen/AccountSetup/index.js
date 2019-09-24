@@ -1,10 +1,9 @@
 import React from "react";
+import firebase from "react-native-firebase";
 import { View, StyleSheet } from "react-native";
 import { Title, Paragraph } from "react-native-paper";
 import { StackActions } from "react-navigation";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import SInfo from "react-native-sensitive-info";
-import firebase from "react-native-firebase";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import Button from "../../../components/Button";
@@ -19,20 +18,16 @@ const INITIAL_STATE = {
 class AccountSetup extends React.PureComponent{
   static navigationOptions = { title: "Account Setup" }
 
-  handleCompleteClick = () => {
-    SInfo.getItem("currentUserEmail", {}).then(currentUserEmail => {
-      const applicationInformation = this.applicationInformationCard.getState();
-      const personalInformation = this.personalInformationCard.getState();
+  handleCompleteClick = async () => {
+    const applicationInformation = this.applicationInformationCard.getState();
+    const personalInformation = this.personalInformationCard.getState();
 
-      const db = firebase.firestore();
-      return db.collection("users").doc(this.props.currentUser.email).update({
-        personalInformation, applicationInformation,
-        isCompleteSetup: true
-      })
-    }).then( () => {
-      const navigator = new Navigator(this.props.navigation);
-      navigator.resetTo("MainTabNavigator", StackActions);
-    }).catch(err => console.error(err));
+    const db = firebase.firestore();
+    await db.collection("users").doc(this.props.currentUser.email).update({
+      personalInformation, applicationInformation, isCompleteSetup: true
+    })
+    const navigator = new Navigator(this.props.navigation);
+    navigator.resetTo("MainTabNavigator", StackActions);
   }
 
   constructor(props){

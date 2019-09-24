@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/node,linux,xcode,macos,windows,android,reactnative,visualstudio,androidstudio,visualstudiocode
-# Edit at https://www.gitignore.io/?templates=node,linux,xcode,macos,windows,android,reactnative,visualstudio,androidstudio,visualstudiocode
+# Created by https://www.gitignore.io/api/node,linux,xcode,macos,windows,android,cocoapods,reactnative,visualstudio,androidstudio,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=node,linux,xcode,macos,windows,android,cocoapods,reactnative,visualstudio,androidstudio,visualstudiocode
 
 ### Android ###
 # Built application files
@@ -93,6 +93,14 @@ output.json
 # Replacement of .externalNativeBuild directories introduced
 # with Android Studio 3.5.
 .cxx/
+
+### CocoaPods ###
+## CocoaPods GitIgnore Template
+
+# CocoaPods - Only use to conserve bandwidth / Save time on Pushing
+#           - Also handy if you have a large number of dependant pods
+#           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGNORE THE LOCK FILE
+Pods/
 
 ### Linux ###
 *~
@@ -904,4 +912,4 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
-# End of https://www.gitignore.io/api/node,linux,xcode,macos,windows,android,reactnative,visualstudio,androidstudio,visualstudiocode
+# End of https://www.gitignore.io/api/node,linux,xcode,macos,windows,android,cocoapods,reactnative,visualstudio,androidstudio,visualstudiocode
