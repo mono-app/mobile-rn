@@ -108,7 +108,9 @@ function ChatScreen(props){
   Logger.log("ChatScreen#headerProfilePicture", headerProfilePicture)
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
-      <ChatHeader navigation={props.navigation} title={headerTitle} subtitle={"Online"}  profilePicture={headerProfilePicture}/>
+      <ChatHeader 
+        navigation={props.navigation} title={headerTitle} subtitle={"Online"}  
+        profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8", }}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop} navigation={props.navigation} room={room}/>
       <ChatBottomTextInput room={room}
         editable={isUserRegistered}

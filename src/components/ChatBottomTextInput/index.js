@@ -7,6 +7,7 @@ import SpeakerButton from "src/components/ChatBottomTextInput/SpeakerButton";
 import RTCListener from "src/components/RTCListener";
 import { View, TextInput } from "react-native";
 import { IconButton, withTheme } from "react-native-paper";
+import { SafeAreaView } from "react-navigation";
 
 function ChatBottomTextInput(props){
   const [ message, setMessage ] = React.useState("");
@@ -37,13 +38,13 @@ function ChatBottomTextInput(props){
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <MicButton style={{ marginRight: 8 }} onPress={handleMicPress}/> 
       <SpeakerButton style={{ marginRight: 8 }} onPress={handleSpeakerPress}/>
       <TextInput style={styles.textInput} autoFocus value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
       <RTCListener roomId={props.room.id} isPublisher={isPublisher} isSubscriber={isSubscriber}/>
-    </View>
+    </SafeAreaView>
   )
 }
 
