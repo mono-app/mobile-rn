@@ -1,6 +1,9 @@
 import React from "react";
-import { Dimensions, TouchableOpacity } from "react-native";
+import PropTypes from "prop-types";
+import { Dimensions } from "react-native";
+
 import FastImage from "react-native-fast-image";
+import { TouchableOpacity } from "react-native";
 
 const INITIAL_STATE = { image: {}}
 
@@ -21,14 +24,16 @@ export default class ImageListItem extends React.Component{
 
   render(){
     const window = Dimensions.get("window");
+    const widthWithPadding = window.width - this.props.containerPadding;
     return (
-      <TouchableOpacity onPress={this.props.onPress} style={{ height: (window.width/3), width: (window.width/3), padding:4 }}>
+      <TouchableOpacity onPress={this.props.onPress} style={{ height: (widthWithPadding/3), width: (widthWithPadding/3), padding:4 }}>
         <FastImage 
           resizeMode="cover"
           source={{ uri: (this.state.image.uri)?this.state.image.uri :this.state.image.downloadUrl  }} 
           style={{ alignSelf: "stretch", flex: 1, borderRadius: 8}}/>
-
       </TouchableOpacity>
     )
   }
 }
+ImageListItem.propTypes = { containerPadding: PropTypes.number };
+ImageListItem.defaultProps = { containerPadding: 32 };
