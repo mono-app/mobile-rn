@@ -134,6 +134,7 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - Protobuf (3.9.2)
+  - QBImagePickerController (3.4.0)
   - React (0.59.9):
     - React/Core (= 0.59.9)
   - react-native-camera (1.13.1):
@@ -212,6 +213,8 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - ReactNativePermissions (1.2.1):
+    - React
   - RNCAsyncStorage (1.6.1):
     - React
   - RNFirebase (5.4.2):
@@ -221,10 +224,15 @@ PODS:
     - React
   - RNGestureHandler (1.1.0):
     - React
+  - RNImageCropPicker (0.24.1):
+    - QBImagePickerController
+    - React/Core
+    - RSKImageCropper
   - RNSVG (9.2.4):
     - React
   - RNVectorIcons (6.3.0):
     - React
+  - RSKImageCropper (2.2.3)
   - SDWebImage (5.1.1):
     - SDWebImage/Core (= 5.1.1)
   - SDWebImage/Core (5.1.1)
@@ -259,10 +267,12 @@ DEPENDENCIES:
   - React/RCTLinkingIOS (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -291,6 +301,8 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - Protobuf
+    - QBImagePickerController
+    - RSKImageCropper
     - SDWebImage
 
 EXTERNAL SOURCES:
@@ -324,6 +336,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-spinkit"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
+  ReactNativePermissions:
+    :path: "../node_modules/react-native-permissions"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNFirebase:
@@ -332,6 +346,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -365,6 +381,7 @@ SPEC CHECKSUMS:
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 67fb42ba613def994e61854de2b3164f13790cc4
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
   react-native-camera: b322bc25f47536219473c6d00c666d221f7f2695
   react-native-document-picker: c36bf5f067a581657ecaf7124dcd921a8be19061
@@ -377,15 +394,18 @@ SPEC CHECKSUMS:
   react-native-netinfo: 0da34082d2cec3100c9b5073bb217e35f1142bdd
   react-native-spinkit: 9a5d2f95aa975d5660fd3e76b7eac38e7329e46c
   react-native-webrtc: c5e3d631179a933548a8e49bddbd8fad02586095
+  ReactNativePermissions: 7cfad56d13c8961cd2a1005b4955b1400c79ef3e
   RNCAsyncStorage: 2e2e3feb9bdadc752a026703d8c4065ca912e75a
   RNFirebase: 891477280514b0cef3225cc48709cabedd192d5e
   RNFS: c9bbde46b0d59619f8e7b735991c60e0f73d22c1
   RNGestureHandler: b65d391f4f570178d657b99a16ec99d09b8656b0
+  RNImageCropPicker: 6134b66a3d5bc13e2895a97c630a4254006902b4
   RNSVG: 6fec2b50e65b4a01ba54155e8e546e0a1eeb16f4
   RNVectorIcons: cb42a5653c046f12ca16c9480c571b52620559e8
+  RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
   SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 904517ee678ce5cadfed91abfa2356b68aa5438e
+PODFILE CHECKSUM: c5d1ce69277ffd5922a8e21f5f0dde5633d7f077
 
 COCOAPODS: 1.8.0
