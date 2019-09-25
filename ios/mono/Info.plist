@@ -77,6 +77,20 @@
 	<string>Mono needs your camera to capture your beautiful moments.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Mono needs your Photo Library to save your photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Mono needs your Photo Library to view your photos.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string></string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string></string>
+	<key>NSCalendarsUsageDescription</key>
+	<string></string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string></string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string></string>
+	<key>NSMotionUsageDescription</key>
+	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Mono needs your mircrophone to send a voice message to your friends.</string>
 </dict>

@@ -37,10 +37,12 @@ def shared_pods
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
+  pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
 end
 
 target 'mono' do
   shared_pods
+
 end
 
 target 'monoTests' do
