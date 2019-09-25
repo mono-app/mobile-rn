@@ -155,6 +155,7 @@ android {
  
 
 dependencies {
+    implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-google-places')
     implementation project(':react-native-image-resizer')

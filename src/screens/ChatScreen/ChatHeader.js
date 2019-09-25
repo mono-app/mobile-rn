@@ -8,13 +8,11 @@ import { Appbar, Subheading, Caption } from "react-native-paper";
 
 function ChatHeader(props){
   const { title, subtitle, profilePicture } = props;
-  const styles = StyleSheet.create({ default: { elevation: 16 }})
+  const styles = StyleSheet.create({ default: { elevation: 4 }})
   const handleBackPress = () => props.navigation.goBack();
   return(
     <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
-      {props.navigation?(
-        <Appbar.BackAction onPress={handleBackPress}/>
-      ): null}
+      {props.navigation?( <Appbar.BackAction onPress={handleBackPress}/> ): null}
       <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
         <CircleAvatar size={40} uri={profilePicture} style={{ marginRight: 8 }}/>
         <View>
