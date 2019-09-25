@@ -3,19 +3,15 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Badge } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
-import CurrentUserAPI from "src/api/people/CurrentUser";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 import FriendsAPI from "src/api/friends";
 
 const INITIAL_STATE = { count: 0, people: [] }
 
-export default class FriendRequest extends React.PureComponent{
+class FriendRequest extends React.PureComponent{
   loadFriendRequestCount = async () => {
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    this.friendRequestListener = FriendsAPI.getFriendRequestWithRealTimeUpdate(currentUserEmail, querySnapshot => {
-      const people = querySnapshot.docs.map(documentSnapshot => {
-        return { id: documentSnapshot.id, ...documentSnapshot.data() }
-      })
-      this.setState({ count: querySnapshot.size, people });
+    this.friendRequestListener = FriendsAPI.getFriendRequestWithRealTimeUpdate(this.props.currentUser.email, people => {
+      this.setState({ count: people.length, people });
     })
   }
 
@@ -58,3 +54,5 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 })
+
+export default withCurrentUser(FriendRequest)

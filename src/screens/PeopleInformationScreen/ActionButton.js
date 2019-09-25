@@ -63,7 +63,9 @@ class ActionButton extends React.PureComponent{
     const style = { marginHorizontal: 16 }
     const { peopleFriendStatus } = this.props;
     if(!peopleFriendStatus || this.state.isLoading) return <Button style={style} isLoading disabled>Harap tunggu...</Button>
-    if(peopleFriendStatus === "stranger"){
+    if(peopleFriendStatus === "myself"){
+      return null
+    }else if(peopleFriendStatus === "stranger"){
       return(
         <Button 
           style={style} text="Jadikan Teman"

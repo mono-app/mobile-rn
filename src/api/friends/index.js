@@ -111,13 +111,25 @@ export default class FriendsAPI{
    */
   static getFriendRequestWithRealTimeUpdate(peopleEmail, callback){
     const db = firebase.firestore();
+    const userCollection = new UserCollection();
     const friendRequestCollection = new FriendRequestCollection();
     const peopleCollection = new PeopleCollection();
     const userDocument = new Document(peopleEmail);
     const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendRequestRef.collection(peopleCollection.getName());
-    return peopleRef.onSnapshot({ includeMetadataChanges: true }, querySnapshot => {
-      callback(querySnapshot);
+    return peopleRef.onSnapshot({ includeMetadataChanges: true }, async querySnapshot => {
+      if(!querySnapshot.empty) {
+        const promises = querySnapshot.docs.map((documentSnapshot) => {
+          const userDocument = new Document(documentSnapshot.id);
+          const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+          return userRef.get();
+        })
+        const friends = await Promise.all(promises);
+        const normalizedFriends = friends.map((documentSnapshot) => {
+          return PeopleAPI.normalizePeople(documentSnapshot);
+        });
+        callback(normalizedFriends)
+      }else callback([]);
     })
   }
 
@@ -138,9 +150,9 @@ export default class FriendsAPI{
    * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
   async acceptRequest(peopleEmail, friendEmail, source){
+   
     try{
       const db = firebase.firestore();
-      const batch = db.batch();
       const friendListCollection = new FriendListCollection();
       const peopleCollection = new PeopleCollection();
       const userDocument = new Document(peopleEmail);
@@ -150,12 +162,33 @@ export default class FriendsAPI{
       const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
       const peoplePeopleRef = peopleFriendListRef.collection(peopleCollection.getName()).doc(userDocument.getId());
       
-      batch.set(userPeopleRef, { creationTime: firebase.firestore.FieldValue.serverTimestamp(), source });
-      batch.set(peoplePeopleRef, { creationTime: firebase.firestore.FieldValue.serverTimestamp(), source });
-      batch.update(userFriendListRef, { totalFriends: firebase.firestore.FieldValue.increment(1) });
-      batch.update(peopleFriendListRef, { totalFriends: firebase.firestore.FieldValue.increment(1) });
+      
+      const promises = [ 
+        userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
+        peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
+        
+      ];
 
-      await Promise.all(batch.commit(), this.cancelRequest(friendEmail, peopleEmail));
+      
+      const userFriendListSnapshot = await userFriendListRef.get();
+      const peopleFriendListSnapshot = await peopleFriendListRef.get();
+      //check if there is totalFriends Field, we must update it, if there is no totalFriends Field, we have to set it.
+      //explanation: method update can't change the value of field if there is no field to update
+      if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
+        promises.push(userFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
+      }else{
+        promises.push(userFriendListRef.set({ totalFriends: 1 }))
+      }
+
+      if(peopleFriendListSnapshot.data() && peopleFriendListSnapshot.data().totalFriends){
+        promises.push(peopleFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
+      }else{
+        promises.push(peopleFriendListRef.set({ totalFriends: 1 }))
+      }
+
+      promises.push(this.cancelRequest(friendEmail, peopleEmail))
+
+      await Promise.all(promises);
       return Promise.resolve(true);
     }catch(err){
       console.log(err);

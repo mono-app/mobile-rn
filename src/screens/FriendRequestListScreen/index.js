@@ -3,30 +3,31 @@ import { View, FlatList } from "react-native";
 
 import PeopleListItem from "src/components/PeopleListItem";
 
-export default class FriendRequestListScreen extends React.Component{
+export default class FriendRequestListScreen extends React.PureComponent{
   static navigationOptions = { headerTitle: "Permintaan Pertemanan" };
 
   handlePeoplePress = people => {
-    const peopleEmail = people.id;
-    const source = people.source;
-    this.props.navigation.navigate("PeopleInformation", { peopleEmail, source });
+    const payload = {
+      peopleEmail: people.email
+    }
+    this.props.navigation.navigate("PeopleInformation", payload);
   }
 
   constructor(props){
     super(props);
 
-    this.people = this.props.navigation.getParam("people", []);
+    this.peoples = this.props.navigation.getParam("people", []);
     this.handlePeoplePress = this.handlePeoplePress.bind(this);
   }
 
   render(){
     return(
       <FlatList
-        data={this.people}
+        data={this.peoples}
         renderItem={ ({ item }) => {
           return <PeopleListItem 
             onPress={() => this.handlePeoplePress(item)}
-            email={item.id} 
+            people={item} 
             autoFetch={true}/>
         }}/>
     )

@@ -22,16 +22,22 @@ function PeopleListItem(props){
   React.useEffect(() => {
     const fetchStatus = async () => {
       const status = await StatusAPI.getLatestStatus(people.email);
-      setStatus(status.content);
+      if(status)
+        setStatus(status.content);
+
     }
     fetchStatus();
   }, [])
 
   Logger.log("PeopleListItem", people);
+  let profilePicture = "https://picsum.photos/200/200/?random"
+  if(people && people.profilePicture){
+    profilePicture = people.profilePicture
+  }
 
   return(
     <TouchableOpacity style={styles.userContainer} onPress={handlePress}>
-      <CircleAvatar size={48} uri={people.profilePicture} style={{ marginRight: 16 }}/>
+      <CircleAvatar size={48} uri={profilePicture} style={{ marginRight: 16 }}/>
       <View>
         <Text style={{ fontWeight: "700" }}>{people.applicationInformation.nickName}</Text>
         <Paragraph style={{ color: "#5E8864" }}>{status}</Paragraph>

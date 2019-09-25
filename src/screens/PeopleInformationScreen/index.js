@@ -33,22 +33,29 @@ function PeopleInformationScreen(props){
   const peopleEmail = props.navigation.getParam("peopleEmail", null);
   const source = props.navigation.getParam("source", { value: "" });
 
-  const handleActionButtonComplete = () => loadPeopleFriendStatus();
+  const handleActionButtonComplete = () => fetchPeopleFriendStatus();
   const fetchPeopleInformation = async () => {
     setIsLoadingProfile(true);
     const peopleData = await PeopleAPI.getDetail(peopleEmail);
     const status = await StatusAPI.getLatestStatus(peopleEmail);
     Logger.log("PeopleInformationScreen.fetchPeopleInformation", peopleData)
+    if(status)
+      setStatus(status.content);
 
-    setStatus(status.content);
     setPeople(peopleData);
+    
     setJoinedFrom(moment.unix(parseInt(peopleData.creationTime) / 1000).format("DD MMMM YYYY"));
+
     setIsLoadingProfile(false);
   }
 
   const fetchPeopleFriendStatus = async () => {
     const peopleFriendStatus = await new FriendsAPI().getFriendStatus(currentUser.email, peopleEmail);
-    setPeopleFriendStatus(peopleFriendStatus);
+    if(currentUser.email!==peopleEmail){
+      setPeopleFriendStatus(peopleFriendStatus);
+    }else{
+      setPeopleFriendStatus("myself");
+    }
   }
 
   React.useEffect(() => {
@@ -82,7 +89,9 @@ function PeopleInformationScreen(props){
       </View>
       <ActionButton 
         peopleEmail={peopleEmail} source={source}
-        peopleFriendStatus={peopleFriendStatus} onComplete={handleActionButtonComplete}/>
+        peopleFriendStatus={peopleFriendStatus} 
+        onComplete={handleActionButtonComplete}
+        />
     </View>
   )
 }
