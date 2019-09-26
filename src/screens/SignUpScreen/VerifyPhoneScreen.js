@@ -46,6 +46,7 @@ class VerifyPhoneScreen extends React.Component{
 
     //const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
     const response = true
+    
     if(response){
       VerifyPhoneAPI.currentNexmoRequestId = null
 
@@ -56,9 +57,6 @@ class VerifyPhoneScreen extends React.Component{
       }catch{
         
       }
-      console.log("===================")
-      console.log(email)
-      console.log(password)
       const db = firebase.firestore();
       db.collection("users").doc(email).update({
         phoneNumber: { value: this.state.phoneNumber, isVerified: true }
