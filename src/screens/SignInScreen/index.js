@@ -25,17 +25,35 @@ function SignInScreen(props){
   const handlePasswordChange = (password) => setPassword(password);
   const handleCreateAccountPress = () => props.navigation.navigate('SignUp');
   const handleLoginpress = async () => {
-    setIsLoading(true);
-    const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
-    props.setCurrentUserEmail(user.email);
+    if(email && password){
+      setIsLoading(true);
+      const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+      props.setCurrentUserEmail(user.email);
+    }
   }
 
   React.useEffect(() => {
     if(props.isLoggedIn){
-      if(props.currentUser.isCompleteSetup !== undefined){
-        const routeNameForReset = (props.currentUser.isCompleteSetup)? "MainTabNavigator": "AccountSetup";
-        const navigator = new NavigatorAPI(props.navigation);
-        navigator.resetTo(routeNameForReset);
+
+      if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
+        console.log("asdf")
+
+        let routeNameForReset = "MainTabNavigator";
+        if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===true){
+          
+          if(props.currentUser.isCompleteSetup){
+            routeNameForReset = "MainTabNavigator"
+          } else {
+            routeNameForReset = "AccountSetup"
+          }
+
+          const navigator = new NavigatorAPI(props.navigation);
+          navigator.resetTo(routeNameForReset);  
+        }else if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===false){
+          if(email && password){
+            props.navigation.navigate("VerifyPhone", {email, password});
+          }
+        }
       }
     }
   }, [props.currentUser.isCompleteSetup, props.isLoggedIn])

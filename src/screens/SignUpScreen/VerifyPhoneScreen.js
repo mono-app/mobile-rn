@@ -11,6 +11,7 @@ import moment from "moment"
 import VerifyPhoneAPI from "src/api/verifyphone"
 import TextInput from "../../components/TextInput";
 import Button from "../../components/Button";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 const INITIAL_STATE = { 
   isAskingOTP: false,
@@ -23,14 +24,15 @@ const INITIAL_STATE = {
   isVerificationLoading: false
 }
 
-export default class VerifyPhoneScreen extends React.Component{
+class VerifyPhoneScreen extends React.Component{
   static navigationOptions = { header: null }
   
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({n: 2}));
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
   handleOTPChange = otp => {this.setState({otp, isInsertingOTP: true});}
   handleAskOTP = async () => {
-    const response = await VerifyPhoneAPI.sendCode(this.state.phoneNumber)
+    //const response = await VerifyPhoneAPI.sendCode(this.state.phoneNumber)
+    const response = "fds"
 
     if(response){
       const otpRequestId = response
@@ -42,14 +44,25 @@ export default class VerifyPhoneScreen extends React.Component{
   handleVerifyClick = async () => {
     this.setState({isVerificationLoading: true})
 
-    
-    const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
+    //const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
+    const response = true
     if(response){
       VerifyPhoneAPI.currentNexmoRequestId = null
 
       const email = this.props.navigation.getParam("email", null);
       const password = this.props.navigation.getParam("password", null);
-      await firebase.auth().createUserWithEmailAndPassword(email, password);
+      try{
+        await firebase.auth().createUserWithEmailAndPassword(email, password);
+      }catch{
+        
+      }
+      console.log("===================")
+      console.log(email)
+      console.log(password)
+      const db = firebase.firestore();
+      db.collection("users").doc(email).update({
+        phoneNumber: { value: this.state.phoneNumber, isVerified: true }
+      }).then(() => this.setState({ showDialog: true }))
     }else{
       this.setState({showSnackbarFailVerification:true})
     }
@@ -71,14 +84,22 @@ export default class VerifyPhoneScreen extends React.Component{
 
   handleScreenDidFocus = () => {
     this.authListener = firebase.auth().onAuthStateChanged(user => {
-      if(user){
+      if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
+
         const db = firebase.firestore();
-        db.collection("users").doc(user.email).set({
-          isCompleteSetup: false,
-          phoneNumber: { value: this.state.phoneNumber, isVerified: false },
-          creationTime: parseInt(moment(user.metadata.creationTime).format("x"))
-        }).then(() => this.setState({ showDialog: true }));
+        if(user && !this.props.currentUser.isCompleteSetup){
+          db.collection("users").doc(user.email).set({
+            isCompleteSetup: false,
+            phoneNumber: { value: this.state.phoneNumber, isVerified: false },
+            creationTime: parseInt(moment(user.metadata.creationTime).format("x"))
+          })
+        }else if(user && this.props.currentUser.isCompleteSetup){
+          db.collection("users").doc(user.email).update({
+            phoneNumber: { value: this.state.phoneNumber, isVerified: false },
+          })
+        }
       }
+
     })
   }
 
@@ -175,3 +196,5 @@ const styles = StyleSheet.create({
     right: 0
   }
 })
+
+export default withCurrentUser(VerifyPhoneScreen);
