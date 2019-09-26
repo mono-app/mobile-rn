@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "react-native-firebase";
 import { View, StyleSheet } from "react-native";
 import { Title, Paragraph } from "react-native-paper";
-import { StackActions } from "react-navigation";
+import { StackActions, NavigationActions } from "react-navigation";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
@@ -26,8 +26,14 @@ class AccountSetup extends React.PureComponent{
     await db.collection("users").doc(this.props.currentUser.email).update({
       personalInformation, applicationInformation, isCompleteSetup: true
     })
-    const navigator = new Navigator(this.props.navigation);
-    navigator.resetTo("MainTabNavigator", StackActions);
+    // const navigator = new Navigator(this.props.navigation);
+    // navigator.resetTo("MainTabNavigator", StackActions);
+    this.props.navigation.dispatch(
+      StackActions.reset({
+        index: 0,
+        actions: [ NavigationActions.navigate({ routeName: 'Splash' }) ],
+      })
+    );
   }
 
   constructor(props){

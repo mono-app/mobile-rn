@@ -43,14 +43,32 @@ function SplashScreen(props){
   // assuming user is signed in, then navigate to MainTabNavigator or AccountSetup
   // withCurrentUser will fetch user data, and useEffect will be triggered if props.currentUser.isCompleteSetup change
   React.useEffect(() => {
-    if(props.isLoggedIn){
-      const { isCompleteSetup } = props.currentUser;
-      if(isCompleteSetup !== undefined){
-        const navigator = new NavigatorAPI(props.navigation);
-        if(isCompleteSetup) navigator.resetTo("MainTabNavigator")
-        else if(!isCompleteSetup) navigator.resetTo("AccountSetup")
+
+    if(props.isLoggedIn) {
+
+      if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
+
+        let routeNameForReset = "MainTabNavigator";
+        if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified){
+          
+          if(props.currentUser.isCompleteSetup){
+            routeNameForReset = "MainTabNavigator"
+          } else {
+            routeNameForReset = "AccountSetup"
+          }
+
+          const navigator = new NavigatorAPI(props.navigation);
+          navigator.resetTo(routeNameForReset);  
+        }else{
+          firebase.auth().signOut();
+          props.navigation.dispatch(StackActions.reset({
+            index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
+            key: null
+          }))
+        }
       }
     }
+
   }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
 
   return(
