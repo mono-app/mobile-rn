@@ -20,17 +20,12 @@ import TaskSubmissionListScreen from "modules/Classroom/screens/Teacher/TaskSubm
 import ClassFilesScreen from "modules/Classroom/screens/Teacher/ClassFilesScreen"
 import SubmissionDetailsScreen from "modules/Classroom/screens/Teacher/SubmissionDetailsScreen"
 import SubmissionScoringScreen from "modules/Classroom/screens/Teacher/SubmissionScoringScreen"
-import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
-import DiscussionCommentScreen from "modules/Classroom/screens/DiscussionCommentScreen"
-import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 import ScoreDetailsScreen from "modules/Classroom/screens/Teacher/ScoreDetailsScreen"
 import TaskFilesScreen from "modules/Classroom/screens/Teacher/TaskFilesScreen"
 import TaskArchiveListScreen from "modules/Classroom/screens/Teacher/TaskArchiveListScreen"
 import ArchiveSelectClassScreen from "modules/Classroom/screens/Teacher/ArchiveSelectClassScreen"
 import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFilesScreen"
 import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
-import ShareDiscussionScreen from "modules/Classroom/screens/ShareDiscussionScreen"
-import DiscussionNavigatorObj from "./DiscussionNavigatorObj"
 
 const MyNavigator = createStackNavigator(
   {
