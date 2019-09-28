@@ -3,10 +3,10 @@ import firebase from 'react-native-firebase';
 import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from "react-native";
-
+import UserMappingAPI from "src/api/usermapping"
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
-import { Text, View, TouchableOpacity } from 'react-native';
+import { AsyncStorage, Text, View, TouchableOpacity } from 'react-native';
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -28,6 +28,7 @@ function SignInScreen(props){
     if(email && password){
       setIsLoading(true);
       const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+      await UserMappingAPI.setAccessToken(email)
       props.setCurrentUserEmail(user.email);
     }
   }
@@ -36,7 +37,6 @@ function SignInScreen(props){
     if(props.isLoggedIn){
 
       if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
-        console.log("asdf")
 
         let routeNameForReset = "MainTabNavigator";
         if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===true){
