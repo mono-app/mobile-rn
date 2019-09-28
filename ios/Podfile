@@ -43,6 +43,8 @@ end
 target 'mono' do
   shared_pods
 
+  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
+
 end
 
 target 'monoTests' do

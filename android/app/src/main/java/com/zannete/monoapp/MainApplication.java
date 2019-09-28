@@ -12,6 +12,7 @@ import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.imagepicker.ImagePickerPackage;
 import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts; 
 
 import com.react.rnspinkit.RNSpinkitPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
@@ -73,7 +74,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseInstanceIdPackage(),
           new MapsPackage(),
           new RNGooglePlacesPackage(),
-          new RNFetchBlobPackage()                                                                                         
+          new RNFetchBlobPackage(),
+          new ReactNativeContacts()                                                                            
       );
     }
 

@@ -18,3 +18,5 @@
 
 -keep class io.invertase.firebase.** { *; }
 -dontwarn io.invertase.firebase.**
+-keep class com.rt2zz.reactnativecontacts.** {*;}
+-keepclassmembers class com.rt2zz.reactnativecontacts.** {*;}
