@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, Dialog, Text, Caption, Platform } from "react-native-paper";
+import { View, StyleSheet, Platform } from "react-native";
+import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import Permissions from "react-native-permissions";
