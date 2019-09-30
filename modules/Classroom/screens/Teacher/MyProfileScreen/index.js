@@ -1,8 +1,9 @@
 import React from "react";
-import { View, StyleSheet, PermissionsAndroid } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
+import Permissions from "react-native-permissions";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
@@ -67,9 +68,10 @@ class MyProfileScreen extends React.PureComponent {
 
   
   changeProfilePicture = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
     try {
       const res = await DocumentPicker.pick({
@@ -90,15 +92,35 @@ class MyProfileScreen extends React.PureComponent {
     }
   }
 
+ 
+  checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("storage");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("photo");
+    }
+
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+  
   requestStoragePermission = async () => {
-    try {
-      await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      );
-     
-    } catch (err) {
-      console.warn(err);
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("storage");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("photo");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+
     }
   }
 
@@ -110,6 +132,7 @@ class MyProfileScreen extends React.PureComponent {
     this.handleStatusPress = this.handleStatusPress.bind(this);
     this.handleArchivePress = this.handleArchivePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
+    this.checkPermission = this.checkPermission.bind(this)
     this.loadStatus = this.loadStatus.bind(this);
 
   }

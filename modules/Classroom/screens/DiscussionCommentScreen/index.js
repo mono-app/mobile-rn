@@ -1,11 +1,12 @@
 import React from "react";
-import { Dimensions, View, FlatList, StyleSheet, PermissionsAndroid, Platform, Linking } from "react-native";
+import { Dimensions, View, FlatList, StyleSheet, Platform, Linking } from "react-native";
 import { ActivityIndicator, Dialog, Text, Card, Caption, Paragraph, Snackbar } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import SquareAvatar from "src/components/Avatar/Square";
 import moment from "moment";
+import Permissions from "react-native-permissions";
 import TextInput from "src/components/TextInput";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import Button from "src/components/Button";
@@ -63,16 +64,35 @@ class DiscussionCommentScreen extends React.PureComponent {
     if(this._isMounted)
       this.setState({ comment })
   }
+  
+  checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("storage");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("photo");
+    }
 
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+  
   requestStoragePermission = async () => {
-    try {
-      await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      );
-     
-    } catch (err) {
-      console.warn(err);
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("storage");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("photo");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+
     }
   }
 
@@ -115,9 +135,10 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleCameraPress = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
    
     const options = {
@@ -136,9 +157,10 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleMultipleImagePress = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
     // Pick multiple files
     try {
@@ -250,6 +272,7 @@ class DiscussionCommentScreen extends React.PureComponent {
     this.handlePicturePress = this.handlePicturePress.bind(this);
     this.handleLocationPress = this.handleLocationPress.bind(this);
     this.handleMultipleImagePress = this.handleMultipleImagePress.bind(this);
+    this.checkPermission = this.checkPermission.bind(this)
     this.handleDeleteImagePress = this.handleDeleteImagePress.bind(this);
     this.onDeletePress = this.onDeletePress.bind(this);
     this.handleCameraPress = this.handleCameraPress.bind(this);

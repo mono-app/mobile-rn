@@ -4,11 +4,9 @@ import Logger from "src/api/logger";
 import MomentAPI from "modules/Moments/api/moment";
 import uuid from "uuid/v4"
 import Permissions from "react-native-permissions";
-import ImagePicker from 'react-native-image-picker';
 import IOSImagePicker from "react-native-image-crop-picker";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { Platform } from "react-native";
-
 import ImageListItem from "src/components/ImageListItem"
 import Button from "src/components/Button";
 import CircleAvatar from "src/components/Avatar/Circle";

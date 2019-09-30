@@ -44,9 +44,13 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
     const schoolsCollection = new SchoolsCollection();
     const schoolAdminsCollection = new SchoolAdminsCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const documentSnapshot = await schoolsDocumentRef.get();
-    const school = { id: documentSnapshot.id, ...documentSnapshot.data() };
-    this.setState({ school });
+    this.schoolListener = schoolsDocumentRef.onSnapshot((documentSnapshot) => {
+      if(documentSnapshot.exists){
+        const school = documentSnapshot.data();
+        school.id = JSON.parse(JSON.stringify(documentSnapshot.id));
+        this.setState({ school });
+      }
+    });
 
     const schoolAdminsDocumentRef = schoolsDocumentRef.collection(schoolAdminsCollection.getName()).doc(email);
     this.userListener = schoolAdminsDocumentRef.onSnapshot((documentSnapshot) => {
