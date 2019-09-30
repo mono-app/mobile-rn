@@ -7,6 +7,7 @@ import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import PeopleSearchResult from "src/screens/PeopleSearchResult";
 import FriendRequestListScreen from "src/screens/FriendRequestListScreen";
 import ChatScreen from "src/screens/ChatScreen";
+import NotificationBotScreen from "src/screens/NotificationBotScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
@@ -20,6 +21,7 @@ export default HomeTabNavigator = createStackNavigator({
   PeopleInformation: { screen: PeopleInformationScreen },
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
+  NotificationBot: { screen: NotificationBotScreen },
   MyQR: { screen: MyQRScreen },
   ...DiscussionClassroomNotifNavigatorObj,
   ...MomentNavigatorObj
@@ -27,6 +29,9 @@ export default HomeTabNavigator = createStackNavigator({
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
-    return { tabBarVisible: (routeName !== "MomentComments" && routeName !== "Chat" && routeName !== "WebRTC" && routeName !== "GallerySwiper" && routeName !== "MapsPicker") }
+    return { tabBarVisible: (
+      routeName !== "MomentComments" && routeName !== "Chat" && routeName !== "WebRTC" && 
+      routeName !== "GallerySwiper" && routeName !== "MapsPicker" && routeName !== "NotificationBot"
+      )}
   }
 })

@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
-import { withCurrentUser } from "src/api/people/CurrentUser";
 import DiscussionAPI from "modules/Classroom/api/discussion";
+import { withCurrentUser } from "src/api/people/CurrentUser";
+
 import ChatBubble from "src/screens/ChatScreen/ChatBubble";
 import { FlatList } from "react-native";
-import { StackActions, NavigationActions } from 'react-navigation';
 
 function ChatList(props){
   const { messages, currentUser } = props;

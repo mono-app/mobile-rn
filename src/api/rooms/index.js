@@ -41,22 +41,6 @@ export default class RoomsAPI{
     return { id: documentSnapshot.id, ...documentSnapshot.data() }
   }
 
-  // static async getUnreadCount(roomId){
-  //   const db = firebase.firestore();
-  //   const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-  //   const roomsCollection = new RoomsCollection();
-  //   const roomDocument = new Document(roomId);
-  //   const messagesCollection = new MessagesCollection();
-  //   const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
-  //   const messageRef = roomRef.collection(messagesCollection.getName());
-  //   const querySnapshot = await messageRef.where("read.isRead", "==", false).get();
-  //   const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
-  //     if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
-  //     else return false;
-  //   }).length;
-  //   return Promise.resolve(unreadCount);
-  // }
-
   /**
    * 
    * @param {enum} type = the type of your room `private`
@@ -90,7 +74,7 @@ export class PersonalRoomsAPI extends RoomsAPI{
    * 
    * @param {array} audiences
    */
-  static async createRoomIfNotExists(firstPeopleEmail, secondPeopleEmail){
+  static async createRoomIfNotExists(firstPeopleEmail, secondPeopleEmail, type="chat"){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
 
@@ -104,8 +88,8 @@ export class PersonalRoomsAPI extends RoomsAPI{
       audiencesPayload[firstPeopleEmail] = true;
       audiencesPayload[secondPeopleEmail] = true;
       const payload = { 
-        audiences: [firstPeopleEmail, secondPeopleEmail], type: "chat",
-        audiencesQuery: audiencesPayload, lastMessage: {message: "", sentTime: null} 
+        audiences: [firstPeopleEmail, secondPeopleEmail], type,
+        audiencesQuery: audiencesPayload, lastMessage: { message: "", sentTime: null } 
       }
 
       const roomRef = db.collection(roomsCollection.getName()).doc();

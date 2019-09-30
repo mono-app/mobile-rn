@@ -70,6 +70,12 @@ function PrivateRoom(props){
   }
 }
 
-PrivateRoom.propTypes = { onPress: PropTypes.func }
+PrivateRoom.propTypes = { 
+  room: PropTypes.shape({
+    lastMessage: PropTypes.shape().isRequired,
+    id: PropTypes.string.isRequired
+  }).isRequired,
+  onPress: PropTypes.func
+}
 PrivateRoom.defaultProps = { onPress: () => {} }
 export default withCurrentUser(PrivateRoom)
