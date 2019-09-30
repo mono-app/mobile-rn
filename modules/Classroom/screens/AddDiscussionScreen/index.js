@@ -27,15 +27,9 @@ const INITIAL_STATE = {
 };
 
 class AddDiscussionScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Buat Diskusi Baru"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -193,7 +187,12 @@ class AddDiscussionScreen extends React.PureComponent {
 
     return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
-        <ScrollView>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Buat Diskusi Baru"
+            style={{ backgroundColor: "white" }}
+          />
+        <ScrollView style={{ marginBottom:56}}>
 
           <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>

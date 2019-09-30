@@ -37,15 +37,9 @@ const CustomTopNavigator = createAppContainer(
 );
 
 class SchoolAdminAddScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          style={{ backgroundColor: "transparent" }}
-          title=""
-        />
-      )
+      header: null
     };
   };
 
@@ -58,6 +52,11 @@ class SchoolAdminAddScreen extends React.PureComponent {
   render() {
     return (
       <View style={{flex:1}}>
+        <AppHeader
+            navigation={this.props.navigation}
+            style={{ backgroundColor: "white" }}
+            title=""
+          />
         <CustomTopNavigator schoolId={this.props.currentSchool.id}/>
       </View>
     );

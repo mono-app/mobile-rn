@@ -10,15 +10,9 @@ import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent
 const INITIAL_STATE = { isLoading: true, announcementList:[], filteredAnnouncementList:[]  };
 
 class AnnouncementScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Pengumuman"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -54,17 +48,6 @@ class AnnouncementScreen extends React.PureComponent {
         subjectDesc: class_.room+" | "+class_.academicYear+" | Semester "+class_.semester
       }
 
-      // const resetAction = StackActions.reset({
-      //   index:1,
-      //   key: "Student",
-      //   actions:[
-      //     NavigationActions.navigate({ routeName: 'TaskList' }),
-      //     NavigationActions.navigate({ routeName: 'TaskDetails' }),
-      //   ],
-      //   params: payload
-      // });
-
-      // this.props.navigation.dispatch(resetAction);
       this.props.navigation.navigate("TaskDetails", payload)
     }
   }
@@ -105,6 +88,11 @@ class AnnouncementScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+       <AppHeader
+          navigation={this.props.navigation}
+          title="Pengumuman"
+          style={{ backgroundColor: "white" }}
+        />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}

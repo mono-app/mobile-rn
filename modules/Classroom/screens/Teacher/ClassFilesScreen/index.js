@@ -23,16 +23,9 @@ const INITIAL_STATE = {
 };
 
 class ClassFilesScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title={navigation.getParam("subject", "")}
-          subtitle={navigation.getParam("subjectDesc", "")}
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -148,7 +141,13 @@ class ClassFilesScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+          navigation={this.props.navigation}
+          title={this.props.navigation.getParam("subject", "")}
+          subtitle={this.props.navigation.getParam("subjectDesc", "")}
+          style={{ backgroundColor: "white" }}
+        />
         <View style={{margin: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
@@ -164,7 +163,7 @@ class ClassFilesScreen extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <FlatList
-          style={{ backgroundColor: "white", marginTop:16 }}
+          style={{ backgroundColor: "white", marginVertical:16 }}
           data={this.state.filteredFileList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {

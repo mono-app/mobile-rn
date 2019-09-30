@@ -10,6 +10,9 @@ admin.initializeApp({
   databaseURL: "https://chat-app-fdf76.firebaseio.com",
 })
 
+// for parsing application/json
+app.use(express.json()) 
+
 // Automatically allow cross-origin requests
 app.use(cors({ origin: true }));
 
@@ -26,8 +29,16 @@ app.get('/test', (req, res) => {
   </html>`);
 
 });
+
 app.post('/synccontact',(req,res)=>{
-  res.send(req.param('phonenumbers'))
+  const auth = req.get('Authorization')
+  const phoneNumbers = JSON.parse(req.body.phonenumbers)
+  let as = ""
+  phoneNumbers.foreach(item => {
+    as += item+" "
+  })
+  res.send(as)
+
 });
 
 exports.app = functions.https.onRequest(app);

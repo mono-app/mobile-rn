@@ -9,15 +9,9 @@ import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent
 const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false };
 
 class TaskListScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Daftar Tugas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -64,6 +58,11 @@ class TaskListScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Daftar Tugas"
+            style={{ backgroundColor: "white" }}
+          />
         <View style={{marginTop: 16,
                       backgroundColor: "#fff",
                       flexDirection: "row",

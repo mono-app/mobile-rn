@@ -21,15 +21,9 @@ const INITIAL_STATE = {
 };
 
 class ClassFilesScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Berkas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -144,6 +138,11 @@ class ClassFilesScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Berkas"
+            style={{ backgroundColor: "white" }}
+          />
         <View style={styles.subjectContainer}>
               <Text style={{fontWeight: "bold", fontSize: 18}}>
                 {this.subject}

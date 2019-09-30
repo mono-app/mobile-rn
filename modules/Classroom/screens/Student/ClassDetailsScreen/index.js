@@ -18,15 +18,9 @@ import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {} };
 class ClassDetailsScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Info Kelas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
   
@@ -117,7 +111,12 @@ class ClassDetailsScreen extends React.PureComponent {
       if(!this.state.class || !this.state.teacher) return null
       return (
         <View style={{ backgroundColor: "#E8EEE8" }}>
-          <ScrollView>
+          <AppHeader
+            navigation={this.props.navigation}
+            title="Info Kelas"
+            style={{ backgroundColor: "white" }}
+          />
+          <ScrollView style={{marginBottom: 56}}>
             <View style={{  marginTop: 16 }}/>  
             <PeopleProfileHeader
               style={{padding:16}}

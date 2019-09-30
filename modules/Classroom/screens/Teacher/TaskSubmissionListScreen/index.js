@@ -9,15 +9,9 @@ import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher
 const INITIAL_STATE = { isLoading: true };
 
 class TaskSubmissionListScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Lihat Pengumpulan"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -69,6 +63,11 @@ class TaskSubmissionListScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Lihat Pengumpulan"
+            style={{ backgroundColor: "white" }}
+          />
         <View style={styles.subjectContainer}>
           <Text style={{fontWeight: "bold", fontSize: 18}}>
             {this.title}

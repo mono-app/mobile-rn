@@ -12,16 +12,9 @@ import { withCurrentUser } from "src/api/people/CurrentUser"
 const INITIAL_STATE = { isLoading: true, discussionList:[], filteredDiscussionList: [] };
 
 class DiscussionsScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title={navigation.getParam("subject", "")}
-          subtitle={navigation.getParam("subjectDesc", "")}
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -115,7 +108,13 @@ class DiscussionsScreen extends React.PureComponent {
 
   render() {
     return (  
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8", marginBottom:16 }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title={this.props.navigation.getParam("subject", "")}
+            subtitle={this.props.navigation.getParam("subjectDesc", "")}
+            style={{ backgroundColor: "white" }}
+          />
         <View style={{margin: 16 }}>
             <MySearchbar 
               onSubmitEditing={this.handleSearchPress}

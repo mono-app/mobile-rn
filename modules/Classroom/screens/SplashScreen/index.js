@@ -85,11 +85,8 @@ class SplashScreen extends React.PureComponent {
 
   componentDidMount(){
     if(this.introduction){
-      console.log("asdf")
       this.props.navigation.navigate("Introduction");
     }else{
-      console.log("z")
-
       this.loadSchools();
     }
   }
