@@ -17,8 +17,8 @@ function AppListScreen(props){
   const [ data, setData ] = React.useState([]);
 
   const handleItemPress = (item) => {
-    const { navigateTo } = item;
-    props.navigation.navigate(navigateTo);
+    const { navigateTo, params } = item;
+    props.navigation.navigate(navigateTo, params);
   }
 
   const fetchData = async () => {
@@ -26,7 +26,9 @@ function AppListScreen(props){
       setData([]);
     const schoolList = await SchoolAPI.getUserSchools(props.currentUser.email);
     if(schoolList.length>0){
-      data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom" })
+      data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom", params: {introduction: false} })
+    }else{
+      data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom", params: {introduction: true} })
     }
     data.push({ title: "News", icon: <MaterialCommunityIcons name="newspaper" size={24}/>, navigateTo: "News" })
     if(_isMounted.current)

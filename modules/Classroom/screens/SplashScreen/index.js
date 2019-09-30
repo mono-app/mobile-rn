@@ -74,15 +74,24 @@ class SplashScreen extends React.PureComponent {
   constructor(props){
     super(props)
     this.state = INITIAL_STATE
+    this.introduction = props.navigation.getParam("introduction", null)
     this.loadSchools = this.loadSchools.bind(this)
     this.handleSchoolPress = this.handleSchoolPress.bind(this)
     this.handleBackPress = this.handleBackPress.bind(this)
     this.handleSearchPress = this.handleSearchPress.bind(this)
     this.redirectScreen = this.redirectScreen.bind(this)
+
   }
 
   componentDidMount(){
-    this.loadSchools();
+    if(this.introduction){
+      console.log("asdf")
+      this.props.navigation.navigate("Introduction");
+    }else{
+      console.log("z")
+
+      this.loadSchools();
+    }
   }
 
   render() {

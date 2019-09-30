@@ -3,10 +3,10 @@ import firebase from 'react-native-firebase';
 import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from "react-native";
-
+import UserMappingAPI from "src/api/usermapping"
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
-import { Text, View, TouchableOpacity } from 'react-native';
+import { AsyncStorage, Text, View, TouchableOpacity } from 'react-native';
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -25,17 +25,35 @@ function SignInScreen(props){
   const handlePasswordChange = (password) => setPassword(password);
   const handleCreateAccountPress = () => props.navigation.navigate('SignUp');
   const handleLoginpress = async () => {
-    setIsLoading(true);
-    const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
-    props.setCurrentUserEmail(user.email);
+    if(email && password){
+      setIsLoading(true);
+      const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+      await UserMappingAPI.setAccessToken(email)
+      props.setCurrentUserEmail(user.email);
+    }
   }
 
   React.useEffect(() => {
     if(props.isLoggedIn){
-      if(props.currentUser.isCompleteSetup !== undefined){
-        const routeNameForReset = (props.currentUser.isCompleteSetup)? "MainTabNavigator": "AccountSetup";
-        const navigator = new NavigatorAPI(props.navigation);
-        navigator.resetTo(routeNameForReset);
+
+      if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
+
+        let routeNameForReset = "MainTabNavigator";
+        if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===true){
+          
+          if(props.currentUser.isCompleteSetup){
+            routeNameForReset = "MainTabNavigator"
+          } else {
+            routeNameForReset = "AccountSetup"
+          }
+
+          const navigator = new NavigatorAPI(props.navigation);
+          navigator.resetTo(routeNameForReset);  
+        }else if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===false){
+          if(email && password){
+            props.navigation.navigate("VerifyPhone", {email, password});
+          }
+        }
       }
     }
   }, [props.currentUser.isCompleteSetup, props.isLoggedIn])

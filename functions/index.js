@@ -1,4 +1,7 @@
 const functions = require('firebase-functions');
+const express = require('express');
+const cors = require('cors');
+const app = express();
 var admin = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
 
@@ -6,6 +9,29 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://chat-app-fdf76.firebaseio.com",
 })
+
+// Automatically allow cross-origin requests
+app.use(cors({ origin: true }));
+
+app.get('/test', (req, res) => {
+  // [END_EXCLUDE silent]
+  res.send(`
+  <!doctype html>
+    <head>
+      <title>Time</title>
+    </head>
+    <body>
+      <p>Hello world</p>
+    </body>
+  </html>`);
+
+});
+app.post('/synccontact',(req,res)=>{
+  res.send(req.param('phonenumbers'))
+});
+
+exports.app = functions.https.onRequest(app);
+
 
 exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {
   const messageDocument = documentSnapshot.data();
@@ -241,7 +267,6 @@ exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2")
 
   }
 })
-
 
 exports.sendNotificationForNewFriendRequest = functions.region("asia-east2").firestore.document("/friendRequest/{friendRequestId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
   const { friendRequestId, peopleId  } = context.params;

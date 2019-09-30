@@ -3,5 +3,14 @@
     "predeploy": [
       "npm --prefix \"$RESOURCE_DIR\" run lint"
     ]
-  }
+  },
+  "hosting": {
+	  "site": "privacypolicy-7d7db",
+	  "public": "public",  // the only required attribute for hosting
+	  "ignore": [
+		"firebase.json",
+		"**/.*",
+		"**/node_modules/**"
+	  ]
+	}
 }
