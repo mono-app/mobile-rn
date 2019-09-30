@@ -9,15 +9,9 @@ import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/Curren
 const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [] };
 
 class TeacherListScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Data Master Guru"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -74,6 +68,11 @@ class TeacherListScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Data Master Guru"
+            style={{ backgroundColor: "white" }}
+          />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}

@@ -18,15 +18,9 @@ const INITIAL_STATE = {
 
 };
 class AddClassScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          style={{ backgroundColor: "transparent" }}
-          title="Tambah Kelas Baru"
-        />
-      )
+      header: null
     };
   };
 
@@ -74,6 +68,11 @@ class AddClassScreen extends React.PureComponent {
   render() {
     return (
         <View style={{flex:1,display:"flex",backgroundColor: "#E8EEE8"}}>
+          <AppHeader
+            navigation={this.props.navigation}
+            style={{ backgroundColor: "white" }}
+            title="Tambah Kelas Baru"
+          />
           <KeyboardAwareScrollView style={{flex:1}}>         
           <Card style={styles.container}>
               <Card.Content>

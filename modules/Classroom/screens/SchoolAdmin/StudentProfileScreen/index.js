@@ -12,15 +12,9 @@ import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/Curren
 const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0  }
 
 class StudentProfileScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Profil Murid"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -191,6 +185,11 @@ class StudentProfileScreen extends React.PureComponent {
       )
     }else return (
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Profil Murid"
+            style={{ backgroundColor: "white" }}
+          />
         <ScrollView>
           <View style={{padding: 16}}>
             <Title style={{ marginLeft: 16}}>{(this.state.student.noInduk)? this.state.student.noInduk  : "-"} / {this.state.student.name}</Title>
