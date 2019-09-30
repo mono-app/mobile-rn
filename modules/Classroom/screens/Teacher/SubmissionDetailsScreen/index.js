@@ -15,15 +15,9 @@ import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher
 const INITIAL_STATE = { isLoading: true, showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
 class SubmissionDetailsScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Nilai Tugas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -124,9 +118,16 @@ class SubmissionDetailsScreen extends React.PureComponent {
     }
 
     return (
-      <View style={{paddingBottom:64}}>
-        <ScrollView>
+      <View>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Nilai Tugas"
+            style={{ backgroundColor: "white" }}
+          />
+        <ScrollView style={{marginBottom:64}}>
+       
           <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+         
             <View style={{flexDirection:"row", backgroundColor: "#fff", marginTop: 16, alignItems:"center", justifyContent:"space-between"}}>
               <View style={styles.subjectContainer}>
                   <Text style={{fontWeight: "bold", fontSize: 18}}>

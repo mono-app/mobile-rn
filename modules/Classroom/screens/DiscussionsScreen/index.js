@@ -108,13 +108,13 @@ class DiscussionsScreen extends React.PureComponent {
 
   render() {
     return (  
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
-      <AppHeader
-          navigation={this.props.navigation}
-          title={this.props.navigation.getParam("subject", "")}
-          subtitle={this.props.navigation.getParam("subjectDesc", "")}
-          style={{ backgroundColor: "white" }}
-        />
+      <View style={{ flex: 1, backgroundColor: "#E8EEE8", marginBottom:16 }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title={this.props.navigation.getParam("subject", "")}
+            subtitle={this.props.navigation.getParam("subjectDesc", "")}
+            style={{ backgroundColor: "white" }}
+          />
         <View style={{margin: 16 }}>
             <MySearchbar 
               onSubmitEditing={this.handleSearchPress}

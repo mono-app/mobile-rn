@@ -15,15 +15,9 @@ import { withTheme } from "react-native-paper";
 const INITIAL_STATE = { isFetching: true, task:{}, showSnackbarFailDeleting: false, totalSubmission:0, totalDiscussion: 0 };
 
 class TaskDetailsScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Detail Tugas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -114,8 +108,13 @@ class TaskDetailsScreen extends React.PureComponent {
 
     return (
       <View>
+        <AppHeader
+          navigation={this.props.navigation}
+          title="Detail Tugas"
+          style={{ backgroundColor: "white" }}
+        />
         <ScrollView>
-          <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+          <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:56 }}>
             <View style={styles.subjectContainer}>
                   <Text style={{fontWeight: "bold", fontSize: 18}}>
                     {this.subject}

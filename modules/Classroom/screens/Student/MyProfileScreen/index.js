@@ -26,15 +26,9 @@ const INITIAL_STATE = { isLoadingProfile: true,
 
 
 class MyProfileScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Profil Saya"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
   
@@ -147,7 +141,12 @@ class MyProfileScreen extends React.PureComponent {
       )
     }else return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
-        <ScrollView>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Profil Saya"
+            style={{ backgroundColor: "white" }}
+          />
+        <ScrollView style={{marginBottom:56}}>
           <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
 
           <PeopleProfileHeader

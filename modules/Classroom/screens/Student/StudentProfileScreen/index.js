@@ -21,15 +21,9 @@ const INITIAL_STATE = {
 }
 
 class StudentProfileScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Profil Murid"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -96,7 +90,12 @@ class StudentProfileScreen extends React.PureComponent {
       )
     }else return (
       <View style={{ backgroundColor: "#E8EEE8"}}>
-        <ScrollView>
+        <AppHeader
+          navigation={this.props.navigation}
+          title="Profil Murid"
+          style={{ backgroundColor: "white" }}
+        />
+        <ScrollView style={{marginBottom:56}}>
           <View style={{marginTop: 16}}/>
           <PeopleProfileHeader
             style={{padding:16}}

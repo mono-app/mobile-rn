@@ -80,16 +80,17 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
       );
     } else 
     return (
-      <View style={{ flex:1, backgroundColor: "#E8EEE8", paddingTop: 16 }}>
+      <View style={{ flex:1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
             title="Info Kelas"
             style={{ backgroundColor: "white" }}
           />
-        <ScrollView>
+        <ScrollView style={{marginBottom:56}}>
           <PeopleProfileHeader
+            style={{padding: 16, marginTop: 16}}
             profilePicture="https://picsum.photos/200/200/?random"
-            nickName={this.state.class.subject}
+            title={this.state.class.subject}
             />
 
           <View style={{  marginVertical: 16 }}>  

@@ -192,7 +192,7 @@ class AddDiscussionScreen extends React.PureComponent {
             title="Buat Diskusi Baru"
             style={{ backgroundColor: "white" }}
           />
-        <ScrollView>
+        <ScrollView style={{ marginBottom:56}}>
 
           <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>

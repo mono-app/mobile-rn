@@ -50,11 +50,7 @@ class AddStudentScreen extends React.PureComponent {
   render() {
     return (
       <View style={{flex:1,display:"flex",backgroundColor: "#E8EEE8"}}>
-        <AppHeader
-            navigation={this.props.navigation}
-            style={{ backgroundColor: "white" }}
-            title="Tambah Murid"
-          />
+    
         <KeyboardAwareScrollView style={{flex:1}}>
             <Card style={styles.container}>
               <Card.Content>

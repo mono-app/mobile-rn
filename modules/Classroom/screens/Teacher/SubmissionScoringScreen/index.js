@@ -17,15 +17,9 @@ const INITIAL_STATE = {
   checked: 0
 };
 class SubmissionScoringScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          style={{ backgroundColor: "transparent" }}
-          title="Beri Penilaian"
-        />
-      )
+      header: null
     };
   };
   handleScoreChange = defaultValue => {
@@ -66,6 +60,11 @@ class SubmissionScoringScreen extends React.PureComponent {
   render() {
     return (
       <View style={{flex:1,display:"flex",backgroundColor: "white"}}>
+        <AppHeader
+            navigation={this.props.navigation}
+            style={{ backgroundColor: "white" }}
+            title="Beri Penilaian"
+          />
         <KeyboardAwareScrollView style={{flex:1}}>
                 <View style={{ margin: 16 }}>
                   <Text style={styles.label}>Input Nilai</Text>

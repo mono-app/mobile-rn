@@ -26,15 +26,9 @@ import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcon
 
 
 class AddTaskScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Tambah Tugas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -112,8 +106,13 @@ class AddTaskScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
-        <ScrollView>
-          <View style={{}}>
+         <AppHeader
+          navigation={this.props.navigation}
+          title="Tambah Tugas"
+          style={{ backgroundColor: "white" }}
+        />
+        <ScrollView style={{marginBottom:56}}>
+          <View>
             <TouchableOpacity onPress={this.handleClassPickPress}>
               <View
                 style={{

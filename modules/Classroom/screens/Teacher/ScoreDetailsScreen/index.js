@@ -14,15 +14,9 @@ import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher
 const INITIAL_STATE = { isLoading: true, showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
 class ScoreDetailsScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Lihat Nilai"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -101,79 +95,84 @@ class ScoreDetailsScreen extends React.PureComponent {
       )
     }
     return (
-        <ScrollView>
           <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-            <TouchableOpacity  onPress={this.handleOtherScoring} style={{marginTop: 16}}>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <FontAwesome name="pencil" size={24} style={{marginRight:8, width: 30}}/>
-                  <Text style={[styles.label, {fontWeight: "bold", fontSize: 18}]}>Beri Penilaian Lainnya</Text>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+            <AppHeader
+              navigation={this.props.navigation}
+              title="Lihat Nilai"
+              style={{ backgroundColor: "white" }}
+            />
+            <ScrollView style={{ marginBottom: 56 }}>
+
+              <TouchableOpacity  onPress={this.handleOtherScoring} style={{marginTop: 16}}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <FontAwesome name="pencil" size={24} style={{marginRight:8, width: 30}}/>
+                    <Text style={[styles.label, {fontWeight: "bold", fontSize: 18}]}>Beri Penilaian Lainnya</Text>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            
+              <View style={styles.subjectContainer}>
+                  <Text style={{fontWeight: "bold", fontSize: 18}}>
+                    {this.state.studentInfo}
+                  </Text>
+                  <Text style={{fontSize: 16}}>
+                    {this.title}
+                  </Text>
+              </View>
+              <View style={{marginTop: 16}}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <Text style={styles.label}>Mata Pelajaran</Text>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.class_.subject}</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <Text style={styles.label}>Kelas</Text>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.class_.room}</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <Text style={styles.label}>Tahun Pelajaran</Text>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.class_.academicYear}</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <Text style={styles.label}>Semester</Text>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.class_.semester}</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <Text style={[styles.label, {color: "#0ead69"}]}>Total nilai</Text>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.submission.score}</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.listItemContainer}>
+                  <View style={{...styles.listDescriptionContainer}}>
+                    <Text style={{...styles.label, color: "#0ead69"}}>Catatan Tambahan</Text>
+                    <Text style={{flex:3, textAlign:"right"}}>Makan malam setiap malam dengerin lagu eminem</Text>
                   </View>
                 </View>
               </View>
-            </TouchableOpacity>
-           
-            <View style={styles.subjectContainer}>
-                <Text style={{fontWeight: "bold", fontSize: 18}}>
-                  {this.state.studentInfo}
-                </Text>
-                <Text style={{fontSize: 16}}>
-                  {this.title}
-                </Text>
-            </View>
-            <View style={{marginTop: 16}}>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Mata Pelajaran</Text>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>{this.state.class_.subject}</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Kelas</Text>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>{this.state.class_.room}</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Tahun Pelajaran</Text>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>{this.state.class_.academicYear}</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Semester</Text>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>{this.state.class_.semester}</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.listItemContainer}>
-                <View style={styles.listDescriptionContainer}>
-                  <Text style={[styles.label, {color: "#0ead69"}]}>Total nilai</Text>
-                  <View style={{flexDirection:"row",textAlign: "right"}}>
-                    <Text>{this.state.submission.score}</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.listItemContainer}>
-                <View style={{...styles.listDescriptionContainer}}>
-                  <Text style={{...styles.label, color: "#0ead69"}}>Catatan Tambahan</Text>
-                  <Text style={{flex:3, textAlign:"right"}}>Makan malam setiap malam dengerin lagu eminem</Text>
-                </View>
-              </View>
-           
-            </View>
+            </ScrollView>
           </View>
-        </ScrollView>
     );
   }
 }

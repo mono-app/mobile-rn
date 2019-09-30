@@ -16,15 +16,9 @@ import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher
 const INITIAL_STATE = { isFetching: true, isDeleting: false ,task:{}, showSnackbarFailDeleting: false, totalSubmission: 0, totalDiscussion: 0 };
 
 class TaskDetailsScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Detail Tugas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -185,7 +179,12 @@ class TaskDetailsScreen extends React.PureComponent {
 
     return (
       <View>
-        <ScrollView>
+        <AppHeader
+          navigation={this.props.navigation}
+          title="Detail Tugas"
+          style={{ backgroundColor: "white" }}
+        />
+        <ScrollView style={{marginBottom: 56}}>
           <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
             <View style={styles.subjectContainer}>
                   <Text style={{fontWeight: "bold", fontSize: 18}}>
