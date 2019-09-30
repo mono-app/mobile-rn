@@ -1,8 +1,4 @@
 import React from 'react';
-import RoomsAPI from 'src/api/rooms';
-import Logger from 'src/api/logger';
-import UserMappingAPI from 'src/api/usermapping';
-import { withCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from 'react-native';
 
 import FriendRequestNotification from 'src/screens/HomeScreen/Notifications/FriendRequest'
