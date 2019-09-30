@@ -42,6 +42,27 @@ function HomeScreen(props){
             phoneNumbers.push(phoneNumber.number)
           })
         })
+        if(accessToken && props.currentUser.email && phoneNumbers.length>0){
+          const headers= {
+            'Authorization': 'Bearer '+accessToken,
+            'Content-Type': 'application/json'
+          }
+          const body= JSON.stringify({
+            userId: props.currentUser.email,
+            phonenumbers: phoneNumbers,
+          })
+          console.log(headers)
+          console.log(body)
+          fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/app/synccontact", {
+            method: 'POST',
+            headers: headers,
+            body: body
+          }).then(res => {
+            console.log("auto sync contact:")
+            console.log(res)
+          })
+          
+        }
 
       }
     })
