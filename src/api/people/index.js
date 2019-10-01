@@ -2,12 +2,13 @@ import React from "react";
 import firebase from "react-native-firebase";
 import moment from "moment";
 import uuid from "uuid/v4";
-import Logger from "src/api/logger";
+import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import { StackActions } from "react-navigation";
 import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
+import {getDistance} from 'geolib';
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -138,8 +139,45 @@ export default class PeopleAPI{
     const usersCollection = new UserCollection();
     const userDocument = new Document(peopleEmail);
     const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
-    await userRef.update( { "location": {...data} });
+    const latitude = data.coords.latitude
+    const longitude = data.coords.longitude
+    const geoHash = geohash.encode(latitude, longitude);
+
+    await userRef.update( { "location": {...data, geoHash } });
     return Promise.resolve(true);
+  }
+
+  static async getNearbyPeoples(userEmail,latitude, longitude, distance){
+    // distance in meters
+    const db = firebase.firestore();
+    const usersCollection = new UserCollection();
+    const userRef = db.collection(usersCollection.getName())
+    const geoHash = geohash.encode(latitude, longitude).substring(0,5)
+
+    const userSnapshot = await userRef.orderBy('location.geoHash','asc').startAt(geoHash).endAt(geoHash+"~").get()
+    const userDocuments = (await userSnapshot.docs).map((snap) => {
+      const peopleLat = snap.data().location.coords.latitude
+      const peopleLong = snap.data().location.coords.longitude
+      const meters = getDistance({ latitude, longitude },
+        { latitude: peopleLat, longitude: peopleLong })
+
+      return {...PeopleAPI.normalizePeople(snap), distance: meters}
+    });
+
+    const filteredUsersByDistance = userDocuments.filter((user)=>{
+      return (user.distance <= distance&& user.email !== userEmail)
+    })
+    // sort from nearest
+    filteredUsersByDistance.sort((a, b) => (a.distance < b.distance) ? 1 : -1)
+
+    let result = []
+    if(filteredUsersByDistance.length > 51){
+      result = filteredUsersByDistance.slice(0, 50);
+    }else{
+      result = filteredUsersByDistance
+    }
+
+    return Promise.resolve(result);
   }
 
 }

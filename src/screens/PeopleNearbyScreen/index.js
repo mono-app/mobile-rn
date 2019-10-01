@@ -8,6 +8,7 @@ import AppHeader from "src/components/AppHeader";
 import { View, FlatList, Platform } from "react-native";
 import Permissions from "react-native-permissions";
 import Geolocation from 'react-native-geolocation-service';
+import geohash from 'ngeohash'
 
 function PeopleNearbyScreen(props){
   const { currentUser } = props;
@@ -55,6 +56,10 @@ function PeopleNearbyScreen(props){
     Geolocation.getCurrentPosition(
         (position) => {
             PeopleAPI.updateCurrentLocation(props.currentUser.email,position)
+            const latitude = position.coords.latitude
+            const longitude = position.coords.longitude
+
+            getNearbyPeople(latitude, longitude)
         },
         (error) => {
             // See error code charts below.
@@ -62,6 +67,12 @@ function PeopleNearbyScreen(props){
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );
+  }
+
+  const getNearbyPeople = async (latitude, longitude) => {
+    const peoples = await PeopleAPI.getNearbyPeoples(props.currentUser.email, latitude,longitude,25000)
+    setPeopleList(peoples);
+
   }
 
   React.useEffect(() => {
@@ -73,14 +84,11 @@ function PeopleNearbyScreen(props){
         return;
       }
       storeCurrentLocation()
-      friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.email, (friends) => {
-        setPeopleList(friends);
-      })
+    
     }
     init()
 
     return function cleanup(){
-      if(friendsListener.current) friendsListener.current();
     }
   }, [isPermissionGranted])
   
@@ -93,7 +101,8 @@ function PeopleNearbyScreen(props){
         data={peopleList}
         keyExtractor={(item) => item.email}
         renderItem={({ item, index }) => {
-          return <PeopleListItem key={index} people={item} onPress={handleContactPress}/>
+          const distance = (item.distance)? item.distance: 0
+          return <PeopleListItem key={index} people={item} distance={distance} onPress={handleContactPress}/>
         }}/>
     </View>
   )
