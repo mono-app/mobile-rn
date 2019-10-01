@@ -133,4 +133,13 @@ export default class PeopleAPI{
     return Promise.resolve(true);
   }
 
+  static async updateCurrentLocation(peopleEmail, data){
+    const db = firebase.firestore();
+    const usersCollection = new UserCollection();
+    const userDocument = new Document(peopleEmail);
+    const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
+    await userRef.update( { "location": {...data} });
+    return Promise.resolve(true);
+  }
+
 }
