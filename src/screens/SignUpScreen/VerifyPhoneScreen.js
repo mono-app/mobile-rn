@@ -12,6 +12,7 @@ import VerifyPhoneAPI from "src/api/verifyphone"
 import TextInput from "../../components/TextInput";
 import Button from "../../components/Button";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import libphonenumber from 'libphonenumber-js';
 
 const INITIAL_STATE = { 
   isAskingOTP: false,
@@ -21,17 +22,24 @@ const INITIAL_STATE = {
   phoneNumber: "",
   otpRequestId: "",
   showSnackbarFailVerification: false,
-  isVerificationLoading: false
+  isVerificationLoading: false,
+  showSnackbarPhoneNoInvalid: false
 }
 
-class VerifyPhoneScreen extends React.Component{
+class VerifyPhoneScreen extends React.PureComponent{
   static navigationOptions = { header: null }
   
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({n: 2}));
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
   handleOTPChange = otp => {this.setState({otp, isInsertingOTP: true});}
   handleAskOTP = async () => {
-    //const response = await VerifyPhoneAPI.sendCode(this.state.phoneNumber)
+
+    const phoneNum = this.validatePhoneNumber(this.state.phoneNumber,"ID","62")
+    if(!phoneNum){
+      this.setState({showSnackbarPhoneNoInvalid: true})
+      return
+    }
+    //const response = await VerifyPhoneAPI.sendCode(phoneNum)
     const response = "fds"
 
     if(response){
@@ -41,6 +49,43 @@ class VerifyPhoneScreen extends React.Component{
     }
   }
   handleDismissDialog = () => this.setState({showDialog: false});
+
+  validatePhoneNumber = (phoneNumber0, countryCode, numCode) => {
+    // numCode: 62
+    // countryCode: ID
+    let result = phoneNumber0.toString()
+    if(result.length<=2){
+      return null
+    }
+
+    const phoneNumber1 = libphonenumber.parsePhoneNumberFromString(result, countryCode)
+    
+    if(phoneNumber1 && phoneNumber1.isPossible()){
+      // check if there is `+` 
+      if(result.substring(0,1)==="+"){
+        result = result.substr(1);
+      }
+      if(!result.toLowerCase().match(/^[0-9]+$/)){
+        return null
+      }
+      // change 0 to numCode 
+      if(result.substring(0,1)==="0"){
+        result = result.substr(1);
+        result = numCode+""+result
+      }
+      // if 2 first letter is not same with numCode, add the numCode at the beginning
+      if(result.substring(0,2)!==numCode){
+        result = numCode+""+result
+      }
+  
+      const phoneNumber2 = libphonenumber.parsePhoneNumberFromString("+"+result, countryCode)
+      if(phoneNumber2.isValid()){
+        return result
+      }
+    }
+    return null
+  }
+
   handleVerifyClick = async () => {
     this.setState({isVerificationLoading: true})
 
@@ -115,6 +160,8 @@ class VerifyPhoneScreen extends React.Component{
     this.handleContinueClick = this.handleContinueClick.bind(this);
     this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
     this.handleScreenWillBlur = this.handleScreenWillBlur.bind(this);
+    this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
+    
   }
 
   // componentDidMount(){
@@ -128,53 +175,71 @@ class VerifyPhoneScreen extends React.Component{
 
   render(){
     return(
-      <View style={styles.container}>
-        <NavigationEvents
-          onDidFocus={this.handleScreenDidFocus}
-          onwillBlue={this.handleScreenWillBlur}/>
-        <Text style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Text>
-        <Text style={{ fontSize: 12, marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Text>
-        <TextInput 
-          placeholder="Contoh: 6281215288888"
-          textContentType="telephoneNumber"
-          keyboardType="number-pad"
-          editable={!this.state.isAskingOTP}
-          value={this.state.phoneNumber}
-          onChangeText={this.handlePhoneNumberChange}/>
-        {(this.state.isAskingOTP)?(
-          <View>
-            <TextInput
-              autoFocus={true}
-              placeholder="Kode Verifikasi"
-              keyboardType="number-pad"
-              value={this.state.otp}
-              onChangeText={this.handleOTPChange}/>
-            <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} text="Verifikasi"/>
-          </View>
-        ):(<Button onPress={this.handleAskOTP} text="Minta Kode Verifikasi"/>)
-        }
-        <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
-          <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>Saya punya akun. Kembali ke Sign In</Text>
-        </TouchableOpacity>
-        <Portal>
-          <Dialog visible={this.state.showDialog}>
-            <Dialog.Title>Sukses</Dialog.Title>
-            <Dialog.Content>
-              <Paragraph>Registrasi Sukses!</Paragraph>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <MaterialButton onPress={this.handleContinueClick}>Lanjutkan</MaterialButton>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
+      <View style={{flex: 1}}>
+        <View style={styles.container}>
+          <NavigationEvents
+            onDidFocus={this.handleScreenDidFocus}
+            onwillBlue={this.handleScreenWillBlur}/>
+          <Text style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Text>
+          <Text style={{ fontSize: 12, marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Text>
+          <View style={{flexDirection:"row"}}>
+          <TextInput
+          style={{paddingLeft: 12, paddingRight: 12}}
+          value="+62"
+          editable={false}
+          />
+          <TextInput 
+          style={{flex:1}}
+            placeholder="Contoh: 81215288888"
+            textContentType="telephoneNumber"
+            keyboardType="number-pad"
+            editable={!this.state.isAskingOTP}
+            value={this.state.phoneNumber}
+            onChangeText={this.handlePhoneNumberChange}/>
+            </View>
+          {(this.state.isAskingOTP)?(
+            <View>
+              <TextInput
+                autoFocus={true}
+                placeholder="Kode Verifikasi"
+                keyboardType="number-pad"
+                value={this.state.otp}
+                onChangeText={this.handleOTPChange}/>
+              <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} text="Verifikasi"/>
+            </View>
+          ):(<Button onPress={this.handleAskOTP} text="Minta Kode Verifikasi"/>)
+          }
+          <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
+            <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>Saya punya akun. Kembali ke Sign In</Text>
+          </TouchableOpacity>
+          <Portal>
+            <Dialog visible={this.state.showDialog}>
+              <Dialog.Title>Sukses</Dialog.Title>
+              <Dialog.Content>
+                <Paragraph>Registrasi Sukses!</Paragraph>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <MaterialButton onPress={this.handleContinueClick}>Lanjutkan</MaterialButton>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        
+        </View>
         <Snackbar
-          visible= {this.state.showSnackbarFailVerification}
-          onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
-          style={{backgroundColor:"red",flex: 1}}
-          duration={Snackbar.DURATION_SHORT}>
-          Kode Verifikasi Salah
-        </Snackbar>
-      </View>
+        visible= {this.state.showSnackbarFailVerification}
+        onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
+        style={{backgroundColor:"red"}}
+        duration={Snackbar.DURATION_SHORT}>
+        Kode Verifikasi Salah
+      </Snackbar>
+      <Snackbar
+        visible= {this.state.showSnackbarPhoneNoInvalid}
+        onDismiss={() => this.setState({ showSnackbarPhoneNoInvalid: false })}
+        style={{backgroundColor:"red"}}
+        duration={Snackbar.DURATION_SHORT}>
+        Nomor Telepon Tidak Valid
+      </Snackbar>
+     </View>
     )
   }
 }

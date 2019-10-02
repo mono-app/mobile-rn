@@ -10,6 +10,8 @@ import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/D
 import ChatScreen from "src/screens/ChatScreen";
 import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
+import PeopleNearbyScreen from "src/screens/PeopleNearbyScreen";
+import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 
 export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen },
@@ -19,6 +21,8 @@ export default AppTabNavigator =  createStackNavigator({
   Chat: { screen: ChatScreen },
   AddDiscussion: {screen: AddDiscussionScreen},
   Discussions: {screen: DiscussionsScreen},
+  PeopleNearby: { screen: PeopleNearbyScreen },
+  PeopleInformation: { screen: PeopleInformationScreen },
   ...MomentNavigatorObj,
   ...DiscussionClassroomNotifNavigatorObj,
   

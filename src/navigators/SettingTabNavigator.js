@@ -6,7 +6,6 @@ import MyQRScreen from "src/screens/MyQRScreen";
 import EditSingleFieldScreen from "src/screens/EditSingleFieldScreen";
 import StatusChangeScreen from "src/screens/StatusChangeScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
-import PeopleNearbyScreen from "src/screens/PeopleNearbyScreen";
 
 export default SettingTabNavigator = createStackNavigator({
   Home: { screen: SettingsScreen },
@@ -15,7 +14,6 @@ export default SettingTabNavigator = createStackNavigator({
   EditSingleField: { screen: EditSingleFieldScreen },
   SettingEditSingleFieldScreen: { screen: EditSingleFieldScreen },
   StatusChange: { screen: StatusChangeScreen },
-  PeopleNearby: { screen: PeopleNearbyScreen },
   ...DiscussionClassroomNotifNavigatorObj
 }, {
   initialRouteName: "Home",

@@ -80,7 +80,30 @@ export default class RoomsAPI{
       else return { isExists: true, documentId: snapshot.docs[0].id }
     })
   }
+
+  static async createGroupClassRoomIfNotExists(schoolId, classId){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const roomsRef = db.collection(roomsCollection.getName());
+
+    const querySnapshot = await roomsRef.where("school.id", "==", schoolId).where("school.classId", "==", classId).get();
+    if(querySnapshot.empty){
+      const school = {id: schoolId, classId: classId};
+      const payload = { 
+        audiences: [],
+        school, type: "group-chat",
+        lastMessage: {message: "", sentTime: null},
+        creationTime: firebase.firestore.FieldValue.serverTimestamp() 
+      }
+
+      const roomRef = db.collection(roomsCollection.getName()).doc();
+      roomRef.set(payload);
+      return Promise.resolve({ id: roomRef.id, ...payload });
+    }
+
+  }
 }
+
 
 export class PersonalRoomsAPI extends RoomsAPI{
   constructor(){ super(); }
@@ -105,7 +128,8 @@ export class PersonalRoomsAPI extends RoomsAPI{
       audiencesPayload[secondPeopleEmail] = true;
       const payload = { 
         audiences: [firstPeopleEmail, secondPeopleEmail], type: "chat",
-        audiencesQuery: audiencesPayload, lastMessage: {message: "", sentTime: null} 
+        audiencesQuery: audiencesPayload, lastMessage: {message: "", sentTime: null},
+        creationTime: firebase.firestore.FieldValue.serverTimestamp() 
       }
 
       const roomRef = db.collection(roomsCollection.getName()).doc();
@@ -113,4 +137,6 @@ export class PersonalRoomsAPI extends RoomsAPI{
       return Promise.resolve({ id: roomRef.id, ...payload });
     }else return Promise.resolve(RoomsAPI.normalizeRoom(querySnapshot.docs[0]));
   }
+
+  
 }

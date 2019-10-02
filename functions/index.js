@@ -97,13 +97,19 @@ app.post('/synccontact', async (req,res)=>{
   });
   const phones = users.map((obj)=> obj.phone);
   phoneNumbers.forEach( async(item) => {
-    let result = item
+    let result = item.toString()
     //result = validatePhoneNumber(result, countryCode, numCode)
+    if(result.length<=2){
+      return
+    }
     const phoneNumber1 = libphonenumber.parsePhoneNumberFromString(result, countryCode)
-    if(phoneNumber1.isPossible()){
+    if(phoneNumber1 && phoneNumber1.isPossible()){
       // check if there is `+` 
       if(result.substring(0,1)==="+"){
         result = result.substr(1);
+      }
+      if(!result.toLowerCase().match(/^[0-9]+$/)){
+        return 
       }
       // change 0 to numCode 
       if(result.substring(0,1)==="0"){
@@ -116,6 +122,7 @@ app.post('/synccontact', async (req,res)=>{
       }
   
       const phoneNumber2 = libphonenumber.parsePhoneNumberFromString("+"+result, countryCode)
+      
       if(phoneNumber2.isValid()){
         const index = phones.indexOf(result)
         if(index>0){
