@@ -1,5 +1,9 @@
 import React from 'react';
 import Contacts from 'react-native-contacts';
+import Permissions from "react-native-permissions";
+import UserMappingAPI from 'src/api/usermapping';
+import Logger from 'src/api/logger';
+import RoomsAPI from 'src/api/rooms';
 import { StyleSheet } from 'react-native';
 import { PermissionsAndroid } from 'react-native';
 
@@ -8,7 +12,7 @@ import HeadlineTitle from 'src/components/HeadlineTitle';
 import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';
 import ChatSection from "src/screens/HomeScreen/Sections/ChatSection";
 import NotificationSection from "src/screens/HomeScreen/Sections/NotificationSection";
-import { View } from 'react-native';
+import { View, FlatList, Platform } from 'react-native';
 
 function HomeScreen(props){
   const [ selectedMenu, setSelectedMenu ] = React.useState(null);
@@ -18,28 +22,77 @@ function HomeScreen(props){
 
   const handleMenuChange = (menu) => setSelectedMenu(menu);
 
-  const autoAddContact = () => {
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-      {
-        'title': 'Contacts',
-        'message': 'This app would like to view your contacts.'
-      }
-    ).then(() => {
-      Contacts.getAll( async (err, contacts) => {
-        if (err !== 'denied'){
-          let phoneNumbers = []
-          const accessToken = await UserMappingAPI.getAccessToken()
-          contacts.forEach((item)=> {
-            item.phoneNumbers.forEach(phoneNumber => {
-              phoneNumbers.push(phoneNumber.number)
-            })
-          })
+  const autoAddContact = async () => {
+    const isPermissionGranted = await checkPermission();
+    if(!isPermissionGranted){
+      await requestPermission();
+      return;
+    }
 
+    Contacts.getAll( async (err, contacts) => {
+      if (err !== 'denied'){
+        let phoneNumbers = []
+        const accessToken = await UserMappingAPI.getAccessToken()
+        contacts.forEach((item)=> {
+          item.phoneNumbers.forEach(phoneNumber => {
+            phoneNumbers.push(phoneNumber.number)
+          })
+        })
+        if(accessToken && props.currentUser.email && phoneNumbers.length>0){
+          const headers= {
+            'Authorization': 'Bearer '+accessToken,
+            'Content-Type': 'application/json'
+          }
+          const body= JSON.stringify({
+            userId: props.currentUser.email,
+            phonenumbers: phoneNumbers,
+          })
+          console.log(headers)
+          console.log(body)
+          fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/app/synccontact", {
+            method: 'POST',
+            headers: headers,
+            body: body
+          }).then(res => {
+            console.log("auto sync contact:")
+            console.log(res)
+          })
+          
         }
-      })
+
+      }
     })
-    
+  }
+  
+  const checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("contacts");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("contacts");
+    }
+
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+  
+  const requestPermission = async () => {
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("contacts");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("contacts");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+
+    }
   }
 
   React.useEffect(() => {

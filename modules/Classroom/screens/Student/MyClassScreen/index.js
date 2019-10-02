@@ -8,15 +8,9 @@ import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent
 
 const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[] };
 class MyClassScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Kelas Saya"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -73,6 +67,11 @@ class MyClassScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Kelas Saya"
+            style={{ backgroundColor: "white" }}
+          />
         <View style={{ padding: 16 }}>
           <MySearchbar 
               onSubmitEditing={this.handleSearchPress}

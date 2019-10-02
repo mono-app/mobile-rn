@@ -1,6 +1,7 @@
 import React from "react";
-import { View, FlatList, StyleSheet, PermissionsAndroid } from "react-native";
+import { View, FlatList, StyleSheet, Platform } from "react-native";
 import { ProgressBar, Text ,Dialog, Portal } from "react-native-paper";
+import Permissions from "react-native-permissions";
 import MySearchbar from "src/components/MySearchbar"
 import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
@@ -21,15 +22,9 @@ const INITIAL_STATE = {
 };
 
 class ClassFilesScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Berkas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -42,50 +37,71 @@ class ClassFilesScreen extends React.PureComponent {
   }
 
   handleDownloadPress = async item => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-    }else{
-      this.setState({progressPercentage:0,showProgressbar: true})
-     
-      RNFetchBlob.config({
-        fileCache : true,
-        // android only options, these options be a no-op on IOS
-        addAndroidDownloads : {
-          // Show notification when response data transmitted
-          useDownloadManager : true,
-          // Title of download notification
-          title : item.title,
-          // Make the file scannable  by media scanner
-          mediaScannable : true,
-          notification : true,
-          path : `/storage/emulated/0/Download/${item.title}`
-        }
-      })
-      .fetch('GET', item.storage.downloadUrl)
-      .progress((received, total) => {
-        const percentage = received / total*100
-        this.setState({progressPercentage: percentage})
-      })
-      .then((resp) => {
-        // the path of downloaded file
-     
-        this.setState({showProgressbar:false})
-      }).catch((errorMessage, statusCode) => {
-        // error handling
-        
-      })
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
+    this.setState({progressPercentage:0,showProgressbar: true})
+    
+    RNFetchBlob.config({
+      fileCache : true,
+      // android only options, these options be a no-op on IOS
+      addAndroidDownloads : {
+        // Show notification when response data transmitted
+        useDownloadManager : true,
+        // Title of download notification
+        title : item.title,
+        // Make the file scannable  by media scanner
+        mediaScannable : true,
+        notification : true,
+        path : `/storage/emulated/0/Download/${item.title}`
+      }
+    })
+    .fetch('GET', item.storage.downloadUrl)
+    .progress((received, total) => {
+      const percentage = received / total*100
+      this.setState({progressPercentage: percentage})
+    })
+    .then((resp) => {
+      // the path of downloaded file
+    
+      this.setState({showProgressbar:false})
+    }).catch((errorMessage, statusCode) => {
+      // error handling
+      
+    })
+    
   }
 
+  checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("storage");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("photo");
+    }
+
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+  
   requestStoragePermission = async () => {
-    try {
-      await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      );
-     
-    } catch (err) {
-      console.warn(err);
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("storage");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("photo");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+
     }
   }
 
@@ -128,6 +144,7 @@ class ClassFilesScreen extends React.PureComponent {
     this.loadFiles = this.loadFiles.bind(this);
     this.handleDownloadPress = this.handleDownloadPress.bind(this);
     this.onDeletePress = this.onDeletePress.bind(this);
+    this.checkPermission = this.checkPermission.bind(this)
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
   }
@@ -144,6 +161,11 @@ class ClassFilesScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Berkas"
+            style={{ backgroundColor: "white" }}
+          />
         <View style={styles.subjectContainer}>
               <Text style={{fontWeight: "bold", fontSize: 18}}>
                 {this.subject}

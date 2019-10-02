@@ -18,15 +18,9 @@ const INITIAL_STATE = { isLoadingProfile: true, isLoadingButton: false ,class: n
 
 
 class ArchiveClassDetailsScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Info Kelas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
   
@@ -86,11 +80,17 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
       );
     } else 
     return (
-      <View style={{ flex:1, backgroundColor: "#E8EEE8", paddingTop: 16 }}>
-        <ScrollView>
+      <View style={{ flex:1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Info Kelas"
+            style={{ backgroundColor: "white" }}
+          />
+        <ScrollView style={{marginBottom:56}}>
           <PeopleProfileHeader
+            style={{padding: 16, marginTop: 16}}
             profilePicture="https://picsum.photos/200/200/?random"
-            nickName={this.state.class.subject}
+            title={this.state.class.subject}
             />
 
           <View style={{  marginVertical: 16 }}>  

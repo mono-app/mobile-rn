@@ -1,7 +1,7 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, PermissionsAndroid } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { ActivityIndicator, Caption, Dialog, Text} from "react-native-paper";
-
+import Permissions from "react-native-permissions";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import SquareAvatar from "src/components/Avatar/Square";
 import Header from "modules/Classroom/components/Header";
@@ -38,22 +38,43 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     this.props.navigation.navigate("ArchiveClassList");
   };
 
+  
+  checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("storage");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("photo");
+    }
+
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+  
   requestStoragePermission = async () => {
-    try {
-      await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      );
-     
-    } catch (err) {
-      console.warn(err);
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("storage");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("photo");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+
     }
   }
 
   changeSchoolProfilePicture = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
     try {
       const res = await DocumentPicker.pick({
@@ -88,6 +109,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     this.handleArchiveClass = this.handleArchiveClass.bind(this);
     this.changeSchoolProfilePicture = this.changeSchoolProfilePicture.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
+    this.checkPermission = this.checkPermission.bind(this);
   }
 
   async componentDidMount(){

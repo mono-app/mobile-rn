@@ -1,8 +1,9 @@
 import React from "react";
-import { View, StyleSheet, PermissionsAndroid } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
+import Permissions from "react-native-permissions";
 import ClassAPI from "modules/Classroom/api/class";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
@@ -26,15 +27,9 @@ const INITIAL_STATE = { isLoadingProfile: true,
 
 
 class MyProfileScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Profil Saya"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
   
@@ -59,9 +54,10 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   changeProfilePicture = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
     try {
       const res = await DocumentPicker.pick({
@@ -82,15 +78,34 @@ class MyProfileScreen extends React.PureComponent {
     }
   }
 
+  checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("storage");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("photo");
+    }
+
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+  
   requestStoragePermission = async () => {
-    try {
-      await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      );
-     
-    } catch (err) {
-      console.warn(err);
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("storage");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("photo");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+
     }
   }
   
@@ -119,6 +134,7 @@ class MyProfileScreen extends React.PureComponent {
     this.handleMyClassPress = this.handleMyClassPress.bind(this);
     this.handleMyArchiveClassPress = this.handleMyArchiveClassPress.bind(this);
     this.changeProfilePicture = this.changeProfilePicture.bind(this);
+    this.checkPermission = this.checkPermission.bind(this)
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
   }
 
@@ -147,7 +163,12 @@ class MyProfileScreen extends React.PureComponent {
       )
     }else return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
-        <ScrollView>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Profil Saya"
+            style={{ backgroundColor: "white" }}
+          />
+        <ScrollView style={{marginBottom:56}}>
           <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
 
           <PeopleProfileHeader

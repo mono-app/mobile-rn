@@ -1,11 +1,12 @@
 import React from "react";
-import { View, FlatList, StyleSheet, PermissionsAndroid } from "react-native";
+import { View, FlatList, StyleSheet, Platform } from "react-native";
 import {
   ProgressBar,
   Text,
   Dialog,
   Portal
 } from "react-native-paper";
+import Permissions from "react-native-permissions";
 import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
 import FileAPI from "modules/Classroom/api/file";
@@ -30,15 +31,9 @@ const INITIAL_STATE = {
 };
 
 class TaskFilesScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Tugas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -57,12 +52,14 @@ class TaskFilesScreen extends React.PureComponent {
   };
 
   handleDownloadPress = async item => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-    }else{
-      this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:1 , showProgressbar: true });
-      this.doDownload(item)
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
+    this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:1 , showProgressbar: true });
+    this.doDownload(item)
+  
   };
 
   doDownload = (item)=>{
@@ -108,17 +105,19 @@ class TaskFilesScreen extends React.PureComponent {
   }
 
   handleDownloadAll = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-    }else{
-      if(this.state.filteredFileList.length==0){
-        return
-      }
-      this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:this.state.filteredFileList.length , showProgressbar: true });
-      this.state.filteredFileList.map((file) => {
-        this.doDownload(file)
-      });
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
+    if(this.state.filteredFileList.length==0){
+      return
+    }
+    this.setState({ progressPercentage: 0,totalDownloadedItem: 0,totalItemToDownload:this.state.filteredFileList.length , showProgressbar: true });
+    this.state.filteredFileList.map((file) => {
+      this.doDownload(file)
+    });
+  
   };
 
   handleDeletePress = (item, selectedIndex) => {
@@ -153,15 +152,34 @@ class TaskFilesScreen extends React.PureComponent {
     }
   }
 
+  checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("storage");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("photo");
+    }
+
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+  
   requestStoragePermission = async () => {
-    try {
-      await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      );
-     
-    } catch (err) {
-      console.warn(err);
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("storage");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("photo");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+
     }
   }
 
@@ -180,6 +198,7 @@ class TaskFilesScreen extends React.PureComponent {
     this.handleDownloadPress = this.handleDownloadPress.bind(this);
     this.handleDownloadAll = this.handleDownloadAll.bind(this);
     this.onDeletePress = this.onDeletePress.bind(this);
+    this.checkPermission = this.checkPermission.bind(this)
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
 
@@ -197,6 +216,11 @@ class TaskFilesScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+          navigation={this.props.navigation}
+          title="Tugas"
+          style={{ backgroundColor: "white" }}
+        />
         <View style={styles.subjectContainer}>
           <Text style={{ fontWeight: "bold", fontSize: 18 }}>
             {this.subject}

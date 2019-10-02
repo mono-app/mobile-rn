@@ -170,21 +170,21 @@ export default class FriendsAPI{
       ];
 
       
-      const userFriendListSnapshot = await userFriendListRef.get();
-      const peopleFriendListSnapshot = await peopleFriendListRef.get();
-      //check if there is totalFriends Field, we must update it, if there is no totalFriends Field, we have to set it.
-      //explanation: method update can't change the value of field if there is no field to update
-      if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
-        promises.push(userFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
-      }else{
-        promises.push(userFriendListRef.set({ totalFriends: 1 }))
-      }
+      // const userFriendListSnapshot = await userFriendListRef.get();
+      // const peopleFriendListSnapshot = await peopleFriendListRef.get();
+      // //check if there is totalFriends Field, we must update it, if there is no totalFriends Field, we have to set it.
+      // //explanation: method update can't change the value of field if there is no field to update
+      // if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
+      //   promises.push(userFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
+      // }else{
+      //   promises.push(userFriendListRef.set({ totalFriends: 1 }))
+      // }
 
-      if(peopleFriendListSnapshot.data() && peopleFriendListSnapshot.data().totalFriends){
-        promises.push(peopleFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
-      }else{
-        promises.push(peopleFriendListRef.set({ totalFriends: 1 }))
-      }
+      // if(peopleFriendListSnapshot.data() && peopleFriendListSnapshot.data().totalFriends){
+      //   promises.push(peopleFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
+      // }else{
+      //   promises.push(peopleFriendListRef.set({ totalFriends: 1 }))
+      // }
 
       promises.push(this.cancelRequest(friendEmail, peopleEmail))
 

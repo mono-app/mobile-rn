@@ -20,15 +20,9 @@ const INITIAL_STATE = {
 
 
 class MassScoringScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Penilaian Massal"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -113,6 +107,11 @@ class MassScoringScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+       <AppHeader
+          navigation={this.props.navigation}
+          title="Penilaian Massal"
+          style={{ backgroundColor: "white" }}
+        />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}

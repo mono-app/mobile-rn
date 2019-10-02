@@ -6,15 +6,9 @@ import AppHeader from "src/components/AppHeader";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
 class SchoolAdminDataMasterScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          style={{ backgroundColor: "transparent" }}
-          title="Data Master"
-        />
-      )
+      header: null
     };
   };
   handleClassPress = e => {
@@ -37,6 +31,11 @@ class SchoolAdminDataMasterScreen extends React.PureComponent {
   render() {
     return (
       <View style={styles.groupContainer}>
+        <AppHeader
+            navigation={this.props.navigation}
+            style={{ backgroundColor: "white" }}
+            title="Data Master"
+          />
         <TouchableOpacity onPress={this.handleClassPress}>
           <View style={styles.menu}>
             <Text style={{ fontWeight: "400" }}>Master Kelas</Text>

@@ -1,10 +1,11 @@
 import React from "react";
-import { FlatList, View, StyleSheet, PermissionsAndroid } from "react-native";
+import { Platform, FlatList, View, StyleSheet } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import AppHeader from "src/components/AppHeader";
 import Button from "src/components/Button";
+import Permissions from "react-native-permissions";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import DocumentPicker from 'react-native-document-picker';
@@ -27,15 +28,9 @@ const INITIAL_STATE = {
 };
 
 class AddDiscussionScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Buat Diskusi Baru"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -77,10 +72,12 @@ class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleSingleImagePress = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
+   
     // Pick a single file
     try {
       const res = await DocumentPicker.pick({
@@ -98,21 +95,43 @@ class AddDiscussionScreen extends React.PureComponent {
       }
     }
   }
+
+  checkPermission = async () => {
+    let permissionResponse;
+    if(Platform.OS === "android"){
+      permissionResponse = await Permissions.check("storage");
+    }else if(Platform.OS === "ios"){
+      permissionResponse = await Permissions.check("photo");
+    }
+
+    if(permissionResponse === "authorized") return true;
+    else return false;
+  }
+
   requestStoragePermission = async () => {
-    try {
-      await PermissionsAndroid.requestMultiple(
-        [PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE]
-      );
-     
-    } catch (err) {
-      console.warn(err);
+    try{
+      let permissionResponse;
+      if(Platform.OS === "android"){
+        permissionResponse = await Permissions.request("storage");
+      }else if(Platform.OS === "ios"){
+        permissionResponse = await Permissions.request("photo");
+      }
+
+      if(permissionResponse === "authorized"){
+        // do something if authorized
+      }else{
+        // do something if unauthorized
+      }
+    }catch(err){
+      Logger.log("AddMomentScreen.requestStoragePermission:err", err);
     }
   }
+
   handleCameraPress = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
    
     const options = {
@@ -129,10 +148,12 @@ class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleMultipleImagePress = async () => {
-    if(!(await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE))){
-      await this.requestStoragePermission()
-      return
+    const isPermissionGranted = await this.checkPermission();
+    if(!isPermissionGranted){
+      await this.requestStoragePermission();
+      return;
     }
+   
     // Pick multiple files
     try {
       const results = await DocumentPicker.pickMultiple({
@@ -183,6 +204,7 @@ class AddDiscussionScreen extends React.PureComponent {
     this.handleSingleImagePress = this.handleSingleImagePress.bind(this);
     this.handleMultipleImagePress = this.handleMultipleImagePress.bind(this);
     this.handleDeleteImagePress = this.handleDeleteImagePress.bind(this);
+    this.checkPermission = this.checkPermission.bind(this)
     this.onDeletePress = this.onDeletePress.bind(this);
     this.handleCameraPress = this.handleCameraPress.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
@@ -193,7 +215,12 @@ class AddDiscussionScreen extends React.PureComponent {
 
     return (
       <View style={{ backgroundColor: "#E8EEE8" }}>
-        <ScrollView>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Buat Diskusi Baru"
+            style={{ backgroundColor: "white" }}
+          />
+        <ScrollView style={{ marginBottom:56}}>
 
           <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>

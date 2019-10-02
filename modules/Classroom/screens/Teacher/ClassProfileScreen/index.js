@@ -19,15 +19,9 @@ const INITIAL_STATE = { isLoadingProfile: true, class: null };
 
 
 class ClassProfileScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Info Kelas"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
   
@@ -122,8 +116,13 @@ class ClassProfileScreen extends React.PureComponent {
       );
     } else 
     return (
-      <View style={{ backgroundColor: "#E8EEE8", paddingTop: 16 }}>
-        <ScrollView>
+      <View style={{ backgroundColor: "#E8EEE8" }}>
+        <AppHeader
+            navigation={this.props.navigation}
+            title="Info Kelas"
+            style={{ backgroundColor: "white" }}
+          />
+        <ScrollView style={{paddingTop: 16, marginBottom: 56}}>
           <PeopleProfileHeader
             style={{padding:16}}
             profilePicture="https://picsum.photos/200/200/?random"

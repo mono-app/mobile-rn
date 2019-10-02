@@ -76,6 +76,7 @@ export class CurrentStudentProvider extends React.PureComponent{
   componentWillUnmount(){
     this._isMounted = false
     if(this.userListener) this.userListener();
+    if(this.schoolListener) this.schoolListener();
   }
 
   render(){
