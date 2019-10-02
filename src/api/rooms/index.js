@@ -17,9 +17,10 @@ export default class RoomsAPI{
   static getRoomsWithRealtimeUpdate(email, callback){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
-    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email);
+    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email)
+                       .where("type", "==", "chat");
     
-    return roomsRef.orderBy("lastMessage.sentTime", "asc").onSnapshot((querySnapshot) => {
+    return roomsRef.orderBy("lastMessage.sentTime", "desc").onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => {
         const normalizedRoom = RoomsAPI.normalizeRoom(documentSnapshot);
         return normalizedRoom;

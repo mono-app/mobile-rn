@@ -6,7 +6,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from 'react-native';
 
 import CircleAvatar from "src/components/Avatar/Circle";
-import UnreadCountBadge from "./UnreadCountBadge";
+import UnreadCountBadge from "src/screens/HomeScreen/UnreadCountBadge";
 import { Text, Caption } from "react-native-paper";
 import { View, TouchableOpacity } from 'react-native';
 
@@ -19,7 +19,7 @@ function PrivateRoom(props){
   const styles = StyleSheet.create({
     chatContainer: {
       display: "flex", flexDirection: "row", backgroundColor: "white", alignItems: "center",
-      margin: 16, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
+      marginHorizontal: 16, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
     }
   })
 
@@ -47,7 +47,7 @@ function PrivateRoom(props){
 
   if(people && people.applicationInformation && !isLoading){
     return(
-      <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
+      <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress}>
         <View style={{ marginRight: 16 }}>
           <CircleAvatar size={50} uri={people.profilePicture}/>
         </View>
@@ -75,7 +75,8 @@ PrivateRoom.propTypes = {
     lastMessage: PropTypes.shape().isRequired,
     id: PropTypes.string.isRequired
   }).isRequired,
-  onPress: PropTypes.func
+  onPress: PropTypes.func, 
+  style: PropTypes.shape()
 }
-PrivateRoom.defaultProps = { onPress: () => {} }
+PrivateRoom.defaultProps = { onPress: () => {}, style: {} }
 export default withCurrentUser(PrivateRoom)

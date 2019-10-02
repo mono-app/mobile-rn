@@ -1,44 +1,47 @@
 import React from "react";
+import firebase from "react-native-firebase";
+import RoomsAPI from "src/api/rooms";
 import { StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
-import CircleAvatar from "src/components/Avatar/Circle";
-import { View, TouchableOpacity, FlatList } from "react-native";
-import { Caption, Text } from "react-native-paper";
+import { FlatList } from "react-native";
+import BotRoom from "../Rooms/BotRoom";
 
 function NotificationSection(props){
+  const { currentUser } = props;
+  const [ notifications, setNotifications ] = React.useState([]);
+  const roomsListener = React.useRef(null);
   const styles = StyleSheet.create({
     chatContainer: {
       display: "flex", flexDirection: "row", backgroundColor: "white", alignItems: "center",
-      margin: 16, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
+      marginHorizontal: 16, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
     }
-  });
+  });  
+  const fetchData = () => {
+    const db = firebase.firestore();
+    const roomsRef = db.collection("rooms").where("type", "==", "bot").where("audiences", "array-contains", currentUser.email);
+    roomsListener.current = roomsRef.orderBy("lastMessage.sentTime", "desc").onSnapshot((querySnapshot) => {
+      const rooms = querySnapshot.docs.map((documentSnapshot) => RoomsAPI.normalizeRoom(documentSnapshot));
+      setNotifications(rooms);
+    })
+  }
 
-  const handleRoomPress = () => props.navigation.navigate("NotificationBot");
+  React.useEffect(() => {
+    fetchData();
+    return function cleanup(){
+      if(roomsListener.current !== null) roomsListener.current();
+    }
+  }, []);
 
   return (
     <FlatList 
-      data={[1, 2, 3]}
+      data={notifications}
       renderItem={({ item ,index}) => {
-        return (
-          <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
-            <View style={{ marginRight: 16 }}>
-              <CircleAvatar size={50} uri={"https://picsum.photos/200"}/>
-            </View>
-            <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                <Text>Permintaan Pertemanan</Text>
-                <Caption>10:15 PM</Caption>
-              </View>
-              <View style={{ display: "flex", flexDirection: "row" }}>
-                <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={2} style={{ minHeight: 24 }}>
-                  Frans mengirimkan perminataan pertemanan dari Kontak Telpon
-                </Caption>
-              </View>
-            </View>
-          </TouchableOpacity>
-        )
+        const marginTop = (index === 0)? 8: 4;
+        const marginBottom = (index === notifications.length)? 8: 4;
+        return <BotRoom room={item} style={{ marginTop, marginBottom }}/>
       }}/>
   );
 }
-export default withNavigation(NotificationSection);
+export default withCurrentUser(withNavigation(NotificationSection));

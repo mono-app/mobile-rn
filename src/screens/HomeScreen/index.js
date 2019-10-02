@@ -1,15 +1,14 @@
 import React from 'react';
+import Contacts from 'react-native-contacts';
 import { StyleSheet } from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 
-import FriendRequestNotification from 'src/screens/HomeScreen/Notifications/FriendRequest'
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
 import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';
 import ChatSection from "src/screens/HomeScreen/Sections/ChatSection";
 import NotificationSection from "src/screens/HomeScreen/Sections/NotificationSection";
 import { View } from 'react-native';
-import { PermissionsAndroid } from 'react-native';
-import Contacts from 'react-native-contacts';
 
 function HomeScreen(props){
   const [ selectedMenu, setSelectedMenu ] = React.useState(null);
@@ -44,11 +43,7 @@ function HomeScreen(props){
   }
 
   React.useEffect(() => {
-    roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => setRooms(rooms));
-    autoAddContact()
-    return function cleanup(){
-      if(roomsListener.current) roomsListener.current();
-    }
+    autoAddContact();
   }, [])
 
   
@@ -57,7 +52,6 @@ function HomeScreen(props){
       <Header/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Chats</HeadlineTitle>
       <ChatMenuSwitch onChange={handleMenuChange}/>
-      <FriendRequestNotification navigation={props.navigation}/> 
       {selectedMenu === "chat"?<ChatSection/>: <NotificationSection/>}
     </View>
   );

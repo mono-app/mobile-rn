@@ -4,7 +4,7 @@ import Logger from 'src/api/logger';
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
 
-import PrivateRoom from "src/screens/HomeScreen/PrivateRoom";
+import PrivateRoom from "src/screens/HomeScreen/Rooms/PrivateRoom";
 import { FlatList } from "react-native";
 
 function ChatSection(props){
@@ -27,9 +27,11 @@ function ChatSection(props){
   return (
     <FlatList
       data={rooms} keyExtractor={(item) => item.id}
-      renderItem={({item}) => {
+      renderItem={({ item, index }) => {
+        const marginTop = (index === 0)? 8: 4;
+        const marginBottom = (index === rooms.length)? 8: 4;
         if(item.type === "chat"){
-          if(item.audiences.length === 2) return <PrivateRoom room={item} onPress={handleRoomPress}/>
+          if(item.audiences.length === 2) return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
         }
       }}/>
   )
