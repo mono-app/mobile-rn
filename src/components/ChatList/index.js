@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
-import { withCurrentUser } from "src/api/people/CurrentUser";
 import DiscussionAPI from "modules/Classroom/api/discussion";
-import ChatBubble from "src/components/ChatBubble";
+import { withCurrentUser } from "src/api/people/CurrentUser";
+
+import ChatBubble from "src/screens/ChatScreen/ChatBubble";
 import { FlatList } from "react-native";
 
 function ChatList(props){
@@ -29,28 +30,14 @@ function ChatList(props){
     const discussionId = item.details.discussion.id
    
     const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, currentUser.email)
-    // params: payload, key: "NotificationClassroom" 
     
-    payload = {
-      isFromNotification: false,
-      schoolId,
-      classId,
-      taskId,
-      discussion
-    }
-   
+    payload = { isFromNotification: false, schoolId, classId, taskId, discussion }
     props.navigation.navigate("DiscussionComment", payload)
-
   }
 
   const handleMomentPress = async (item) => {
-        
-    payload = {
-      momentId: item.details.moment.id,
-    }
-   
+    payload = { momentId: item.details.moment.id }
     props.navigation.navigate("MomentComments", payload)
-
   }
 
   return (

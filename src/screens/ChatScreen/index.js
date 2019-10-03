@@ -1,15 +1,14 @@
 import React from "react";
 import Logger from "src/api/logger";
+import MessagesAPI from "src/api/messages";
+import PeopleAPI from "src/api/people";
 import { withTheme } from "react-native-paper";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
-import MessagesAPI from "src/api/messages";
-import PeopleAPI from "src/api/people";
-
-import ChatList from "src/components/ChatList";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
+import ChatList from "src/components/ChatList";
 import ChatHeader from "src/components/ChatHeader";
-import { KeyboardAvoidingView, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native";
 
 function ChatScreen(props){
   const { currentUser } = props;
@@ -52,17 +51,15 @@ function ChatScreen(props){
     const audiences = room.audiences.filter((audience) => audience !== currentUser.email);
     
     const results = await Promise.all(audiences.map((audience) => PeopleAPI.getDetail(audience)));
-    Logger.log("ChatScreen#results", results);
+    Logger.log("ChatScreen.fetchPeople#results", results);
 
     const headerTitle = results.map((audienceData) => {
       if(audienceData){
         if(audienceData.applicationInformation){
-          if( _isMounted.current)
-            setUserRegistered(true)
+          if( _isMounted.current) setUserRegistered(true)
           return audienceData.applicationInformation.nickName
         }else if(audienceData.email){
-          if( _isMounted.current)
-            setUserRegistered(true)
+          if( _isMounted.current) setUserRegistered(true)
           return audienceData.email
         }else{
           return "user not registered"
@@ -73,15 +70,12 @@ function ChatScreen(props){
     }).join(", ");
     if(audiences.length === 1) {
       if(results[0] && results[0].profilePicture){
-        if( _isMounted.current)
-          setHeaderProfilePicture(results[0].profilePicture);
+        if( _isMounted.current) setHeaderProfilePicture(results[0].profilePicture);
       }else{
-        if( _isMounted.current)
-          setHeaderProfilePicture("https://picsum.photos/200/200/?random")           
+        if( _isMounted.current) setHeaderProfilePicture("https://picsum.photos/200/200/?random")           
       }
     }
-    if( _isMounted.current)
-      setHeaderTitle(headerTitle);
+    if( _isMounted.current) setHeaderTitle(headerTitle);
   }
 
   const initMessages = () => {

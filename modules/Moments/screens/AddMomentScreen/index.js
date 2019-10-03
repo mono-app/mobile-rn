@@ -130,6 +130,7 @@ function AddMomentScreen(props){
         permissionResponse = await Permissions.request("photo");
       }
 
+      // TODO: do something for this permissions please
       Logger.log("AddMommentScreen.requestStoragePermission:permissionResponse", permissionResponse);
       if(permissionResponse === "authorized"){
         // do something if authorized

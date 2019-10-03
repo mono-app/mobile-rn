@@ -38,13 +38,11 @@ def shared_pods
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
+  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 end
 
 target 'mono' do
   shared_pods
-
-  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
-
 end
 
 target 'monoTests' do

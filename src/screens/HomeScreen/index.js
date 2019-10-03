@@ -1,34 +1,23 @@
 import React from 'react';
-import RoomsAPI from 'src/api/rooms';
-import Logger from 'src/api/logger';
-import UserMappingAPI from 'src/api/usermapping';
-import { withCurrentUser } from "src/api/people/CurrentUser";
+import Contacts from 'react-native-contacts';
 import Permissions from "react-native-permissions";
+import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
+
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
-import PrivateRoom from "src/screens/HomeScreen/PrivateRoom";
-import { View, FlatList, Platform } from 'react-native';
-import FriendRequestNotification from 'src/screens/HomeScreen/Notifications/FriendRequest'
-import Contacts from 'react-native-contacts';
+import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';
+import ChatSection from "src/screens/HomeScreen/Sections/ChatSection";
+import NotificationSection from "src/screens/HomeScreen/Sections/NotificationSection";
+import { View, Platform } from 'react-native';
 
 function HomeScreen(props){
-  const { currentUser } = props;
-  const [ rooms, setRooms ] = React.useState([]);
-  const roomsListener = React.useRef(null);
-
+  const [ selectedMenu, setSelectedMenu ] = React.useState(null);
   const styles = StyleSheet.create({
     container: { flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }
   });
 
-  const handleRoomPress = (room) => {
-    Logger.log("HomeScreen.handleRoomPress", room);
-    if(room.type==="group-chat"){
-      props.navigation.navigate("GroupChat", { room });
-    }else{
-      props.navigation.navigate("Chat", { room });
-    }
-  }
+  const handleMenuChange = (menu) => setSelectedMenu(menu);
 
   const autoAddContact = async () => {
     const isPermissionGranted = await checkPermission();
@@ -48,7 +37,7 @@ function HomeScreen(props){
         })
         if(accessToken && props.currentUser.email && phoneNumbers.length>0){
           const headers= {
-            'Authorization': 'Bearer '+accessToken,
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           }
           const body= JSON.stringify({
@@ -56,9 +45,7 @@ function HomeScreen(props){
             phonenumbers: phoneNumbers,
           })
           fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/app/synccontact", {
-            method: 'POST',
-            headers: headers,
-            body: body
+            method: 'POST', headers: headers, body: body
           }).then(res => {
             console.log("auto sync contact:")
             console.log(res)
@@ -102,11 +89,7 @@ function HomeScreen(props){
   }
 
   React.useEffect(() => {
-    roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => setRooms(rooms));
-    autoAddContact()
-    return function cleanup(){
-      if(roomsListener.current) roomsListener.current()
-    }
+    autoAddContact();
   }, [])
 
   
@@ -114,16 +97,11 @@ function HomeScreen(props){
     <View style={styles.container}>
       <Header/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Chats</HeadlineTitle>
-      <FriendRequestNotification navigation={props.navigation}/> 
-      <FlatList
-        data={rooms}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => {
-          return <PrivateRoom room={item} onPress={handleRoomPress}/>
-        }}/>
+      <ChatMenuSwitch onChange={handleMenuChange}/>
+      {selectedMenu === "chat"?<ChatSection/>: <NotificationSection/>}
     </View>
   );
 }
 
 HomeScreen.navigationOptions = { header: null };
-export default withCurrentUser(HomeScreen);
+export default HomeScreen;

@@ -4,8 +4,9 @@ const bearerToken = require('express-bearer-token');
 const libphonenumber = require('libphonenumber-js')
 const cors = require('cors');
 const app = express();
-var admin = require("firebase-admin");
-var serviceAccount = require("./serviceAccountKey.json");
+const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
+const BirthdayReminder = require("./listeners/birthdayReminder");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -162,6 +163,7 @@ app.post('/synccontact', async (req,res)=>{
 });
 
 exports.app = functions.https.onRequest(app);
+exports.schedullerBirthdayReminder = BirthdayReminder.schedule;
 
 exports.addFriendTrigger = functions.region("asia-east2").firestore.document("/friendList/{friendListId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
   // this trigger for auto increment totalFriends in friends collection
