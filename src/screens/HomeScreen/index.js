@@ -2,17 +2,14 @@ import React from 'react';
 import Contacts from 'react-native-contacts';
 import Permissions from "react-native-permissions";
 import UserMappingAPI from 'src/api/usermapping';
-import Logger from 'src/api/logger';
-import RoomsAPI from 'src/api/rooms';
 import { StyleSheet } from 'react-native';
-import { PermissionsAndroid } from 'react-native';
 
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
 import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';
 import ChatSection from "src/screens/HomeScreen/Sections/ChatSection";
 import NotificationSection from "src/screens/HomeScreen/Sections/NotificationSection";
-import { View, FlatList, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 
 function HomeScreen(props){
   const [ selectedMenu, setSelectedMenu ] = React.useState(null);
@@ -40,7 +37,7 @@ function HomeScreen(props){
         })
         if(accessToken && props.currentUser.email && phoneNumbers.length>0){
           const headers= {
-            'Authorization': 'Bearer '+accessToken,
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           }
           const body= JSON.stringify({
@@ -48,9 +45,7 @@ function HomeScreen(props){
             phonenumbers: phoneNumbers,
           })
           fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/app/synccontact", {
-            method: 'POST',
-            headers: headers,
-            body: body
+            method: 'POST', headers: headers, body: body
           }).then(res => {
             console.log("auto sync contact:")
             console.log(res)
