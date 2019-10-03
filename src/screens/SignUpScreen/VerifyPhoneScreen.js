@@ -108,17 +108,16 @@ class VerifyPhoneScreen extends React.PureComponent{
       if(userSnapshot.exists){
         userDocumentRef.update({
           phoneNumber: { value: this.state.phoneNumber, isVerified: true }
-        }).then(() => this.setState({ showDialog: true }))
+        }).then(() => this.setState({ showDialog: true, isVerificationLoading: false }))
       }else{
         userDocumentRef.set({
           phoneNumber: { value: this.state.phoneNumber, isVerified: true },
           isCompleteSetup: false
-        }).then(() => this.setState({ showDialog: true }))
+        }).then(() => this.setState({ showDialog: true, isVerificationLoading: false }))
       }
     }else{
       this.setState({showSnackbarFailVerification:true})
     }
-    this.setState({isVerificationLoading: false})
   }
 
   handleContinueClick = () => {
