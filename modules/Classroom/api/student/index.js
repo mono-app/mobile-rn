@@ -87,7 +87,6 @@ export default class StudentAPI{
     });
 
     return Promise.resolve(studentDocuments);
-  
   }
 
   static async updateDiscussionNotification(studentId, discussionId, isAllowNotif){

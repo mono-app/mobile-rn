@@ -33,13 +33,13 @@ function PrivateRoom(props){
       const { audiences, type, school } = props.room;
       const realAudience = audiences.filter((audience) => audience !== currentUser.email)[0];
       console.log(type)
-      if(type==="chat"){
-        const peopleData = await PeopleAPI.getDetail(realAudience);
-        setPeople(peopleData);
-      }else if(type==="group-chat"){
+      if(type==="group-chat"){
         const classData = await ClassAPI.getDetail(school.id,school.classId)
         setClass(classData)
-      }
+      }else{
+        const peopleData = await PeopleAPI.getDetail(realAudience);
+        setPeople(peopleData);
+      } 
       setIsLoading(false);
     }
     fetchData();
@@ -58,18 +58,18 @@ function PrivateRoom(props){
       return(
         <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
           <View style={{ marginRight: 16 }}>
-            {(props.room.type==="chat")? 
-              <CircleAvatar size={50} uri={people.profilePicture}/>
-            : 
+            {(props.room.type==="group-chat")? 
               <CircleAvatar size={50} uri="https://picsum.photos/200/200/?random"/>
+            : 
+              <CircleAvatar size={50} uri={people.profilePicture}/>
             }
           </View>
           <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>
             <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-            {(props.room.type==="chat")? 
-              <Text>{people.applicationInformation.nickName}</Text>
-              :
+            {(props.room.type==="group-chat")? 
               <Text>{class_.room} | Semester {class_.semester} | {class_.subject}</Text>
+              :
+              <Text>{people.applicationInformation.nickName}</Text>
             }
               <Caption>{dateTimeString}</Caption>
             </View>

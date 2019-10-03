@@ -23,10 +23,10 @@ function HomeScreen(props){
 
   const handleRoomPress = (room) => {
     Logger.log("HomeScreen.handleRoomPress", room);
-    if(room.type==="chat"){
-      props.navigation.navigate("Chat", { room });
-    }else if(room.type==="group-chat"){
+    if(room.type==="group-chat"){
       props.navigation.navigate("GroupChat", { room });
+    }else{
+      props.navigation.navigate("Chat", { room });
     }
   }
 
