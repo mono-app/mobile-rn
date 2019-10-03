@@ -103,9 +103,18 @@ class VerifyPhoneScreen extends React.PureComponent{
         
       }
       const db = firebase.firestore();
-      db.collection("users").doc(email).update({
-        phoneNumber: { value: this.state.phoneNumber, isVerified: true }
-      }).then(() => this.setState({ showDialog: true }))
+      const userDocumentRef = db.collection("users").doc(email)
+      const userSnapshot = await userDocumentRef.get()
+      if(userSnapshot.exists){
+        userDocumentRef.update({
+          phoneNumber: { value: this.state.phoneNumber, isVerified: true }
+        }).then(() => this.setState({ showDialog: true }))
+      }else{
+        userDocumentRef.set({
+          phoneNumber: { value: this.state.phoneNumber, isVerified: true },
+          isCompleteSetup: false
+        }).then(() => this.setState({ showDialog: true }))
+      }
     }else{
       this.setState({showSnackbarFailVerification:true})
     }

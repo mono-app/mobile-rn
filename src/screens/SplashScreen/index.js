@@ -45,7 +45,6 @@ function SplashScreen(props){
   React.useEffect(() => {
 
     if(props.isLoggedIn) {
-
       if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
 
         let routeNameForReset = "MainTabNavigator";

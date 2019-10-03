@@ -28,6 +28,7 @@ function SignInScreen(props){
     if(email && password){
       setIsLoading(true);
       const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+      console.log(user)
       await UserMappingAPI.setAccessToken(email)
       props.setCurrentUserEmail(user.email);
     }
