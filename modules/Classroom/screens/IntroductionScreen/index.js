@@ -16,8 +16,8 @@ export default class IntroductionScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex:1, backgroundColor: "#E8EEE8", padding:32 }}>
-        <Header navigation={this.props.navigation} title="Classroom" />
+      <View style={{ flex:1, backgroundColor: "#E8EEE8" }}>
+        <Header navigation={this.props.navigation} title="Classroom" style={{backgroundColor:"white"}} />
         <View style={{}}>
           <Subheading style={{fontWeight: "700"}}>Introduction about Classroom</Subheading>
           

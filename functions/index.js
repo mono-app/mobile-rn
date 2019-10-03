@@ -98,13 +98,19 @@ app.post('/synccontact', async (req,res)=>{
   });
   const phones = users.map((obj)=> obj.phone);
   phoneNumbers.forEach( async(item) => {
-    let result = item
+    let result = item.toString()
     //result = validatePhoneNumber(result, countryCode, numCode)
+    if(result.length<=2){
+      return
+    }
     const phoneNumber1 = libphonenumber.parsePhoneNumberFromString(result, countryCode)
-    if(phoneNumber1.isPossible()){
+    if(phoneNumber1 && phoneNumber1.isPossible()){
       // check if there is `+` 
       if(result.substring(0,1)==="+"){
         result = result.substr(1);
+      }
+      if(!result.toLowerCase().match(/^[0-9]+$/)){
+        return 
       }
       // change 0 to numCode 
       if(result.substring(0,1)==="0"){
@@ -117,6 +123,7 @@ app.post('/synccontact', async (req,res)=>{
       }
   
       const phoneNumber2 = libphonenumber.parsePhoneNumberFromString("+"+result, countryCode)
+      
       if(phoneNumber2.isValid()){
         const index = phones.indexOf(result)
         if(index>0){
@@ -159,6 +166,7 @@ exports.app = functions.https.onRequest(app);
 exports.schedullerBirthdayReminder = BirthdayReminder.schedule;
 
 exports.addFriendTrigger = functions.region("asia-east2").firestore.document("/friendList/{friendListId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
+  // this trigger for auto increment totalFriends in friends collection
   const messageDocument = documentSnapshot.data();
   const { friendListId, peopleId } = context.params;
   
@@ -177,6 +185,96 @@ exports.addFriendTrigger = functions.region("asia-east2").firestore.document("/f
   return Promise.resolve(true);
 })
 
+exports.addStudentClassTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/students/{studentId}").onCreate(async (documentSnapshot, context) => {
+  // this trigger for auto add room audiences rooms collection
+  const { schoolId, classId, studentId } = context.params;
+  
+  const db = admin.firestore();
+  const roomsRef = db.collection("rooms");
+  const querySnapshot = await roomsRef.where("school.id", "==", schoolId).where("school.classId", "==", classId).get();
+  if(!querySnapshot.empty){
+    const queryDocumentSnapshot = querySnapshot.docs[0]
+    const audiences = queryDocumentSnapshot.data().audiences
+    const audiencesQuery = queryDocumentSnapshot.data().audiencesQuery
+
+    audiences.push(studentId)
+    audiencesQuery[studentId] = true
+    queryDocumentSnapshot.ref.update({audiences,audiencesQuery})
+  }
+  
+  return Promise.resolve(true);
+})
+
+exports.deletedStudentClassTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/students/{studentId}").onDelete(async (documentSnapshot, context) => {
+  // this trigger for auto add room audiences rooms collection
+  const { schoolId, classId, studentId } = context.params;
+  
+  const db = admin.firestore();
+  const roomsRef = db.collection("rooms");
+  const querySnapshot = await roomsRef.where("school.id", "==", schoolId).where("school.classId", "==", classId).get();
+  if(!querySnapshot.empty){
+    const queryDocumentSnapshot = querySnapshot.docs[0]
+    const audiences = queryDocumentSnapshot.data().audiences
+    const audiencesQuery = queryDocumentSnapshot.data().audiencesQuery
+
+    //remove
+    const indexToRemove = audiences.indexOf(studentId);
+    if (indexToRemove > -1) {
+      audiences.splice(indexToRemove, 1);
+    }
+
+    delete audiencesQuery[studentId]
+    queryDocumentSnapshot.ref.update({audiences,audiencesQuery})
+  }
+  
+  return Promise.resolve(true);
+})
+
+exports.addTeacherClassTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/teachers/{teacherId}").onCreate(async (documentSnapshot, context) => {
+  // this trigger for auto add room audiences rooms collection
+  const { schoolId, classId, teacherId } = context.params;
+  
+  const db = admin.firestore();
+  const roomsRef = db.collection("rooms");
+  const querySnapshot = await roomsRef.where("school.id", "==", schoolId).where("school.classId", "==", classId).get();
+  if(!querySnapshot.empty){
+    const queryDocumentSnapshot = querySnapshot.docs[0]
+    const audiences = queryDocumentSnapshot.data().audiences
+    const audiencesQuery = queryDocumentSnapshot.data().audiencesQuery
+
+    audiences.push(teacherId)
+    audiencesQuery[teacherId] = true
+    queryDocumentSnapshot.ref.update({audiences,audiencesQuery})
+  }
+  
+  return Promise.resolve(true);
+})
+
+exports.deletedTeacherClassTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/teachers/{teacherId}").onDelete(async (documentSnapshot, context) => {
+  // this trigger for auto add room audiences rooms collection
+  const { schoolId, classId, teacherId } = context.params;
+  
+  const db = admin.firestore();
+  const roomsRef = db.collection("rooms");
+  const querySnapshot = await roomsRef.where("school.id", "==", schoolId).where("school.classId", "==", classId).get();
+  if(!querySnapshot.empty){
+    const queryDocumentSnapshot = querySnapshot.docs[0]
+    const audiences = queryDocumentSnapshot.data().audiences
+    const audiencesQuery = queryDocumentSnapshot.data().audiencesQuery
+
+    //remove
+    const indexToRemove = audiences.indexOf(teacherId);
+    if (indexToRemove > -1) {
+      audiences.splice(indexToRemove, 1);
+    }
+
+    delete audiencesQuery[teacherId]
+    queryDocumentSnapshot.ref.update({audiences,audiencesQuery})
+  }
+  
+  return Promise.resolve(true);
+})
+
 
 exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {
   const messageDocument = documentSnapshot.data();
@@ -188,6 +286,7 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
   const roomRef = db.collection("rooms").doc(roomId);
   const roomSnapshot = await roomRef.get();
   const roomDocument = roomSnapshot.data();
+  const roomType = roomDocument.type
   const audiences =  roomDocument.audiences.filter( (audience)=>{
     return audience !== senderEmail
   })
@@ -200,8 +299,8 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
   const audiencesSnapshot = await Promise.all(promises);
   const audiencesData = audiencesSnapshot.map(audienceSnapshot => {
     const audienceData = audienceSnapshot.data();
-    if(audienceData.tokenInformation){
-      if(audienceData.tokenInformation.messagingToken) return audienceData;
+    if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken){
+      return audienceData;
     }
   });
 
@@ -209,12 +308,14 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
 
   // send notification to all audiences except sender
   const messagePromises = audiencesData.map(audienceData => {
-    if(!tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
-      const message = {
+    if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken && 
+      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
+      let message = {}
+      message = {
         token: audienceData.tokenInformation.messagingToken,
         android: { notification: {channelId: "message-notification"} },
         data: {
-          type: "new-chat",
+          type: "new-groupchat",
           roomId: roomId,
           messageId: messageId
         },

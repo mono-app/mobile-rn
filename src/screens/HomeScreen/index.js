@@ -47,8 +47,6 @@ function HomeScreen(props){
             userId: props.currentUser.email,
             phonenumbers: phoneNumbers,
           })
-          console.log(headers)
-          console.log(body)
           fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/app/synccontact", {
             method: 'POST',
             headers: headers,

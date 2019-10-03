@@ -31,6 +31,7 @@ function AppListScreen(props){
       data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom", params: {introduction: true} })
     }
     data.push({ title: "News", icon: <MaterialCommunityIcons name="newspaper" size={24}/>, navigateTo: "News" })
+    data.push({ title: "People Nearby", icon: <MaterialCommunityIcons name="newspaper" size={24}/>, navigateTo: "PeopleNearby" })
     if(_isMounted.current)
       setData(data);
   }

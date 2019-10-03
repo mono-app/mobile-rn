@@ -67,7 +67,7 @@ function SettingsScreen(props){
             data={[
               {title: "Show my QR Code", icon: <FontAwesome name="qrcode" size={24}/>, navigateTo: "MyQR"},
               {title: "Account", icon: <MaterialIcons name="vpn-key" size={24}/>, navigateTo: "Account"},
-              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "Chats"},
+              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "PeopleNearby"},
               {title: "Privacy", icon: <MaterialIcons name="lock" size={24}/>, navigateTo: "Privacy"},
               {title: "Help", icon: <FontAwesome name="question-circle" size={24}/>, navigateTo: "Help"}
             ]}
