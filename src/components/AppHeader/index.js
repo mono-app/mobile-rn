@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { StyleSheet } from "react-native";
 
-import { Appbar } from "react-native-paper";
+import { View } from "react-native";
+import { Appbar, Subheading, Caption } from "react-native-paper";
 
 function AppHeader(props){
   const styles = StyleSheet.create({ default: {} })
@@ -12,7 +13,10 @@ function AppHeader(props){
       {props.navigation?(
         <Appbar.BackAction onPress={handleBackPress}/>
       ): null}
-      <Appbar.Content title={props.title} subtitle={props.subtitle}/>
+      <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
+        <Subheading>{props.title}</Subheading>
+        <Caption>{props.caption}</Caption>
+      </View>
     </Appbar.Header>
   )
 }

@@ -19,9 +19,10 @@ export default class RoomsAPI{
   static getRoomsWithRealtimeUpdate(email, callback){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
-    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email);
+    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email)
+                       .where("type", "==", "chat");
     
-    return roomsRef.orderBy("lastMessage.sentTime", "asc").onSnapshot((querySnapshot) => {
+    return roomsRef.orderBy("lastMessage.sentTime", "desc").onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => {
         const normalizedRoom = RoomsAPI.normalizeRoom(documentSnapshot);
         return normalizedRoom;
@@ -42,22 +43,6 @@ export default class RoomsAPI{
   static normalizeRoom(documentSnapshot){
     return { id: documentSnapshot.id, ...documentSnapshot.data() }
   }
-
-  // static async getUnreadCount(roomId){
-  //   const db = firebase.firestore();
-  //   const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-  //   const roomsCollection = new RoomsCollection();
-  //   const roomDocument = new Document(roomId);
-  //   const messagesCollection = new MessagesCollection();
-  //   const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
-  //   const messageRef = roomRef.collection(messagesCollection.getName());
-  //   const querySnapshot = await messageRef.where("read.isRead", "==", false).get();
-  //   const unreadCount = querySnapshot.docs.filter(documentSnapshot => {
-  //     if(documentSnapshot.data().senderEmail !== currentUserEmail) return true;
-  //     else return false;
-  //   }).length;
-  //   return Promise.resolve(unreadCount);
-  // }
 
   /**
    * 
@@ -135,7 +120,7 @@ export class PersonalRoomsAPI extends RoomsAPI{
    * 
    * @param {array} audiences
    */
-  static async createRoomIfNotExists(firstPeopleEmail, secondPeopleEmail){
+  static async createRoomIfNotExists(firstPeopleEmail, secondPeopleEmail, type="chat"){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
 

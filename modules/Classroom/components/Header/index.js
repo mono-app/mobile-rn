@@ -1,29 +1,25 @@
 import React from "react";
-import { Appbar } from "react-native-paper";
-import { StackActions } from "react-navigation";
 import Navigator from "src/api/navigator";
+import { StackActions } from "react-navigation";
+import { StyleSheet, View } from "react-native";
 
-const INITIAL_STATE = { isMenuVisible: false }
+import { Appbar, Subheading, Caption } from "react-native-paper";
 
-export default class Header extends React.PureComponent{
- 
+function Header(props){ 
+  const styles = StyleSheet.create({ default: { backgroundColor: "white"} })
   handleBackPress = () => {
     const navigator = new Navigator(this.props.navigation);
     navigator.resetTo("Home", StackActions, {key: "AppTab"});
   }
-  
-  constructor(props){
-    super(props);
-    this.state = INITIAL_STATE;
-    this.handleBackPress = this.handleBackPress.bind(this);
-  }
 
-  render(){
-    return(
-      <Appbar.Header style={{...this.props.style, backgroundColor: "white"}}>
-          <Appbar.BackAction onPress={this.handleBackPress}/>
-        <Appbar.Content title={this.props.title} subtitle={this.props.subtitle}/>
-      </Appbar.Header>
-    )
-  }
+  return(
+    <Appbar.Header style={[ styles.default, props.styles ]}>
+      <Appbar.BackAction onPress={this.handleBackPress}/>
+      <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
+        <Subheading>{props.title}</Subheading>
+        <Caption>{props.subtitle}</Caption>
+      </View>
+    </Appbar.Header>
+  )
 }
+export default Header;
