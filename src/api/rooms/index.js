@@ -20,14 +20,20 @@ export default class RoomsAPI{
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
     const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email)
-                       .where("type", "==", "chat");
+                       
     
-    return roomsRef.orderBy("lastMessage.sentTime", "desc").onSnapshot((querySnapshot) => {
+    return roomsRef.onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => {
         const normalizedRoom = RoomsAPI.normalizeRoom(documentSnapshot);
         return normalizedRoom;
       })
-      callback(rooms);
+      const filteredRooms = rooms.filter((item)=>{
+        return item.type !=="bot"
+      })
+
+      filteredRooms.sort((a, b) => ((a.lastMessage && b.lastMessage)&&a.lastMessage.sentTime < b.lastMessage.sentTime) ? 1 : -1)
+
+      callback(filteredRooms);
     })
   }
 

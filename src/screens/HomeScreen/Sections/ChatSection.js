@@ -21,7 +21,11 @@ function ChatSection(props){
 
   const handleRoomPress = (room) => {
     Logger.log("HomeScreen.handleRoomPress", room);
-    props.navigation.navigate("Chat", { room });
+    if(room.type==="group-chat"){
+      props.navigation.navigate("GroupChat", { room });
+    }else{
+      props.navigation.navigate("Chat", { room });
+    }
   }
   
   return (
@@ -30,9 +34,9 @@ function ChatSection(props){
       renderItem={({ item, index }) => {
         const marginTop = (index === 0)? 8: 4;
         const marginBottom = (index === rooms.length)? 8: 4;
-        if(item.type === "chat"){
-          if(item.audiences.length === 2) return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
-        }
+        
+        return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
+        
       }}/>
   )
 }
