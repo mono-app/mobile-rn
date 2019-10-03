@@ -4,7 +4,7 @@ import Logger from "src/api/logger";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
-import ChatBubble from "src/screens/ChatScreen/ChatBubble";
+import ChatBubble from "src/components/ChatBubble";
 import { FlatList } from "react-native";
 
 function ChatList(props){
