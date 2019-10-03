@@ -26,7 +26,11 @@ function PeopleListItem(props){
         setStatus(status.content);
 
     }
-    fetchStatus();
+    if(props.distance===undefined){
+      fetchStatus();
+    }else{
+      setStatus("jarak < "+props.distance+" meters");
+    }
   }, [])
 
   Logger.log("PeopleListItem", people);

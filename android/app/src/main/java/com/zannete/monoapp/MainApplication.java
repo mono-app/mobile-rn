@@ -21,6 +21,7 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 
 import com.facebook.react.ReactApplication;
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.oney.WebRTCModule.WebRTCModulePackage;
 import com.facebook.react.ReactNativeHost;
@@ -51,6 +52,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFusedLocationPackage(),
             new PickerPackage(),
           new WebRTCModulePackage(),
           new ImageResizerPackage(),

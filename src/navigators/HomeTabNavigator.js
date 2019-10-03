@@ -7,6 +7,7 @@ import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import PeopleSearchResult from "src/screens/PeopleSearchResult";
 import FriendRequestListScreen from "src/screens/FriendRequestListScreen";
 import ChatScreen from "src/screens/ChatScreen";
+import GroupChatScreen from "src/screens/GroupChatScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
@@ -20,6 +21,7 @@ export default HomeTabNavigator = createStackNavigator({
   PeopleInformation: { screen: PeopleInformationScreen },
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
+  GroupChat: { screen: GroupChatScreen },
   MyQR: { screen: MyQRScreen },
   ...DiscussionClassroomNotifNavigatorObj,
   ...MomentNavigatorObj

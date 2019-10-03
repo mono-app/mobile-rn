@@ -46,7 +46,15 @@ class NotificationListener extends React.PureComponent {
            room
          }
          this.props.navigation.navigate("Chat", payload);
-       }else if(data.type=="friend-request"){
+       }else if(data.type=="new-groupchat"){
+        const roomId = data.roomId
+        const room = await RoomsAPI.getDetail(roomId)
+        payload = {
+          room
+        }
+        this.props.navigation.navigate("GroupChat", payload);
+       }
+       else if(data.type=="friend-request"){
           const userId = data.friendRequestFromUserId
           const payload = {
             peopleEmail: userId

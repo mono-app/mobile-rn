@@ -9,12 +9,14 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import UnreadCountBadge from "./UnreadCountBadge";
 import { Text, Caption } from "react-native-paper";
 import { View, TouchableOpacity } from 'react-native';
+import ClassAPI from "modules/Classroom/api/class";
 
 function PrivateRoom(props){
   const { currentUser, room } = props; 
 
   const [ isLoading, setIsLoading ] = React.useState(true);
   const [ people, setPeople ] = React.useState(null);
+  const [ class_, setClass ] = React.useState(null);
 
   const styles = StyleSheet.create({
     chatContainer: {
@@ -28,10 +30,16 @@ function PrivateRoom(props){
   React.useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      const { audiences } = props.room;
+      const { audiences, type, school } = props.room;
       const realAudience = audiences.filter((audience) => audience !== currentUser.email)[0];
-      const peopleData = await PeopleAPI.getDetail(realAudience);
-      setPeople(peopleData);
+      console.log(type)
+      if(type==="group-chat"){
+        const classData = await ClassAPI.getDetail(school.id,school.classId)
+        setClass(classData)
+      }else{
+        const peopleData = await PeopleAPI.getDetail(realAudience);
+        setPeople(peopleData);
+      } 
       setIsLoading(false);
     }
     fetchData();
@@ -45,26 +53,39 @@ function PrivateRoom(props){
     else dateTimeString = sentTime.format("DD MMMM YYYY");
   }
 
-  if(people && people.applicationInformation && !isLoading){
-    return(
-      <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
-        <View style={{ marginRight: 16 }}>
-          <CircleAvatar size={50} uri={people.profilePicture}/>
-        </View>
-        <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>
-          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-            <Text>{people.applicationInformation.nickName}</Text>
-            <Caption>{dateTimeString}</Caption>
+  if(!isLoading){
+    try{
+      return(
+        <TouchableOpacity style={styles.chatContainer} onPress={handleRoomPress}>
+          <View style={{ marginRight: 16 }}>
+            {(props.room.type==="group-chat")? 
+              <CircleAvatar size={50} uri="https://picsum.photos/200/200/?random"/>
+            : 
+              <CircleAvatar size={50} uri={people.profilePicture}/>
+            }
           </View>
-          <View style={{ display: "flex", flexDirection: "row" }}>
-            <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={1}>
-              {room.lastMessage.message}
-            </Caption>
-            <UnreadCountBadge roomId={room.id}/>
+          <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>
+            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+            {(props.room.type==="group-chat")? 
+              <Text>{class_.room} | Semester {class_.semester} | {class_.subject}</Text>
+              :
+              <Text>{people.applicationInformation.nickName}</Text>
+            }
+              <Caption>{dateTimeString}</Caption>
+            </View>
+            <View style={{ display: "flex", flexDirection: "row" }}>
+              <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={1}>
+                {room.lastMessage.message}
+              </Caption>
+              <UnreadCountBadge roomId={room.id}/>
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
-    )
+        </TouchableOpacity>
+      )
+    }catch{
+      return null
+    }
+    
   }else{
     return null
   }

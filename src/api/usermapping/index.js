@@ -10,7 +10,12 @@ export default class UserMappingAPI{
     const userMappingCollection = new UserMappingCollection()
     const userMappingRef = db.collection(userMappingCollection.getName()).doc(email)
     const accessToken = uuid()
-    await userMappingRef.update({accessToken})
+    const userMappingSnapshot = await userMappingRef.get()
+    if(userMappingSnapshot.exists){
+      await userMappingRef.update({accessToken})
+    }else{
+      await userMappingRef.set({accessToken})
+    }
     try {
       await AsyncStorage.setItem('accessToken', accessToken);
     } catch (error) {

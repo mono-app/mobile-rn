@@ -23,7 +23,11 @@ function HomeScreen(props){
 
   const handleRoomPress = (room) => {
     Logger.log("HomeScreen.handleRoomPress", room);
-    props.navigation.navigate("Chat", { room });
+    if(room.type==="group-chat"){
+      props.navigation.navigate("GroupChat", { room });
+    }else{
+      props.navigation.navigate("Chat", { room });
+    }
   }
 
   const autoAddContact = async () => {
@@ -51,8 +55,6 @@ function HomeScreen(props){
             userId: props.currentUser.email,
             phonenumbers: phoneNumbers,
           })
-          console.log(headers)
-          console.log(body)
           fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/app/synccontact", {
             method: 'POST',
             headers: headers,
@@ -103,7 +105,7 @@ function HomeScreen(props){
     roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => setRooms(rooms));
     autoAddContact()
     return function cleanup(){
-      if(roomsListener.current) roomsListener.current();
+      if(roomsListener.current) roomsListener.current()
     }
   }, [])
 
@@ -117,9 +119,7 @@ function HomeScreen(props){
         data={rooms}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => {
-          if(item.type === "chat"){
-            if(item.audiences.length === 2) return <PrivateRoom room={item} onPress={handleRoomPress}/>
-          }
+          return <PrivateRoom room={item} onPress={handleRoomPress}/>
         }}/>
     </View>
   );
