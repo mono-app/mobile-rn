@@ -193,6 +193,7 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
   const roomRef = db.collection("rooms").doc(roomId);
   const roomSnapshot = await roomRef.get();
   const roomDocument = roomSnapshot.data();
+  const roomType = roomDocument.type
   const audiences =  roomDocument.audiences.filter( (audience)=>{
     return audience !== senderEmail
   })
@@ -205,8 +206,8 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
   const audiencesSnapshot = await Promise.all(promises);
   const audiencesData = audiencesSnapshot.map(audienceSnapshot => {
     const audienceData = audienceSnapshot.data();
-    if(audienceData.tokenInformation){
-      if(audienceData.tokenInformation.messagingToken) return audienceData;
+    if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken){
+      return audienceData;
     }
   });
 
@@ -214,12 +215,14 @@ exports.sendNotificationForNewMessage = functions.region("asia-east2").firestore
 
   // send notification to all audiences except sender
   const messagePromises = audiencesData.map(audienceData => {
-    if(!tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
-      const message = {
+    if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken && 
+      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
+      let message = {}
+      message = {
         token: audienceData.tokenInformation.messagingToken,
         android: { notification: {channelId: "message-notification"} },
         data: {
-          type: "new-chat",
+          type: "new-groupchat",
           roomId: roomId,
           messageId: messageId
         },

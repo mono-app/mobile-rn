@@ -4,6 +4,8 @@ import CurrentUserAPI from "src/api/people/CurrentUser";
 import { RoomsCollection, RoomUserMappingCollection, MessagesCollection, Collection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { GetDocument } from "src/api/database/query";
+import StudentAPI from "modules/Classroom/api/student";
+import TeacherAPI from "modules/Classroom/api/teacher";
 
 export default class RoomsAPI{
   constructor(){
@@ -88,9 +90,29 @@ export default class RoomsAPI{
 
     const querySnapshot = await roomsRef.where("school.id", "==", schoolId).where("school.classId", "==", classId).get();
     if(querySnapshot.empty){
+      const audiences = []
+      const audiencesPayload = {}
+      const students = await StudentAPI.getClassStudent(schoolId, classId)
+      const teachers = await TeacherAPI.getClassTeachers(schoolId, classId)
+      students.forEach(element => {
+        if(!audiences.includes(element.id))
+        {  
+          audiences.push(element.id)
+          audiencesPayload[element.id] = true;
+        }
+      })
+      teachers.forEach(element => {
+        if(!audiences.includes(element.id))
+        {
+          audiences.push(element.id)
+          audiencesPayload[element.id] = true;
+        }
+      })
+     
       const school = {id: schoolId, classId: classId};
       const payload = { 
-        audiences: [],
+        audiences,
+        audiencesQuery: audiencesPayload,
         school, type: "group-chat",
         lastMessage: {message: "", sentTime: null},
         creationTime: firebase.firestore.FieldValue.serverTimestamp() 
