@@ -127,7 +127,7 @@ class VerifyPhoneScreen extends React.PureComponent{
 
   handleScreenDidFocus = () => {
     this.authListener = firebase.auth().onAuthStateChanged(user => {
-      if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
+      if(this.props.currentUser.phoneNumber !== undefined && this.props.currentUser.isCompleteSetup !== undefined){
 
         const db = firebase.firestore();
         if(user && !this.props.currentUser.isCompleteSetup){
