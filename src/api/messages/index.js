@@ -1,5 +1,6 @@
 import firebase from "react-native-firebase";
 import moment from "moment";
+import Logger from "src/api/logger";
 
 import { RoomsCollection, MessagesCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
@@ -31,12 +32,15 @@ export default class MessagesAPI{
     const clonnedMessages = [];
     let currentDate = null;
     messages.forEach((message) => {
-      if(currentDate === null) currentDate = new moment.unix(message.sentTime.seconds).format("DD MMMM YYYY");
-      if(currentDate !== moment.unix(message.sentTime.seconds).format("DD MMMM YYYY")) {
+      if(message.type === "date-separator") return;
+      const messageSentTime = (message.sentTime === null)? new moment().format("DD MMMM YYYY"): new moment.unix(message.sentTime.seconds).format("DD MMMM YYYY");
+      
+      if(currentDate === null) currentDate = messageSentTime;
+      if(currentDate !== messageSentTime) {
         clonnedMessages.push({ type: "date-separator", details: {value: currentDate} });
       }
       clonnedMessages.push(message);
-      currentDate = moment.unix(message.sentTime.seconds).format("DD MMMM YYYY");
+      currentDate = messageSentTime;
     });
     clonnedMessages.push({ type: "date-separator", details: {value: currentDate} });
     return clonnedMessages

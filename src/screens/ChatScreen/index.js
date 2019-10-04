@@ -32,10 +32,9 @@ function ChatScreen(props){
         Logger.log("ChatScreen.handleChatListReachTop#combineMessages", combinedMessages);
         Logger.log("ChatScreen.handleChatListReachTop#newData", newData);
         if(_isMounted.current){
-          setMessages(combinedMessages);
+          setMessages(MessagesAPI.appendDateSeparator(combinedMessages));
           setLastMessageSnapshot(newData.lastDocumentSnapshot);
         }
-        
       }catch(err){
         Logger.log("ChatScreen.handleChatListReachTop#err", err);
       }finally{ 
@@ -79,7 +78,7 @@ function ChatScreen(props){
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
       Logger.log("ChatScreen.initMessages", messages);
       if( _isMounted.current){
-        setMessages(messages);
+        setMessages(MessagesAPI.appendDateSeparator(messages));
         setLastMessageSnapshot(snapshot);
         setUserRegistered(true);
       }
