@@ -9,6 +9,7 @@ const serviceAccount = require("./serviceAccountKey.json");
 
 const BirthdayReminder = require("./listeners/birthdayReminder");
 const Messages = require("./listeners/messages");
+const Friends = require("./listeners/friends");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -167,6 +168,7 @@ app.post('/synccontact', async (req,res)=>{
 exports.app = functions.https.onRequest(app);
 exports.schedulerBirthdayReminder = BirthdayReminder.schedule;
 exports.triggerNewMessage = Messages.triggerNewMessage;
+exports.triggerNewFriendRequest = Friends.triggerNewFriendRequest;
 
 exports.addFriendTrigger = functions.region("asia-east2").firestore.document("/friendList/{friendListId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
   // this trigger for auto increment totalFriends in friends collection

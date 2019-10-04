@@ -20,6 +20,7 @@ function ChatList(props){
   })
 
   const handleSetupBirthdayPress = () => {}
+  const handleFriendRequestPress = () => {}
   const handleListContentSizeChange = (contentWidth, contentHeight) => {
     Logger.log("ChatList.handleListContentSizeChange#contentHeight", contentHeight);
     setListHeight(contentHeight);
@@ -65,6 +66,8 @@ function ChatList(props){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentPress(item)} message={item}/>
         }else if(item.type === "setup-birthday"){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item}/>
+        }else if(item.type === "friend-request"){
+          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item}/>
         }else if(item.type === "date-separator"){
           return (
             <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
