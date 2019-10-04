@@ -1,18 +1,21 @@
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 import Logger from "src/api/logger";
+import { withTheme } from "react-native-paper";
 
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, withTheme, Caption } from "react-native-paper";
+import { Text, Caption, IconButton } from "react-native-paper";
 
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 function ChatBubble(props){
-  const { content, sentTime, isSent, readBy } = props.message;
+  const { theme, clickable, bubbleStyle } = props;
+  const { content, sentTime, isSent } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
 
   const myBubble = StyleSheet.create({
-    container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row-reverse" },
+    container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row-reverse", alignItems: "center" },
     section: {
       maxWidth: "90%", backgroundColor: props.theme.colors.primary, paddingHorizontal: 16, paddingVertical: 8,
       borderRadius: 16, borderBottomEndRadius: 0, display: "flex", flexDirection: "row"
@@ -27,7 +30,7 @@ function ChatBubble(props){
   })
 
   const peopleBubble = StyleSheet.create({
-    container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row" },
+    container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row", alignItems: "center" },
     section: {
       maxWidth: "90%", backgroundColor: "white", paddingHorizontal: 16, paddingVertical: 8,
       borderRadius: 16, borderBottomStartRadius: 0, display: "flex", flexDirection: "row",
@@ -44,30 +47,36 @@ function ChatBubble(props){
 
   const styles = props.bubbleStyle === "myBubble"? myBubble: peopleBubble;
 
+  const handlePress = (message) => props.onPress(message);
+
   React.useEffect(() => {
     Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
     if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
   }, [isSent, sentTime])
 
   return (
-    <TouchableOpacity onPress={props.onPress} disabled={(!props.clickable)? true: false} >
-      <View style={[ styles.container, props.style ]}>
-        <View style={ styles.section}>
-          <Text style={styles.contentColor}>
-            {content}
-            <Text style={styles.empty}>±±±±±±±±±±</Text>     
-          </Text>
-          
-          <View style={styles.metadata}>
-            <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
-            {props.bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
-          </View>
+    <View style={[ styles.container, props.style ]}>
+      <TouchableOpacity style={styles.section} onPress={handlePress} disabled={!clickable}>
+        <Text style={styles.contentColor}>
+          {content}
+          <Text style={styles.empty}>±±±±±±±±±±</Text>     
+        </Text>
+        <View style={styles.metadata}>
+          <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+          {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      {clickable && bubbleStyle !== "myBubble"?(
+        <IconButton icon="share" color={theme.colors.placeholder} onPress={handlePress}/>
+      ): null}
+    </View>
   )
 }
 
 ChatBubble.defaultProps = { bubbleStyle: "myBubble" }
-
+ChatBubble.propTypes = { 
+  onPress: PropTypes.func, clickable: PropTypes.bool,
+  bubbleStyle: PropTypes.string.isRequired
+}
+ChatBubble.defaultProps = { onPress: () => {}, clickable: false }
 export default withTheme(ChatBubble);

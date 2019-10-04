@@ -1,12 +1,11 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
+import VerifyPhoneAPI from "src/api/verifyphone";
+import AppNavigator from "src/navigators/AppNavigator";
 import { AppState } from "react-native";
 import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
-
-import VerifyPhoneAPI from "src/api/verifyphone"
-import AppNavigator from "src/navigators/AppNavigator";
 
 console.disableYellowBox = true;
 

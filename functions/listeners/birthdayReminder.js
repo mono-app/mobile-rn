@@ -6,7 +6,7 @@ const User = require("../lib/user");
 function BirthdayReminder(){}
 
 BirthdayReminder.BOT_NAME = "BirthdayReminder";
-BirthdayReminder.schedule = functions.pubsub.schedule("every day 09:00").timeZone("Asia/Jakarta").onRun((context) => {
+BirthdayReminder.schedule = functions.pubsub.schedule("every day 09:00").timeZone("Asia/Jakarta").onRun(async (context) => {
   await BirthdayReminder.normalizeDatabase();
   await BirthdayReminder.execute();
   return true;
