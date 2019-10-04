@@ -3,7 +3,7 @@ import Contacts from 'react-native-contacts';
 import Permissions from "react-native-permissions";
 import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
-
+import { withCurrentUser } from "src/api/people/CurrentUser";
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
 import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';
@@ -44,11 +44,11 @@ function HomeScreen(props){
             userId: props.currentUser.email,
             phonenumbers: phoneNumbers,
           })
-          fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/app/synccontact", {
+
+          fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/contactService/synccontact", {
             method: 'POST', headers: headers, body: body
           }).then(res => {
-            console.log("auto sync contact:")
-            console.log(res)
+          
           })
           
         }
@@ -104,4 +104,4 @@ function HomeScreen(props){
 }
 
 HomeScreen.navigationOptions = { header: null };
-export default HomeScreen;
+export default withCurrentUser(HomeScreen);

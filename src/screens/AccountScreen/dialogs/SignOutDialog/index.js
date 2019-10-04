@@ -1,7 +1,7 @@
 import React from "react";
 import { withNavigation, StackActions, NavigationActions} from "react-navigation";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
+import PeopleAPI from "src/api/people"
 import { Dialog, Portal, Paragraph, Button } from "react-native-paper";
 import firebase from "react-native-firebase";
 

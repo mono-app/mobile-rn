@@ -6,7 +6,8 @@ import { StyleSheet } from "react-native";
 import UserMappingAPI from "src/api/usermapping"
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
-import { AsyncStorage, Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
+import PeopleAPI from "src/api/people"
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -27,14 +28,29 @@ function SignInScreen(props){
   const handleLoginpress = async () => {
     if(email && password){
       setIsLoading(true);
-      const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
-      console.log(user)
-      await UserMappingAPI.setAccessToken(email)
-      props.setCurrentUserEmail(user.email);
+      try{
+        const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+        props.setCurrentUserEmail(user.email);
+      }catch{
+        console.log("wrong username/pass")
+      }finally{
+        setIsLoading(false);
+      }
     }
   }
 
   React.useEffect(() => {
+    const storeToken = async () => {
+      await UserMappingAPI.setAccessToken(email)
+      const firebaseUser = firebase.auth().currentUser;
+      if(firebaseUser !== null) {
+        const fcmToken = await firebase.messaging().getToken();
+        if (fcmToken) {
+            await PeopleAPI.storeMessagingToken(firebaseUser.email,fcmToken)
+        }
+      }
+    }
+
     if(props.isLoggedIn){
 
       if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
@@ -44,6 +60,7 @@ function SignInScreen(props){
           
           if(props.currentUser.isCompleteSetup){
             routeNameForReset = "MainTabNavigator"
+            storeToken()
           } else {
             routeNameForReset = "AccountSetup"
           }
