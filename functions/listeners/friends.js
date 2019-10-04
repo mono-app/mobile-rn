@@ -8,11 +8,21 @@ function Friends(){}
 
 Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.document("/friendRequest/{receiverEmail}/people/{requestorEmail}").onCreate(async (documentSnapshot, context) => {
   const { receiverEmail, requestorEmail } = context.params;
-  
+
+  // this trigger for auto increment totalFriends in friends collection
+  const db = admin.firestore();
+  const userFriendListRef = db.collection("friendList").doc(receiverEmail)
+  const userFriendListSnapshot = await userFriendListRef.get();
+
+  if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
+    await userFriendListRef.update({ totalFriends: admin.firestore.FieldValue.increment(1) })
+  }else{
+    await userFriendListRef.set({ totalFriends: 1 })
+  }
+
   // notify receiver that requestor is requesting to be a friend
   // search if FriendRequest bot has room with the receiver
   const BOT_NAME = "FriendRequest";
-  const db = admin.firestore();
   const botQuery = new admin.firestore.FieldPath("audiencesQuery", BOT_NAME);
   const receiverQuery = new admin.firestore.FieldPath("audiencesQuery", receiverEmail);
   const roomRef = await db.collection("rooms").where(botQuery, "==", true).where(receiverQuery, "==", true).get();
@@ -36,6 +46,58 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
       readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "friend-request"
     })
   }))
+})
+
+
+Friends.addFriendTrigger = functions.region("asia-east2").firestore.document("/friendList/{friendListId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
+  // this trigger for auto increment totalFriends in friends collection
+  const messageDocument = documentSnapshot.data();
+  const { friendListId, peopleId } = context.params;
+  
+  // get all audiences except sender
+  const db = admin.firestore();
+  const userFriendListRef = db.collection("friendList").doc(friendListId)
+   
+  const userFriendListSnapshot = await userFriendListRef.get();
+
+  if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
+    await userFriendListRef.update({ totalFriends: admin.firestore.FieldValue.increment(1) })
+  }else{
+    await userFriendListRef.set({ totalFriends: 1 })
+  }
+
+  return Promise.resolve(true);
+})
+
+
+Friends.sendNotificationForNewFriendRequest = functions.region("asia-east2").firestore.document("/friendRequest/{friendRequestId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
+  const { friendRequestId, peopleId  } = context.params;
+
+  const db = admin.firestore();
+
+  const friendRequestFromRef = db.collection("users").doc(peopleId);
+  const friendRequestFromSnapshot = await friendRequestFromRef.get();
+  const friendRequestFrom = Object.assign({id: friendRequestFromSnapshot.id}, friendRequestFromSnapshot.data())
+
+  const friendRequestToRef = db.collection("users").doc(friendRequestId);
+  const friendRequestToSnapshot = await friendRequestToRef.get();
+  const friendRequestTo = Object.assign({id: friendRequestToSnapshot.id}, friendRequestToSnapshot.data())
+
+  if(friendRequestTo && friendRequestTo.tokenInformation && friendRequestTo.tokenInformation.messagingToken){
+    const message = {
+      token: friendRequestTo.tokenInformation.messagingToken,
+      android: { 
+        notification: {channelId: "friendrequest-notification"}
+      },
+      data: {
+        type: "friend-request",
+        friendRequestFromUserId: peopleId,
+      },
+      notification: { title: friendRequestFrom.applicationInformation.nickName+ " ingin berteman denganmu" }
+    }
+    admin.messaging().send(message);
+  }
+
 })
 
 module.exports = Friends;

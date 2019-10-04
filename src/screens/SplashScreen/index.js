@@ -44,6 +44,19 @@ function SplashScreen(props){
   // withCurrentUser will fetch user data, and useEffect will be triggered if props.currentUser.isCompleteSetup change
   React.useEffect(() => {
 
+    const doLogout =async ()=> {
+      const result = await PeopleAPI.updateUserForLogout(props.currentUser.email)
+      if(result){
+        firebase.auth().signOut();
+        props.navigation.dispatch(StackActions.reset({
+          index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
+          key: null
+        }))
+      }else{
+        doLogout()
+      }
+    }
+
     if(props.isLoggedIn) {
       if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
 
@@ -59,11 +72,7 @@ function SplashScreen(props){
           const navigator = new NavigatorAPI(props.navigation);
           navigator.resetTo(routeNameForReset);  
         }else{
-          firebase.auth().signOut();
-          props.navigation.dispatch(StackActions.reset({
-            index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
-            key: null
-          }))
+          doLogout()
         }
       }
     }
