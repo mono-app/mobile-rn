@@ -2,7 +2,6 @@ import React from "react";
 import Logger from "src/api/logger";
 import MessagesAPI from "src/api/messages";
 import PeopleAPI from "src/api/people";
-import { withTheme } from "react-native-paper";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
@@ -13,7 +12,6 @@ import { KeyboardAvoidingView } from "react-native";
 function ChatScreen(props){
   const { currentUser } = props;
   const room = props.navigation.getParam("room", null);
-  const _isMounted = React.useRef(true);
   const [ messages, setMessages ] = React.useState([]);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
   const [ isUserRegistered, setUserRegistered ] = React.useState(false);
@@ -21,14 +19,14 @@ function ChatScreen(props){
   const [ isLoadingNewMessage, setIsLoadingNewMessage ] = React.useState(false);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
   const messagesListener = React.useRef(null);
+  const _isMounted = React.useRef(true);
 
   const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.email, message);
   const handleChatListReachTop = async () => {
     Logger.log("ChatScreen.handleChatListReactTop", `Getting new messages ${isLoadingNewMessage}`)
     if(!isLoadingNewMessage){
       try{
-        if(_isMounted.current)
-          setIsLoadingNewMessage(true);
+        if(_isMounted.current) setIsLoadingNewMessage(true);
         const newData = await MessagesAPI.getNext(lastMessageSnapshot, room.id);
         const combinedMessages = messages.concat(newData.messages);
         Logger.log("ChatScreen.handleChatListReachTop#combineMessages", combinedMessages);
@@ -41,8 +39,7 @@ function ChatScreen(props){
       }catch(err){
         Logger.log("ChatScreen.handleChatListReachTop#err", err);
       }finally{ 
-        if( _isMounted.current)
-          setIsLoadingNewMessage(false) 
+        if( _isMounted.current) setIsLoadingNewMessage(false) 
       }
     }
   }
@@ -115,4 +112,4 @@ function ChatScreen(props){
 }
 
 ChatScreen.navigationOptions = { header: null }
-export default withCurrentUser(withTheme(ChatScreen));
+export default withCurrentUser(ChatScreen);
