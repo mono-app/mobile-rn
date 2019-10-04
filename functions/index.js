@@ -403,7 +403,8 @@ exports.sendNotificationForNewDiscussion = functions.region("asia-east2").firest
   // send notification to all audiences except sender
   try{
     const messagePromises = audiencesData.map(audienceData => {
-      if(audienceData.tokenInformation && !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
+      if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken &&
+        !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
         const message = {
           token: audienceData.tokenInformation.messagingToken,
           android: { 
@@ -486,7 +487,8 @@ exports.sendNotificationForNewDiscussionComment = functions.region("asia-east2")
   // send notification to all audiences except sender
   try{
     const messagePromises = audiencesData.map(audienceData => {
-      if(audienceData.tokenInformation && !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
+      if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken &&
+        !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
         const message = {
           token: audienceData.tokenInformation.messagingToken,
           android: { 
@@ -527,7 +529,7 @@ exports.sendNotificationForNewFriendRequest = functions.region("asia-east2").fir
   const friendRequestToSnapshot = await friendRequestToRef.get();
   const friendRequestTo = Object.assign({id: friendRequestToSnapshot.id}, friendRequestToSnapshot.data())
 
-  if(friendRequestTo.tokenInformation){
+  if(friendRequestTo && friendRequestTo.tokenInformation && friendRequestTo.tokenInformation.messagingToken){
     const message = {
       token: friendRequestTo.tokenInformation.messagingToken,
       android: { 

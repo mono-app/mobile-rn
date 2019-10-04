@@ -6,12 +6,15 @@ import { Dialog, Portal, Paragraph, Button } from "react-native-paper";
 import firebase from "react-native-firebase";
 
 function SignOutDialog(props){
-  const handleSignOutPress = () => {
-    firebase.auth().signOut();
-    props.navigation.dispatch(StackActions.reset({
-      index: 0, actions: [ NavigationActions.navigate({ routeName: "Splash" }) ],
-      key: null
-    }))
+  const handleSignOutPress = async () => {
+    const result = await PeopleAPI.updateUserForLogout(props.currentUser.email)
+    if(result){
+      firebase.auth().signOut();
+      props.navigation.dispatch(StackActions.reset({
+        index: 0, actions: [ NavigationActions.navigate({ routeName: "Splash" }) ],
+        key: null
+      }))
+    }
   }
 
   return(
