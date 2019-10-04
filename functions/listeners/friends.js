@@ -33,7 +33,8 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
     await messageRef.set({
       content: `${requestor.applicationInformation.nickName} ingin berteman dengan kamu. Lihat sekarang!`,
       senderEmail: BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()),
-      readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "friend-request"
+      readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "friend-request",
+      details: {targetEmail: requestorRef.id}
     })
   }))
 })
