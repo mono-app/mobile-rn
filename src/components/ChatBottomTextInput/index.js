@@ -41,7 +41,7 @@ function ChatBottomTextInput(props){
     <SafeAreaView style={styles.container}>
       <MicButton style={{ marginRight: 8 }} onPress={handleMicPress}/> 
       <SpeakerButton style={{ marginRight: 8 }} onPress={handleSpeakerPress}/>
-      <TextInput style={styles.textInput} autoFocus value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
+      <TextInput style={styles.textInput} autoFocus multiline value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
       <RTCListener roomId={props.room.id} isPublisher={isPublisher} isSubscriber={isSubscriber}/>
     </SafeAreaView>
