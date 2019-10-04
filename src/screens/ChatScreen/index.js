@@ -106,7 +106,7 @@ function ChatScreen(props){
       <ChatHeader 
         navigation={props.navigation} title={headerTitle} subtitle={"Online"}  
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8", }}/>
-      <ChatList messages={messages} onReachTop={handleChatListReachTop} navigation={props.navigation} room={room}/>
+      <ChatList messages={messages} onReachTop={handleChatListReachTop} room={room}/>
       <ChatBottomTextInput room={room}
         editable={isUserRegistered}
         onSendPress={handleSendPress}/>

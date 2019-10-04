@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Logger from "src/api/logger";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import { withNavigation } from "react-navigation";
 
 import ChatBubble from "src/components/ChatBubble";
 import { FlatList } from "react-native";
@@ -61,4 +62,4 @@ function ChatList(props){
 
 ChatList.propTypes = { onReachTop: PropTypes.func };
 ChatList.defaultProps = { onReachTop: () => {} }
-export default withCurrentUser(ChatList);
+export default withNavigation(withCurrentUser(ChatList));
