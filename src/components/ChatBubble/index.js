@@ -10,7 +10,7 @@ import { Text, Caption, IconButton } from "react-native-paper";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 function ChatBubble(props){
-  const { theme, clickable, bubbleStyle } = props;
+  const { theme, clickable, bubbleStyle, message } = props;
   const { content, sentTime, isSent } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
 
@@ -47,7 +47,7 @@ function ChatBubble(props){
 
   const styles = props.bubbleStyle === "myBubble"? myBubble: peopleBubble;
 
-  const handlePress = (message) => props.onPress(message);
+  const handlePress = () => props.onPress(message);
 
   React.useEffect(() => {
     Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
@@ -76,7 +76,8 @@ function ChatBubble(props){
 ChatBubble.defaultProps = { bubbleStyle: "myBubble" }
 ChatBubble.propTypes = { 
   onPress: PropTypes.func, clickable: PropTypes.bool,
-  bubbleStyle: PropTypes.string.isRequired
+  bubbleStyle: PropTypes.string.isRequired,
+  message: PropTypes.shape().isRequired
 }
 ChatBubble.defaultProps = { onPress: () => {}, clickable: false }
 export default withTheme(ChatBubble);

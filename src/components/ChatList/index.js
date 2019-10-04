@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
 import DiscussionAPI from "modules/Classroom/api/discussion";
+import PeopleAPI from "src/api/people";
 import moment from "moment";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
@@ -12,14 +13,14 @@ import { FlatList, View } from "react-native";
 import { Chip } from "react-native-paper";
 
 function ChatList(props){
-  const { messages, currentUser } = props;
+  const { messages, currentUser, navigation } = props;
   const [ listHeight, setListHeight ] = React.useState(0);
-  
   const styles = StyleSheet.create({
     container: { flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }
   })
 
-  const handleSetupBirthdayPress = () => {}
+  const beforeBirthdaySave = (value) => moment(value, "DD/MM/YYYY").isValid();
+
   const handleFriendRequestPress = () => {}
   const handleListContentSizeChange = (contentWidth, contentHeight) => {
     Logger.log("ChatList.handleListContentSizeChange#contentHeight", contentHeight);
@@ -46,16 +47,33 @@ function ChatList(props){
   }
 
   const handleMomentPress = (item) => {
-    payload = { momentId: item.details.moment.id }
+    const payload = { momentId: item.details.moment.id }
     props.navigation.navigate("MomentComments", payload)
+  }
+
+  const handleSetupBirthdayPress = async (message) => {
+    Logger.log("ChatList.handleSetupBirthdayPress#message", message);
+
+    // if birthday has been setup, go to account screen
+    const targetUser = await PeopleAPI.getDetail(message.details.targetEmail);
+    if(targetUser.personalInformation.birthday === undefined){
+      const payload = {
+        databaseCollection: "users", databaseDocumentId: targetUser.email,
+        databaseFieldName: "personalInformation.birthday", beforeSave: beforeBirthdaySave,
+        caption: "Format tanggal lahir: 22/12/2007",
+        placeholder: "DD/MM/YYYY", fieldValue: "", fieldTitle: "Tanggal Lahir",
+      }
+      navigation.navigate("EditSingleField", payload);
+    }else{
+      navigation.navigate({ routeName: "Account", key: "SettingsTab" })
+    }
   }
 
   return (
     <FlatList 
-      style={[ styles.container, props.style ]} 
+      style={[ styles.container, props.style ]} keyExtractor={(item) => item.id}
       onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
-      keyExtractor={(item) => item.id}
-      data={messages} inverted={true}
+      data={messages} inverted
       renderItem={({ item }) => {
         const bubbleStyle = (currentUser.email !== item.senderEmail)? "peopleBubble": "myBubble";
         if(item.type === "text") {
@@ -79,6 +97,10 @@ function ChatList(props){
   )
 }
 
-ChatList.propTypes = { onReachTop: PropTypes.func, style: PropTypes.shape() };
+ChatList.propTypes = { 
+  onReachTop: PropTypes.func, 
+  style: PropTypes.shape(),
+  messages: PropTypes.arrayOf(PropTypes.shape()).isRequired
+};
 ChatList.defaultProps = { onReachTop: () => {}, style: {} }
 export default withNavigation(withCurrentUser(ChatList));

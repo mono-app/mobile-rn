@@ -9,6 +9,8 @@ function TextInput(props){
     }
   });
 
-  return <InputBox style={[ styles.textInput, props.style ]} {...props}/>
+  const remainingProps = Object.assign({}, props);
+  delete remainingProps.style;
+  return <InputBox style={[ styles.textInput, props.style ]} {...remainingProps}/>
 }
 export default TextInput;

@@ -11,6 +11,7 @@ import GroupChatScreen from "src/screens/GroupChatScreen";
 import NotificationBotScreen from "src/screens/NotificationBotScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
+import EditSingleFieldScreen from "src/screens/EditSingleFieldScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj";
 import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
 
@@ -26,6 +27,7 @@ export default HomeTabNavigator = createStackNavigator({
   NotificationBot: { screen: NotificationBotScreen },
   GroupChat: { screen: GroupChatScreen },
   MyQR: { screen: MyQRScreen },
+  EditSingleField: { screen: EditSingleFieldScreen },
   ...DiscussionClassroomNotifNavigatorObj,
   ...MomentNavigatorObj
 }, {

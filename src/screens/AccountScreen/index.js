@@ -35,14 +35,14 @@ function AccountScreen(props){
     navigation.navigate("EditSingleField", payload);
   }
 
-  const handleDateOfBirthPress = () => {
+  const handleBirthdayPress = () => {
     const payload = {
       databaseCollection: "users",
       databaseDocumentId: currentUser.email,
-      databaseFieldName: "personalInformation.dateOfBirth",
+      databaseFieldName: "personalInformation.birthday",
       caption: "Format tanggal lahir: 22/12/2007",
       placeholder: "DD/MM/YYYY",
-      fieldValue: personalInformation.dateOfBirth,
+      fieldValue: personalInformation.birthday,
       fieldTitle: "Tanggal Lahir",
       beforeSave: (value) => moment(value, "DD/MM/YYYY").isValid()
     }
@@ -87,12 +87,12 @@ function AccountScreen(props){
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleDateOfBirthPress}>
+          <TouchableOpacity onPress={handleBirthdayPress}>
             <View style={styles.menu}>
               <Text style={{ fontWeight: "500" }}>Tanggal Lahir</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                {personalInformation.dateOfBirth?(
-                  <Text>{moment(personalInformation.dateOfBirth, "DD/MM/YYYY").format("DD MMM YYYY")}</Text>
+                {personalInformation.birthday?(
+                  <Text>{moment(personalInformation.birthday, "DD/MM/YYYY").format("DD MMM YYYY")}</Text>
                 ):null}
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>
