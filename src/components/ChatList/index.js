@@ -21,7 +21,6 @@ function ChatList(props){
 
   const beforeBirthdaySave = (value) => moment(value, "DD/MM/YYYY").isValid();
 
-  const handleFriendRequestPress = () => {}
   const handleListContentSizeChange = (contentWidth, contentHeight) => {
     Logger.log("ChatList.handleListContentSizeChange#contentHeight", contentHeight);
     setListHeight(contentHeight);
@@ -67,6 +66,13 @@ function ChatList(props){
     }else{
       navigation.navigate({ routeName: "Account", key: "SettingsTab" })
     }
+  }
+
+  const handleFriendRequestPress = async (message) => {
+    Logger.log("ChatList.handleFriendRequestPress#message", message);
+    navigation.navigate("PeopleInformation", { 
+      peopleEmail: message.details.targetEmail, source: message.details.source
+    });
   }
 
   return (

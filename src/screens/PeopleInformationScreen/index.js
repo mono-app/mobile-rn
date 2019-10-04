@@ -13,14 +13,6 @@ import AppHeader from "src/components/AppHeader";
 import { View } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 
-
-const INITIAL_STATE = { isLoadingProfile: true, people: null, peopleFriendStatus: null }
-
-/**
- * Parameter list
- * 
- * @param {string} peopleId
- */
 function PeopleInformationScreen(props){
   const { currentUser } = props;
 
@@ -39,13 +31,10 @@ function PeopleInformationScreen(props){
     const peopleData = await PeopleAPI.getDetail(peopleEmail);
     const status = await StatusAPI.getLatestStatus(peopleEmail);
     Logger.log("PeopleInformationScreen.fetchPeopleInformation", peopleData)
-    if(status)
-      setStatus(status.content);
+    if(status) setStatus(status.content);
 
     setPeople(peopleData);
-    
     setJoinedFrom(moment.unix(parseInt(peopleData.creationTime) / 1000).format("DD MMMM YYYY"));
-
     setIsLoadingProfile(false);
   }
 
@@ -90,8 +79,7 @@ function PeopleInformationScreen(props){
       <ActionButton 
         peopleEmail={peopleEmail} source={source}
         peopleFriendStatus={peopleFriendStatus} 
-        onComplete={handleActionButtonComplete}
-        />
+        onComplete={handleActionButtonComplete}/>
     </View>
   )
 }
