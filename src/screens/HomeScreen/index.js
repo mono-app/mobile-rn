@@ -27,6 +27,7 @@ function HomeScreen(props){
     }
 
     Contacts.getAll( async (err, contacts) => {
+
       if (err !== 'denied'){
         let phoneNumbers = []
         const accessToken = await UserMappingAPI.getAccessToken()
@@ -44,11 +45,14 @@ function HomeScreen(props){
             userId: props.currentUser.email,
             phonenumbers: phoneNumbers,
           })
+          console.log(body)
 
           fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/contactService/synccontact", {
             method: 'POST', headers: headers, body: body
           }).then(res => {
-          
+            console.log("sync contact:")
+            console.log(res)
+
           })
           
         }
@@ -80,6 +84,7 @@ function HomeScreen(props){
 
       if(permissionResponse === "authorized"){
         // do something if authorized
+        autoAddContact()
       }else{
         // do something if unauthorized
       }

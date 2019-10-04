@@ -52,6 +52,8 @@ Contact.request = app.post('/synccontact', async (req,res)=>{
   const phones = users.map((obj)=> obj.phone);
   phoneNumbers.forEach( async(item) => {
     let result = item.toString()
+    result = result.replace(/-/g, '')
+
     //result = validatePhoneNumber(result, countryCode, numCode)
     if(result.length<=2){
       return
