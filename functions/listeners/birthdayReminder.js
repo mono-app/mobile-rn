@@ -1,12 +1,14 @@
 const functions = require('firebase-functions');
 const admin = require("firebase-admin");
 const moment = require("moment");
+
+const Room = require("../lib/room");
 const User = require("../lib/user");
 
 function BirthdayReminder(){}
 
 BirthdayReminder.BOT_NAME = "BirthdayReminder";
-BirthdayReminder.schedule = functions.pubsub.schedule("every day 09:00").timeZone("Asia/Jakarta").onRun((context) => {
+BirthdayReminder.schedule = functions.pubsub.schedule("every day 09:00").timeZone("Asia/Jakarta").onRun(async (context) => {
   await BirthdayReminder.normalizeDatabase();
   await BirthdayReminder.execute();
   return true;
@@ -40,13 +42,7 @@ BirthdayReminder.reminderToSetup = async (users) => {
     const roomQuerySnapshot = await db.collection("rooms").where(botQuery, "==", true).where(userQuery, "==", true)
                                       .where("type", "==", "bot").get();
     if(roomQuerySnapshot.empty){
-      const newRoomRef = db.collection("rooms").doc();
-      await newRoomRef.set({
-        audiences: [ BirthdayReminder.BOT_NAME, user.id ],
-        audiencesQuery: { [BirthdayReminder.BOT_NAME]: true, [user.id]: true },
-        bot: BirthdayReminder.BOT_NAME, creationTime: admin.firestore.FieldValue.serverTimestamp(),
-        type: "bot"
-      });
+      const newRoomRef = await Room.createBotRoom(BirthdayReminder.BOT_NAME, [BirthdayReminder.BOT_NAME, user.id]);
       await BirthdayReminder.sendBirthdaySetupReminder(newRoomRef);
     }else{
       const promises = roomQuerySnapshot.docs.map((documentSnapshot) => BirthdayReminder.sendBirthdaySetupReminder(documentSnapshot.ref))

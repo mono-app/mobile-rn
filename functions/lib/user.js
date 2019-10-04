@@ -10,7 +10,7 @@ User.getAll = async () => {
 };
 
 User.normalize = (documentSnapshot) => {
-  return { id: documentSnapshot.id, ...documentSnapshot.data() }
+  return Object.assign({ id: documentSnapshot.id }, documentSnapshot.data());
 }
 
 module.exports = User;

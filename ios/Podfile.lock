@@ -145,6 +145,8 @@ PODS:
     - React
   - react-native-camera/RN (1.13.1):
     - React
+  - react-native-contacts (4.0.2):
+    - React
   - react-native-document-picker (3.2.4):
     - React
   - react-native-fast-image (6.0.3):
@@ -248,6 +250,7 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
@@ -316,6 +319,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-contacts:
+    :path: "../node_modules/react-native-contacts"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
   react-native-fast-image:
@@ -384,6 +389,7 @@ SPEC CHECKSUMS:
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
   react-native-camera: b322bc25f47536219473c6d00c666d221f7f2695
+  react-native-contacts: 348958bb7da4399040b1eb45bfb7f6af08e61412
   react-native-document-picker: c36bf5f067a581657ecaf7124dcd921a8be19061
   react-native-fast-image: 3390cc968d598f0c6b5c710df138f4b653a87231
   react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
@@ -406,6 +412,6 @@ SPEC CHECKSUMS:
   SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: c5d1ce69277ffd5922a8e21f5f0dde5633d7f077
+PODFILE CHECKSUM: b0c66bbdd3c8c163de791a7deffafac2ebbb24c5
 
 COCOAPODS: 1.8.0

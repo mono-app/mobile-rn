@@ -1,7 +1,6 @@
 import React from "react";
 import firebase from "react-native-firebase";
 import RoomsAPI from "src/api/rooms";
-import { StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
@@ -12,12 +11,9 @@ function NotificationSection(props){
   const { currentUser } = props;
   const [ notifications, setNotifications ] = React.useState([]);
   const roomsListener = React.useRef(null);
-  const styles = StyleSheet.create({
-    chatContainer: {
-      display: "flex", flexDirection: "row", backgroundColor: "white", alignItems: "center",
-      marginHorizontal: 16, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
-    }
-  });  
+
+  const handleRoomPress = (room) => props.navigation.navigate("InboundOnlyChat", { room });
+
   const fetchData = () => {
     const db = firebase.firestore();
     const roomsRef = db.collection("rooms").where("type", "==", "bot").where("audiences", "array-contains", currentUser.email);
@@ -40,7 +36,7 @@ function NotificationSection(props){
       renderItem={({ item ,index}) => {
         const marginTop = (index === 0)? 8: 4;
         const marginBottom = (index === notifications.length)? 8: 4;
-        return <BotRoom room={item} style={{ marginTop, marginBottom }}/>
+        return <BotRoom room={item} style={{ marginTop, marginBottom }} onPress={handleRoomPress}/>
       }}/>
   );
 }
