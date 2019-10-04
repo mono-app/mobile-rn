@@ -2,6 +2,7 @@ import React from "react";
 import Logger from "src/api/logger";
 import moment from "moment";
 import MessagesAPI from "src/api/messages";
+import BotsAPI from "src/api/bots"
 
 import ChatHeader from "src/components/ChatHeader";
 import ChatList from "src/components/ChatList";
@@ -13,6 +14,7 @@ function InboundOnlyChatScreen(props){
   const [ messages, setMessages ] = React.useState([]);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
   const [ isLoadingNewMessage, setIsLoadingNewMessage ] = React.useState(false);
+  const [ bot, setBot ] = React.useState(null);
   const messagesListener = React.useRef(null);
   const _isMounted = React.useRef(true);
 
@@ -48,18 +50,25 @@ function InboundOnlyChatScreen(props){
     })
   }
 
+  const fetchBot = async () => {
+    const bot = await BotsAPI.getDetail(room.bot);
+    setBot(bot);
+  }
+
   React.useEffect(() => {
+    fetchBot();
     initMessages();
     return function cleanup(){
       if(messagesListener.current) messagesListener.current();
     }
   }, []);
 
+  if(bot === null) return null;
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <ChatHeader
-        navigation={navigation} title="Ulang Tahun" subtitle="Bot"
-        profilePicture="https://picsum.photos/200" style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
+        navigation={navigation} title={bot.displayName} subtitle="Bot"
+        profilePicture={bot.profilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop}/>
     </KeyboardAvoidingView>
   )
