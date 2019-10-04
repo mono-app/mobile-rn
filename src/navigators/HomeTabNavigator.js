@@ -1,4 +1,3 @@
-import React from "react";
 import { createStackNavigator } from "react-navigation";
 
 import HomeScreen from "src/screens/HomeScreen";
@@ -7,12 +6,13 @@ import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import PeopleSearchResult from "src/screens/PeopleSearchResult";
 import FriendRequestListScreen from "src/screens/FriendRequestListScreen";
 import ChatScreen from "src/screens/ChatScreen";
+import InboundOnlyChatScreen from "src/screens/InboundOnlyChatScreen";
 import GroupChatScreen from "src/screens/GroupChatScreen";
 import NotificationBotScreen from "src/screens/NotificationBotScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
 import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
-import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
-import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
+import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj";
+import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
 
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -22,6 +22,7 @@ export default HomeTabNavigator = createStackNavigator({
   PeopleInformation: { screen: PeopleInformationScreen },
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
+  InboundOnlyChat: { screen: InboundOnlyChatScreen },
   NotificationBot: { screen: NotificationBotScreen },
   GroupChat: { screen: GroupChatScreen },
   MyQR: { screen: MyQRScreen },

@@ -27,6 +27,21 @@ export default class MessagesAPI{
     })
   }
 
+  static appendDateSeparator(messages){
+    const clonnedMessages = [];
+    let currentDate = null;
+    messages.forEach((message) => {
+      if(currentDate === null) currentDate = new moment.unix(message.sentTime.seconds).format("DD MMMM YYYY");
+      if(currentDate !== moment.unix(message.sentTime.seconds).format("DD MMMM YYYY")) {
+        clonnedMessages.push({ type: "date-separator", details: {value: currentDate} });
+      }
+      clonnedMessages.push(message);
+      currentDate = moment.unix(message.sentTime.seconds).format("DD MMMM YYYY");
+    });
+    clonnedMessages.push({ type: "date-separator", details: {value: currentDate} });
+    return clonnedMessages
+  }
+
   /**
    * 
    * @param {String} roomId 

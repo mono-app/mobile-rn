@@ -2,16 +2,24 @@ import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
 import DiscussionAPI from "modules/Classroom/api/discussion";
+import moment from "moment";
+import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
 
 import ChatBubble from "src/components/ChatBubble";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
+import { Chip } from "react-native-paper";
 
 function ChatList(props){
   const { messages, currentUser } = props;
   const [ listHeight, setListHeight ] = React.useState(0);
+  
+  const styles = StyleSheet.create({
+    container: { flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }
+  })
 
+  const handleSetupBirthdayPress = () => {}
   const handleListContentSizeChange = (contentWidth, contentHeight) => {
     Logger.log("ChatList.handleListContentSizeChange#contentHeight", contentHeight);
     setListHeight(contentHeight);
@@ -36,14 +44,14 @@ function ChatList(props){
     props.navigation.navigate("DiscussionComment", payload)
   }
 
-  const handleMomentPress = async (item) => {
+  const handleMomentPress = (item) => {
     payload = { momentId: item.details.moment.id }
     props.navigation.navigate("MomentComments", payload)
   }
 
   return (
     <FlatList 
-      style={{ flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }} 
+      style={[ styles.container, props.style ]} 
       onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
       keyExtractor={(item) => item.id}
       data={messages} inverted={true}
@@ -55,11 +63,19 @@ function ChatList(props){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
         }else if(item.type === "moment-share"){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentPress(item)} message={item}/>
+        }else if(item.type === "setup-birthday"){
+          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item}/>
+        }else if(item.type === "date-separator"){
+          return (
+            <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
+              <Chip>{item.details.value}</Chip>
+            </View>
+          )
         }
       }}/>
   )
 }
 
-ChatList.propTypes = { onReachTop: PropTypes.func };
-ChatList.defaultProps = { onReachTop: () => {} }
+ChatList.propTypes = { onReachTop: PropTypes.func, style: PropTypes.shape() };
+ChatList.defaultProps = { onReachTop: () => {}, style: {} }
 export default withNavigation(withCurrentUser(ChatList));
