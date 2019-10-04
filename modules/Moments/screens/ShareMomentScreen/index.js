@@ -13,15 +13,9 @@ import { Text } from "react-native-paper";
 const INITIAL_STATE = { isLoading: true, isShareLoading: false , peopleList:[], filteredPeopleList:[] };
 
 class ShareMomentScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
-      header: (
-        <AppHeader
-          navigation={navigation}
-          title="Bagikan ke"
-          style={{ backgroundColor: "transparent" }}
-        />
-      )
+      header: null
     };
   };
 
@@ -124,6 +118,11 @@ class ShareMomentScreen extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+       <AppHeader
+          navigation={this.props.navigation}
+          title="Bagikan ke"
+          style={{ backgroundColor: "white" }}
+        />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
