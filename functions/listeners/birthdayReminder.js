@@ -43,20 +43,20 @@ BirthdayReminder.reminderToSetup = async (users) => {
                                       .where("type", "==", "bot").get();
     if(roomQuerySnapshot.empty){
       const newRoomRef = await Room.createBotRoom(BirthdayReminder.BOT_NAME, [BirthdayReminder.BOT_NAME, user.id]);
-      await BirthdayReminder.sendBirthdaySetupReminder(newRoomRef);
+      await BirthdayReminder.sendBirthdaySetupReminder(newRoomRef, user.id);
     }else{
-      const promises = roomQuerySnapshot.docs.map((documentSnapshot) => BirthdayReminder.sendBirthdaySetupReminder(documentSnapshot.ref))
+      const promises = roomQuerySnapshot.docs.map((documentSnapshot) => BirthdayReminder.sendBirthdaySetupReminder(documentSnapshot.ref, user.id))
       await Promise.all(promises);
     }
   }));
 }
 
-BirthdayReminder.sendBirthdaySetupReminder = async (roomRef) => {
+BirthdayReminder.sendBirthdaySetupReminder = async (roomRef, targetEmail) => {
   const messageRef = roomRef.collection("messages").doc();
   await messageRef.set({
     content: `Kamu belum menambahkan data ulang tahun. Tambahkan sekarang agar kamu juga bisa melihat ulang tahun teman kamu.`,
     senderEmail: BirthdayReminder.BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()), 
-    readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "setup-birthday"
+    readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "setup-birthday", details: {targetEmail}
   });
 }
 
