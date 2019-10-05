@@ -21,7 +21,6 @@ function ChatList(props){
 
   const beforeBirthdaySave = (value) => moment(value, "DD/MM/YYYY").isValid();
 
-  const handleFriendRequestPress = () => {}
   const handleListContentSizeChange = (contentWidth, contentHeight) => {
     Logger.log("ChatList.handleListContentSizeChange#contentHeight", contentHeight);
     setListHeight(contentHeight);
@@ -69,6 +68,13 @@ function ChatList(props){
     }
   }
 
+  const handleFriendRequestPress = async (message) => {
+    Logger.log("ChatList.handleFriendRequestPress#message", message);
+    navigation.navigate("PeopleInformation", { 
+      peopleEmail: message.details.targetEmail, source: message.details.source
+    });
+  }
+
   return (
     <FlatList 
       style={[ styles.container, props.style ]} keyExtractor={(item) => item.id}
@@ -86,7 +92,7 @@ function ChatList(props){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item}/>
         }else if(item.type === "friend-request"){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item}/>
-        }else if(item.type === "date-separator"){
+        }else if(item.type === "date-separator" || item.type === "lets-start-chat"){
           return (
             <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
               <Chip>{item.details.value}</Chip>

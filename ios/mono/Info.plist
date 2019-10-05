@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>mono</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -37,6 +37,32 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string></string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string></string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string></string>
+	<key>NSCalendarsUsageDescription</key>
+	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string>Mono needs your camera to capture your beautiful moments.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Mono needs your Contacts to add your friends</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Mono needs your location to show you places.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Mono needs your location to show you places.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mono needs your mircrophone to send a voice message to your friends.</string>
+	<key>NSMotionUsageDescription</key>
+	<string></string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Mono needs your Photo Library to save your photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Mono needs your Photo Library to view your photos.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -69,31 +95,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Mono needs your location to show you places.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Mono needs your location to show you places.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Mono needs your camera to capture your beautiful moments.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Mono needs your Photo Library to save your photos.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Mono needs your Photo Library to view your photos.</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string></string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string></string>
-	<key>NSContactsUsageDescription</key>
-	<string>Mono needs your Contacts to add your friends</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string></string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string></string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string></string>
-	<key>NSMotionUsageDescription</key>
-	<string></string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Mono needs your mircrophone to send a voice message to your friends.</string>
 </dict>
 </plist>
