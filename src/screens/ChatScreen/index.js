@@ -10,8 +10,8 @@ import ChatHeader from "src/components/ChatHeader";
 import { KeyboardAvoidingView } from "react-native";
 
 function ChatScreen(props){
-  const { currentUser } = props;
-  const room = props.navigation.getParam("room", null);
+  const { currentUser, navigation } = props;
+  const room = navigation.getParam("room", null);
   const [ messages, setMessages ] = React.useState([]);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
   const [ isUserRegistered, setUserRegistered ] = React.useState(false);
@@ -78,7 +78,8 @@ function ChatScreen(props){
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
       Logger.log("ChatScreen.initMessages", messages);
       if( _isMounted.current){
-        setMessages(MessagesAPI.appendDateSeparator(messages));
+        if(messages.length === 0) setMessages(MessagesAPI.welcomeMessage());
+        else setMessages(MessagesAPI.appendDateSeparator(messages));
         setLastMessageSnapshot(snapshot);
         setUserRegistered(true);
       }
@@ -100,12 +101,10 @@ function ChatScreen(props){
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <ChatHeader 
-        navigation={props.navigation} title={headerTitle} subtitle={"Online"}  
+        navigation={navigation} title={headerTitle} subtitle={"Online"}  
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop}/>
-      <ChatBottomTextInput room={room}
-        editable={isUserRegistered}
-        onSendPress={handleSendPress}/>
+      <ChatBottomTextInput room={room} editable={isUserRegistered} onSendPress={handleSendPress}/>
     </KeyboardAvoidingView>
   )
 }

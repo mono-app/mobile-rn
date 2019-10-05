@@ -92,7 +92,7 @@ function ChatList(props){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item}/>
         }else if(item.type === "friend-request"){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item}/>
-        }else if(item.type === "date-separator"){
+        }else if(item.type === "date-separator" || item.type === "lets-start-chat"){
           return (
             <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
               <Chip>{item.details.value}</Chip>
