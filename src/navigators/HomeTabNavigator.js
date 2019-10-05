@@ -35,7 +35,7 @@ export default HomeTabNavigator = createStackNavigator({
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index];
     return { tabBarVisible: (
-      routeName !== "MomentComments" && routeName !== "Chat" && routeName !== "WebRTC" && 
+      routeName !== "MomentComments" && routeName !== "Chat" && routeName !== "GroupChat" && routeName !== "WebRTC" && 
       routeName !== "GallerySwiper" && routeName !== "MapsPicker" && routeName !== "NotificationBot"
       )}
   }
