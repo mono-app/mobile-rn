@@ -67,7 +67,7 @@ export default class PeopleAPI{
     const usersCollection = new UserCollection();
     const userDocument = new Document(peopleEmail);
     const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
-    await userRef.update({ "tokenInformation.messagingToken": messagingToken });
+    await userRef.update({ "tokenInformation.messagingToken": messagingToken, isLogin: true });
   }
 
   /**
@@ -178,6 +178,20 @@ export default class PeopleAPI{
     }
 
     return Promise.resolve(result);
+  }
+
+  static async updateUserForLogout(email){
+    // set messaging token to null
+    // set user status to logout
+    try{
+      const db = firebase.firestore();
+      const usersCollection = new UserCollection();
+      const userRef = db.collection(usersCollection.getName()).doc(email)
+      await userRef.update({tokenInformation: null, isLogin: false})
+    }catch{
+      return Promise.resolve(false)
+    }
+    return Promise.resolve(true)
   }
 
 }
