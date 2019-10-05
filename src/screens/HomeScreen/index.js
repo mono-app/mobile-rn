@@ -4,6 +4,7 @@ import Permissions from "react-native-permissions";
 import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
 import { withCurrentUser } from "src/api/people/CurrentUser";
+
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
 import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';

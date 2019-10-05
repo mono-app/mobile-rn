@@ -1,10 +1,10 @@
 import React from "react";
 import moment from "moment";
-import Logger from "src/api/logger";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
+import Container from "src/components/Container";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
@@ -51,7 +51,7 @@ function AccountScreen(props){
 
   if(currentUser === {}) return;
   return (
-    <View style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+    <Container>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <View style={styles.container}>
         <SignOutDialog show={isSignOutDialogShown} onCancel={handleSignOutDialogCancel}/>
@@ -111,7 +111,7 @@ function AccountScreen(props){
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </Container> 
   )
 }
 AccountScreen.navigationOptions = { header: null } 

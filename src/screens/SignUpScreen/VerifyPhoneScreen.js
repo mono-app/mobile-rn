@@ -1,18 +1,15 @@
 import React from "react";
-import { 
-  Text, View, StyleSheet, TouchableOpacity
-} from "react-native";
-import { StackActions, NavigationEvents, NavigationActions } from "react-navigation";
-import { 
-  Portal, Dialog, Paragraph, Button as MaterialButton, Snackbar 
-} from "react-native-paper";
 import firebase from "react-native-firebase";
-import moment from "moment"
-import VerifyPhoneAPI from "src/api/verifyphone"
-import TextInput from "../../components/TextInput";
-import Button from "../../components/Button";
-import { withCurrentUser } from "src/api/people/CurrentUser";
+import moment from "moment";
 import libphonenumber from 'libphonenumber-js';
+import VerifyPhoneAPI from "src/api/verifyphone"
+import { StackActions, NavigationEvents, NavigationActions } from "react-navigation";
+import { withCurrentUser } from "src/api/people/CurrentUser";
+
+import TextInput from "src/components/TextInput";
+import Button from "src/components/Button";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Portal, Dialog, Paragraph, Button as MaterialButton, Snackbar } from "react-native-paper";
 
 const INITIAL_STATE = { 
   isAskingOTP: false,
@@ -29,14 +26,14 @@ const INITIAL_STATE = {
 class VerifyPhoneScreen extends React.PureComponent{
   static navigationOptions = { header: null }
   
+  handleDismissDialog = () => this.setState({showDialog: false});
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({n: 2}));
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
   handleOTPChange = otp => {this.setState({otp, isInsertingOTP: true});}
   handleAskOTP = async () => {
-
     const phoneNum = this.validatePhoneNumber(this.state.phoneNumber,"ID","62")
     if(!phoneNum){
-      this.setState({showSnackbarPhoneNoInvalid: true})
+      this.setState({ showSnackbarPhoneNoInvalid: true })
       return
     }
     //const response = await VerifyPhoneAPI.sendCode(phoneNum)
@@ -45,10 +42,9 @@ class VerifyPhoneScreen extends React.PureComponent{
     if(response){
       const otpRequestId = response
       VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
-      this.setState({isAskingOTP: true, otpRequestId})
+      this.setState({ isAskingOTP: true, otpRequestId })
     }
   }
-  handleDismissDialog = () => this.setState({showDialog: false});
 
   validatePhoneNumber = (phoneNumber0, countryCode, numCode) => {
     // numCode: 62
@@ -59,29 +55,20 @@ class VerifyPhoneScreen extends React.PureComponent{
     }
 
     const phoneNumber1 = libphonenumber.parsePhoneNumberFromString(result, countryCode)
-    
     if(phoneNumber1 && phoneNumber1.isPossible()){
       // check if there is `+` 
-      if(result.substring(0,1)==="+"){
-        result = result.substr(1);
-      }
-      if(!result.toLowerCase().match(/^[0-9]+$/)){
-        return null
-      }
+      if(result.substring(0,1)==="+") result = result.substr(1);
+      if(!result.toLowerCase().match(/^[0-9]+$/)) return null;
+
       // change 0 to numCode 
       if(result.substring(0,1)==="0"){
         result = result.substr(1);
-        result = numCode+""+result
+        result = numCode+""+result;
       }
       // if 2 first letter is not same with numCode, add the numCode at the beginning
-      if(result.substring(0,2)!==numCode){
-        result = numCode+""+result
-      }
-  
-      const phoneNumber2 = libphonenumber.parsePhoneNumberFromString("+"+result, countryCode)
-      if(phoneNumber2.isValid()){
-        return result
-      }
+      if(result.substring(0,2)!==numCode) result = `${numCode}${result}`;
+      const phoneNumber2 = libphonenumber.parsePhoneNumberFromString(`+${result}`, countryCode);
+      if(phoneNumber2.isValid()) return result
     }
     return null
   }
@@ -91,7 +78,6 @@ class VerifyPhoneScreen extends React.PureComponent{
 
     //const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
     const response = true
-    
     if(response){
       VerifyPhoneAPI.currentNexmoRequestId = null
 
@@ -172,11 +158,6 @@ class VerifyPhoneScreen extends React.PureComponent{
     
   }
 
-  // componentDidMount(){
-  // }
-
-  // componentWillUnmount(){ this.authListener() }
-
   componentDidUpdate(){
     if(this.isAskingOTP && this.txtVerificationCode && !this.isInsertingOTP) this.txtVerificationCode.focus();
   }
@@ -185,38 +166,25 @@ class VerifyPhoneScreen extends React.PureComponent{
     return(
       <View style={{flex: 1}}>
         <View style={styles.container}>
-          <NavigationEvents
-            onDidFocus={this.handleScreenDidFocus}
-            onwillBlue={this.handleScreenWillBlur}/>
+          <NavigationEvents onDidFocus={this.handleScreenDidFocus} onwillBlue={this.handleScreenWillBlur}/>
           <Text style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Text>
           <Text style={{ fontSize: 12, marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Text>
           <View style={{flexDirection:"row"}}>
-          <TextInput
-          style={{paddingLeft: 12, paddingRight: 12}}
-          value="+62"
-          editable={false}
-          />
+          <TextInput style={{ marginRight: 8 }} value="+62" editable={false}/>
           <TextInput 
           style={{flex:1}}
-            placeholder="Contoh: 81215288888"
-            textContentType="telephoneNumber"
-            keyboardType="number-pad"
-            editable={!this.state.isAskingOTP}
-            value={this.state.phoneNumber}
+            placeholder="Contoh: 81215288888" textContentType="telephoneNumber" keyboardType="number-pad"
+            editable={!this.state.isAskingOTP} value={this.state.phoneNumber}
             onChangeText={this.handlePhoneNumberChange}/>
             </View>
           {(this.state.isAskingOTP)?(
             <View>
               <TextInput
-                autoFocus={true}
-                placeholder="Kode Verifikasi"
-                keyboardType="number-pad"
-                value={this.state.otp}
-                onChangeText={this.handleOTPChange}/>
+                placeholder="Kode Verifikasi" keyboardType="number-pad"
+                value={this.state.otp} onChangeText={this.handleOTPChange} autoFocus/>
               <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} text="Verifikasi"/>
             </View>
-          ):(<Button onPress={this.handleAskOTP} text="Minta Kode Verifikasi"/>)
-          }
+          ):(<Button onPress={this.handleAskOTP} text="Minta Kode Verifikasi"/>)}
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
             <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>Saya punya akun. Kembali ke Sign In</Text>
           </TouchableOpacity>
@@ -231,20 +199,17 @@ class VerifyPhoneScreen extends React.PureComponent{
               </Dialog.Actions>
             </Dialog>
           </Portal>
-        
         </View>
         <Snackbar
-        visible= {this.state.showSnackbarFailVerification}
-        onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
-        style={{backgroundColor:"red"}}
-        duration={Snackbar.DURATION_SHORT}>
-        Kode Verifikasi Salah
-      </Snackbar>
+          visible={this.state.showSnackbarFailVerification}
+          onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
+          style={{ backgroundColor:"red" }} duration={Snackbar.DURATION_SHORT}>
+          Kode Verifikasi Salah
+        </Snackbar>
       <Snackbar
         visible= {this.state.showSnackbarPhoneNoInvalid}
         onDismiss={() => this.setState({ showSnackbarPhoneNoInvalid: false })}
-        style={{backgroundColor:"red"}}
-        duration={Snackbar.DURATION_SHORT}>
+        style={{ backgroundColor:"red" }} duration={Snackbar.DURATION_SHORT}>
         Nomor Telepon Tidak Valid
       </Snackbar>
      </View>
@@ -254,18 +219,10 @@ class VerifyPhoneScreen extends React.PureComponent{
 
 const styles = StyleSheet.create({
   container: {
-    paddingLeft: 32,
-    paddingRight: 32,
-    flex: 1,
-    alignItems: "stretch",
-    justifyContent: "center"
+    paddingLeft: 32, paddingRight: 32, flex: 1,
+    alignItems: "stretch", justifyContent: "center"
   },
-  backToSignInContainer: {
-    position: "absolute",
-    bottom: 32,
-    left: 0,
-    right: 0
-  }
+  backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })
 
 export default withCurrentUser(VerifyPhoneScreen);

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Picker, TouchableOpacity, StyleSheet } from "react-native";
 import { Card, Text } from "react-native-paper";
 
-import TextInput from "../../../components/TextInput";
+import TextInput from "src/components/TextInput";
 
 const INITIAL_STATE = {
   givenName: "",
