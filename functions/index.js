@@ -14,6 +14,7 @@ const Friends = require("./listeners/friends");
 const Discussions = require("./listeners/discussions");
 const Student = require("./listeners/student");
 const Teacher = require("./listeners/teacher");
+const Tasks = require("./listeners/tasks");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -38,3 +39,7 @@ exports.deletedStudentClassTrigger = Student.deletedStudentClassTrigger;
 
 exports.addTeacherClassTrigger = Teacher.addTeacherClassTrigger;
 exports.deletedTeacherClassTrigger = Teacher.deletedTeacherClassTrigger;
+
+exports.triggerNewTask = Tasks.triggerNewTask
+exports.triggerUpdatedTask = Tasks.triggerUpdatedTask
+exports.triggerDeletedTask = Tasks.triggerDeletedTask

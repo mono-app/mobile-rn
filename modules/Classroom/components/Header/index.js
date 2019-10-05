@@ -8,8 +8,9 @@ import { Appbar, Subheading, Caption } from "react-native-paper";
 function Header(props){ 
   const styles = StyleSheet.create({ default: { backgroundColor: "white"} })
   handleBackPress = () => {
-    const navigator = new Navigator(this.props.navigation);
-    navigator.resetTo("Home", StackActions, {key: "AppTab"});
+    props.navigation.goBack(null)
+    // const navigator = new Navigator(props.navigation);
+    // navigator.resetTo("Home", StackActions, {key: "AppTab"});
   }
 
   return(
