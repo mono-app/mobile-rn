@@ -15,7 +15,6 @@ import PeopleInformationContainer from "src/components/PeopleProfile/Information
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { IconButton } from "react-native-paper";
 import RoomsAPI from "src/api/rooms"
 
@@ -76,7 +75,11 @@ class ClassDetailsScreen extends React.PureComponent {
   }
 
   handleGroupChatPress = async () => {
-    await RoomsAPI.createGroupClassRoomIfNotExists(this.props.currentSchool.id, this.classId)
+    const room = await RoomsAPI.createGroupClassRoomIfNotExists(this.props.currentSchool.id, this.classId)
+    console.log(room)
+    if(room){
+      this.props.navigation.navigate("GroupChat", { room });
+    }
   }
 
   constructor(props) {
