@@ -40,10 +40,11 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
 
   await Promise.all(arrRooms.map(async (roomRef) => {
     const messageRef = roomRef.collection("messages").doc();
+    const details = Object.assign({ targetEmail: requestorRef.id }, documentSnapshot.data());
     await messageRef.set({
       content: `${requestor.applicationInformation.nickName} ingin berteman dengan kamu. Lihat sekarang!`,
       senderEmail: BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()),
-      readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "friend-request"
+      readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "friend-request", details
     })
   }))
 })

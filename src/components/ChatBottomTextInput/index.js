@@ -17,8 +17,8 @@ function ChatBottomTextInput(props){
   const { colors } = props.theme;
   const styles = StyleSheet.create({
     container: { 
-      display: "flex", flexDirection: "row", paddingHorizontal: 16, paddingVertical: 8, flexGrow: 1,
-      borderTopWidth: 1, borderTopColor: "#E8EEE8", alignItems: "center", justifyContent: "center", maxWidth: "100%"
+      display: "flex", flexDirection: "row", paddingHorizontal: 16, paddingVertical: 8, borderTopWidth: 1, 
+      borderTopColor: "#E8EEE8", alignItems: "center", justifyContent: "center", maxWidth: "100%"
     },
     textInput: {
       backgroundColor: "#E8EEE8", borderColor: "#E8EEE8", borderWidth: 1, flexGrow: 1,

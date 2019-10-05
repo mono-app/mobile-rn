@@ -13,6 +13,27 @@ export default class MessagesAPI{
     this.messagePaginationLimit = 25;
   }
 
+  static createMessageObject(payload){
+    return {
+      ...payload, sentTime: firebase.firestore.FieldValue.serverTimestamp(),
+      localSentTime: firebase.firestore.Timestamp.fromMillis(new moment().valueOf)
+    }
+  }
+
+  static welcomeMessage(){
+    const contents = [
+      "Ayo jangan malu-malu.",
+      "Semua dimulai dari halo.",
+      "Jangan lupa sapa teman kamu."
+    ]
+    const randomNumber = Math.floor(Math.random() * (contents.length + 1));
+    const welcomeMessage = MessagesAPI.createMessageObject({ 
+      type: "lets-start-chat", content: contents[randomNumber], details: {value: contents[randomNumber]} 
+    });
+    Logger.log("MessagesAPI.welcomeMessage#welcomeMessage", welcomeMessage);
+    return [ welcomeMessage ]
+  }
+
    /**
    * This function will trigger for offline storage as well
    * 
