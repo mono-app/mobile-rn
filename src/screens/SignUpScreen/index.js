@@ -36,7 +36,9 @@ export default class SignUpScreen extends React.Component{
     }else if(this.state.password !== this.state.verifyPassword){
       this.setState({isError: true, errorMessage: "Password tidak sama!"});
     }else{
-      this.props.navigation.navigate("VerifyPhone", {email: this.state.email, password: this.state.password});
+      let email = JSON.parse(JSON.stringify(this.state.email))
+      email = email.toLowerCase()
+      this.props.navigation.navigate("VerifyPhone", {email, password: this.state.password});
     }
   }
 
