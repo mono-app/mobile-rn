@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Text } from "react-native-paper";
 import { View, StyleSheet } from "react-native";
 
-import TextInput from "../../../components/TextInput";
+import TextInput from "src/components/TextInput";
 
 const INITIAL_STATE = { nickName: "", id: "" }
 
@@ -26,7 +26,7 @@ export default class ApplicationInformationCard extends React.Component{
   render(){
     return(
       <Card>
-        <Card.Title title="Informasi Aplikasi" subtitle="Kamu dapat menggunakan nama panggilan untuk ditampilkan pada dunia loh. Ayo buat sekarang"/>
+        <Card.Title title="Informasi Akun" subtitle="Pastikan tidak memberikan data sensitif."/>
         <Card.Content>
           <View>
             <Text style={styles.headerText}>Mono ID</Text>
