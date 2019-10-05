@@ -112,6 +112,10 @@ export default class RoomsAPI{
       const roomRef = db.collection(roomsCollection.getName()).doc();
       roomRef.set(payload);
       return Promise.resolve({ id: roomRef.id, ...payload });
+    }else{
+      const roomSnapshot = querySnapshot.docs[0]
+      return Promise.resolve({ id: roomSnapshot.id, ...roomSnapshot.data() });
+
     }
 
   }

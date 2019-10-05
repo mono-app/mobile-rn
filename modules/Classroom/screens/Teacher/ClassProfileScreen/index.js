@@ -14,6 +14,8 @@ import PeopleInformationContainer from "src/components/PeopleProfile/Information
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import RoomsAPI from "src/api/rooms"
+import { IconButton } from "react-native-paper";
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null };
 
@@ -78,6 +80,14 @@ class ClassProfileScreen extends React.PureComponent {
     this.props.navigation.navigate("MassScoring", payload);
   }
 
+  
+  handleGroupChatPress = async () => {
+    const room = await RoomsAPI.createGroupClassRoomIfNotExists(this.props.currentSchool.id, this.classId)
+    if(room){
+      this.props.navigation.navigate("GroupChat", { room });
+    }
+  }
+
   constructor(props) {
     super(props);
     this.state = INITIAL_STATE;
@@ -87,7 +97,7 @@ class ClassProfileScreen extends React.PureComponent {
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
     this.handleAddTask = this.handleAddTask.bind(this);
     this.handleClassFilesScreenPress = this.handleClassFilesScreenPress.bind(this);
-    
+    this.handleGroupChatPress = this.handleGroupChatPress.bind(this);
   }
 
   componentDidMount() {
@@ -123,12 +133,18 @@ class ClassProfileScreen extends React.PureComponent {
             style={{ backgroundColor: "white" }}
           />
         <ScrollView style={{paddingTop: 16, marginBottom: 56}}>
-          <PeopleProfileHeader
-            style={{padding:16}}
-            profilePicture="https://picsum.photos/200/200/?random"
-            title={this.state.class.subject}
-            />
-
+          <View style={{flexDirection:"row", backgroundColor: "white"}}>
+            <PeopleProfileHeader
+              style={{padding:16, flex:2}}
+              profilePicture="https://picsum.photos/200/200/?random"
+              title={this.state.class.subject}
+              />
+            <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+              <TouchableOpacity onPress={this.handleGroupChatPress}>
+                <IconButton icon="comment" size={32}></IconButton>
+              </TouchableOpacity>
+            </View>
+          </View>
           <View style={{  marginVertical: 16 }}>  
             <PeopleInformationContainer
               fieldName="Ruangan"
