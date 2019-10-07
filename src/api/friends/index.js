@@ -166,29 +166,44 @@ export default class FriendsAPI{
       const promises = [ 
         userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
         peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
-        
       ];
-
-      
-      // const userFriendListSnapshot = await userFriendListRef.get();
-      // const peopleFriendListSnapshot = await peopleFriendListRef.get();
-      // //check if there is totalFriends Field, we must update it, if there is no totalFriends Field, we have to set it.
-      // //explanation: method update can't change the value of field if there is no field to update
-      // if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
-      //   promises.push(userFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
-      // }else{
-      //   promises.push(userFriendListRef.set({ totalFriends: 1 }))
-      // }
-
-      // if(peopleFriendListSnapshot.data() && peopleFriendListSnapshot.data().totalFriends){
-      //   promises.push(peopleFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
-      // }else{
-      //   promises.push(peopleFriendListRef.set({ totalFriends: 1 }))
-      // }
 
       promises.push(this.cancelRequest(friendEmail, peopleEmail))
 
       await Promise.all(promises);
+      return Promise.resolve(true);
+    }catch(err){
+      console.log(err);
+      return Promise.resolve(false);
+    }
+  }
+
+  async setFriends(peopleEmail, friendEmail, source){
+    // used for add new friend from barcode scan (auto become friend without friendRequest)
+    try{
+      const db = firebase.firestore();
+      const friendListCollection = new FriendListCollection();
+      const peopleCollection = new PeopleCollection();
+      const userDocument = new Document(peopleEmail);
+      const peopleDocument = new Document(friendEmail);
+
+
+      const userFriendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+      const peopleFriendListRef = db.collection(friendListCollection.getName()).doc(peopleDocument.getId());
+      const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
+      const peoplePeopleRef = peopleFriendListRef.collection(peopleCollection.getName()).doc(userDocument.getId());
+
+      const userPeopleSnapshot = await userPeopleRef.get()
+      const peoplePeopleSnapshot = await peoplePeopleRef.get()
+      // check if already friends or not
+      if(!userPeopleSnapshot.exists || !peoplePeopleSnapshot.exists){
+        const promises = [ 
+          userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
+          peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
+        ];
+        await Promise.all(promises);
+      }
+
       return Promise.resolve(true);
     }catch(err){
       console.log(err);
