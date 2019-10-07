@@ -81,7 +81,6 @@ function ChatScreen(props){
         if(messages.length === 0) setMessages(MessagesAPI.welcomeMessage());
         else setMessages(MessagesAPI.appendDateSeparator(messages));
         setLastMessageSnapshot(snapshot);
-        setUserRegistered(true);
       }
     })
   }

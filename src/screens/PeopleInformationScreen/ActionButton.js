@@ -2,8 +2,6 @@ import React from "react";
 import FriendsAPI from "src/api/friends";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
-import { StackActions } from "react-navigation";
-import { PersonalRoomsAPI } from "src/api/rooms";
 
 import Button from "src/components/Button";
 import { View } from "react-native";
@@ -11,13 +9,6 @@ import { View } from "react-native";
 const INITIAL_STATE = { isLoading: false };
 
 class ActionButton extends React.PureComponent{
-
-  handleStartChatPress = async () => {
-    this.setState({ isLoading: true });
-    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, this.props.peopleEmail);
-    this.setState({ isLoading: false });
-    this.props.navigation.dispatch(StackActions.replace({ routeName: "Chat", params: {room} }));
-  }
 
   handleAddFriendPress = async () => {
     this.setState({ isLoading: true });
@@ -51,12 +42,10 @@ class ActionButton extends React.PureComponent{
     super(props);
 
     this.state = INITIAL_STATE;
-    this.handleStartChatPress = this.handleStartChatPress.bind(this);
     this.handleAddFriendPress = this.handleAddFriendPress.bind(this);
     this.handleCancelRequestPress = this.handleCancelRequestPress.bind(this);
     this.handleRejectRequestPress = this.handleRejectRequestPress.bind(this);
     this.handleAcceptRequestPress = this.handleAcceptRequestPress.bind(this);
-    this.handleStartChatPress = this.handleStartChatPress.bind(this);
   }
 
   render(){
@@ -80,7 +69,7 @@ class ActionButton extends React.PureComponent{
           isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
       )
     }else if(peopleFriendStatus === "friend"){
-      return <Button style={style} onPress={this.handleStartChatPress} text="Mulai Percakapan"/>
+      return null
     }else if(peopleFriendStatus === "pendingAccept"){
       if(this.state.isLoading) return <Button style={style} text="Harap tunggu..." isLoading disabled/>
       else return (

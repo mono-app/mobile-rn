@@ -46,6 +46,22 @@ export default class PeopleAPI{
     return Promise.resolve(normalizedPeople);
   }
 
+  static async isExists(email){
+    const db = firebase.firestore();
+    const userCollection = new UserCollection();
+    const userRef = db.collection(userCollection.getName()).doc(email);
+    const documentSnapshot = await userRef.get();
+    return Promise.resolve(documentSnapshot.exists);
+  }
+
+  static async isMonoIdAvailable(monoId){
+    console.log(monoId)
+    const db = firebase.firestore();
+    const userCollection = new UserCollection();
+    const userQuerySnapshot = await db.collection(userCollection.getName()).where("applicationInformation.id","==",monoId).get();
+    return Promise.resolve(userQuerySnapshot.empty);
+  }
+
   /**
    * 
    * @param {String} email 
@@ -193,5 +209,7 @@ export default class PeopleAPI{
     }
     return Promise.resolve(true)
   }
+
+ 
 
 }
