@@ -9,18 +9,21 @@ import {
   Button as MaterialButton 
 } from "react-native-paper";
 
-import Button from "../../components/Button";
-import TextInput from "../../components/TextInput";
+import Button from "src/components/Button";
+import TextInput from "src/components/TextInput";
+import PeopleAPI from "src/api/people";
+import HelperAPI from "src/api/helper"
 
 const INITIAL_STATE = { 
   email: "", 
   password: "", 
   verifyPassword: "",
   isError: false,
-  errorMessage: ""
+  errorMessage: "",
+  isLoading: false
 }
 
-export default class SignUpScreen extends React.Component{
+export default class SignUpScreen extends React.PureComponent{
   static navigationOptions = { header: null }
   
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({n: 1}));
@@ -28,9 +31,12 @@ export default class SignUpScreen extends React.Component{
   handleEmailChange = email => this.setState({email});
   handlePasswordChange = password => this.setState({password});
   handleVerifyPasswordChange = verifyPassword => this.setState({verifyPassword});
-  handleContinuePress = () => {
+  handleContinuePress = async () => {
+    this.setState({isLoading:true})
     if(this.state.email === null || this.state.email === "" || this.state.email === undefined){
       this.setState({isError: true, errorMessage: "Email tidak boleh kosong!"});
+    }else if(!HelperAPI.validateEmail(this.state.email)){
+      this.setState({isError: true, errorMessage: "Format email tidak benar!"});
     }else if(this.state.password === null || this.state.password === "" || this.state.password === undefined){
       this.setState({isError: true, errorMessage: "Password tidak boleh kosong!"});
     }else if(this.state.password !== this.state.verifyPassword){
@@ -38,8 +44,15 @@ export default class SignUpScreen extends React.Component{
     }else{
       let email = JSON.parse(JSON.stringify(this.state.email))
       email = email.toLowerCase()
-      this.props.navigation.navigate("VerifyPhone", {email, password: this.state.password});
+      const isExists = await PeopleAPI.isExists(email)
+      if(isExists===false){
+        this.props.navigation.navigate("VerifyPhone", {email, password: this.state.password});
+      }else{
+        this.setState({isError: true, errorMessage: "Email sudah digunakan!"});
+
+      }
     }
+    this.setState({isLoading:false})
   }
 
   constructor(props){
@@ -72,7 +85,7 @@ export default class SignUpScreen extends React.Component{
             secureTextEntry={true}
             value={this.state.verifyPassword}
             onChangeText={this.handleVerifyPasswordChange}/>
-          <Button text="Lanjutlan" onPress={this.handleContinuePress}/>
+          <Button text="Lanjutkan" onPress={this.handleContinuePress} isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
         </View>
         <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
           <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>Saya punya akun. Kembali ke Sign In</Text>
@@ -97,6 +110,7 @@ const styles = StyleSheet.create({
   container: {
     paddingLeft: 32,
     paddingRight: 32,
+    paddingBottom: 96,
     flex: 1,
     alignItems: "stretch",
     justifyContent: "center"

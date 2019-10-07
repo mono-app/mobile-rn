@@ -3,7 +3,6 @@ import firebase from "react-native-firebase";
 import { StyleSheet } from "react-native";
 import { StackActions, NavigationActions } from "react-navigation";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
 import Button from "src/components/Button";
 import AppHeader from "src/components/AppHeader";
 import HeadlineTitle from "src/components/HeadlineTitle";
@@ -17,6 +16,7 @@ function AccountSetupScreen(props){
   const [ isApplicationInformationComplete, setIsApplicationInformationComplete ] = React.useState(false);
   const [ isPersonalInformationComplete, setIsPersonalInformationComplete ] = React.useState(false);
   const [ canSubmit, setCanSubmit ] = React.useState(false);
+  const [ isLoading, setLoading ] = React.useState(false);
   const [ applicationInformation, setApplicationInformation ] = React.useState(null);
   const [ personalInformation, setPersonalInformation ] = React.useState(null);
 
@@ -26,9 +26,26 @@ function AccountSetupScreen(props){
     cardContainer:{ padding: 16, paddingBottom: 8, paddingTop: 8 }
   })
 
-  const handlePersonalInformationPress = () => navigation.navigate("PersonalInformationSetup", { onFinish: finishPersonalInformationSetup });
-  const handleApplicationInformationPress = () => navigation.navigate("ApplicationInformationSetup", { onFinish: finishApplicationInformationSetup });
+  const handlePersonalInformationPress = () => {
+    const payload = {
+      defaultGivenName: (personalInformation)?personalInformation.givenName:"",
+      defaultFamilyName: (personalInformation)?personalInformation.familyName:"",
+      defaultGender: (personalInformation)?personalInformation.gender:"",
+      onFinish: finishPersonalInformationSetup
+    }
+    navigation.navigate("PersonalInformationSetup", payload);
+  }
+  const handleApplicationInformationPress = () => {
+    const payload = {
+      defaultId: (applicationInformation)?applicationInformation.id:"",
+      defaultNickName: (applicationInformation)?applicationInformation.nickName:"",
+      onFinish: finishApplicationInformationSetup
+    }
+    navigation.navigate("ApplicationInformationSetup", payload);
+  }
+
   const handleCompleteClick = async () => {
+    setLoading(true)
     if(isApplicationInformationComplete && isPersonalInformationComplete){
       const db = firebase.firestore();
       await db.collection("users").doc(currentUser.email).update({
@@ -41,6 +58,7 @@ function AccountSetupScreen(props){
         })
       );
     }
+    setLoading(false)
   };
 
   const finishApplicationInformationSetup = (data) => {
@@ -78,8 +96,9 @@ function AccountSetupScreen(props){
         title="Informasi Akun" subtitle="Pastikan tidak memberikan data sensitif." 
         onPress={handleApplicationInformationPress} isComplete={isApplicationInformationComplete}/>
       <View style={styles.cardContainer}>
-        <Button text="Sempurna" onPress={handleCompleteClick} disabled={!canSubmit}/>
+        <Button text="Sempurna" onPress={handleCompleteClick} isLoading={isLoading} disabled={!canSubmit}/>
       </View>
+      
     </KeyboardAwareScrollView>
   )
 }

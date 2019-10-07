@@ -10,6 +10,9 @@ import { View } from "react-native";
 function PersonalInformationSetupScreen(props){
   const { navigation } = props;
   const onFinish = navigation.getParam("onFinish", () => {});
+  const defaultGivenName = navigation.getParam("defaultGivenName","")
+  const defaultFamilyName = navigation.getParam("defaultFamilyName","")
+  const defaultGender = navigation.getParam("defaultGender","male")
   const personalInformationCard = React.useRef(null);
 
   const styles = StyleSheet.create({
@@ -17,16 +20,20 @@ function PersonalInformationSetupScreen(props){
   })
 
   const handleSavePress = () => {
-    const data = personalInformationCard.current.getState();
-    onFinish(data);
-    navigation.goBack();
+    let data = JSON.parse(JSON.stringify(personalInformationCard.current.getState()))
+    data.givenName = data.givenName.trim()
+    data.familyName = data.familyName.trim()
+    if(data.givenName && data.familyName){
+      onFinish(data);
+      navigation.goBack();
+    }
   }
 
   return (
     <Container style={{ }}>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <View style={styles.content}>
-        <PersonalInformationCard ref={personalInformationCard}/>
+        <PersonalInformationCard ref={personalInformationCard} defaultGivenName={defaultGivenName} defaultFamilyName={defaultFamilyName} defaultGender={defaultGender}/>
         <Button style={{ marginTop: 8 }} text="Simpan" onPress={handleSavePress}/>
       </View>
     </Container>

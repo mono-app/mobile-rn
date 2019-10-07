@@ -10,7 +10,7 @@ const INITIAL_STATE = {
   gender: "male"
 }
 
-export default class PersonalInformationCard extends React.Component{
+export default class PersonalInformationCard extends React.PureComponent{
   handleGivenNameChange = givenName => this.setState({givenName});
   handleFamilyNameChange = familyName => this.setState({familyName});
   handleGenderChange = (gender, index) => this.setState({gender});
@@ -18,6 +18,9 @@ export default class PersonalInformationCard extends React.Component{
   constructor(props){
     super(props);
 
+    INITIAL_STATE.givenName = props.defaultGivenName
+    INITIAL_STATE.familyName = props.defaultFamilyName
+    INITIAL_STATE.gender = props.defaultGender
     this.state = INITIAL_STATE;
     this.handleGivenNameChange = this.handleGivenNameChange.bind(this);
     this.handleFamilyNameChange = this.handleFamilyNameChange.bind(this);

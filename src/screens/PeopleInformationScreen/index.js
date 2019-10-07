@@ -5,13 +5,15 @@ import FriendsAPI from "src/api/friends";
 import PeopleAPI from "src/api/people";
 import StatusAPI from "src/api/status";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import ActionButton from "src/screens/PeopleInformationScreen/ActionButton";
 import AppHeader from "src/components/AppHeader";
 import { View } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
+import Button from "src/components/Button";
+import { PersonalRoomsAPI } from "src/api/rooms";
+import { StackActions } from "react-navigation";
 
 function PeopleInformationScreen(props){
   const { currentUser } = props;
@@ -47,6 +49,11 @@ function PeopleInformationScreen(props){
     }
   }
 
+  const handleStartChatPress = async () => {
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(props.currentUser.email, peopleEmail);
+    props.navigation.navigate({ routeName: "Chat", params: {room} })
+  }
+
   React.useEffect(() => {
     fetchPeopleInformation();
     fetchPeopleFriendStatus();
@@ -80,6 +87,9 @@ function PeopleInformationScreen(props){
         peopleEmail={peopleEmail} source={source}
         peopleFriendStatus={peopleFriendStatus} 
         onComplete={handleActionButtonComplete}/>
+
+      <Button style={{marginHorizontal: 16}} onPress={handleStartChatPress} outlined={true} text="Mulai Percakapan"/>
+
     </View>
   )
 }

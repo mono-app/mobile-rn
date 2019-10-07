@@ -27,7 +27,15 @@ function SplashScreen(props){
         props.setCurrentUserEmail(firebaseUser.email, props.navigation);
         const fcmToken = await firebase.messaging().getToken();
         if (fcmToken) {
+          try{
             await PeopleAPI.storeMessagingToken(firebaseUser.email,fcmToken)
+          }catch{
+            firebase.auth().signOut();
+            props.navigation.dispatch(StackActions.reset({
+              index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
+              key: null
+            }))
+          }
         }
       }
       else {
