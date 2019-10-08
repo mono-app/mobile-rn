@@ -8031,6 +8031,13 @@ react-native-permissions@1.2.1, react-native-permissions@^1.1.1:
   resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-1.2.1.tgz#cb1f6e53b8992b3912de5a4cfc1553ac2e82d0f6"
   integrity sha512-6NOGsA7EsuKT9hfULccQfMrsGmRhBkmN6Uv8nz2QObjEG87XtroQtw4Qi1+tAjIkSHawCeAMJp+SCtiXSGUD5Q==
 
+react-native-push-notification-popup@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-push-notification-popup/-/react-native-push-notification-popup-1.4.0.tgz#917bb96666d0fd3c119276295a7360860ded003b"
+  integrity sha512-m79AdvliQNpVBtYVErUFDTu11+9I/sooUU687QuXxIfT6WLry3nyZ/784c+l3FGuPUNMPF1XDhyBukh/N7Q+iQ==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-qrcode-scanner@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.2.1.tgz#aa3949a77f6eee063a3ca25796a1f0ce17f9c4dd"
