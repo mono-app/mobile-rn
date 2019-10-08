@@ -17,11 +17,21 @@ BirthdayReminder.schedule = functions.pubsub.schedule("every day 09:00").timeZon
 BirthdayReminder.execute = async () => {
   const users = await User.getAll();
 
+  const noBirthdayFilter = (user) => {
+    try { return user.queryExists.birthday === false }
+    catch(err) { return false }
+  }
+
+  const haveBirthdayFilter = (user) => {
+    try { return user.queryExists.birthday === true }
+    catch(err){ return false }
+  }
+
   // filter the user that has birthday setup
   // if the user does not has birthday setup, remind the user to setup the birthday
   // until the user setup the birthday, the user will not receive any friend's birthday reminder
-  const noBirthdaySetupUsers = users.filter((user) => user.queryExists.birthday === false);
-  const haveBirthdaySetupUsers = users.filter((user) => user.queryExists.birthday === true);
+  const noBirthdaySetupUsers = users.filter(noBirthdayFilter);
+  const haveBirthdaySetupUsers = users.filter(haveBirthdayFilter);
   await Promise.all([
     BirthdayReminder.reminderToSetup(noBirthdaySetupUsers),
     BirthdayReminder.reminderOfFriends(haveBirthdaySetupUsers)
