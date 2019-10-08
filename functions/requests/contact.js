@@ -99,10 +99,10 @@ Contact.request = app.post('/synccontact', async (req,res)=>{
           
 
             if(!userPeopleSnapshot.exists){
-              promises.push(userPeopleRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), source: {value: "auto-sync"} }));
+              promises.push(userPeopleRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), source: {id: "autosync" ,value: "Auto Sync"} }));
             }
             if(!peoplePeopleSnapshot.exists){
-              promises.push(peoplePeopleRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), source: {value: "auto-sync"} }));
+              promises.push(peoplePeopleRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), source: {id: "autosync", value: "Auto Sync"} }));
             }
 
             await Promise.all(promises);
