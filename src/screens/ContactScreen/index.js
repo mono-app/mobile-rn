@@ -19,7 +19,6 @@ function ContactScreen(props){
 
   React.useEffect(() => {
     friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.email, (friends) => {
-
       setPeopleList(friends);
     })
     return function cleanup(){

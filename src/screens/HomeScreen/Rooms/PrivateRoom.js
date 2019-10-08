@@ -12,7 +12,7 @@ import { View, TouchableOpacity } from 'react-native';
 
 function PrivateRoom(props){
   const { currentUser, room } = props; 
-
+  const _isMounted = React.useRef(true);
   const [ isLoading, setIsLoading ] = React.useState(true);
   const [ people, setPeople ] = React.useState(null);
   const [ class_, setClass ] = React.useState(null);
@@ -27,20 +27,23 @@ function PrivateRoom(props){
   const handleRoomPress = () => props.onPress(room);
 
   React.useEffect(() => {
-    setIsLoading(true);
+    if(_isMounted.current) setIsLoading(true);
     const fetchData = async () => {
       const { audiences, type, school } = props.room;
       const realAudience = audiences.filter((audience) => audience !== currentUser.email)[0];
       if(type==="group-chat"){
         const classData = await ClassAPI.getDetail(school.id,school.classId)
-        setClass(classData)
+        if(_isMounted.current) setClass(classData)
       }else{
         const peopleData = await PeopleAPI.getDetail(realAudience);
-        setPeople(peopleData);
+        if(_isMounted.current) setPeople(peopleData);
       } 
-      setIsLoading(false);
+      if(_isMounted.current) setIsLoading(false);
     }
     fetchData();
+    return () => {
+      _isMounted.current = false;
+    };
   }, [])
 
   const sentTime = room.lastMessage.sentTime? new moment.unix(room.lastMessage.sentTime.seconds): null;
@@ -53,6 +56,21 @@ function PrivateRoom(props){
 
   if(!isLoading){
     try{
+      // check blocked User List and Hidden User List
+      if(room.type==="chat"){
+        if(room.audiences && room.audiences.length >0){
+          for(let i=0;i<room.audiences.length;i++){
+            if(props.blockedUsers && props.blockedUsers.includes(room.audiences[i])){
+              return null
+            }
+            if(props.hiddenUsers && props.hiddenUsers.includes(room.audiences[i])){
+              return null
+            }
+          }
+        }
+      }
+      // ----------
+
       return(
         <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress}>
           <View style={{ marginRight: 16 }}>
@@ -80,6 +98,7 @@ function PrivateRoom(props){
           </View>
         </TouchableOpacity>
       )
+
     }catch{
       return null
     }

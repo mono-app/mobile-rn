@@ -17,7 +17,7 @@ class ScanQRCodeSCreen extends React.PureComponent{
     const peopleEmail = e.data;
     try{
       if(peopleEmail!==this.props.currentUser.email){
-        await new FriendsAPI().setFriends(this.props.currentUser.email, peopleEmail, "barcode");
+        await new FriendsAPI().setFriends(this.props.currentUser.email, peopleEmail, { id: "QRCode", value: "QR Code" });
         this.props.navigation.dispatch(StackActions.replace({ routeName: "PeopleInformation", params: {
           peopleEmail, source: { id: "QRCode", value: "QR Code" }
         }}))
@@ -25,7 +25,6 @@ class ScanQRCodeSCreen extends React.PureComponent{
     }catch{
 
     }
-
   }
 
   constructor(props){
