@@ -21,7 +21,6 @@ export default class RoomsAPI{
     const roomsCollection = new RoomsCollection();
     const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email)
                        
-    
     return roomsRef.onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => {
         const normalizedRoom = RoomsAPI.normalizeRoom(documentSnapshot);
@@ -32,7 +31,7 @@ export default class RoomsAPI{
       })
 
       filteredRooms.sort((a, b) => ((a.lastMessage && b.lastMessage)&&a.lastMessage.sentTime < b.lastMessage.sentTime) ? 1 : -1)
-
+      console.log(rooms)
       callback(filteredRooms);
     })
   }

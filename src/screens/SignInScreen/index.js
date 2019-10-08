@@ -29,7 +29,7 @@ function SignInScreen(props){
     if(email && password){
       setIsLoading(true);
       try{
-        const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const { user } = await firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password);
         props.setCurrentUserEmail(user.email);
       }catch{
         console.log("wrong username/pass")

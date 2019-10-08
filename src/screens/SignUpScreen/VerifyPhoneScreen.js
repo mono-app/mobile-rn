@@ -19,8 +19,8 @@ const INITIAL_STATE = {
   phoneNumber: "",
   otpRequestId: "",
   showSnackbarFailVerification: false,
-  isVerificationLoading: false,
-  showSnackbarPhoneNoInvalid: false
+  snackbarFailMessage: "",
+  isVerificationLoading: false
 }
 
 class VerifyPhoneScreen extends React.PureComponent{
@@ -31,19 +31,23 @@ class VerifyPhoneScreen extends React.PureComponent{
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
   handleOTPChange = otp => {this.setState({otp, isInsertingOTP: true});}
   handleAskOTP = async () => {
+    this.setState({isVerificationLoading: true})
+
     const phoneNum = this.validatePhoneNumber(this.state.phoneNumber,"ID","62")
     if(!phoneNum){
-      this.setState({ showSnackbarPhoneNoInvalid: true })
-      return
-    }
-    //const response = await VerifyPhoneAPI.sendCode(phoneNum)
-    const response = "fds"
+      this.setState({ snackbarFailMessage: "Nomor Telepon Tidak Valid", showSnackbarFailVerification:true })
+    }else{
+      //const response = await VerifyPhoneAPI.sendCode(phoneNum)
+      const response = "fds"
 
-    if(response){
-      const otpRequestId = response
-      VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
-      this.setState({ isAskingOTP: true, otpRequestId })
+      if(response){
+        const otpRequestId = response
+        VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
+        this.setState({ isAskingOTP: true, otpRequestId })
+      }
     }
+   
+    this.setState({isVerificationLoading: false})
   }
 
   validatePhoneNumber = (phoneNumber0, countryCode, numCode) => {
@@ -85,25 +89,29 @@ class VerifyPhoneScreen extends React.PureComponent{
       const password = this.props.navigation.getParam("password", null);
       try{
         await firebase.auth().createUserWithEmailAndPassword(email, password);
-      }catch{
         
+        const db = firebase.firestore();
+        const userDocumentRef = db.collection("users").doc(email)
+        const userSnapshot = await userDocumentRef.get()
+        if(userSnapshot.exists){
+          await userDocumentRef.update({
+            phoneNumber: { value: this.state.phoneNumber, isVerified: true }
+          })
+        }else{
+          await userDocumentRef.set({
+            phoneNumber: { value: this.state.phoneNumber, isVerified: true },
+            isCompleteSetup: false
+          })
+        }
+        this.setState({ showDialog: true, isVerificationLoading: false })
+      }catch{
+        this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Koneksi bermasalah", isVerificationLoading: false})
       }
-      const db = firebase.firestore();
-      const userDocumentRef = db.collection("users").doc(email)
-      const userSnapshot = await userDocumentRef.get()
-      if(userSnapshot.exists){
-        userDocumentRef.update({
-          phoneNumber: { value: this.state.phoneNumber, isVerified: true }
-        }).then(() => this.setState({ showDialog: true, isVerificationLoading: false }))
-      }else{
-        userDocumentRef.set({
-          phoneNumber: { value: this.state.phoneNumber, isVerified: true },
-          isCompleteSetup: false
-        }).then(() => this.setState({ showDialog: true, isVerificationLoading: false }))
-      }
+     
     }else{
-      this.setState({showSnackbarFailVerification:true})
+      this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Kode Verifikasi Salah", isVerificationLoading: false})
     }
+
   }
 
   handleContinueClick = () => {
@@ -182,9 +190,9 @@ class VerifyPhoneScreen extends React.PureComponent{
               <TextInput
                 placeholder="Kode Verifikasi" keyboardType="number-pad"
                 value={this.state.otp} onChangeText={this.handleOTPChange} autoFocus/>
-              <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} text="Verifikasi"/>
+              <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":"Verifikasi"}/>
             </View>
-          ):(<Button onPress={this.handleAskOTP} text="Minta Kode Verifikasi"/>)}
+          ):(<Button onPress={this.handleAskOTP} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":"Minta Kode Verifikasi"}/>)}
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
             <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>Saya punya akun. Kembali ke Sign In</Text>
           </TouchableOpacity>
@@ -204,14 +212,9 @@ class VerifyPhoneScreen extends React.PureComponent{
           visible={this.state.showSnackbarFailVerification}
           onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
           style={{ backgroundColor:"red" }} duration={Snackbar.DURATION_SHORT}>
-          Kode Verifikasi Salah
+          {this.state.snackbarFailMessage}
         </Snackbar>
-      <Snackbar
-        visible= {this.state.showSnackbarPhoneNoInvalid}
-        onDismiss={() => this.setState({ showSnackbarPhoneNoInvalid: false })}
-        style={{ backgroundColor:"red" }} duration={Snackbar.DURATION_SHORT}>
-        Nomor Telepon Tidak Valid
-      </Snackbar>
+  
      </View>
     )
   }
