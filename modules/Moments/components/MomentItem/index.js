@@ -84,6 +84,7 @@ function MomentItem(props){
 
   
   try{
+    
     if(people === null||!moment||!moment.content) return null;
       const imageSize = (Dimensions.get("window").width/3) + 10;
       let totalComments = ""
@@ -94,7 +95,7 @@ function MomentItem(props){
           totalComments = moment.totalComments
         }
       }
-      
+
     return (
       <Surface style={[ styles.surface, props.style ]}>
         <View style={{justifyContent: "space-between", flexDirection:"row"}}>

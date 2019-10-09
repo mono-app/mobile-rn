@@ -56,21 +56,6 @@ function PrivateRoom(props){
 
   if(!isLoading){
     try{
-      // check blocked User List and Hidden User List
-      if(room.type==="chat"){
-        if(room.audiences && room.audiences.length >0){
-          for(let i=0;i<room.audiences.length;i++){
-            if(props.blockedUsers && props.blockedUsers.includes(room.audiences[i])){
-              return null
-            }
-            if(props.hiddenUsers && props.hiddenUsers.includes(room.audiences[i])){
-              return null
-            }
-          }
-        }
-      }
-      // ----------
-
       return(
         <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress}>
           <View style={{ marginRight: 16 }}>

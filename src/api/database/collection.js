@@ -118,3 +118,7 @@ export class HideCollection extends Collection{
   constructor(){ super("hide"); }
 }
 
+export class BlockedByCollection extends Collection{
+  constructor(){ super("blockedBy"); }
+}
+

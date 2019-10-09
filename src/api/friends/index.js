@@ -140,6 +140,51 @@ export default class FriendsAPI{
     })
   }
 
+  static async getBlockedUsers(peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const blockedCollection = new BlockedCollection();
+    const userDocument = new Document(peopleEmail);
+    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendListRef.collection(blockedCollection.getName());
+    const querySnapshot = await peopleRef.get();
+    
+    if(querySnapshot.empty) return Promise.resolve([]);
+    else{
+      const arrayOfPromise = querySnapshot.docs.map(async (snap) => {
+        const user = await PeopleAPI.getDetail(snap.id);
+        return Promise.resolve({...user, source: snap.data().source})
+      });
+
+      const userDocuments = await Promise.all(arrayOfPromise);
+      userDocuments.sort((a, b) => ((a.name && b.name)&&a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+      return Promise.resolve(userDocuments);
+    }
+  }
+
+  static async getHiddenUsers(peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const hideCollection = new HideCollection();
+    const userDocument = new Document(peopleEmail);
+    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendListRef.collection(hideCollection.getName());
+    const querySnapshot = await peopleRef.get();
+    
+    if(querySnapshot.empty) return Promise.resolve([]);
+    else{
+      const arrayOfPromise = querySnapshot.docs.map(async (snap) => {
+        const user = await PeopleAPI.getDetail(snap.id);
+        return Promise.resolve({...user, source: snap.data().source})
+      });
+
+      const userDocuments = await Promise.all(arrayOfPromise);
+      userDocuments.sort((a, b) => ((a.name && b.name)&&a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+      return Promise.resolve(userDocuments);
+    }
+  }
+
+
   /**
    * 
    * @param {String} peopleEmail 

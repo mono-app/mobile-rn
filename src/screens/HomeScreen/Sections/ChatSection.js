@@ -8,7 +8,7 @@ import PrivateRoom from "src/screens/HomeScreen/Rooms/PrivateRoom";
 import { FlatList } from "react-native";
 
 function ChatSection(props){
-  const { currentUser, blockedUserList, hiddenUserList } = props;
+  const { currentUser } = props;
   const [ rooms, setRooms ] = React.useState([]);
   const roomsListener = React.useRef(null);
 
@@ -32,12 +32,11 @@ function ChatSection(props){
     <FlatList
       data={rooms} 
       keyExtractor={(item) => item.id}
-      extraData={[blockedUserList,hiddenUserList]}
       renderItem={({ item, index }) => {
       const marginTop = (index === 0)? 8: 4;
       const marginBottom = (index === rooms.length)? 8: 4;
       
-      return <PrivateRoom room={item} blockedUsers={blockedUserList} hiddenUsers={hiddenUserList} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
+      return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
         
       }}/>
   )

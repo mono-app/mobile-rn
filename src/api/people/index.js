@@ -6,7 +6,7 @@ import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import { StackActions } from "react-navigation";
-import { UserCollection, RoomsCollection, StatusCollection } from "src/api/database/collection";
+import { UserCollection, RoomsCollection, StatusCollection, FriendListCollection, PeopleCollection, BlockedCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import {getDistance} from 'geolib';
 
@@ -35,15 +35,32 @@ export default class PeopleAPI{
    * 
    * @param {String} monoId 
    */
-  static async getByMonoId(monoId){
+  static async getByMonoId(currentUserEmail, monoId){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const collectionRef = db.collection(userCollection.getName());
     const queryPath = new firebase.firestore.FieldPath("applicationInformation", "id");
-    const userQuery = collectionRef.where(queryPath, "==", monoId);
+    const userQuery = collectionRef.orderBy(queryPath,"asc").startAt(monoId).endAt(monoId+"~");
     const querySnapshot = await userQuery.get();
-    const normalizedPeople = querySnapshot.docs.map((documentSnapshot) => PeopleAPI.normalizePeople(documentSnapshot));
-    return Promise.resolve(normalizedPeople);
+    
+    const normalizedPeople = querySnapshot.docs.map((documentSnapshot) => {
+      return PeopleAPI.normalizePeople(documentSnapshot)
+    });
+    const friendListCollection = new FriendListCollection()
+    const blockedByCollection = new BlockedByCollection()
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail)
+    const peopleQuerySnapshot = await friendListDocRef.collection(blockedByCollection.getName()).get()
+
+    const blockedByDocList = peopleQuerySnapshot.docs
+
+    const blockedByIdList = blockedByDocList.map(obj=> obj.id)
+
+    // is user blocked?
+    const filteredPeople = normalizedPeople.filter(data => {
+      return !blockedByIdList.includes(data.email)
+    })
+
+    return Promise.resolve(filteredPeople);
   }
 
   static async isExists(email){
