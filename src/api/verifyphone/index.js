@@ -1,4 +1,6 @@
 import { NEXMO_API_KEY, NEXMO_API_SECRET } from "react-native-dotenv";
+import firebase from "react-native-firebase";
+import { UserCollection } from "src/api/database/collection";
 
 export default class VerifyPhoneAPI{
   static currentNexmoRequestId = null
@@ -63,6 +65,22 @@ export default class VerifyPhoneAPI{
     } catch (error) {
       console.error(error);
     }
+  }
+
+  static async isAvailable(currentUserEmail, phone){
+    const db = firebase.firestore();
+    const usersCollection = new UserCollection();
+    const userRef = db.collection(usersCollection.getName()).where('phoneNumber.value','==',phone)
+    const userQuerySnapshot = await userRef.get()
+    let isAvailable = true
+
+    userQuerySnapshot.forEach((obj)=>{
+        if(obj.id!==currentUserEmail){
+          isAvailable = false
+        }
+    })
+
+    return Promise.resolve(isAvailable)
   }
 
 }
