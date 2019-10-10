@@ -34,8 +34,8 @@ export default class ApplicationInformationCard extends React.PureComponent{
           <View>
             <View style={{flexDirection:"row"}}>
               <Text style={styles.headerText}>Mono ID</Text>
-              <Tooltip backgroundColor="grey" 
-                popover={<Text style={{color:"white", padding:4}}>Mono ID adalah ID unik yang bisa kamu gunakan untuk identitas kamu.</Text>}>
+              <Tooltip backgroundColor="grey" height={80}
+                popover={<Text style={{color:"white"}}>Mono ID adalah ID unik yang bisa kamu gunakan untuk identitas kamu.</Text>}>
                 <Icon style={{marginLeft: 4}}  name="question-circle" size={16}/> 
               </Tooltip>
             </View>
