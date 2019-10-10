@@ -26,12 +26,18 @@ function FriendRequest(props){
       friendRequestListener.current = friendRequestRef.onSnapshot((querySnapshot) => {
         const newFriendRequest = [];
         querySnapshot.docChanges.forEach((change) => {
-          if(change.type === "added") newFriendRequest.push(change.doc);
+          if(change.type === "modified") newFriendRequest.push(change.doc);
         });
 
+        Logger.log("FriendRequest.showNotification#newFriendRequest", newFriendRequest.map((documentSnapshot) => documentSnapshot.data()));
+
         let notificationBody = null;
-        if(newFriendRequest.length === 1) notificationBody = "Frans Huang mengirimkan permintaan pertemanan. Lihat sekarang!";
-        else if(newFriendRequest.length > 1) notificationBody = `Kamu memiliki ${newFriendRequest.size} perminataan pertemanan. Lihat sekarang!`;
+        if(newFriendRequest.length === 1) {
+          const requestorData = newFriendRequest[0].data();
+          notificationBody = `${requestorData.applicationInformation.nickName} mengirimkan permintaan pertemanan. Lihat sekarang!`;
+        }else if(newFriendRequest.length > 1) {
+          notificationBody = `Kamu memiliki ${newFriendRequest.size} perminataan pertemanan. Lihat sekarang!`;
+        }
         
         Logger.log("FriendRequest.showNotification", newFriendRequest.length);
         if(popup.current !== undefined && newFriendRequest.length > 0 && !isFirstTime.current){
