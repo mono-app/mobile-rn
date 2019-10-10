@@ -78,16 +78,26 @@ function HomeScreen(props){
         onRefresh={handleRefresh} 
         refreshing={isRefreshing} 
         style={{ flex: 1 }}
-        windowSize={3} initialNumToRender={5} renderItem={({ item, index }) => (
-          <MomentItem 
-          moment={item} 
-          style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} 
-          navigation={props.navigation}
-          onCommentPress={() => handleCommentPress(item)}
-          onSharePress={() => handleSharePress(item)}
-          onDeleteMomentPress={() => handleDeleteMomentPress(item)}
+        windowSize={3} initialNumToRender={5} 
+        renderItem={({ item, index }) => {
+          if(props.blockedByUserList.includes(item.posterEmail)){
+            return null
+          }else if(props.blockedUserList.includes(item.posterEmail)){
+            return null
+          }else if(props.hiddenUserList.includes(item.posterEmail)){
+            return null
+          }
+          return <MomentItem 
+            moment={item} 
+            style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} 
+            navigation={props.navigation}
+            onCommentPress={() => handleCommentPress(item)}
+            onSharePress={() => handleSharePress(item)}
+            onDeleteMomentPress={() => handleDeleteMomentPress(item)}
           />
-        )}/>
+          }
+         
+        }/>
         <DeleteDialog 
           ref ={i => deleteDialog.current = i}
           title= {"Apakah anda ingin menghapus gambar ini?"}
