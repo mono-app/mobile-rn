@@ -6,6 +6,7 @@ import { AppState } from "react-native";
 import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
+import { TutorialProvider } from "src/api/Tutorial";
 
 import InAppNotifications from "src/components/InAppNotifications";
 
@@ -37,8 +38,10 @@ function App(){
   return(
     <PaperProvider theme={theme}>
       <CurrentUserProvider>
-        <AppContainer/>
-        <InAppNotifications type="friend-request"/>
+        <TutorialProvider>
+          <AppContainer/>
+          <InAppNotifications type="friend-request"/>
+        </TutorialProvider>
       </CurrentUserProvider>
     </PaperProvider>
   )
