@@ -1,9 +1,11 @@
 import React from "react";
-import { Card, Text } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
-import { Tooltip } from 'react-native-elements';
+import { StyleSheet } from "react-native";
+
 import TextInput from "src/components/TextInput";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Card, Text } from "react-native-paper";
+import { View } from "react-native";
+import { Tooltip } from 'react-native-elements';
 
 const INITIAL_STATE = { nickName: "", id: "" }
 
@@ -35,23 +37,22 @@ export default class ApplicationInformationCard extends React.PureComponent{
             <View style={{flexDirection:"row"}}>
               <Text style={styles.headerText}>Mono ID</Text>
               <Tooltip backgroundColor="grey" 
-                popover={<Text style={{color:"white", padding:4}}>Mono ID adalah ID unik yang bisa kamu gunakan untuk identitas kamu.</Text>}>
-                <Icon style={{marginLeft: 4}}  name="question-circle" size={16}/> 
+                popover={
+                  <Text style={{ color: "white" }}>Mono ID adalah ID unik yang bisa kamu gunakan untuk identitas kamu.</Text>
+                }
+                height={64} width={256}>
+                <Icon style={{ marginLeft: 4 }} name="question-circle" size={14}/> 
               </Tooltip>
             </View>
             <TextInput 
-              placeholder="Mono ID"
-              textContentType="nickname"
-              value={this.state.id}
-              onChangeText={this.handleIdChange}/>
+              placeholder="Mono ID" autoCapitalize="none" textContentType="nickname"
+              value={this.state.id} onChangeText={this.handleIdChange}/>
           </View>
           <View>
             <Text style={styles.headerText}>Nama Panggilam</Text>
             <TextInput 
-              placeholder="Nama Panggilan"
-              textContentType="name"
-              value={this.state.nickName}
-              onChangeText={this.handleNickNameChange}/>
+              placeholder="Nama Panggilan" textContentType="name"
+              value={this.state.nickName} onChangeText={this.handleNickNameChange}/>
           </View>
         </Card.Content>
       </Card>

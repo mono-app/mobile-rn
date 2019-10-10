@@ -1,26 +1,18 @@
 import React from "react";
-import { 
-  Text, View, TouchableOpacity,
-  StyleSheet
-} from "react-native";
+import PeopleAPI from "src/api/people";
+import HelperAPI from "src/api/helper";
 import { StackActions } from "react-navigation";
-import { 
-  Dialog, Paragraph, Portal, 
-  Button as MaterialButton 
-} from "react-native-paper";
+import { StyleSheet } from "react-native";
 
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
-import PeopleAPI from "src/api/people";
-import HelperAPI from "src/api/helper"
+import { View, TouchableOpacity } from "react-native";
+import { Text, Title, Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const INITIAL_STATE = { 
-  email: "", 
-  password: "", 
-  verifyPassword: "",
-  isError: false,
-  errorMessage: "",
-  isLoading: false
+  email: "",  password: "",  verifyPassword: "", isError: false,
+  errorMessage: "", isLoading: false
 }
 
 export default class SignUpScreen extends React.PureComponent{
@@ -49,7 +41,6 @@ export default class SignUpScreen extends React.PureComponent{
         this.props.navigation.navigate("VerifyPhone", {email, password: this.state.password});
       }else{
         this.setState({isError: true, errorMessage: "Email sudah digunakan!"});
-
       }
     }
     this.setState({isLoading:false})
@@ -64,27 +55,19 @@ export default class SignUpScreen extends React.PureComponent{
 
   render(){
     return(
-      <View style={styles.container}>
-        <Text style={styles.title}>Form Registrasi Pengguna Baru</Text>
-        <Text style={{ fontSize: 12, marginBottom: 16 }}>Masukan email dan password untuk mendaftar pada aplikasi ini. Mohon untuk tidak pernah membagikan password kepada siapapun</Text>
+      <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+        <Title>Form Registrasi Pengguna Baru</Title>
+        <Paragraph style={{ marginBottom: 16 }}>Masukan email dan password untuk mendaftar pada aplikasi ini. Mohon untuk tidak pernah membagikan password kepada siapapun</Paragraph>
         <View>
           <TextInput
-            placeholder="Email ID"
-            textContentType="emailAddress"
-            value={this.state.email}
-            onChangeText={this.handleEmailChange}/>
+            placeholder="Alamat Email" textContentType="emailAddress" style={{ marginBottom: 8, paddingVertical: 16 }}
+            value={this.state.email} onChangeText={this.handleEmailChange} autoCapitalize="none"/>
           <TextInput
-            placeholder="Password"
-            textContentType="password"
-            secureTextEntry={true}
-            value={this.state.password}
-            onChangeText={this.handlePasswordChange}/>
+            placeholder="Password" textContentType="password" style={{ marginBottom: 8, paddingVertical: 16 }}
+            secureTextEntry={true} value={this.state.password} onChangeText={this.handlePasswordChange}/>
           <TextInput
-            placeholder="Ulangi Password"
-            textContentType="password"
-            secureTextEntry={true}
-            value={this.state.verifyPassword}
-            onChangeText={this.handleVerifyPasswordChange}/>
+            placeholder="Ulangi Password" textContentType="password" style={{ paddingVertical: 16 }}
+            secureTextEntry={true} value={this.state.verifyPassword} onChangeText={this.handleVerifyPasswordChange}/>
           <Button text="Lanjutkan" onPress={this.handleContinuePress} isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
         </View>
         <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
@@ -101,29 +84,12 @@ export default class SignUpScreen extends React.PureComponent{
             </Dialog.Actions>
           </Dialog>
         </Portal>
-      </View>
+      </KeyboardAwareScrollView>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingLeft: 32,
-    paddingRight: 32,
-    paddingBottom: 96,
-    flex: 1,
-    alignItems: "stretch",
-    justifyContent: "center"
-  },
-  title: {
-    fontWeight: "500",
-    fontSize: 24,
-    marginBottom: 4
-  },
-  backToSignInContainer: {
-    position: "absolute",
-    bottom: 32,
-    left: 0,
-    right: 0
-  }
+  container: { paddingHorizontal: 32, flex: 1, alignItems: "stretch", justifyContent: "center" },
+  backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })

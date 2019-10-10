@@ -75,7 +75,7 @@ class ActionButton extends React.PureComponent{
       else return (
         <View style={style}>
           <Button style={{ marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text="Terima Pertemanan"/>
-          <Button style={{ backgroundColor: "#EF6F6C" }} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>
+          <Button style={{ backgroundColor: "#EF6F6C", borderColor: "#EF6F6C" }} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>
         </View>
       )
     }
