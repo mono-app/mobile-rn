@@ -3,17 +3,22 @@ import Logger from "src/api/logger";
 import firebase from "react-native-firebase";
 import PeopleAPI from "src/api/people";
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { UserCollection } from "src/api/database/collection";
+import { UserCollection, FriendListCollection, BlockedCollection, HideCollection } from "src/api/database/collection";
 
 const CurrentUserContext = React.createContext();
 export function withCurrentUser(Component){
   const WrapperComponent = React.forwardRef((props, ref) => {
     return (
       <CurrentUserContext.Consumer>
-        {(context) => <Component {...props} ref={ref}
-          currentUser={context.user}
-          isLoggedIn={context.isLoggedIn}
-          setCurrentUserEmail={context.handleCurrentUserEmail}/>}
+        {(context) => 
+          <Component {...props} ref={ref}
+            currentUser={context.user}
+            isLoggedIn={context.isLoggedIn}
+            setCurrentUserEmail={context.handleCurrentUserEmail}
+            blockedUserList={context.blockedUserList}
+            hiddenUserList={context.hiddenUserList}
+          />}
+
       </CurrentUserContext.Consumer>
     )
   })
@@ -22,18 +27,23 @@ export function withCurrentUser(Component){
 }
 
 export function useCurrentUser(){
-  const { user, handleCurrentUserEmail, isLoggedIn } = React.useContext(CurrentUserContext);
-  return { currentUser: user, isLoggedIn, setCurrentUserEmail: handleCurrentUserEmail }
+  const { user, handleCurrentUserEmail, isLoggedIn, blockedUserList, hiddenUserList } = React.useContext(CurrentUserContext);
+  return { currentUser: user, isLoggedIn, setCurrentUserEmail: handleCurrentUserEmail, blockedUserList, hiddenUserList }
 }
 
-export class CurrentUserProvider extends React.Component{
+export class CurrentUserProvider extends React.PureComponent{
   constructor(props){
     super(props);
     this.userListener = null;
     this.authListener = null;
+    this.blockedUserListener = null;
+    this.hiddenUserListener = null;
     this.state = { 
-      user: {}, isLoggedIn: false,
-      handleCurrentUserEmail: this.handleCurrentUserEmail 
+      user: {}, 
+      isLoggedIn: false,
+      handleCurrentUserEmail: this.handleCurrentUserEmail,
+      blockedUserList: [],
+      hiddenUserList: []
     }
 
     this.handleCurrentUserEmail = this.handleCurrentUserEmail.bind(this);
@@ -45,6 +55,9 @@ export class CurrentUserProvider extends React.Component{
 
     const db = firebase.firestore();
     const userCollection = new UserCollection();
+    const friendListCollection = new FriendListCollection();
+    const blockedCollection = new BlockedCollection();
+    const hideCollection = new HideCollection();
     const userRef = db.collection(userCollection.getName()).doc(email); 
     this.userListener = userRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
@@ -53,6 +66,27 @@ export class CurrentUserProvider extends React.Component{
         this.setState({ user: userData });
       }
     });
+
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(email)
+    const blockedColRef = friendListDocRef.collection(blockedCollection.getName())
+    this.blockedUserListener = blockedColRef.onSnapshot((querySnapshot)=> {
+      const queryDocumentSnapshotList = querySnapshot.docs
+      const blockedUserList = queryDocumentSnapshotList.map(documentSnapshot => {
+        return documentSnapshot.id
+      })
+      this.setState({blockedUserList: blockedUserList})
+    })
+
+    const hideColRef = friendListDocRef.collection(hideCollection.getName())
+    this.hiddenUserListener = hideColRef.onSnapshot((querySnapshot)=> {
+      const queryDocumentSnapshotList = querySnapshot.docs
+      const hiddenUserList = queryDocumentSnapshotList.map(documentSnapshot => {
+        return documentSnapshot.id
+      })
+
+      this.setState({hiddenUserList: hiddenUserList})
+    })
+
   };
 
   componentDidMount(){
@@ -67,6 +101,9 @@ export class CurrentUserProvider extends React.Component{
   componentWillUnmount(){
     if(this.userListener) this.userListener();
     if(this.authListener) this.authListener();
+    if(this.blockedUserListener) this.blockedUserListener();
+    if(this.hiddenUserListener) this.hiddenUserListener();
+    
   }
 
   render(){

@@ -49,10 +49,7 @@ function PeopleInformationScreen(props){
     }
   }
 
-  const handleStartChatPress = async () => {
-    const room = await PersonalRoomsAPI.createRoomIfNotExists(props.currentUser.email, peopleEmail);
-    props.navigation.navigate({ routeName: "Chat", params: {room} })
-  }
+
 
   React.useEffect(() => {
     fetchPeopleInformation();
@@ -87,9 +84,6 @@ function PeopleInformationScreen(props){
         peopleEmail={peopleEmail} source={source}
         peopleFriendStatus={peopleFriendStatus} 
         onComplete={handleActionButtonComplete}/>
-
-      <Button style={{marginHorizontal: 16}} onPress={handleStartChatPress} outlined={true} text="Mulai Percakapan"/>
-
     </View>
   )
 }

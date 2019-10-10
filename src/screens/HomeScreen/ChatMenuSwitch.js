@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-
+import Tooltip from 'react-native-walkthrough-tooltip';
 import { View } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 
 function ChatMenuSwitch(props){
   const [ selectedMenu, setSelectedMenu ] = React.useState("");
@@ -22,18 +22,32 @@ function ChatMenuSwitch(props){
   return(
     <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 16 }}>
       <View style={{ marginHorizontal: 16, position: "relative" }}>
-        <Button 
-          mode={selectedMenu === "chat"? "contained": "outlined"} style={{ borderRadius: 50 }}
-          onPress={handleMenuChatPress}>
-            Percakapan
+        <Tooltip
+          isVisible={props.showTutorialHomeChatSection}
+          placement="bottom"
+          showChildInTooltip={false}
+          content={<Text>Klik disini melihat history chat</Text>}
+          onClose={() => props.homeScreenTutorial.show(3)}>
+          <Button 
+            mode={selectedMenu === "chat"? "contained": "outlined"} style={{ borderRadius: 50 }}
+            onPress={handleMenuChatPress}>
+              Percakapan
           </Button>
+        </Tooltip>
       </View>
       <View style={{ marginHorizontal: 16, position: "relative" }}>
-        <Button 
-          mode={selectedMenu === "notification"? "contained": "outlined"} style={{ borderRadius: 50 }}
-          onPress={handleMenuNotificationPress}>
-          Notifikasi
-        </Button>
+        <Tooltip
+            isVisible={props.showTutorialHomeNotifSection}
+            placement="bottom"
+            showChildInTooltip={false}
+            content={<Text>Klik disini melihat history notifikasi</Text>}
+            onClose={() => props.homeScreenTutorial.end()}>
+          <Button 
+            mode={selectedMenu === "notification"? "contained": "outlined"} style={{ borderRadius: 50 }}
+            onPress={handleMenuNotificationPress}>
+            Notifikasi
+          </Button>
+        </Tooltip>
       </View>
     </View>
   )

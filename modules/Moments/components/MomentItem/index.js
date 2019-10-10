@@ -82,69 +82,76 @@ function MomentItem(props){
     }
   }, [])
 
-  if(people === null||!moment||!moment.content) return null;
-  const imageSize = (Dimensions.get("window").width/3) + 10;
-  let totalComments = ""
-  if(moment.totalComments){
-    if(moment.totalComments>=99){
-      totalComments = "99+"
-    }else{
-      totalComments = moment.totalComments
-    }
-  }
-  return (
-    <Surface style={[ styles.surface, props.style ]}>
-      <View style={{justifyContent: "space-between", flexDirection:"row"}}>
-        <View style={styles.profile}>
-          <SquareAvatar size={50} uri={people.profilePicture}/>
-          <View style={{ marginLeft: 8 }}>
-            <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
-            <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
+  
+  try{
+    
+    if(people === null||!moment||!moment.content) return null;
+      const imageSize = (Dimensions.get("window").width/3) + 10;
+      let totalComments = ""
+      if(moment.totalComments){
+        if(moment.totalComments>=99){
+          totalComments = "99+"
+        }else{
+          totalComments = moment.totalComments
+        }
+      }
+
+    return (
+      <Surface style={[ styles.surface, props.style ]}>
+        <View style={{justifyContent: "space-between", flexDirection:"row"}}>
+          <View style={styles.profile}>
+            <SquareAvatar size={50} uri={people.profilePicture}/>
+            <View style={{ marginLeft: 8 }}>
+              <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
+              <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
+            </View>
+          
           </View>
+          {(people.email===props.currentUser.email)?  
+          <Menu
+            visible={isMenuVisible}
+            onDismiss={handleMenuClose}
+            anchor={<TouchableOpacity   onPress={toggleOpen}>
+              <MaterialCommunityIcons name="dots-vertical" size={24} style={{padding:4}}/>
+            </TouchableOpacity>}>
+            <Menu.Item title="Delete Moment" onPress={handleDeleteMomentPress}/>
+          </Menu>
+          :
+          <View/>
+          }
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
+          {(moment.content.images.length>0)?
+            <View style={{height: imageSize}}>
+              <FlatList 
+                style={styles.imagesContainer} 
+                data={moment.content.images} 
+                horizontal={true}
+                keyExtractor={(item) => item.downloadUrl}
+                renderItem={({ item, index }) => {
+                  return <MomentImageThumbnail source={{ uri: item.downloadUrl }} onPress={() => handlePicturePress(index)}/>
+                }}/> 
+            </View>
+            : <View/>}
         
         </View>
-        {(people.email===props.currentUser.email)?  
-        <Menu
-          visible={isMenuVisible}
-          onDismiss={handleMenuClose}
-          anchor={<TouchableOpacity   onPress={toggleOpen}>
-            <MaterialCommunityIcons name="dots-vertical" size={24} style={{padding:4}}/>
-          </TouchableOpacity>}>
-          <Menu.Item title="Delete Moment" onPress={handleDeleteMomentPress}/>
-        </Menu>
-        :
-        <View/>
-        }
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
-        {(moment.content.images.length>0)?
-          <View style={{height: imageSize}}>
-            <FlatList 
-              style={styles.imagesContainer} 
-              data={moment.content.images} 
-              horizontal={true}
-              keyExtractor={(item) => item.downloadUrl}
-              renderItem={({ item, index }) => {
-                return <MomentImageThumbnail source={{ uri: item.downloadUrl }} onPress={() => handlePicturePress(index)}/>
-              }}/> 
-          </View>
-          : <View/>}
-       
-      </View>
-      <View style={styles.actionContainer}>
-        <LikeButton style={styles.actionItem} moment={moment}/>
-        <TouchableOpacity style={styles.actionItem} onPress={props.onCommentPress}>
-          <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
-          <Text>{totalComments?`(${totalComments})`: ""} Komentar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionItem} onPress={props.onSharePress}>
-          <MaterialCommunityIcons name="share-variant" size={16} style={{ marginRight: 4 }}/>
-          <Text>Bagikan</Text>
-        </TouchableOpacity>
-      </View>
-    </Surface>
-  );
+        <View style={styles.actionContainer}>
+          <LikeButton style={styles.actionItem} moment={moment}/>
+          <TouchableOpacity style={styles.actionItem} onPress={props.onCommentPress}>
+            <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
+            <Text>{totalComments?`(${totalComments})`: ""} Komentar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionItem} onPress={props.onSharePress}>
+            <MaterialCommunityIcons name="share-variant" size={16} style={{ marginRight: 4 }}/>
+            <Text>Bagikan</Text>
+          </TouchableOpacity>
+        </View>
+      </Surface>
+    );
+  } catch{
+    return null
+  }
 }
 
 export default withCurrentUser(MomentItem);

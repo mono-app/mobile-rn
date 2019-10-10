@@ -3,20 +3,28 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { StackActions } from "react-navigation";
 import { View } from "react-native";
 import { Button } from "react-native-paper";
-
+import FriendsAPI from "src/api/friends"
 import AppHeader from "src/components/AppHeader";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
-export default class ScanQRCodeSCreen extends React.PureComponent{
+class ScanQRCodeSCreen extends React.PureComponent{
   static navigationOptions = ({ navigation }) => { return {
     header: <AppHeader navigation={navigation} style={{ backgroundColor: "transparent" }}/>
   }}
 
   handleViewMyQRCodePress = () => this.props.navigation.navigate("MyQR");
-  handleQRCodeScannerRead = e => {
+  handleQRCodeScannerRead = async e => {
     const peopleEmail = e.data;
-    this.props.navigation.dispatch(StackActions.replace({ routeName: "PeopleInformation", params: {
-      peopleEmail, source: { id: "QRCode", value: "QR Code" }
-    }}))
+    try{
+      if(peopleEmail!==this.props.currentUser.email){
+        await new FriendsAPI().setFriends(this.props.currentUser.email, peopleEmail, { id: "QRCode", value: "QR Code" });
+        this.props.navigation.dispatch(StackActions.replace({ routeName: "PeopleInformation", params: {
+          peopleEmail, source: { id: "QRCode", value: "QR Code" }
+        }}))
+      }
+    }catch{
+
+    }
   }
 
   constructor(props){
@@ -41,3 +49,5 @@ export default class ScanQRCodeSCreen extends React.PureComponent{
     )
   }
 }
+
+export default withCurrentUser(ScanQRCodeSCreen)

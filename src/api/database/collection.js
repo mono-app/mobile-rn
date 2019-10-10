@@ -109,3 +109,16 @@ export class AnnouncementsCollection extends Collection{
 export class ParticipantsCollection extends Collection{
   constructor(){ super("participants"); }
 }
+
+export class BlockedCollection extends Collection{
+  constructor(){ super("blocked"); }
+}
+
+export class HideCollection extends Collection{
+  constructor(){ super("hide"); }
+}
+
+export class BlockedByCollection extends Collection{
+  constructor(){ super("blockedBy"); }
+}
+
