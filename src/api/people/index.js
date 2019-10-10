@@ -9,6 +9,7 @@ import { StackActions } from "react-navigation";
 import { UserCollection, RoomsCollection, StatusCollection, FriendListCollection, PeopleCollection, BlockedCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import {getDistance} from 'geolib';
+import {AsyncStorage} from 'react-native';
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
