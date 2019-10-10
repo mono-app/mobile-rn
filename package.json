@@ -46,6 +46,7 @@
     "react-native-modal-datetime-picker": "7.5.0",
     "react-native-paper": "2.16.0",
     "react-native-permissions": "1.2.1",
+    "react-native-push-notification-popup": "1.4.0",
     "react-native-qrcode-scanner": "1.2.1",
     "react-native-qrcode-svg": "5.1.2",
     "react-native-scalable-image": "0.5.1",
