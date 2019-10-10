@@ -24,12 +24,17 @@ function FriendRequest(props){
       const db = firebase.firestore();
       const friendRequestRef = db.collection("friendRequest").doc(currentUser.email).collection("people");
       friendRequestListener.current = friendRequestRef.onSnapshot((querySnapshot) => {
-        let notificationBody = null;
-        if(querySnapshot.size === 1) notificationBody = "Frans Huang mengirimkan permintaan pertemanan. Lihat sekarang!";
-        else if(querySnapshot.size > 1) notificationBody = `Kamu memiliki ${querySnapshot.size} perminataan pertemanan. Lihat sekarang!`;
+        const newFriendRequest = [];
+        querySnapshot.docChanges.forEach((change) => {
+          if(change.type === "added") newFriendRequest.push(change.doc);
+        });
 
-        Logger.log("FriendRequest.showNotification", !isFirstTime.current)
-        if(popup.current !== undefined && querySnapshot.size > 0 && !isFirstTime.current){
+        let notificationBody = null;
+        if(newFriendRequest.length === 1) notificationBody = "Frans Huang mengirimkan permintaan pertemanan. Lihat sekarang!";
+        else if(newFriendRequest.length > 1) notificationBody = `Kamu memiliki ${newFriendRequest.size} perminataan pertemanan. Lihat sekarang!`;
+        
+        Logger.log("FriendRequest.showNotification", newFriendRequest.length);
+        if(popup.current !== undefined && newFriendRequest.length > 0 && !isFirstTime.current){
           Logger.log("FriendRequest.showNotification#popup", popup.current);
           popup.current.show({
             onPress: () => console.log("Pressed"), slideOutTime: 5000,
