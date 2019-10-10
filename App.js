@@ -7,8 +7,6 @@ import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 
-import InAppNotifications from "src/components/InAppNotifications";
-
 console.disableYellowBox = true;
 
 const AppContainer = createAppContainer(AppNavigator);
@@ -38,7 +36,6 @@ function App(){
     <PaperProvider theme={theme}>
       <CurrentUserProvider>
         <AppContainer/>
-        <InAppNotifications type="friend-request"/>
       </CurrentUserProvider>
     </PaperProvider>
   )

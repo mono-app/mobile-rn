@@ -31,7 +31,7 @@ function MonoIDSearch(props){
       <MaterialIcons name="search" size={24} color="#E8EEE8" style={{ marginRight: 8 }}/>
       <TextInput 
         placeholder="Mono ID" returnKeyType="search" style={{ borderWidth: 0, flex: 1, marginBottom: 0 }}
-        value={id} onChangeText={handleIdChange} onSubmitEditing={handleSubmit}/>
+        value={id} onChangeText={handleIdChange} onSubmitEditing={handleSubmit} autoCapitalize="none"/>
     </View>
   )
 }
