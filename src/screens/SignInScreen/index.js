@@ -10,7 +10,8 @@ import Logo from "assets/logo-vertical.png";
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Text, View, TouchableOpacity, Image } from 'react-native';
+import { View, Image } from 'react-native';
+import { Text, Paragraph } from 'react-native-paper';
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -80,26 +81,24 @@ function SignInScreen(props){
     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
       <Image style={styles.logo} source={Logo}/>
       <View style={styles.contentWrapper}>
-        <Text style={styles.title}>
+        <Paragraph style={styles.title}>
           Masukan alamat Email dan Password anda kemudian tekan Masuk
-        </Text>
+        </Paragraph>
         <View style={styles.formWrapper}>
           <TextInput
             placeholder="Alamat Email" textContentType="emailAddress" autoCapitalize="none"
-            value={email} onChangeText={handleEmailChange}/>
+            value={email} onChangeText={handleEmailChange} style={{ paddingVertical: 16, marginBottom: 8 }}/>
           <TextInput
             placeholder="Password" textContentType="password"
-            secureTextEntry={true} value={password}
+            secureTextEntry={true} value={password} style={{ paddingVertical: 16 }}
             onChangeText={handlePasswordChange}/>
-          <Button onPress={handleLoginpress} isLoading={isLoading} disabled={isLoading} text="Masuk"/>
-          <Text style={{ fontWeight: '500', textAlign: 'center' }}>
+          <Button onPress={handleLoginpress} isLoading={isLoading} disabled={isLoading} text="Masuk" style={{ marginBottom: 4 }}/>
+          <Button onPress={handleCreateAccountPress} text="Buat Akun" outlined/>
+          <Paragraph style={{ fontWeight: '500', textAlign: 'center' }}>
             Saya lupa password saya. Reset Password
-          </Text>
+          </Paragraph>
         </View>
       </View>
-      <TouchableOpacity style={styles.createAccountContainer} onPress={handleCreateAccountPress}>
-        <Text style={{ textAlign: 'center', color: '#0EAD69', fontWeight: '500', }}> Buat Akun </Text>
-      </TouchableOpacity>
     </KeyboardAwareScrollView>
   );
 }

@@ -8,11 +8,11 @@ function Button(props){
   const styles = StyleSheet.create({
     button: {
       display: "flex", justifyContent: 'center', flexDirection: "row",
-      backgroundColor: props.theme.colors.primary, borderColor: '#fff',
-      marginBottom: 16, padding: 16, paddingLeft: 32, paddingRight: 32, 
+      backgroundColor: props.theme.colors.primary, borderColor: props.theme.colors.primary,
+      marginBottom: 16, paddingVertical: 8, paddingHorizontal: 16, 
       borderRadius: 8, borderWidth: 2
     },
-    disabled: { backgroundColor: props.theme.colors.disabled },
+    disabled: { backgroundColor: props.theme.colors.disabled, borderColor: props.theme.colors.disabled },
     outlined: { backgroundColor: "#fff", borderColor:props.theme.colors.primary  },
   })
 
