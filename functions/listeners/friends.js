@@ -38,6 +38,8 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
   const requestorRef = await db.collection("users").doc(requestorEmail).get();
   const requestor = requestorRef.data();
 
+  // update the document to include requestor detail
+  await documentSnapshot.ref.update({ "applicationInformation": requestor.applicationInformation })
   await Promise.all(arrRooms.map(async (roomRef) => {
     const messageRef = roomRef.collection("messages").doc();
     const details = Object.assign({ targetEmail: requestorRef.id }, documentSnapshot.data());

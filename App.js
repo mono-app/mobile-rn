@@ -7,10 +7,11 @@ import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 
+import InAppNotifications from "src/components/InAppNotifications";
+
 console.disableYellowBox = true;
 
 const AppContainer = createAppContainer(AppNavigator);
-
 
 function App(){
   const theme = {
@@ -22,27 +23,12 @@ function App(){
   };
 
   const handleAppStateChange = async (nextAppState) => {
-   // const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    if(nextAppState === "active"){
-    //  await PeopleAPI.setOnlineStatus(currentUserEmail, "Online");
-    }
-
-    if(nextAppState === "background" || nextAppState === "inactive"){
-    //  await PeopleAPI.setOnlineStatus(currentUserEmail, "Offline");
-    }
-    
-    if(nextAppState === "inactive"){
-      VerifyPhoneAPI.cancelRequest()
-    }
+    if(nextAppState === "inactive") VerifyPhoneAPI.cancelRequest()
   }
 
   React.useEffect(() => {
-    // CurrentUserAPI.getCurrentUserEmail().then(currentUserEmail => {
-    //   return PeopleAPI.setOnlineStatus(currentUserEmail, "Online");
-    // })
     firebase.firestore().settings({ persistence: true });
     AppState.addEventListener("change", handleAppStateChange);
-
     return function cleanup(){
       AppState.removeEventListener("change", handleAppStateChange) 
     }
@@ -52,6 +38,7 @@ function App(){
     <PaperProvider theme={theme}>
       <CurrentUserProvider>
         <AppContainer/>
+        <InAppNotifications type="friend-request"/>
       </CurrentUserProvider>
     </PaperProvider>
   )
