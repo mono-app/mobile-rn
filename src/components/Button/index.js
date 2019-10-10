@@ -10,7 +10,7 @@ function Button(props){
       display: "flex", justifyContent: 'center', flexDirection: "row",
       backgroundColor: props.theme.colors.primary, borderColor: props.theme.colors.primary,
       marginBottom: 16, paddingVertical: 8, paddingHorizontal: 16, 
-      borderRadius: 8, borderWidth: 2
+      borderRadius: 8, borderWidth: 1
     },
     disabled: { backgroundColor: props.theme.colors.disabled, borderColor: props.theme.colors.disabled },
     outlined: { backgroundColor: "#fff", borderColor:props.theme.colors.primary  },
