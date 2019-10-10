@@ -3,7 +3,7 @@ import Logger from "src/api/logger";
 import firebase from "react-native-firebase";
 import PeopleAPI from "src/api/people";
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { UserCollection, FriendListCollection, BlockedCollection, HideCollection } from "src/api/database/collection";
+import { UserCollection, FriendListCollection, BlockedCollection, HideCollection, BlockedByCollection } from "src/api/database/collection";
 
 const CurrentUserContext = React.createContext();
 export function withCurrentUser(Component){
@@ -16,6 +16,7 @@ export function withCurrentUser(Component){
             isLoggedIn={context.isLoggedIn}
             setCurrentUserEmail={context.handleCurrentUserEmail}
             blockedUserList={context.blockedUserList}
+            blockedByUserList={context.blockedByUserList}
             hiddenUserList={context.hiddenUserList}
           />}
 
@@ -43,6 +44,7 @@ export class CurrentUserProvider extends React.PureComponent{
       isLoggedIn: false,
       handleCurrentUserEmail: this.handleCurrentUserEmail,
       blockedUserList: [],
+      blockedByUserList: [],
       hiddenUserList: []
     }
 
@@ -57,6 +59,7 @@ export class CurrentUserProvider extends React.PureComponent{
     const userCollection = new UserCollection();
     const friendListCollection = new FriendListCollection();
     const blockedCollection = new BlockedCollection();
+    const blockedByCollection = new BlockedByCollection();
     const hideCollection = new HideCollection();
     const userRef = db.collection(userCollection.getName()).doc(email); 
     this.userListener = userRef.onSnapshot((documentSnapshot) => {
@@ -75,6 +78,15 @@ export class CurrentUserProvider extends React.PureComponent{
         return documentSnapshot.id
       })
       this.setState({blockedUserList: blockedUserList})
+    })
+
+    const blockedByColRef = friendListDocRef.collection(blockedByCollection.getName())
+    this.blockedByUserListener = blockedByColRef.onSnapshot((querySnapshot)=> {
+      const queryDocumentSnapshotList = querySnapshot.docs
+      const blockedByUserList = queryDocumentSnapshotList.map(documentSnapshot => {
+        return documentSnapshot.id
+      })
+      this.setState({blockedByUserList: blockedByUserList})
     })
 
     const hideColRef = friendListDocRef.collection(hideCollection.getName())
