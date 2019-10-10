@@ -25,7 +25,7 @@ function Button(props){
       style={[ styles.button, props.style, ((props.disabled)? styles.disabled: {}), ((props.outlined)? styles.outlined: {} ) ]}
       onPress={handlePress} disabled={props.disabled}>
       {props.isLoading? <ActivityIndicator size="small" color="white"/>: null}
-      <Text style={{ color: (props.outlined)? props.theme.colors.primary :'white', fontWeight: 'bold' }}>{props.text}</Text>
+      {props.isLoading? null: <Text style={{ color: (props.outlined)? props.theme.colors.primary :'white', fontWeight: 'bold' }}>{props.text}</Text>}
     </TouchableOpacity>
   )
 }
