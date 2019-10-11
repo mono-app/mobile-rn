@@ -1,15 +1,18 @@
 import React from "react";
-import { Text } from "react-native";
 import { createBottomTabNavigator } from "react-navigation";
+
+import { Text } from "react-native-paper";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
-import NotificationListener from "src/components/NotificationListener"
+
 import HomeTabNavigator from "./HomeTabNavigator.js";
 import ContactTabNavigator from "./ContactTabNavigator";
 import SettingTabNavigator from "./SettingTabNavigator.js";
 import AppTabNavigator from "./AppTabNavigator";
-
 import { default as MomentTabNavigator } from "modules/Moments/navigators/MainNavigator";
+
+import NotificationListener from "src/components/NotificationListener"
+import InAppNotifications from "src/components/InAppNotifications";
 
 const MainTabNavigator = createBottomTabNavigator({
   HomeTab: HomeTabNavigator,
@@ -59,6 +62,7 @@ export default class MainNavigator extends React.PureComponent {
     <React.Fragment>
       <MainTabNavigator navigation={this.props.navigation}/>
       <NotificationListener/>
+      <InAppNotifications type="friend-request"/>
     </React.Fragment>
     )
   }

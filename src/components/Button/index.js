@@ -8,11 +8,11 @@ function Button(props){
   const styles = StyleSheet.create({
     button: {
       display: "flex", justifyContent: 'center', flexDirection: "row",
-      backgroundColor: props.theme.colors.primary, borderColor: '#fff',
-      marginBottom: 16, padding: 16, paddingLeft: 32, paddingRight: 32, 
-      borderRadius: 8, borderWidth: 2
+      backgroundColor: props.theme.colors.primary, borderColor: props.theme.colors.primary,
+      marginBottom: 16, paddingVertical: 8, paddingHorizontal: 16, 
+      borderRadius: 8, borderWidth: 1
     },
-    disabled: { backgroundColor: props.theme.colors.disabled },
+    disabled: { backgroundColor: props.theme.colors.disabled, borderColor: props.theme.colors.disabled },
     outlined: { backgroundColor: "#fff", borderColor:props.theme.colors.primary  },
   })
 
@@ -25,7 +25,7 @@ function Button(props){
       style={[ styles.button, props.style, ((props.disabled)? styles.disabled: {}), ((props.outlined)? styles.outlined: {} ) ]}
       onPress={handlePress} disabled={props.disabled}>
       {props.isLoading? <ActivityIndicator size="small" color="white"/>: null}
-      <Text style={{ color: (props.outlined)? props.theme.colors.primary :'white', fontWeight: 'bold' }}>{props.text}</Text>
+      {props.isLoading? null: <Text style={{ color: (props.outlined)? props.theme.colors.primary :'white', fontWeight: 'bold' }}>{props.text}</Text>}
     </TouchableOpacity>
   )
 }

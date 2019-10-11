@@ -8,8 +8,6 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 import { TutorialProvider } from "src/api/Tutorial";
 
-import InAppNotifications from "src/components/InAppNotifications";
-
 console.disableYellowBox = true;
 
 const AppContainer = createAppContainer(AppNavigator);
@@ -40,7 +38,6 @@ function App(){
       <CurrentUserProvider>
         <TutorialProvider>
           <AppContainer/>
-          <InAppNotifications type="friend-request"/>
         </TutorialProvider>
       </CurrentUserProvider>
     </PaperProvider>

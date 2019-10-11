@@ -1,13 +1,17 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
 import NavigatorAPI from "src/api/navigator";
-import { withCurrentUser } from "src/api/people/CurrentUser";
-import { StyleSheet } from "react-native";
+import PeopleAPI from "src/api/people"
 import UserMappingAPI from "src/api/usermapping"
+import { StyleSheet } from "react-native";
+import { withCurrentUser } from "src/api/people/CurrentUser";
+
+import Logo from "assets/logo-vertical.png";
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
-import { Text, View, TouchableOpacity } from 'react-native';
-import PeopleAPI from "src/api/people"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { View, Image } from 'react-native';
+import { Text, Paragraph } from 'react-native-paper';
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -15,11 +19,12 @@ function SignInScreen(props){
   const [ isLoading, setIsLoading ] = React.useState(false);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, flexDirection: 'column', backgroundColor: '#fff', alignItems: 'stretch', justifyContent: 'center' },
+    container: { flex: 1, flexDirection: 'column', backgroundColor: '#fff', justifyContent: 'flex-start', alignItems: "center" },
     contentWrapper: { paddingLeft: 32, paddingRight: 32 },
     formWrapper: { justifyContent: 'space-between' },
-    title: { marginBottom: 32, fontSize: 14, lineHeight: 14 * 1.5 },
+    title: { marginBottom: 16, fontSize: 14, lineHeight: 14 * 1.5 },
     createAccountContainer: { position: 'absolute', bottom: 32, left: 0, right: 0 },
+    logo: { width: 150, height: 150, resizeMode: "contain", marginHorizontal: 32, marginVertical: 64 }
   });
 
   const handleEmailChange = (email) => setEmail(email);
@@ -52,19 +57,15 @@ function SignInScreen(props){
     }
 
     if(props.isLoggedIn){
-
       if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
-
         let routeNameForReset = "MainTabNavigator";
         if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===true){
-          
           if(props.currentUser.isCompleteSetup){
             routeNameForReset = "MainTabNavigator"
             storeToken()
           } else {
             routeNameForReset = "AccountSetup"
           }
-
           const navigator = new NavigatorAPI(props.navigation);
           navigator.resetTo(routeNameForReset);  
         }else if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===false){
@@ -77,29 +78,28 @@ function SignInScreen(props){
   }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
 
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+      <Image style={styles.logo} source={Logo}/>
       <View style={styles.contentWrapper}>
-        <Text style={styles.title}>
+        <Paragraph style={styles.title}>
           Masukan alamat Email dan Password anda kemudian tekan Masuk
-        </Text>
+        </Paragraph>
         <View style={styles.formWrapper}>
           <TextInput
-            placeholder="Email ID" textContentType="emailAddress"
-            value={email} onChangeText={handleEmailChange}/>
+            placeholder="Alamat Email" textContentType="emailAddress" autoCapitalize="none"
+            value={email} onChangeText={handleEmailChange} style={{ paddingVertical: 16, marginBottom: 8 }}/>
           <TextInput
             placeholder="Password" textContentType="password"
-            secureTextEntry={true} value={password}
+            secureTextEntry={true} value={password} style={{ paddingVertical: 16 }}
             onChangeText={handlePasswordChange}/>
-          <Button onPress={handleLoginpress} isLoading={isLoading} text="Masuk"/>
-          <Text style={{ fontWeight: '500', textAlign: 'center' }}>
+          <Button onPress={handleLoginpress} isLoading={isLoading} disabled={isLoading} text="Masuk" style={{ marginBottom: 4 }}/>
+          <Button onPress={handleCreateAccountPress} text="Buat Akun" outlined/>
+          <Paragraph style={{ fontWeight: '500', textAlign: 'center' }}>
             Saya lupa password saya. Reset Password
-          </Text>
+          </Paragraph>
         </View>
       </View>
-      <TouchableOpacity style={styles.createAccountContainer} onPress={handleCreateAccountPress}>
-        <Text style={{ textAlign: 'center', color: '#0EAD69', fontWeight: '500', }}> Buat Akun </Text>
-      </TouchableOpacity>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
 export default withCurrentUser(SignInScreen);

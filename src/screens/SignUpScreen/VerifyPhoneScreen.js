@@ -8,19 +8,14 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 
 import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Portal, Dialog, Paragraph, Button as MaterialButton, Snackbar } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, Portal, Dialog, Paragraph, Button as MaterialButton, Snackbar, Title } from "react-native-paper";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const INITIAL_STATE = { 
-  isAskingOTP: false,
-  isInsertingOTP: false,
-  showDialog: false,
-  otp: "", 
-  phoneNumber: "",
-  otpRequestId: "",
-  showSnackbarFailVerification: false,
-  snackbarFailMessage: "",
-  isVerificationLoading: false
+  isAskingOTP: false, isInsertingOTP: false, showDialog: false,
+  otp: "",  phoneNumber: "", otpRequestId: "",
+  showSnackbarFailVerification: false, snackbarFailMessage: "", isVerificationLoading: false
 }
 
 class VerifyPhoneScreen extends React.PureComponent{
@@ -32,7 +27,6 @@ class VerifyPhoneScreen extends React.PureComponent{
   handleOTPChange = otp => {this.setState({otp, isInsertingOTP: true});}
   handleAskOTP = async () => {
     this.setState({isVerificationLoading: true})
-
     const phoneNum = this.validatePhoneNumber(this.state.phoneNumber,"ID","62")
     if(!phoneNum){
       this.setState({ snackbarFailMessage: "Nomor Telepon Tidak Valid", showSnackbarFailVerification:true })
@@ -51,7 +45,6 @@ class VerifyPhoneScreen extends React.PureComponent{
         this.setState({ snackbarFailMessage: "Nomor Telepon Sudah Digunakan", showSnackbarFailVerification:true })
       }
     }
-   
     this.setState({isVerificationLoading: false})
   }
 
@@ -59,9 +52,7 @@ class VerifyPhoneScreen extends React.PureComponent{
     // numCode: 62
     // countryCode: ID
     let result = phoneNumber0.toString()
-    if(result.length<=2){
-      return null
-    }
+    if(result.length<=2) return null
 
     const phoneNumber1 = libphonenumber.parsePhoneNumberFromString(result, countryCode)
     if(phoneNumber1 && phoneNumber1.isPossible()){
@@ -134,7 +125,6 @@ class VerifyPhoneScreen extends React.PureComponent{
   handleScreenDidFocus = () => {
     this.authListener = firebase.auth().onAuthStateChanged(user => {
       if(this.props.currentUser.phoneNumber !== undefined && this.props.currentUser.isCompleteSetup !== undefined){
-
         const db = firebase.firestore();
         if(user && !this.props.currentUser.isCompleteSetup){
           db.collection("users").doc(user.email).set({
@@ -168,7 +158,6 @@ class VerifyPhoneScreen extends React.PureComponent{
     this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
     this.handleScreenWillBlur = this.handleScreenWillBlur.bind(this);
     this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
-    
   }
 
   componentDidUpdate(){
@@ -177,11 +166,11 @@ class VerifyPhoneScreen extends React.PureComponent{
 
   render(){
     return(
-      <View style={{flex: 1}}>
-        <View style={styles.container}>
+      <React.Fragment>
+        <KeyboardAwareScrollView contentContainerStyle={styles.container}>
           <NavigationEvents onDidFocus={this.handleScreenDidFocus} onwillBlue={this.handleScreenWillBlur}/>
-          <Text style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Text>
-          <Text style={{ fontSize: 12, marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Text>
+          <Title style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Title>
+          <Paragraph style={{ marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Paragraph>
           <View style={{flexDirection:"row"}}>
           <TextInput style={{ marginRight: 8 }} value="+62" editable={false}/>
           <TextInput 
@@ -212,24 +201,20 @@ class VerifyPhoneScreen extends React.PureComponent{
               </Dialog.Actions>
             </Dialog>
           </Portal>
-        </View>
+        </KeyboardAwareScrollView>
         <Snackbar
           visible={this.state.showSnackbarFailVerification}
           onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
           style={{ backgroundColor:"red" }} duration={Snackbar.DURATION_SHORT}>
           {this.state.snackbarFailMessage}
         </Snackbar>
-  
-     </View>
+     </React.Fragment>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingLeft: 32, paddingRight: 32, flex: 1,
-    alignItems: "stretch", justifyContent: "center"
-  },
+  container: { paddingHorizontal: 32, flex: 1, alignItems: "stretch", justifyContent: "center" },
   backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })
 
