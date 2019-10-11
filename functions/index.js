@@ -15,6 +15,7 @@ const Discussions = require("./listeners/discussions");
 const Student = require("./listeners/student");
 const Teacher = require("./listeners/teacher");
 const Tasks = require("./listeners/tasks");
+const Moments = require("./listeners/moments");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -29,6 +30,7 @@ exports.sendNotificationForNewMessage = Messages.sendNotificationForNewMessage;
 
 exports.triggerNewFriendRequest = Friends.triggerNewFriendRequest;
 exports.addFriendTrigger = Friends.addFriendTrigger;
+exports.deleteFriendTrigger = Friends.deleteFriendTrigger
 exports.sendNotificationForNewFriendRequest = Friends.sendNotificationForNewFriendRequest;
 exports.triggerBlockFriends = Friends.triggerBlockFriends
 exports.triggerUnblockFriends = Friends.triggerUnblockFriends
@@ -47,3 +49,5 @@ exports.deletedTeacherClassTrigger = Teacher.deletedTeacherClassTrigger;
 exports.triggerNewTask = Tasks.triggerNewTask
 exports.triggerUpdatedTask = Tasks.triggerUpdatedTask
 exports.triggerDeletedTask = Tasks.triggerDeletedTask
+
+exports.triggerNewMoment = Moments.triggerNewMoment

@@ -54,10 +54,8 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
 
 Friends.addFriendTrigger = functions.region("asia-east2").firestore.document("/friendList/{friendListId}/people/{peopleId}").onCreate(async (documentSnapshot, context) => {
   // this trigger for auto increment totalFriends in friends collection
-  const messageDocument = documentSnapshot.data();
   const { friendListId, peopleId } = context.params;
   
-  // get all audiences except sender
   const db = admin.firestore();
   const userFriendListRef = db.collection("friendList").doc(friendListId)
    
@@ -68,6 +66,36 @@ Friends.addFriendTrigger = functions.region("asia-east2").firestore.document("/f
   }else{
     await userFriendListRef.set({ totalFriends: 1 })
   }
+
+  // add showsTo in moments collection
+  const momentQuerySnapshot = await db.collection("moments").where("posterEmail","==",friendListId).get()
+  momentQuerySnapshot.docs.map( async documentSnapshot => {
+    
+    await documentSnapshot.ref.update({showsTo: admin.firestore.FieldValue.arrayUnion(peopleId)})
+  })
+
+  return Promise.resolve(true);
+})
+
+Friends.deleteFriendTrigger = functions.region("asia-east2").firestore.document("/friendList/{friendListId}/people/{peopleId}").onDelete(async (documentSnapshot, context) => {
+  // this trigger for auto decrease totalFriends in friends collection
+  const { friendListId, peopleId } = context.params;
+  
+  const db = admin.firestore();
+  const userFriendListRef = db.collection("friendList").doc(friendListId)
+   
+  const userFriendListSnapshot = await userFriendListRef.get();
+
+  if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
+    await userFriendListRef.update({ totalFriends: admin.firestore.FieldValue.increment(-1) })
+  }
+  
+  // remove showsTo in moments collection
+  const momentQuerySnapshot = await db.collection("moments").where("posterEmail","==",friendListId).get()
+  momentQuerySnapshot.docs.map( async documentSnapshot => {
+    
+    await documentSnapshot.ref.update({showsTo: admin.firestore.FieldValue.arrayRemove(peopleId)})
+  })
 
   return Promise.resolve(true);
 })

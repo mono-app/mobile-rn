@@ -83,7 +83,7 @@ class VerifyPhoneScreen extends React.PureComponent{
 
       
       try{
-        await firebase.auth().createUserWithEmailAndPassword(this.email, password);
+        await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
         
         const db = firebase.firestore();
         const userDocumentRef = db.collection("users").doc(this.email)
