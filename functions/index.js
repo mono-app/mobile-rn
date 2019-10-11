@@ -30,6 +30,10 @@ exports.sendNotificationForNewMessage = Messages.sendNotificationForNewMessage;
 exports.triggerNewFriendRequest = Friends.triggerNewFriendRequest;
 exports.addFriendTrigger = Friends.addFriendTrigger;
 exports.sendNotificationForNewFriendRequest = Friends.sendNotificationForNewFriendRequest;
+exports.triggerBlockFriends = Friends.triggerBlockFriends
+exports.triggerUnblockFriends = Friends.triggerUnblockFriends
+exports.triggerHideFriends = Friends.triggerHideFriends
+exports.triggerUnhideFriends = Friends.triggerUnhideFriends
 
 exports.sendNotificationForNewDiscussion = Discussions.sendNotificationForNewDiscussion;
 exports.sendNotificationForNewDiscussionComment = Discussions.sendNotificationForNewDiscussionComment;

@@ -1,22 +1,27 @@
 import React from "react";
 import StatusAPI from "src/api/status";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-import { withTheme } from "react-native-paper";
+import { Text, Card, withTheme } from "react-native-paper";
 import { withNavigation } from "react-navigation";
-
+import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
+import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import QRCode from "react-native-qrcode-svg"
 import AppHeader from "src/components/AppHeader";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
-import { View, StyleSheet } from "react-native";
-import { Text, Card } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 function MyQRScreen(props){
   const [ status, setStatus ] = React.useState("");
   const { currentUser, navigation } = props;
   const styles = StyleSheet.create({
     container: { flex: 1, padding: 32, backgroundColor: "#E8EEE8" },
-    smallDescription: { fontSize: 12, textAlign: "center", color: "#5E8864" }
+    smallDescription: { fontSize: 12, textAlign: "center", color: "#5E8864" },
+    menuContainer: {
+      backgroundColor: "white", padding: 16, paddingTop: 8, paddingBottom: 8,
+      display: "flex", flexDirection: "row", alignItems: "center"
+    }
   })
+  const handleScanQRCodePress = () => props.navigation.navigate("ScanQRCode")
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +50,19 @@ function MyQRScreen(props){
             <Text style={styles.smallDescription}>Scan QR Code diatas ini untuk menambahkan aku dalam daftar pertemanan-mu</Text>
           </Card.Content>
         </Card>
+
+        <View>
+          <TouchableOpacity style={styles.menuContainer} onPress={handleScanQRCodePress}>
+            <MaterialCommunityIcons name="qrcode-scan" size={36} style={{ marginRight: 16 }}/>
+            <View style={{ display: "flex", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <View style={{ display: "flex", flexDirection: "column" }}>
+                <Text style={{ fontWeight: "500", fontSize: 16 }}>Scan</Text>
+                <Text>Menambahkan teman dengan QR code</Text>
+              </View>
+              <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   )

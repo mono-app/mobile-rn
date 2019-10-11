@@ -4,6 +4,7 @@ import Permissions from "react-native-permissions";
 import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import { withTutorial } from "src/api/Tutorial";
 
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
@@ -96,18 +97,20 @@ function HomeScreen(props){
 
   React.useEffect(() => {
     autoAddContact();
+    props.homeScreenTutorial.start()
   }, [])
 
   
   return (
     <View style={styles.container}>
-      <Header/>
+      <Header homeScreenTutorial={props.homeScreenTutorial} showTutorialHomeAddContact={props.showTutorialHomeAddContact}/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Chats</HeadlineTitle>
-      <ChatMenuSwitch onChange={handleMenuChange}/>
+      <ChatMenuSwitch onChange={handleMenuChange} homeScreenTutorial={props.homeScreenTutorial} 
+        showTutorialHomeChatSection={props.showTutorialHomeChatSection} showTutorialHomeNotifSection={props.showTutorialHomeNotifSection} />
       {selectedMenu === "chat"?<ChatSection/>: <NotificationSection/>}
     </View>
   );
 }
 
 HomeScreen.navigationOptions = { header: null };
-export default withCurrentUser(HomeScreen);
+export default withTutorial(withCurrentUser(HomeScreen));

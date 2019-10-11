@@ -1,7 +1,7 @@
 import firebase from "react-native-firebase";
 import Logger from "src/api/logger";
 import PeopleAPI from "src/api/people";
-import { FriendRequestCollection, FriendListCollection, PeopleCollection, UserCollection } from "src/api/database/collection";
+import { FriendRequestCollection, FriendListCollection, PeopleCollection, UserCollection, BlockedCollection, HideCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
 export default class FriendsAPI{
@@ -23,8 +23,16 @@ export default class FriendsAPI{
     // if available in friendList, it means you are friends with that person;
     // if not, check if you are requesting a friend request to that person or not;
     // if I am not requesting, check if the other party is requestiong or not;
-    if(peopleDocumentSnapshot.exists) return Promise.resolve("friend");
-    else{
+    if(peopleDocumentSnapshot.exists) {
+      const data = peopleDocumentSnapshot.data()
+      if(data.status ==="blocked"){
+        return Promise.resolve("blocked");
+      }else if(data.status === "hide"){
+        return Promise.resolve("hide");
+      }else{
+        return Promise.resolve("friend");
+      }
+    }else{
       const friendRequestCollection = new FriendRequestCollection();
       const userFriendRequestRef = db.collection(friendRequestCollection.getName()).doc(peopleDocument.getId());
       const userRef = userFriendRequestRef.collection(peopleCollection.getName()).doc(userDocument.getId())
@@ -39,7 +47,25 @@ export default class FriendsAPI{
 
         // I am geeting the friend request from user, so my friend status is pedingAccept
         if(peopleDocumentSnapshot.exists) return Promise.resolve("pendingAccept");
-        else return Promise.resolve("stranger");
+        else {
+          const blockedCollection = new BlockedCollection()
+          const blockedDocRef = friendListRef.collection(blockedCollection.getName()).doc(friendEmail)
+          const blockedSnapshot = await blockedDocRef.get()
+          if(blockedSnapshot.exists){
+            return Promise.resolve("blocked");
+          }else{
+            const hideCollection = new HideCollection()
+            const hideDocRef = friendListRef.collection(hideCollection.getName()).doc(friendEmail)
+            const hideSnapshot = await hideDocRef.get()
+            if(hideSnapshot.exists){
+              return Promise.resolve("hide");
+            }
+          }
+
+          return Promise.resolve("stranger");
+
+        }
+        
       }
     }
   }
@@ -87,21 +113,77 @@ export default class FriendsAPI{
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(peopleCollection.getName());
     return peopleRef.onSnapshot(async (querySnapshot) => {
+    
       if(!querySnapshot.empty) {
-        const promises = querySnapshot.docs.map((documentSnapshot) => {
+        const friendList = querySnapshot.docs
+        const filteredFriendList = friendList.filter(documentSnapshot => {
+          const data = documentSnapshot.data()
+
+          return (!data.status || (data.status && data.status !== "blocked" &&  data.status !== "hide"))
+        })
+
+        const promises = filteredFriendList.map((documentSnapshot) => {
           const userDocument = new Document(documentSnapshot.id);
           const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
           return userRef.get();
         })
         const friends = await Promise.all(promises);
+
+
         const normalizedFriends = friends.map((documentSnapshot) => {
           return PeopleAPI.normalizePeople(documentSnapshot);
         });
         Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (friends, normalizedFriends));
+
         callback(normalizedFriends)
       }else callback([]);
     })
   }
+
+  static async getBlockedUsers(peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const blockedCollection = new BlockedCollection();
+    const userDocument = new Document(peopleEmail);
+    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendListRef.collection(blockedCollection.getName());
+    const querySnapshot = await peopleRef.get();
+    
+    if(querySnapshot.empty) return Promise.resolve([]);
+    else{
+      const arrayOfPromise = querySnapshot.docs.map(async (snap) => {
+        const user = await PeopleAPI.getDetail(snap.id);
+        return Promise.resolve({...user, source: snap.data().source})
+      });
+
+      const userDocuments = await Promise.all(arrayOfPromise);
+      userDocuments.sort((a, b) => ((a.name && b.name)&&a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+      return Promise.resolve(userDocuments);
+    }
+  }
+
+  static async getHiddenUsers(peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const hideCollection = new HideCollection();
+    const userDocument = new Document(peopleEmail);
+    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    const peopleRef = friendListRef.collection(hideCollection.getName());
+    const querySnapshot = await peopleRef.get();
+    
+    if(querySnapshot.empty) return Promise.resolve([]);
+    else{
+      const arrayOfPromise = querySnapshot.docs.map(async (snap) => {
+        const user = await PeopleAPI.getDetail(snap.id);
+        return Promise.resolve({...user, source: snap.data().source})
+      });
+
+      const userDocuments = await Promise.all(arrayOfPromise);
+      userDocuments.sort((a, b) => ((a.name && b.name)&&a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+      return Promise.resolve(userDocuments);
+    }
+  }
+
 
   /**
    * 
@@ -166,29 +248,44 @@ export default class FriendsAPI{
       const promises = [ 
         userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
         peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
-        
       ];
-
-      
-      // const userFriendListSnapshot = await userFriendListRef.get();
-      // const peopleFriendListSnapshot = await peopleFriendListRef.get();
-      // //check if there is totalFriends Field, we must update it, if there is no totalFriends Field, we have to set it.
-      // //explanation: method update can't change the value of field if there is no field to update
-      // if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
-      //   promises.push(userFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
-      // }else{
-      //   promises.push(userFriendListRef.set({ totalFriends: 1 }))
-      // }
-
-      // if(peopleFriendListSnapshot.data() && peopleFriendListSnapshot.data().totalFriends){
-      //   promises.push(peopleFriendListRef.update({ totalFriends: firebase.firestore.FieldValue.increment(1) }))
-      // }else{
-      //   promises.push(peopleFriendListRef.set({ totalFriends: 1 }))
-      // }
 
       promises.push(this.cancelRequest(friendEmail, peopleEmail))
 
       await Promise.all(promises);
+      return Promise.resolve(true);
+    }catch(err){
+      console.log(err);
+      return Promise.resolve(false);
+    }
+  }
+
+  async setFriends(peopleEmail, friendEmail, source){
+    // used for add new friend from barcode scan (auto become friend without friendRequest)
+    try{
+      const db = firebase.firestore();
+      const friendListCollection = new FriendListCollection();
+      const peopleCollection = new PeopleCollection();
+      const userDocument = new Document(peopleEmail);
+      const peopleDocument = new Document(friendEmail);
+
+
+      const userFriendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+      const peopleFriendListRef = db.collection(friendListCollection.getName()).doc(peopleDocument.getId());
+      const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
+      const peoplePeopleRef = peopleFriendListRef.collection(peopleCollection.getName()).doc(userDocument.getId());
+
+      const userPeopleSnapshot = await userPeopleRef.get()
+      const peoplePeopleSnapshot = await peoplePeopleRef.get()
+      // check if already friends or not
+      if(!userPeopleSnapshot.exists || !peoplePeopleSnapshot.exists){
+        const promises = [ 
+          userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
+          peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
+        ];
+        await Promise.all(promises);
+      }
+
       return Promise.resolve(true);
     }catch(err){
       console.log(err);
@@ -240,4 +337,103 @@ export default class FriendsAPI{
       return Promise.resolve(false); 
     }
   }
+
+  static async blockUsers(currentUserEmail, peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const blockedCollection = new BlockedCollection();
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
+    const blockedDocRef = friendListDocRef.collection(blockedCollection.getName()).doc(peopleEmail)
+    const blockedSnapshot = await blockedDocRef.get()
+    if(!blockedSnapshot.exists){
+      await blockedDocRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+    }
+    //update status friendList
+    const peopleCollection = new PeopleCollection();
+
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+
+    const peopleSnapshot = await peopleDocRef.get()
+
+    if(peopleSnapshot.exists){
+      await peopleDocRef.update({status: "blocked"})
+    }
+
+    return Promise.resolve(true)
+  }
+
+  static async unblockUsers(currentUserEmail, peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const blockedCollection = new BlockedCollection();
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
+    const blockedDocRef = friendListDocRef.collection(blockedCollection.getName()).doc(peopleEmail)
+    const blockedSnapshot = await blockedDocRef.get()
+    if(blockedSnapshot.exists){
+      await blockedDocRef.delete()
+    }
+
+    //update status friendList
+    const peopleCollection = new PeopleCollection();
+
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+
+    const peopleSnapshot = await peopleDocRef.get()
+  
+    if(peopleSnapshot.exists){
+      await peopleDocRef.update({status: "friend"})
+    }
+
+    return Promise.resolve(true)
+  }
+
+  static async hideUsers(currentUserEmail, peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const hideCollection = new HideCollection();
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
+    const hideDocRef = friendListDocRef.collection(hideCollection.getName()).doc(peopleEmail)
+    const hideSnapshot = await hideDocRef.get()
+    if(!hideSnapshot.exists){
+      await hideDocRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+    }
+
+    //update status friendList
+    const peopleCollection = new PeopleCollection();
+
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+
+    const peopleSnapshot = await peopleDocRef.get()
+
+    if(peopleSnapshot.exists){
+      await peopleDocRef.update({status: "hide"})
+    }
+
+    return Promise.resolve(true)
+  }
+
+  static async unhideUsers(currentUserEmail, peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const hideCollection = new HideCollection();
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
+    const hideDocRef = friendListDocRef.collection(hideCollection.getName()).doc(peopleEmail)
+    const hideSnapshot = await hideDocRef.get()
+    if(hideSnapshot.exists){
+      await hideDocRef.delete()
+    }
+    //update status friendList
+    const peopleCollection = new PeopleCollection();
+
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+
+    const peopleSnapshot = await peopleDocRef.get()
+  
+    if(peopleSnapshot.exists){
+      await peopleDocRef.update({status: "friend"})
+    }
+
+    return Promise.resolve(true)
+  }
+
 }

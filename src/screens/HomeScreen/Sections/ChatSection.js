@@ -30,12 +30,13 @@ function ChatSection(props){
   
   return (
     <FlatList
-      data={rooms} keyExtractor={(item) => item.id}
+      data={rooms} 
+      keyExtractor={(item) => item.id}
       renderItem={({ item, index }) => {
-        const marginTop = (index === 0)? 8: 4;
-        const marginBottom = (index === rooms.length)? 8: 4;
-        
-        return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
+      const marginTop = (index === 0)? 8: 4;
+      const marginBottom = (index === rooms.length)? 8: 4;
+      
+      return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
         
       }}/>
   )

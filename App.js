@@ -6,6 +6,7 @@ import { AppState } from "react-native";
 import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
+import { TutorialProvider } from "src/api/Tutorial";
 
 console.disableYellowBox = true;
 
@@ -35,7 +36,9 @@ function App(){
   return(
     <PaperProvider theme={theme}>
       <CurrentUserProvider>
-        <AppContainer/>
+        <TutorialProvider>
+          <AppContainer/>
+        </TutorialProvider>
       </CurrentUserProvider>
     </PaperProvider>
   )

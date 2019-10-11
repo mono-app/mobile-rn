@@ -11,6 +11,7 @@ function NotificationSection(props){
   const { currentUser } = props;
   const [ notifications, setNotifications ] = React.useState([]);
   const roomsListener = React.useRef(null);
+  const _isMounted = React.useRef(true);
 
   const handleRoomPress = (room) => props.navigation.navigate("InboundOnlyChat", { room });
 
@@ -19,13 +20,14 @@ function NotificationSection(props){
     const roomsRef = db.collection("rooms").where("type", "==", "bot").where("audiences", "array-contains", currentUser.email);
     roomsListener.current = roomsRef.orderBy("lastMessage.sentTime", "desc").onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => RoomsAPI.normalizeRoom(documentSnapshot));
-      setNotifications(rooms);
+      if(_isMounted.current) setNotifications(rooms);
     })
   }
 
   React.useEffect(() => {
     fetchData();
     return function cleanup(){
+      _isMounted.current = false
       if(roomsListener.current !== null) roomsListener.current();
     }
   }, []);
