@@ -28,6 +28,9 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
     return audience !== senderEmail
   })
 
+  const senderSnapshot = await db.collection("users").doc(senderEmail).get()
+  const senderNickname = senderSnapshot.data().applicationInformation.nickName
+
   // get all audiences messagingToken  
   const promises = audiences.map(audience => {
     const userRef = db.collection("users").doc(audience);
@@ -58,10 +61,10 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
         }
       }else if(roomType==="chat"){
         type = "new-chat"
-        title = audienceData.applicationInformation.nickName
+        title = senderNickname
       }else if(roomType==="group-chat"){
         type = "new-groupchat"
-        title = audienceData.applicationInformation.nickName
+        title = senderNickname
       }
       message = {
         token: audienceData.tokenInformation.messagingToken,

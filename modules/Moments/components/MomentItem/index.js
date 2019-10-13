@@ -10,6 +10,7 @@ import { View, TouchableOpacity, FlatList } from "react-native";
 import { Menu, Text, Surface, Caption } from "react-native-paper";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import { default as momentDate } from "moment"
 
 export function MomentImageThumbnail(props){
   const imageSize = Dimensions.get("window").width/3;
@@ -29,6 +30,7 @@ export function MomentImageThumbnail(props){
 function MomentItem(props){
   const _isMounted = React.useRef(true);
   const [ moment, setMoment ] = React.useState(props.moment);
+  const [ createdDate, setCreatedDate ] = React.useState("-");
   const [ people, setPeople ] = React.useState(null);
   const [ isMenuVisible, setIsMenuVisible ] = React.useState(false);
   
@@ -59,7 +61,13 @@ function MomentItem(props){
   }
 
   const fetchMoment = async () => {
-    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, (newMoment) => {
+    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, props.currentUser.email, (newMoment) => {
+      console.log(newMoment)
+      if(newMoment.postTime){
+       const creationDate = momentDate(newMoment.postTime.seconds * 1000).format("DD MMMM YYYY")
+       const creationTime = momentDate(newMoment.postTime.seconds * 1000).format("HH:mm")
+       setCreatedDate(creationDate+" | Jam "+ creationTime+" WIB")
+      }
       if(_isMounted.current)
         setMoment(newMoment);
     })
@@ -96,6 +104,8 @@ function MomentItem(props){
         }
       }
 
+  
+
     return (
       <Surface style={[ styles.surface, props.style ]}>
         <View style={{justifyContent: "space-between", flexDirection:"row"}}>
@@ -103,7 +113,7 @@ function MomentItem(props){
             <SquareAvatar size={50} uri={people.profilePicture}/>
             <View style={{ marginLeft: 8 }}>
               <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
-              <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
+              <Caption style={{ margin: 0 }}>{createdDate}</Caption>
             </View>
           
           </View>
@@ -137,10 +147,10 @@ function MomentItem(props){
         
         </View>
         <View style={styles.actionContainer}>
-          <LikeButton style={styles.actionItem} moment={moment}/>
+          <LikeButton style={{...styles.actionItem} } moment={moment} textColor={(moment.isLiked)? "#0ead69" : ""} />
           <TouchableOpacity style={styles.actionItem} onPress={props.onCommentPress}>
-            <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
-            <Text>{totalComments?`(${totalComments})`: ""} Komentar</Text>
+            <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4, color:(moment.isCommented)? "#0ead69" : "#000000" }}/>
+            <Text style={{ color:(moment.isCommented)? "#0ead69" : "#000000" }}>{totalComments?`(${totalComments})`: ""} Komentar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionItem} onPress={props.onSharePress}>
             <MaterialCommunityIcons name="share-variant" size={16} style={{ marginRight: 4 }}/>

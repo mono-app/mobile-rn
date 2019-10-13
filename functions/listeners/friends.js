@@ -144,6 +144,11 @@ Friends.triggerBlockFriends = functions.region("asia-east2").firestore.document(
     await blockedByRef.set({creationTime: admin.firestore.FieldValue.serverTimestamp()})
   }
 
+  // set blocked to opponent friendList
+  const blockedUserFriendListRef = db.collection("friendList").doc(blockId)
+  const peopleRef = blockedUserFriendListRef.collection("people").doc(friendListId)
+  peopleRef.update({status:"blocked-by"})
+
   // set Room to blocked: true
   const roomDocRef = db.collection("rooms").where("type", "==", "chat");
   const userPath = new admin.firestore.FieldPath("audiencesQuery", friendListId);
@@ -170,6 +175,11 @@ Friends.triggerUnblockFriends = functions.region("asia-east2").firestore.documen
   if(blockedBySnapshot.exists){
     await blockedByRef.delete()
   }
+
+  // set blocked to opponent friendList
+  const blockedUserFriendListRef = db.collection("friendList").doc(blockId)
+  const peopleRef = blockedUserFriendListRef.collection("people").doc(friendListId)
+  peopleRef.update({status:"friend"})
 
    // set Room to blocked: false
    const roomDocRef = db.collection("rooms").where("type", "==", "chat");

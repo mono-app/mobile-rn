@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 import CircleAvatar from "src/components/Avatar/Circle";
 import { View } from "react-native";
-import { Appbar, Subheading, Caption } from "react-native-paper";
+import { Appbar, Subheading, Caption, Text } from "react-native-paper";
 
 function ChatHeader(props){
   const { title, subtitle, profilePicture } = props;
@@ -13,13 +13,21 @@ function ChatHeader(props){
   return(
     <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
       {props.navigation?( <Appbar.BackAction onPress={handleBackPress}/> ): null}
-      <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
-        <CircleAvatar size={40} uri={profilePicture} style={{ marginRight: 8 }}/>
-        <View>
-          <Subheading style={{ fontWeight: "bold", marginBottom: 0 }}>{title}</Subheading>
-          <Caption style={{ marginTop: 0 }}>{subtitle}</Caption>
+
+      <TouchableOpacity onPress={props.onUserHeaderPress}>
+        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
+            <CircleAvatar size={40} uri={profilePicture} style={{ marginRight: 8 }}/>
+            <View>
+              <Subheading style={{ fontWeight: "bold", marginBottom: 0 }}>{title} </Subheading>
+              <View style={{flexDirection:"row"}}>
+                <Caption style={{ marginTop: 0 }}>{subtitle}</Caption>
+                <Caption style={{ marginTop:0, marginLeft: 4 }}>{(!props.isFriend)?"(Belum berteman denganmu)" : ""}</Caption>
+              </View>
+            </View>
         </View>
-      </View>
+      </TouchableOpacity>
+
+
     </Appbar.Header>
   )
 }

@@ -4,7 +4,7 @@ import uuid from "uuid/v4";
 import FriendsAPI from "src/api/friends";
 import StorageAPI from "src/api/storage";
 
-import { MomentsCollection, FansCollection } from "src/api/database/collection";
+import { MomentsCollection, FansCollection, CommentsCollection } from "src/api/database/collection";
 import { AddDocument } from "src/api/database/query";
 import { Document } from "src/api/database/document";
 
@@ -45,13 +45,25 @@ export default class MomentAPI{
    * @param {String} momentId 
    * @param {function} callback 
    */
-  static getDetailWithRealTimeUpdate(momentId, callback){
+  static getDetailWithRealTimeUpdate(momentId, currentUserEmail ,callback){
     const db = firebase.firestore();
     const momentsCollection = new MomentsCollection();
+    const fansCollection = new FansCollection();
+    const commentsCollection = new CommentsCollection();
     const momentDocument = new Document(momentId);
     const momentRef = db.collection(momentsCollection.getName()).doc(momentDocument.getId());
-    return momentRef.onSnapshot({ includeMetadataChanges: true }, (documentSnapshot) => {
-      if(documentSnapshot.exists) callback(MomentAPI.normalizeMoment(documentSnapshot));
+    
+    return momentRef.onSnapshot({ includeMetadataChanges: true }, async (documentSnapshot) => {
+      if(documentSnapshot.exists) {
+        const fansSnapshot = await momentRef.collection(fansCollection.getName()).doc(currentUserEmail).get()
+        const commentSnapshot = await momentRef.collection(commentsCollection.getName()).where("peopleEmail","==",currentUserEmail).get()
+       
+        let normalized = MomentAPI.normalizeMoment(documentSnapshot)
+        normalized.isLiked = fansSnapshot.exists
+        normalized.isCommented = !commentSnapshot.empty
+     
+        callback(normalized);
+      }
       else callback(null);
     })
   }

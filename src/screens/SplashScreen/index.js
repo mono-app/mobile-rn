@@ -15,10 +15,10 @@ function SplashScreen(props){
         if(!isNotificationEnabled) await firebase.messaging().requestPermission();
 
         // Creating notification channel for Android
-        const channel = new firebase.notifications.Android.Channel('message-notification', 'Message Notification', firebase.notifications.Android.Importance.Default)
+        const channel = new firebase.notifications.Android.Channel('message-notification', 'Message Notification', firebase.notifications.Android.Importance.Max)
         firebase.notifications().android.createChannel(channel);
-        firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('discussion-notification', 'Discussion Notification', firebase.notifications.Android.Importance.Default));
-        firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('friendrequest-notification', 'Friend Request Notification', firebase.notifications.Android.Importance.Default));
+        firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('discussion-notification', 'Discussion Notification', firebase.notifications.Android.Importance.Max));
+        firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('friendrequest-notification', 'Friend Request Notification', firebase.notifications.Android.Importance.Max));
 
       }catch(err){ console.log("User reject notification", err); }
 
