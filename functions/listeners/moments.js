@@ -81,7 +81,7 @@ Moments.sendNotificationForNewMomentComment = functions.region("asia-east2").fir
       await messageRef.set({
         content: `${peopleCommentData.applicationInformation.nickName} Mengomentari Moment Kamu. Lihat sekarang!`,
         senderEmail: BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()),
-        readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "moment-comment", details
+        readBy: {}, sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "moment-comment", details
       })
     }))
 

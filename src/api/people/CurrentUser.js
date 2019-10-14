@@ -18,6 +18,10 @@ export function withCurrentUser(Component){
             blockedUserList={context.blockedUserList}
             blockedByUserList={context.blockedByUserList}
             hiddenUserList={context.hiddenUserList}
+            setUnreadChat={context.handleUnreadChat}
+            setUnreadBot={context.handleUnreadBot}
+            unreadChat={context.unreadChat}
+            unreadBot={context.unreadBot}
           />}
 
       </CurrentUserContext.Consumer>
@@ -43,12 +47,18 @@ export class CurrentUserProvider extends React.PureComponent{
       user: {}, 
       isLoggedIn: false,
       handleCurrentUserEmail: this.handleCurrentUserEmail,
+      handleUnreadChat: this.handleUnreadChat,
+      handleUnreadBot: this.handleUnreadBot,
       blockedUserList: [],
       blockedByUserList: [],
-      hiddenUserList: []
+      hiddenUserList: [],
+      unreadBot: 0,
+      unreadChat: 0
     }
 
     this.handleCurrentUserEmail = this.handleCurrentUserEmail.bind(this);
+    this.handleUnreadBot = this.handleUnreadBot.bind(this);
+    this.handleUnreadChat = this.handleUnreadChat.bind(this);
   }
 
   handleCurrentUserEmail = async (email) => {
@@ -100,6 +110,18 @@ export class CurrentUserProvider extends React.PureComponent{
     })
 
   };
+
+  handleUnreadChat = async (number) => {
+    const unreadChat = (JSON.parse(JSON.stringify(this.state.unreadChat))) + (number)
+    this.setState({unreadChat})
+    console.log("unreadChatunreadChatunreadChatunreadChatunreadChatunreadChatunreadChatunreadChatunreadChat")
+    console.log(unreadChat)
+  }
+
+  handleUnreadBot = async (number) => {
+    const unreadBot = (JSON.parse(JSON.stringify(this.state.unreadBot))) + (number)
+    this.setState({unreadBot})
+  }
 
   componentDidMount(){
     this.authListener = firebase.auth().onAuthStateChanged((user) => {

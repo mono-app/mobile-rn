@@ -58,6 +58,7 @@ function GroupChatScreen(props){
   const initMessages = () => {
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
       if( _isMounted.current){
+        MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then()
         setMessages(messages);
         setLastMessageSnapshot(snapshot);
         setUserRegistered(true);

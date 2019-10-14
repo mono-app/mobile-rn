@@ -146,7 +146,7 @@ export default class MessagesAPI{
    * @param {String} messageId 
    * @param {String} peopleEmail 
    */
-  static async bulkMarkAsRead(roomId, messageIdList, peopleEmail){
+  static async bulkMarkAsRead(roomId, peopleEmail){
     const db = firebase.firestore();
     const batch = db.batch();
     const roomsCollection = new RoomsCollection();
@@ -165,8 +165,11 @@ export default class MessagesAPI{
 
     batch.update(roomRef, { "lastMessage.readTime": moment().unix() })
 
-    await batch.commit();
-
-    return Promise.resolve(true);
+    const result = await batch.commit(messageQuerySnapshot.size);
+    if(result) return Promise.resolve();
+    else  return Promise.resolve(false);
+    
+   
+   
   }
 }

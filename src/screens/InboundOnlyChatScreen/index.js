@@ -1,6 +1,6 @@
 import React from "react";
 import Logger from "src/api/logger";
-import moment from "moment";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 import MessagesAPI from "src/api/messages";
 import BotsAPI from "src/api/bots"
 
@@ -9,7 +9,7 @@ import ChatList from "src/components/ChatList";
 import { KeyboardAvoidingView } from "react-native";
 
 function InboundOnlyChatScreen(props){
-  const { navigation } = props;
+  const { navigation, currentUser } = props;
   const room = navigation.getParam("room", null);
   const [ messages, setMessages ] = React.useState([]);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
@@ -43,6 +43,8 @@ function InboundOnlyChatScreen(props){
   const initMessages = () => {
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
       Logger.log("InboundOnlyChatScreen.initMessages", messages);
+      MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then()
+
       if( _isMounted.current){
         setMessages(MessagesAPI.appendDateSeparator(messages));
         setLastMessageSnapshot(snapshot);
@@ -75,4 +77,4 @@ function InboundOnlyChatScreen(props){
 };
 
 InboundOnlyChatScreen.navigationOptions = { header: null }
-export default InboundOnlyChatScreen;
+export default withCurrentUser(InboundOnlyChatScreen)

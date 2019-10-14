@@ -105,8 +105,13 @@ function HomeScreen(props){
     <View style={styles.container}>
       <Header homeScreenTutorial={props.homeScreenTutorial} showTutorialHomeAddContact={props.showTutorialHomeAddContact}/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Chats</HeadlineTitle>
-      <ChatMenuSwitch onChange={handleMenuChange} homeScreenTutorial={props.homeScreenTutorial} 
-        showTutorialHomeChatSection={props.showTutorialHomeChatSection} showTutorialHomeNotifSection={props.showTutorialHomeNotifSection} />
+      <ChatMenuSwitch onChange={handleMenuChange} 
+        homeScreenTutorial={props.homeScreenTutorial} 
+        showTutorialHomeChatSection={props.showTutorialHomeChatSection} 
+        showTutorialHomeNotifSection={props.showTutorialHomeNotifSection}
+        unreadBot={props.unreadBot}
+        unreadChat={props.unreadChat}
+        />
       {selectedMenu === "chat"?<ChatSection/>: <NotificationSection/>}
     </View>
   );
