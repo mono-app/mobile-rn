@@ -89,7 +89,11 @@ function ChatScreen(props){
       Logger.log("ChatScreen.initMessages", messages);
       if( _isMounted.current){
         if(messages.length === 0) setMessages(MessagesAPI.welcomeMessage());
-        else setMessages(MessagesAPI.appendDateSeparator(messages));
+        else {
+          setMessages(MessagesAPI.appendDateSeparator(messages));
+          MessagesAPI.bulkMarkAsRead(room.id, messages, currentUser.email).then()
+        }
+
         setLastMessageSnapshot(snapshot);
       }
     })

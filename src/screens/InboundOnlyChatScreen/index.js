@@ -67,7 +67,7 @@ function InboundOnlyChatScreen(props){
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <ChatHeader
-        navigation={navigation} title={bot.displayName} subtitle="Bot"
+        navigation={navigation} title={bot.displayName} subtitle="Bot" isFriend={true}
         profilePicture={bot.profilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop}/>
     </KeyboardAvoidingView>

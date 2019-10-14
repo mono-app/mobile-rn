@@ -127,7 +127,7 @@ export default class MessagesAPI{
     const localSentTime = firebase.firestore.Timestamp.fromMillis(new moment().valueOf())
     const sentTime = firebase.firestore.FieldValue.serverTimestamp();
     const payload = { 
-      senderEmail, content: message, sentTime, readBy: [], localSentTime, type, details
+      senderEmail, content: message, sentTime, readBy: {}, localSentTime, type, details
     }
     const db = firebase.firestore();
     const batch = db.batch();
@@ -138,7 +138,6 @@ export default class MessagesAPI{
     const roomsRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
     const newCollectionRef = roomsRef.collection(messagesCollection.getName()).doc();
     batch.set(newCollectionRef, payload);
-    batch.update(roomsRef, { lastMessage: { message, sentTime } });
     return batch.commit().then(() => Promise.resolve(true));
   }
 
@@ -147,19 +146,27 @@ export default class MessagesAPI{
    * @param {String} messageId 
    * @param {String} peopleEmail 
    */
-  static async markAsRead(roomId, messageId, peopleEmail){
+  static async bulkMarkAsRead(roomId, messageIdList, peopleEmail){
     const db = firebase.firestore();
     const batch = db.batch();
     const roomsCollection = new RoomsCollection();
     const roomDocument = new Document(roomId);
     const messagesCollection = new MessagesCollection();
-    const messageDocument = new Document(messageId);
     const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
-    const messageRef = roomRef.collection(messagesCollection.getName()).doc(messageDocument.getId());
-    batch.update(messageRef, { "read.isRead": true });
-    batch.update(messageRef, { "read.by": firebase.firestore.FieldValue.arrayUnion(peopleEmail) });
+
+    const userPath = new firebase.firestore.FieldPath("readBy", peopleEmail);
+
+    const messageQuerySnapshot = await roomRef.collection(messagesCollection.getName()).where(userPath,"==",false).get()
+    messageQuerySnapshot.docs.forEach(documentSnapshot=> {
+      const readBy = documentSnapshot.data().readBy
+      readBy[peopleEmail]=true
+      batch.update(documentSnapshot.ref, {readBy: readBy});
+    })
+
     batch.update(roomRef, { "lastMessage.readTime": moment().unix() })
+
     await batch.commit();
+
     return Promise.resolve(true);
   }
 }

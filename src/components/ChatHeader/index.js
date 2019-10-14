@@ -13,7 +13,6 @@ function ChatHeader(props){
   return(
     <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
       {props.navigation?( <Appbar.BackAction onPress={handleBackPress}/> ): null}
-
       <TouchableOpacity onPress={props.onUserHeaderPress}>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
             <CircleAvatar size={40} uri={profilePicture} style={{ marginRight: 8 }}/>
@@ -26,8 +25,6 @@ function ChatHeader(props){
             </View>
         </View>
       </TouchableOpacity>
-
-
     </Appbar.Header>
   )
 }

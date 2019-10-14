@@ -19,6 +19,7 @@ function SplashScreen(props){
         firebase.notifications().android.createChannel(channel);
         firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('discussion-notification', 'Discussion Notification', firebase.notifications.Android.Importance.Max));
         firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('friendrequest-notification', 'Friend Request Notification', firebase.notifications.Android.Importance.Max));
+        firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('moment-notification', 'Moment Notification', firebase.notifications.Android.Importance.Max));
 
       }catch(err){ console.log("User reject notification", err); }
 

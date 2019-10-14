@@ -2,7 +2,7 @@ import React from "react";
 import PeopleAPI from "src/api/people";
 import MomentAPI from "modules/Moments/api/moment";
 import Logger from "src/api/logger";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, ActivityIndicator } from "react-native";
 import SquareAvatar from "src/components/Avatar/Square";
 import FastImage from "react-native-fast-image";
 import LikeButton from "modules/Moments/components/MomentItem/LikeButton";
@@ -14,7 +14,20 @@ import { default as momentDate } from "moment"
 
 export function MomentImageThumbnail(props){
   const imageSize = Dimensions.get("window").width/3;
- 
+  const [isLoaded, setLoaded] = React.useState(false)
+  const _isMounted = React.useRef(true);
+
+  const handleLoadedImage =()=>{
+    if(_isMounted.current) setLoaded(true)
+  }
+
+  React.useEffect(() => {
+
+    return ()=> {
+      _isMounted.current=false
+    }
+  }, [])
+
   const styles = StyleSheet.create({
     imageContainer: { display: "flex", alignItems: "stretch", flex: 1, height: imageSize },
     imageItem: { 
@@ -22,7 +35,10 @@ export function MomentImageThumbnail(props){
   })
   return (
     <TouchableOpacity style={[ styles.imageContainer, props.style ]} onPress={props.onPress}>
-      <FastImage style={styles.imageItem} source={props.source} resizeMode="cover"/>
+        {(!isLoaded)?
+          <ActivityIndicator style={{position: 'absolute',top: '40%',left:"40%"}} size="small" animating={true} color="#0EAD69"/>
+        :<View/>}
+      <FastImage style={[styles.imageItem,(!isLoaded)?{opacity: 0 } :{}]} source={props.source} resizeMode="cover" onLoad={handleLoadedImage}/>
     </TouchableOpacity>
   )
 }

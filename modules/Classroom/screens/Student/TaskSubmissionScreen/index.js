@@ -209,7 +209,7 @@ class TaskSubmissionScreen extends React.PureComponent {
             >
               <View>
                 <Text>Mendownload Berkas</Text>
-                  <ProgressBar progress={this.state.progressPercentage} color="red" />
+                  <ProgressBar progress={this.state.progressPercentage} color="#EF6F6C" />
               </View>
             </Dialog.Content>
           </Dialog>

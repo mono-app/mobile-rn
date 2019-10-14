@@ -11,6 +11,7 @@ import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import PrivacyScreen from "src/screens/PrivacyScreen";
 import BlockedUsersScreen from "src/screens/BlockedUsersScreen";
 import HiddenUsersScreen from "src/screens/HiddenUsersScreen";
+import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
 
 export default SettingTabNavigator = createStackNavigator({
   Home: { screen: SettingsScreen },
@@ -24,7 +25,8 @@ export default SettingTabNavigator = createStackNavigator({
   EditSingleField: { screen: EditSingleFieldScreen },
   SettingEditSingleFieldScreen: { screen: EditSingleFieldScreen },
   StatusChange: { screen: StatusChangeScreen },
-  ...DiscussionClassroomNotifNavigatorObj
+  ...DiscussionClassroomNotifNavigatorObj,
+  ...MomentNavigatorObj
 }, {
   initialRouteName: "Home",
   navigationOptions: ({ navigation }) => {

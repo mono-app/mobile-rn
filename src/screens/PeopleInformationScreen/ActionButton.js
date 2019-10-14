@@ -88,6 +88,7 @@ class ActionButton extends React.PureComponent{
 
   render(){
     const style = { marginHorizontal: 16,marginBottom:8 }
+    const styleButtonRed = { backgroundColor: "#EF6F6C", borderColor: "#EF6F6C" }
     const { peopleFriendStatus } = this.props;
     if(!peopleFriendStatus || this.state.isLoading) return <Button style={style} isLoading disabled>Harap tunggu...</Button>
 
@@ -96,18 +97,18 @@ class ActionButton extends React.PureComponent{
     onPress={this.handleAddFriendPress} 
     isLoading={this.state.isLoading} disabled={this.state.isLoading}/>;
 
-    const blockButton = <Button style={{...style, backgroundColor: "red"}} onPress={this.handleBlockPress}  text="Block"/>;
-    const unblockButton =  <Button style={{...style, backgroundColor: "red"}} onPress={this.handleUnblockPress}  text="Unblock"/>
-    const hideButton = <Button style={{...style, backgroundColor: "red"}} onPress={this.handleHidePress} text="Hide"/>;
-    const unhideButton =  <Button style={{...style, backgroundColor: "red"}} onPress={this.handleUnhidePress} text="Unhide"/>;
+    const blockButton = <Button style={{...style, ...styleButtonRed}} onPress={this.handleBlockPress}  text="Block"/>;
+    const unblockButton =  <Button style={{...style, ...styleButtonRed}} onPress={this.handleUnblockPress}  text="Unblock"/>
+    const hideButton = <Button style={{...style, ...styleButtonRed}} onPress={this.handleHidePress} text="Hide"/>;
+    const unhideButton =  <Button style={{...style, ...styleButtonRed}} onPress={this.handleUnhidePress} text="Unhide"/>;
 
     const cancelRequestButton = <Button 
-    style={[ style, {backgroundColor: "#EF6F6C"} ]}
+    style={[ style, styleButtonRed ]}
     text="Batalkan Pertemanan" onPress={this.handleCancelRequestPress} 
     isLoading={this.state.isLoading} disabled={this.state.isLoading}/>;
 
     const acceptFriendButton = <Button style={{ marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text="Terima Pertemanan"/>;
-    const rejectFriendButton = <Button style={{ backgroundColor: "#EF6F6C" }} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>;
+    const rejectFriendButton = <Button style={styleButtonRed} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>;
 
     const startChatButton = <Button style={style} onPress={this.handleStartChatPress} outlined={true} text="Mulai Percakapan"/>
 

@@ -3,14 +3,26 @@ const admin = require("firebase-admin");
 
 function Messages(){}
 
-Messages.triggerNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate((documentSnapshot, context) => {
+Messages.triggerNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {
   const { roomId } = context.params;
   const db = admin.firestore();
   const message = documentSnapshot.data()
-  return db.collection("rooms").doc(roomId).update({
+  const roomDocRef = db.collection("rooms").doc(roomId)
+  await roomDocRef.update({
     "lastMessage.message": message.content,
     "lastMessage.sentTime": message.sentTime
   })
+  const docSnapshot = await roomDocRef.get()
+  const readByPayload = {}
+  docSnapshot.data().audiences.map(email=>{
+    if(email===message.senderEmail){
+      readByPayload[email] = true
+    }else{
+      readByPayload[email] = false
+    }
+    return 1
+  })
+  await documentSnapshot.ref.update({readBy: readByPayload})
 })
 
 Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {

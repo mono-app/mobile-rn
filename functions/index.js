@@ -51,3 +51,4 @@ exports.triggerUpdatedTask = Tasks.triggerUpdatedTask
 exports.triggerDeletedTask = Tasks.triggerDeletedTask
 
 exports.triggerNewMoment = Moments.triggerNewMoment
+exports.sendNotificationForNewMomentComment = Moments.sendNotificationForNewMomentComment

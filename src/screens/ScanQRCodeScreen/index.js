@@ -39,7 +39,7 @@ class ScanQRCodeSCreen extends React.PureComponent{
       <View style={{ flex: 1 }}>
         <QRCodeScanner
           onRead={this.handleQRCodeScannerRead}
-          style={{ backgroundColor: "red" }}
+          style={{ backgroundColor: "#EF6F6C" }}
           showMarker={true}
           checkAndroid6Permissions={true}/>
         <View style={{ padding: 16 }}>

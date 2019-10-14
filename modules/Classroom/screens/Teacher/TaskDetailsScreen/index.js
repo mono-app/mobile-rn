@@ -285,7 +285,7 @@ class TaskDetailsScreen extends React.PureComponent {
         <Snackbar
           visible= {this.state.showSnackbarFailDeleting}
           onDismiss={() => this.setState({ showSnackbarFailDeleting: false })}
-          style={{backgroundColor:"red"}}
+          style={{backgroundColor:"#EF6F6C"}}
           duration={Snackbar.DURATION_SHORT}>
           Tidak bisa menghapus karena sudah ada murid yang mengumpulkan tugas
         </Snackbar>
