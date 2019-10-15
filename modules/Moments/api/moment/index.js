@@ -103,24 +103,13 @@ export default class MomentAPI{
    * @returns {Promise} an array of `moments` object
    */
   static async getMoments(email){
-    const friends = await FriendsAPI.getFriends(email);
-    const posterEmails = friends.map((friend) => friend.email);
-    posterEmails.push(email); // add myself to poster email to catch the moment created by me
-    
+  
     const db = firebase.firestore();
     const momentsCollection = new MomentsCollection();
-    const momentsRef = db.collection(momentsCollection.getName());
-    const queries = posterEmails.map((email) => {
-      const posterRef = momentsRef.where("posterEmail", "==", email);
-      const privacyRef = posterRef.where("privacy", "==", "friends");
-      return privacyRef.limit(100).orderBy("postTime", "desc").get();
-    });
+    const momentsRef = db.collection(momentsCollection.getName()).where('showsTo','array-contains',email);
+    const querySnapshots = await momentsRef.get();
 
-    const querySnapshots = await Promise.all(queries);
-    const documentSnapshots = [];
-    querySnapshots.forEach((querySnapshot) => documentSnapshots.push.apply(documentSnapshots, querySnapshot.docs))
-
-    const moments = documentSnapshots.map((documentSnapshot) => MomentAPI.normalizeMoment(documentSnapshot));
+    const moments = querySnapshots.docs.map((documentSnapshot) => MomentAPI.normalizeMoment(documentSnapshot));
     moments.sort((a, b) => (a.postTime.seconds > b.postTime.seconds)? -1: 1);
     return Promise.resolve(moments);
   }

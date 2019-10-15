@@ -19,8 +19,9 @@ function MonoIDSearch(props){
 
   const handleIdChange = (id) => setId(id);
   const handleSubmit = async () => {
-    const foundPeople = await PeopleAPI.getByMonoId(id);
-    if(foundPeople.length > 0) {
+    const foundPeople = await PeopleAPI.getByMonoId(props.currentUser.email, id);
+    
+    if(foundPeople.length > 0 ) {
       setId("");
       props.navigation.navigate("PeopleSearchResult", { people: foundPeople });
     }

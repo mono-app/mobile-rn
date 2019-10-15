@@ -2,7 +2,7 @@ import React from "react";
 import FriendsAPI from "src/api/friends";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
-
+import { PersonalRoomsAPI } from "src/api/rooms";
 import Button from "src/components/Button";
 import { View } from "react-native";
 
@@ -38,6 +38,39 @@ class ActionButton extends React.PureComponent{
     this.setState({ isLoading: false });
   }
 
+  handleBlockPress = async ()=> {
+    this.setState({ isLoading: true });
+    await FriendsAPI.blockUsers(this.props.currentUser.email, this.props.peopleEmail)
+    if(this.props.onComplete) await this.props.onComplete();
+    this.setState({ isLoading: false });
+  }
+
+  handleUnblockPress = async ()=> {
+    this.setState({ isLoading: true });
+    await FriendsAPI.unblockUsers(this.props.currentUser.email, this.props.peopleEmail)
+    if(this.props.onComplete) await this.props.onComplete();
+    this.setState({ isLoading: false });
+  }
+
+  handleHidePress = async ()=> {
+    this.setState({ isLoading: true });
+    await FriendsAPI.hideUsers(this.props.currentUser.email, this.props.peopleEmail)
+    if(this.props.onComplete) await this.props.onComplete();
+    this.setState({ isLoading: false });
+  }
+
+  handleUnhidePress = async ()=> {
+    this.setState({ isLoading: true });
+    await FriendsAPI.unhideUsers(this.props.currentUser.email, this.props.peopleEmail)
+    if(this.props.onComplete) await this.props.onComplete();
+    this.setState({ isLoading: false });
+  }
+  
+  handleStartChatPress = async () => {
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, this.props.peopleEmail);
+    this.props.navigation.navigate({ routeName: "Chat", params: {room} })
+  }
+
   constructor(props){
     super(props);
 
@@ -46,36 +79,81 @@ class ActionButton extends React.PureComponent{
     this.handleCancelRequestPress = this.handleCancelRequestPress.bind(this);
     this.handleRejectRequestPress = this.handleRejectRequestPress.bind(this);
     this.handleAcceptRequestPress = this.handleAcceptRequestPress.bind(this);
+    this.handleBlockPress = this.handleBlockPress.bind(this);
+    this.handleUnblockPress = this.handleUnblockPress.bind(this);
+    this.handleHidePress = this.handleHidePress.bind(this);
+    this.handleUnhidePress = this.handleUnhidePress.bind(this);
+    this.handleStartChatPress = this.handleStartChatPress.bind(this);
   }
 
   render(){
-    const style = { marginHorizontal: 16 }
+    const style = { marginHorizontal: 16,marginBottom:8 }
     const { peopleFriendStatus } = this.props;
     if(!peopleFriendStatus || this.state.isLoading) return <Button style={style} isLoading disabled>Harap tunggu...</Button>
+
+    const addFriendButton = <Button 
+    style={style} text="Jadikan Teman"
+    onPress={this.handleAddFriendPress} 
+    isLoading={this.state.isLoading} disabled={this.state.isLoading}/>;
+
+    const blockButton = <Button style={{...style, backgroundColor: "red"}} onPress={this.handleBlockPress}  text="Block"/>;
+    const unblockButton =  <Button style={{...style, backgroundColor: "red"}} onPress={this.handleUnblockPress}  text="Unblock"/>
+    const hideButton = <Button style={{...style, backgroundColor: "red"}} onPress={this.handleHidePress} text="Hide"/>;
+    const unhideButton =  <Button style={{...style, backgroundColor: "red"}} onPress={this.handleUnhidePress} text="Unhide"/>;
+
+    const cancelRequestButton = <Button 
+    style={[ style, {backgroundColor: "#EF6F6C"} ]}
+    text="Batalkan Pertemanan" onPress={this.handleCancelRequestPress} 
+    isLoading={this.state.isLoading} disabled={this.state.isLoading}/>;
+
+    const acceptFriendButton = <Button style={{ marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text="Terima Pertemanan"/>;
+    const rejectFriendButton = <Button style={{ backgroundColor: "#EF6F6C" }} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>;
+
+    const startChatButton = <Button style={style} onPress={this.handleStartChatPress} outlined={true} text="Mulai Percakapan"/>
+
     if(peopleFriendStatus === "myself"){
       return null
     }else if(peopleFriendStatus === "stranger"){
       return(
-        <Button 
-          style={style} text="Jadikan Teman"
-          onPress={this.handleAddFriendPress} 
-          isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
+        <View>
+          {addFriendButton}
+          {blockButton}
+          {startChatButton}
+        </View>
       )
     }else if(peopleFriendStatus === "requesting"){
       return (
-        <Button 
-          style={[ style, {backgroundColor: "#EF6F6C"} ]}
-          text="Batalkan Pertemanan" onPress={this.handleCancelRequestPress} 
-          isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
+        <View>
+        {cancelRequestButton}
+        {startChatButton}
+        </View>
       )
     }else if(peopleFriendStatus === "friend"){
-      return null
+      return (
+        <View>
+          {blockButton}
+          {hideButton}
+          {startChatButton}
+        </View>
+      )
     }else if(peopleFriendStatus === "pendingAccept"){
       if(this.state.isLoading) return <Button style={style} text="Harap tunggu..." isLoading disabled/>
       else return (
         <View style={style}>
-          <Button style={{ marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text="Terima Pertemanan"/>
-          <Button style={{ backgroundColor: "#EF6F6C", borderColor: "#EF6F6C" }} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>
+          {acceptFriendButton}
+          {rejectFriendButton}
+          {startChatButton}
+        </View>
+      )
+    }else if(peopleFriendStatus === "blocked"){
+      return (      
+       unblockButton
+      )
+    }else if(peopleFriendStatus === "hide"){
+      return (
+        <View>
+          {unhideButton}
+          {startChatButton}
         </View>
       )
     }

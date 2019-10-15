@@ -25,7 +25,7 @@ function AddContactScreen(props){
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "#E8EEE8" }}/>
-      <MonoIDSearch/>
+      <MonoIDSearch currentUser={currentUser}/>
       <View style={{ marginBottom: 16, flex: 1, alignItems: "center" }}>
         <Text style={{ color: "#5E8864" }}>Mono ID: {currentUser.applicationInformation.id}</Text>
       </View>

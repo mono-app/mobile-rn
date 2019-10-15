@@ -27,7 +27,7 @@ export default class RoomsAPI{
         return normalizedRoom;
       })
       const filteredRooms = rooms.filter((item)=>{
-        return item.type !=="bot"
+        return (item.type !=="bot" && !item.blocked && !item.hidden)
       })
 
       filteredRooms.sort((a, b) => ((a.lastMessage && b.lastMessage)&&a.lastMessage.sentTime < b.lastMessage.sentTime) ? 1 : -1)
@@ -61,7 +61,7 @@ export default class RoomsAPI{
     firebaseCollection = firebaseCollection.where("type", "==", type);
     audiences.forEach(audience => {
       firebaseCollection = firebaseCollection.where(
-        new firebase.firestore.FieldPath("audiences", audience), "==", true
+        new firebase.firestore.FieldPath("audiencesQuery", audience), "==", true
       )
     })
 

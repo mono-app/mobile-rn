@@ -31,12 +31,18 @@ class VerifyPhoneScreen extends React.PureComponent{
     if(!phoneNum){
       this.setState({ snackbarFailMessage: "Nomor Telepon Tidak Valid", showSnackbarFailVerification:true })
     }else{
-      //const response = await VerifyPhoneAPI.sendCode(phoneNum)
-      const response = "fds"
-      if(response){
-        const otpRequestId = response
-        VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
-        this.setState({ isAskingOTP: true, otpRequestId })
+      const isAvailable = await VerifyPhoneAPI.isAvailable(this.email, phoneNum)
+      if(isAvailable){
+        //const response = await VerifyPhoneAPI.sendCode(phoneNum)
+        const response = "fds"
+
+        if(response){
+          const otpRequestId = response
+          VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
+          this.setState({ isAskingOTP: true, otpRequestId })
+        }
+      }else{
+        this.setState({ snackbarFailMessage: "Nomor Telepon Sudah Digunakan", showSnackbarFailVerification:true })
       }
     }
     this.setState({isVerificationLoading: false})
@@ -75,13 +81,12 @@ class VerifyPhoneScreen extends React.PureComponent{
     if(response){
       VerifyPhoneAPI.currentNexmoRequestId = null
 
-      const email = this.props.navigation.getParam("email", null);
-      const password = this.props.navigation.getParam("password", null);
+      
       try{
-        await firebase.auth().createUserWithEmailAndPassword(email, password);
+        await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
         
         const db = firebase.firestore();
-        const userDocumentRef = db.collection("users").doc(email)
+        const userDocumentRef = db.collection("users").doc(this.email)
         const userSnapshot = await userDocumentRef.get()
         if(userSnapshot.exists){
           await userDocumentRef.update({
@@ -141,7 +146,8 @@ class VerifyPhoneScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    
+    this.email = this.props.navigation.getParam("email", null);
+    this.password = this.props.navigation.getParam("password", null);
     this.authListener = null;
     this.databaseListener = null;
     this.handleBackToSignIn = this.handleBackToSignIn.bind(this);

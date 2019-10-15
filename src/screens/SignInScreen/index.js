@@ -19,7 +19,7 @@ function SignInScreen(props){
   const [ isLoading, setIsLoading ] = React.useState(false);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, flexDirection: 'column', backgroundColor: '#fff', justifyContent: 'flex-start', alignItems: "center" },
+    container: { flexDirection: 'column', backgroundColor: '#fff', justifyContent: 'flex-start', alignItems: "center" },
     contentWrapper: { paddingLeft: 32, paddingRight: 32 },
     formWrapper: { justifyContent: 'space-between' },
     title: { marginBottom: 16, fontSize: 14, lineHeight: 14 * 1.5 },
