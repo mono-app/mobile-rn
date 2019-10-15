@@ -7,12 +7,14 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatList from "src/components/ChatList";
 import ChatHeader from "src/components/ChatHeader";
-import { KeyboardAvoidingView } from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import FriendsAPI from "src/api/friends";
 
 function ChatScreen(props){
   const { currentUser, navigation } = props;
+
   const room = navigation.getParam("room", null);
+
   const [ messages, setMessages ] = React.useState([]);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
   const [ peopleEmail, setPeopleEmail ] = React.useState("");
@@ -21,6 +23,7 @@ function ChatScreen(props){
   const [ headerProfilePicture, setHeaderProfilePicture ] = React.useState("");
   const [ isLoadingNewMessage, setIsLoadingNewMessage ] = React.useState(false);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
+  
   const messagesListener = React.useRef(null);
   const _isMounted = React.useRef(true);
 
@@ -86,7 +89,7 @@ function ChatScreen(props){
 
   const initMessages = () => {
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
-      Logger.log("ChatScreen.initMessages", messages);
+      Logger.log("ChatScreen.initMessages#messages", messages);
       if( _isMounted.current){
         if(messages.length === 0) setMessages(MessagesAPI.welcomeMessage());
         else {
@@ -118,7 +121,7 @@ function ChatScreen(props){
   Logger.log("ChatScreen#room", room);
   Logger.log("ChatScreen#headerProfilePicture", headerProfilePicture)
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeader 
         navigation={navigation} title={headerTitle} subtitle={"Online"}  
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}
