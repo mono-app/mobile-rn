@@ -133,6 +133,7 @@ PODS:
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - OpenTok (2.16.3)
   - Protobuf (3.9.2)
   - QBImagePickerController (3.4.0)
   - React (0.59.9):
@@ -167,8 +168,6 @@ PODS:
   - react-native-netinfo (3.2.1):
     - React
   - react-native-spinkit (1.0.2):
-    - React
-  - react-native-webrtc (1.75.0):
     - React
   - React/Core (0.59.9):
     - yoga (= 0.59.9.React)
@@ -249,6 +248,7 @@ DEPENDENCIES:
   - Firebase/Storage (~> 5.20.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - OpenTok (= 2.16.3)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
@@ -260,7 +260,6 @@ DEPENDENCIES:
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-spinkit (from `../node_modules/react-native-spinkit`)
-  - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/cxxreact (from `../node_modules/react-native`)
@@ -303,6 +302,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
+    - OpenTok
     - Protobuf
     - QBImagePickerController
     - RSKImageCropper
@@ -339,8 +339,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-spinkit:
     :path: "../node_modules/react-native-spinkit"
-  react-native-webrtc:
-    :path: "../node_modules/react-native-webrtc"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
   RNCAsyncStorage:
@@ -385,6 +383,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  OpenTok: e17e1333108837cf0669be5de8f3155d1eb7ac12
   Protobuf: 67fb42ba613def994e61854de2b3164f13790cc4
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
@@ -399,7 +398,6 @@ SPEC CHECKSUMS:
   react-native-maps: 190c02ca533fddac5bb49cf17bdece3644612107
   react-native-netinfo: 0da34082d2cec3100c9b5073bb217e35f1142bdd
   react-native-spinkit: 9a5d2f95aa975d5660fd3e76b7eac38e7329e46c
-  react-native-webrtc: c5e3d631179a933548a8e49bddbd8fad02586095
   ReactNativePermissions: 7cfad56d13c8961cd2a1005b4955b1400c79ef3e
   RNCAsyncStorage: 2e2e3feb9bdadc752a026703d8c4065ca912e75a
   RNFirebase: 891477280514b0cef3225cc48709cabedd192d5e
@@ -412,6 +410,6 @@ SPEC CHECKSUMS:
   SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: b0c66bbdd3c8c163de791a7deffafac2ebbb24c5
+PODFILE CHECKSUM: d5972fd851b3e1012b1e1b81749b2a87735fa1a5
 
 COCOAPODS: 1.8.0
