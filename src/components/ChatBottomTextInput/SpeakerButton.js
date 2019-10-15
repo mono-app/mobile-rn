@@ -6,12 +6,10 @@ import { StyleSheet } from "react-native";
 
 import { IconButton } from "react-native-paper";
 import { OTSubscriber } from "opentok-react-native";
-import { ActivityIndicator } from "react-native";
 
 function SpeakerButton(props){
   const { colors } = props.theme;
   const [ isActive, setIsActive ] = React.useState(false);
-  const [ isLoading, setIsLoading ] = React.useState(true);
   const [ showSubscriber, setShowSubscriber ] = React.useState(false);
   
   const iconName = (isActive)? "volume-up": "volume-off";
@@ -30,7 +28,6 @@ function SpeakerButton(props){
   }
 
   Logger.log("SpeakerButton#showSubscriber", showSubscriber);
-  if(isLoading) return <ActivityIndicator style={[ styles.default, props.style ]} size="small" color={colors.disabled}/>
   return (
     <React.Fragment>
       {showSubscriber?(
