@@ -7,17 +7,20 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatList from "src/components/ChatList";
 import ChatHeader from "src/components/ChatHeader";
-import { KeyboardAvoidingView } from "react-native";
+import { KeyboardAvoidingView, ActivityIndicatorComponent } from "react-native";
 
 function ChatScreen(props){
   const { currentUser, navigation } = props;
+
   const room = navigation.getParam("room", null);
+
   const [ messages, setMessages ] = React.useState([]);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
   const [ isUserRegistered, setUserRegistered ] = React.useState(false);
   const [ headerProfilePicture, setHeaderProfilePicture ] = React.useState("");
   const [ isLoadingNewMessage, setIsLoadingNewMessage ] = React.useState(false);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
+  
   const messagesListener = React.useRef(null);
   const _isMounted = React.useRef(true);
 
@@ -57,13 +60,10 @@ function ChatScreen(props){
         }else if(audienceData.email){
           if( _isMounted.current) setUserRegistered(true)
           return audienceData.email
-        }else{
-          return "user not registered"
-        }
-      }else{
-        return "user not registered"
-      }
+        }else return "user not registered"
+      }else return "user not registered"
     }).join(", ");
+
     if(audiences.length === 1) {
       if(results[0] && results[0].profilePicture){
         if( _isMounted.current) setHeaderProfilePicture(results[0].profilePicture);
@@ -76,7 +76,7 @@ function ChatScreen(props){
 
   const initMessages = () => {
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
-      Logger.log("ChatScreen.initMessages", messages);
+      Logger.log("ChatScreen.initMessages#messages", messages);
       if( _isMounted.current){
         if(messages.length === 0) setMessages(MessagesAPI.welcomeMessage());
         else setMessages(MessagesAPI.appendDateSeparator(messages));
