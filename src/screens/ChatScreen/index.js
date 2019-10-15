@@ -7,7 +7,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatList from "src/components/ChatList";
 import ChatHeader from "src/components/ChatHeader";
-import { KeyboardAvoidingView, ActivityIndicatorComponent } from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 
 function ChatScreen(props){
   const { currentUser, navigation } = props;
@@ -98,7 +98,7 @@ function ChatScreen(props){
   Logger.log("ChatScreen#room", room);
   Logger.log("ChatScreen#headerProfilePicture", headerProfilePicture)
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeader 
         navigation={navigation} title={headerTitle} subtitle={"Online"}  
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>

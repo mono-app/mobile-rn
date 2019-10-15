@@ -11,7 +11,7 @@ import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { View, Image } from 'react-native';
-import { Text, Paragraph } from 'react-native-paper';
+import { Paragraph } from 'react-native-paper';
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
