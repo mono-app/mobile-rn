@@ -6,12 +6,10 @@ import { StyleSheet } from "react-native";
 
 import { IconButton } from "react-native-paper";
 import { OTPublisher } from "opentok-react-native";
-import { ActivityIndicator } from "react-native";
 
 function MicButton(props){
   const { colors } = props.theme;
   const [ isActive, setIsActive ] = React.useState(false);
-  const [ isLoading, setIsLoading ] = React.useState(true);
   const [ showPublisher, setShowPublisher ] = React.useState(false);
   
   const iconName = (isActive)? "mic": "mic-off";
@@ -34,8 +32,6 @@ function MicButton(props){
   }
 
   Logger.log("MicButton#showPublisher", showPublisher);
-
-  if(isLoading) return <ActivityIndicator style={[ styles.default, props.style ]} size="small" color={colors.disabled}/>
   return (
     <React.Fragment>
       {showPublisher?(

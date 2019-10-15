@@ -1,3 +1,4 @@
+const admin = require("firebase-admin");
 const functions = require("firebase-functions");
 const OpenTok = require("opentok");
 const moment = require("moment");
@@ -26,7 +27,7 @@ RoomListener.triggerNewRoom = functions.region("asia-east2").firestore.document(
 });
 
 RoomListener.requestRoomToken = functions.region("asia-east2").https.onRequest((req, res) => {
-  const { sessionId } = req.body;
+  const { roomId, userEmail, sessionId } = req.body;
 
   if(sessionId === undefined || sessionId === null) return;
 
@@ -34,7 +35,13 @@ RoomListener.requestRoomToken = functions.region("asia-east2").https.onRequest((
   const API_SECRET = functions.config().tb.secret;
   const OT = new OpenTok(API_KEY, API_SECRET);
   const token = OT.generateToken(sessionId);
-  return res.status(200).json({ error: false, result: token }).end();
+
+  const db = admin.firestore();
+  const roomRef = db.collection("rooms").doc(roomId);
+  const userPath = new admin.firestore.FieldPath("liveVoice", "token", userEmail);
+  return roomRef.update(userPath, token).then(() => {
+    return res.status(200).json({ error: false, result: token }).end();
+  })
 });
 
 module.exports = RoomListener;
