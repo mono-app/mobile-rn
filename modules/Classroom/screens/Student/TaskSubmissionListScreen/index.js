@@ -6,7 +6,7 @@ import AppHeader from "src/components/AppHeader";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoading: true };
+const INITIAL_STATE = { isRefreshing: true };
 
 class TaskSubmissionListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -15,12 +15,14 @@ class TaskSubmissionListScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadSubmissions()
+
   loadSubmissions = async () => {
     if(this._isMounted)
-      this.setState({ submissionList: [] });
+      this.setState({ submissionList: [], isRefreshing: true });
     const submissionList = await SubmissionAPI.getSubmissions(this.props.currentSchool.id, this.classId, this.taskId);
     if(this._isMounted)
-      this.setState({ submissionList });
+      this.setState({ submissionList, isRefreshing: false });
   }
 
   handleSubmissionPress = submission => {
@@ -42,6 +44,8 @@ class TaskSubmissionListScreen extends React.PureComponent {
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     this.loadSubmissions = this.loadSubmissions.bind(this);
     this.handleSubmissionPress = this.handleSubmissionPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+
   }
 
   componentDidMount(){
@@ -71,6 +75,8 @@ class TaskSubmissionListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.submissionList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

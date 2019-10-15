@@ -7,7 +7,7 @@ import AnnouncementAPI from "modules/Classroom/api/announcement";
 import ClassAPI from "modules/Classroom/api/class";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoading: true, announcementList:[], filteredAnnouncementList:[]  };
+const INITIAL_STATE = { isRefreshing: true, announcementList:[], filteredAnnouncementList:[]  };
 
 class AnnouncementScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -16,9 +16,11 @@ class AnnouncementScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadAnnouncements()
+
   loadAnnouncements = async () => {
     if(this._isMounted){
-      this.setState({ announcementList: [] });
+      this.setState({ announcementList: [], isRefreshing:true });
     }
    
     const announcementList = await AnnouncementAPI.getStudentAnnouncements(this.props.currentSchool.id,this.props.currentStudent.email)
@@ -33,7 +35,7 @@ class AnnouncementScreen extends React.PureComponent {
     })
 
     if(this._isMounted){
-      this.setState({ announcementList:clonedAnnouncementList, filteredAnnouncementList: clonedAnnouncementList });
+      this.setState({ announcementList:clonedAnnouncementList, filteredAnnouncementList: clonedAnnouncementList, isRefreshing:false });
     }
   }
 
@@ -74,6 +76,7 @@ class AnnouncementScreen extends React.PureComponent {
     this.loadAnnouncements = this.loadAnnouncements.bind(this);
     this.handleAnnouncementPress = this.handleAnnouncementPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -101,6 +104,8 @@ class AnnouncementScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredAnnouncementList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => {
             return (

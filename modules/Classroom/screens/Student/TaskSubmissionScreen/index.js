@@ -13,7 +13,7 @@ import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent
 import RNFetchBlob from 'react-native-fetch-blob'
 
 const INITIAL_STATE = { 
-  isLoading: true, 
+  isRefreshing: true, 
   progressPercentage: 0, 
   showProgressbar: false, 
   isDeleting: false, 
@@ -30,13 +30,15 @@ class TaskSubmissionScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadFiles()
+
   loadFiles = async () => {
     if(this._isMounted)
-      this.setState({ fileList: [], isLoading: true });
+      this.setState({ fileList: [], isRefreshing: true });
     const currentUserEmail = this.props.currentStudent.email
     const fileList = await FileAPI.getStudentSubmissionFiles(this.props.currentSchool.id, this.classId, this.taskId, currentUserEmail);
     if(this._isMounted)
-      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+      this.setState({ isRefreshing: false, fileList, filteredFileList: fileList  });
   }
 
   handleDownloadPress = async item => {
@@ -81,13 +83,13 @@ class TaskSubmissionScreen extends React.PureComponent {
   }
 
   onDeletePress = async () => {
-    this.setState({isLoading: true})
+    this.setState({isRefreshing: true})
     const currentUserEmail = this.props.currentStudent.email
 
     await FileAPI.deleteStudentSubmissionFile(this.props.currentSchool.id,this.classId,this.taskId,currentUserEmail, this.state.selectedFile);
     this.deleteDialog.toggleShow()
     await this.loadFiles();
-    this.setState({isLoading: false})
+    this.setState({isRefreshing: false})
   }
 
   handleAddFiles = () => {
@@ -154,6 +156,8 @@ class TaskSubmissionScreen extends React.PureComponent {
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.checkPermission = this.checkPermission.bind(this)
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+
   }
 
   componentDidMount(){
@@ -192,6 +196,8 @@ class TaskSubmissionScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredFileList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
