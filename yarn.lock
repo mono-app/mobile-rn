@@ -7143,7 +7143,7 @@ opener@^1.5.1:
   resolved "https://registry.yarnpkg.com/opener/-/opener-1.5.1.tgz#6d2f0e77f1a0af0032aca716c2c1fbb8e7e8abed"
   integrity sha512-goYSy5c2UXE4Ra1xixabeVh1guIX/ZV/YokJksb6q2lubWu6UbvPQ20p542/sFIll1nl8JnCyK9oBaOcCWXwvA==
 
-opentok-react-native@^0.12.1:
+opentok-react-native@0.12.1:
   version "0.12.1"
   resolved "https://registry.yarnpkg.com/opentok-react-native/-/opentok-react-native-0.12.1.tgz#cdba0f721dc982d97e78609302ae756bb76c9068"
   integrity sha512-kEfc9FMHCVMQ40Iv+FWbI9EL30KbSd2L+7yW7xK1QUGycaQwlO6f62CcVwq8yCPMwA+pIQmOgsx5YU8WZ55zFg==
@@ -7914,7 +7914,7 @@ react-native-easy-view-transformer@^1.1.1:
     react-native-easy-guesture-responder "^1.1.2"
     react-native-scrolling "^1.0.2"
 
-react-native-elements@^1.2.5:
+react-native-elements@1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-1.2.5.tgz#f806af1d6c8df56f84ef4e2c8db4c84207ede25a"
   integrity sha512-zAZPc5BLoep2dPzVNsZfTMDpb7vq3frVmB71N0SzAgK59mDBNvw8Ku/P7XHp9DGdMVLqJRnAJuGybkxTTkzDoQ==
@@ -8190,7 +8190,7 @@ react-native-vector-icons@6.3.0:
     prop-types "^15.6.2"
     yargs "^8.0.2"
 
-react-native-walkthrough-tooltip@^1.1.2:
+react-native-walkthrough-tooltip@1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/react-native-walkthrough-tooltip/-/react-native-walkthrough-tooltip-1.1.2.tgz#246519815db9f574f6d62875c03a0b26f0b64002"
   integrity sha512-kIA5x4kmMsFvuPYQH0BcGUFUGZlhRAfmlmyzvS3UdV6/TE2qYcRucj7/M6En+z8t7ovyZuri+iQr9cmLHVcoFQ==
