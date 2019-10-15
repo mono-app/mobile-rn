@@ -45,14 +45,14 @@ function ChatBottomTextInput(props){
 
   console.log(TB_API_KEY);
   return (
-    <OTSession apiKey={TB_API_KEY} sessionId={TB_SESSION_ID} token={TB_TOKEN} eventHandlers={sessionEventHandler}>
-      <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <OTSession apiKey={TB_API_KEY} sessionId={TB_SESSION_ID} token={TB_TOKEN} eventHandlers={sessionEventHandler} style={{ display: "flex", flexDirection: "row" }}>
         <MicButton style={{ marginRight: 8 }}/> 
         <SpeakerButton style={{ marginRight: 8 }}/>
-        <TextInput style={styles.textInput} autoFocus multiline value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
-        <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
-      </SafeAreaView>
-    </OTSession>
+      </OTSession>
+      <TextInput style={styles.textInput} autoFocus multiline value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
+      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
+    </SafeAreaView>
   )
 }
 
