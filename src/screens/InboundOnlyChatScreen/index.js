@@ -43,8 +43,9 @@ function InboundOnlyChatScreen(props){
   const initMessages = () => {
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
       Logger.log("InboundOnlyChatScreen.initMessages", messages);
-      MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then()
-
+      MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then(result => {
+        if(result) props.setUnreadBot(room.id, 0)
+      })
       if( _isMounted.current){
         setMessages(MessagesAPI.appendDateSeparator(messages));
         setLastMessageSnapshot(snapshot);

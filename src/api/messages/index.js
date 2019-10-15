@@ -165,11 +165,8 @@ export default class MessagesAPI{
 
     batch.update(roomRef, { "lastMessage.readTime": moment().unix() })
 
-    const result = await batch.commit(messageQuerySnapshot.size);
-    if(result) return Promise.resolve(result);
-    else  return Promise.resolve(false);
-    
+    await batch.commit();
    
-   
+    return Promise.resolve(true);
   }
 }

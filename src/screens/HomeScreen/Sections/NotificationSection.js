@@ -10,17 +10,23 @@ import BotRoom from "../Rooms/BotRoom";
 function NotificationSection(props){
   const { currentUser } = props;
   const [ notifications, setNotifications ] = React.useState([]);
+  const [ isRefreshing, setRefreshing ] = React.useState(true);
+
   const roomsListener = React.useRef(null);
   const _isMounted = React.useRef(true);
 
   const handleRoomPress = (room) => props.navigation.navigate("InboundOnlyChat", { room });
 
   const fetchData = () => {
+    setRefreshing(true)
+
     const db = firebase.firestore();
     const roomsRef = db.collection("rooms").where("type", "==", "bot").where("audiences", "array-contains", currentUser.email);
     roomsListener.current = roomsRef.orderBy("lastMessage.sentTime", "desc").onSnapshot((querySnapshot) => {
       const rooms = querySnapshot.docs.map((documentSnapshot) => RoomsAPI.normalizeRoom(documentSnapshot));
       if(_isMounted.current) setNotifications(rooms);
+      setRefreshing(false)
+
     })
   }
 
@@ -35,6 +41,9 @@ function NotificationSection(props){
   return (
     <FlatList 
       data={notifications}
+      onRefresh={()=>{}} 
+      refreshing={isRefreshing} 
+      keyExtractor={(item) => item.id}
       renderItem={({ item ,index}) => {
         const marginTop = (index === 0)? 8: 4;
         const marginBottom = (index === notifications.length)? 8: 4;

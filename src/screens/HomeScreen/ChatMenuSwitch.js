@@ -18,8 +18,6 @@ function ChatMenuSwitch(props){
 
   React.useEffect(() => {
     menuChange("chat")
-    console.log("props.unreadChatprops.unreadChatprops.unreadChatprops.unreadChatprops.unreadChatprops.unreadChatprops.unreadChatprops.unreadChatprops.unreadChatprops.unreadChatprops.unreadChat")
-    console.log(props.unreadChat)
   }, [])
 
   return(
@@ -36,9 +34,9 @@ function ChatMenuSwitch(props){
               onPress={handleMenuChatPress}>
                 Percakapan
             </Button>
-            {/* {(props.unreadChat>0)? 
-            <Badge style={{position: "absolute", top: -5, right: -5, }}>{props.unreadChat}</Badge>
-            : <View/>} */}
+            {(props.unreadChatRoomList.length>0)? 
+            <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
+            : <View/>}
         </Tooltip>
       </View>
       <View style={{ marginHorizontal: 16, position: "relative" }}>
@@ -53,9 +51,9 @@ function ChatMenuSwitch(props){
             onPress={handleMenuNotificationPress}>
             Notifikasi
           </Button>
-          {/* {(props.unreadBot>0)? 
-            <Badge style={{position: "absolute", top: -5, right: -5, }}>{props.unreadBot}</Badge>
-            : <View/>} */}
+          {(props.unreadBotRoomList.length>0)? 
+            <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
+            : <View/>}
         </Tooltip>
       </View>
     </View>

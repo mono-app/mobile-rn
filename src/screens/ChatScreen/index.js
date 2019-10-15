@@ -70,7 +70,7 @@ function ChatScreen(props){
       }else{
         return "user not registered"
       }
-    })
+    })[0]
     const isFriend = await FriendsAPI.isFriends(props.currentUser.email,peopleEmail)
     setFriend(isFriend)
 
@@ -91,7 +91,9 @@ function ChatScreen(props){
         if(messages.length === 0) setMessages(MessagesAPI.welcomeMessage());
         else {
           setMessages(MessagesAPI.appendDateSeparator(messages));
-          MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then(countRead => {props.setUnreadChat((countRead*-1))})
+          MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then(result => {
+            if(result) props.setUnreadChat(room.id, 0)
+          })
         }
 
         setLastMessageSnapshot(snapshot);

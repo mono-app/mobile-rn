@@ -31,9 +31,9 @@ function UnreadCountBadge(props){
         if(_isMounted.current) setCount(unreadCount);
         
         if(roomData.type==="bot"){
-          if(_isMounted.current) props.setUnreadBot(unreadCount)
+          if(_isMounted.current && unreadCount>0) props.setUnreadBot(roomId, unreadCount)
         }else{
-          if(_isMounted.current) props.setUnreadChat(unreadCount)
+          if(_isMounted.current && unreadCount>0) props.setUnreadChat(roomId, unreadCount)
         }
       })
     }
@@ -49,7 +49,7 @@ function UnreadCountBadge(props){
   }, [])
 
   if(count === 0) return null;
-  else return <Badge style={props.style}>{count}</Badge>
+  else return <Badge style={props.style}>{(count>99)?"99+":count}</Badge>
 }
 
 UnreadCountBadge.defaultProps = { style: {}, roomId: null }

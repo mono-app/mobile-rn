@@ -48,11 +48,10 @@ function BotRoom(props){
             <Caption>{dateTimeString}</Caption>
           </View>
           <View style={{ display: "flex", flexDirection: "row",justifyContent: "space-between" }}>
-            <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={2} style={{ minHeight: 24 }}>
+            <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={2}>
               {props.room.lastMessage.message}
             </Caption>
             <UnreadCountBadge roomId={props.room.id}/>
-
           </View>
         </View>
       </TouchableOpacity>

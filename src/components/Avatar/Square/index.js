@@ -35,7 +35,7 @@ export default class SquareAvatar extends React.PureComponent {
     return (
       <View style={{...style}}>
         {(!this.state.isLoaded)?
-          <ActivityIndicator style={{position: 'absolute',top: '40%',left:"40%"}} size="small" animating={true} color="#0EAD69"/>
+          <ActivityIndicator style={{position:"absolute", top:"35%", left:"38%"}} size="small" animating={true} color="#0EAD69"/>
         :<View/>}
         <FastImage style={[style, (!this.state.isLoaded)?{opacity: 0 } :{}]} source={{ uri: this.props.uri }} resizeMode="cover" onLoad={this.handleLoadedImage}/>
       </View>

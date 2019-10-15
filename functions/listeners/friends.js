@@ -58,19 +58,13 @@ Friends.addFriendTrigger = functions.region("asia-east2").firestore.document("/f
   
   const db = admin.firestore();
   const userFriendListRef = db.collection("friendList").doc(friendListId)
-   
-  const userFriendListSnapshot = await userFriendListRef.get();
+  const peopleQuerySnapshot = await userFriendListRef.collection("people").get()
 
-  if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
-    await userFriendListRef.update({ totalFriends: admin.firestore.FieldValue.increment(1) })
-  }else{
-    await userFriendListRef.set({ totalFriends: 1 })
-  }
+  await userFriendListRef.update({ totalFriends: peopleQuerySnapshot.size })
 
   // add showsTo in moments collection
   const momentQuerySnapshot = await db.collection("moments").where("posterEmail","==",friendListId).get()
   momentQuerySnapshot.docs.map( async documentSnapshot => {
-    
     await documentSnapshot.ref.update({showsTo: admin.firestore.FieldValue.arrayUnion(peopleId)})
   })
 

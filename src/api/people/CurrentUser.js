@@ -20,8 +20,8 @@ export function withCurrentUser(Component){
             hiddenUserList={context.hiddenUserList}
             setUnreadChat={context.handleUnreadChat}
             setUnreadBot={context.handleUnreadBot}
-            unreadChat={context.unreadChat}
-            unreadBot={context.unreadBot}
+            unreadChatRoomList={context.unreadChatRoomList}
+            unreadBotRoomList={context.unreadBotRoomList}
           />}
 
       </CurrentUserContext.Consumer>
@@ -52,8 +52,8 @@ export class CurrentUserProvider extends React.PureComponent{
       blockedUserList: [],
       blockedByUserList: [],
       hiddenUserList: [],
-      unreadBot: 0,
-      unreadChat: 0
+      unreadChatRoomList: [],
+      unreadBotRoomList: [],
     }
 
     this.handleCurrentUserEmail = this.handleCurrentUserEmail.bind(this);
@@ -111,16 +111,36 @@ export class CurrentUserProvider extends React.PureComponent{
 
   };
 
-  handleUnreadChat = async (number) => {
-    const unreadChat = (JSON.parse(JSON.stringify(this.state.unreadChat))) + (number)
-    this.setState({unreadChat})
-    console.log("unreadChatunreadChatunreadChatunreadChatunreadChatunreadChatunreadChatunreadChatunreadChat")
-    console.log(unreadChat)
+  handleUnreadChat = (roomId, number) => {
+
+    let clonedChatRoomList = JSON.parse(JSON.stringify(this.state.unreadChatRoomList))
+
+    if(number>0){
+      clonedChatRoomList.push(roomId)
+    }else{
+      const index = clonedChatRoomList.indexOf(roomId)
+      if(index!==-1){
+        clonedChatRoomList.splice(index,1)
+      }
+
+    }
+
+    this.setState({unreadChatRoomList: clonedChatRoomList})
   }
 
-  handleUnreadBot = async (number) => {
-    const unreadBot = (JSON.parse(JSON.stringify(this.state.unreadBot))) + (number)
-    this.setState({unreadBot})
+  handleUnreadBot = (roomId, number) => {
+    let clonedBotRoomList = JSON.parse(JSON.stringify(this.state.unreadBotRoomList))
+
+    if(number>0){
+      clonedBotRoomList.push(roomId)
+    }else{
+      const index = clonedBotRoomList.indexOf(roomId)
+      if(index!==-1){
+        clonedBotRoomList.splice(index,1)
+      }
+    }
+
+    this.setState({unreadBotRoomList: clonedBotRoomList})
   }
 
   componentDidMount(){
