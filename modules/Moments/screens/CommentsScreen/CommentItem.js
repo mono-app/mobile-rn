@@ -37,6 +37,12 @@ export default class CommentItem extends React.PureComponent{
       const timeFromNow = moment(this.props.timestamp.seconds * 1000).fromNow();
       shortTimeFromNow = TranslateAPI.shortTime(timeFromNow);
     }
+    let createdDate = "-"
+    if(this.props.moment.postTime){
+      const creationDate = moment(this.props.moment.postTime.seconds * 1000).format("DD MMMM YYYY")
+      const creationTime = moment(this.props.moment.postTime.seconds * 1000).format("HH:mm")
+      createdDate = creationDate+" | Jam "+ creationTime+" WIB"
+    }
 
     return(
       <View>
@@ -45,7 +51,7 @@ export default class CommentItem extends React.PureComponent{
               <SquareAvatar size={50} uri={this.props.people.profilePicture}/>
               <View style={{ marginLeft: 8 }}>
                 <Text style={{ margin: 0, fontWeight: "bold" }}>{this.props.people.applicationInformation.nickName}</Text>
-                <Caption style={{ margin: 0 }}>10 Agustus 2019 | Jam 10:15 WIB</Caption>
+                <Caption style={{ margin: 0 }}>{createdDate}</Caption>
               </View>
             </View>
             <View style={styles.textContainer}>

@@ -14,9 +14,9 @@ function LikeButton(props){
   const handleLikePress = () => MomentAPI.toggleLike(moment.id, currentUser.email);
   
   return(
-    <TouchableOpacity style={[ props.style ]} onPress={handleLikePress}>
-      <MaterialCommunityIcons name="thumb-up-outline" size={16} style={{ marginRight: 4 }}/>
-      <Text>
+    <TouchableOpacity style={ props.style } onPress={handleLikePress}>
+      <MaterialCommunityIcons name="thumb-up-outline" size={16} style={{ marginRight: 4, color:(props.textColor)?props.textColor:"#757575" }}/>
+      <Text style={{color:(props.textColor)?props.textColor:"#000000"}}>
         Suka  { totalFans > 0?
                 (totalFans > 99)? "(99+)":
                 `(${totalFans})`

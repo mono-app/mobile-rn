@@ -10,10 +10,24 @@ import { FlatList } from "react-native";
 function ChatSection(props){
   const { currentUser } = props;
   const [ rooms, setRooms ] = React.useState([]);
+  const [ isRefreshing, setRefreshing ] = React.useState(true);
   const roomsListener = React.useRef(null);
 
+
+  const fetchData = () => {
+    setRefreshing(true)
+    roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => {
+      setRooms(rooms)
+      setRefreshing(false)
+      const newRooms = rooms.map(obj=>{
+        return {id: obj.id}
+      })
+    });
+  }
+
   React.useEffect(() => {
-    roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => setRooms(rooms));
+    fetchData()
+    
     return function cleanup(){
       if(roomsListener.current) roomsListener.current();
     }
@@ -31,6 +45,8 @@ function ChatSection(props){
   return (
     <FlatList
       data={rooms} 
+      onRefresh={()=>{}} 
+      refreshing={isRefreshing} 
       keyExtractor={(item) => item.id}
       renderItem={({ item, index }) => {
       const marginTop = (index === 0)? 8: 4;

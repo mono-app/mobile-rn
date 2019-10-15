@@ -262,7 +262,7 @@ class TaskFilesScreen extends React.PureComponent {
                 <Text>Mendownload Tugas</Text>
                 <ProgressBar
                   progress={this.state.progressPercentage}
-                  color="red"
+                  color="#EF6F6C"
                 />
                 <Text style={{ textAlign: "center" }}>{this.state.totalDownloadedItem} / {this.state.totalItemToDownload} </Text>
               </View>

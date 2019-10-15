@@ -205,7 +205,7 @@ class VerifyPhoneScreen extends React.PureComponent{
         <Snackbar
           visible={this.state.showSnackbarFailVerification}
           onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
-          style={{ backgroundColor:"red" }} duration={Snackbar.DURATION_SHORT}>
+          style={{ backgroundColor:"#EF6F6C" }} duration={Snackbar.DURATION_SHORT}>
           {this.state.snackbarFailMessage}
         </Snackbar>
      </React.Fragment>

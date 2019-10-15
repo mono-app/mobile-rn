@@ -50,6 +50,11 @@ function ChatList(props){
     props.navigation.navigate("MomentComments", payload)
   }
 
+  const handleMomentCommentPress = (item) => {
+    const payload = { momentId: item.details.momentId }
+    props.navigation.navigate("MomentComments", payload)
+  }
+
   const handleSetupBirthdayPress = async (message) => {
     Logger.log("ChatList.handleSetupBirthdayPress#message", message);
 
@@ -88,6 +93,8 @@ function ChatList(props){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
         }else if(item.type === "moment-share"){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentPress(item)} message={item}/>
+        }else if(item.type === "moment-comment"){
+          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentCommentPress(item)} message={item}/>
         }else if(item.type === "setup-birthday"){
           return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item}/>
         }else if(item.type === "friend-request"){

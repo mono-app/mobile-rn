@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
-
+import { withTheme } from "react-native-paper";
 import ImagePicker from 'react-native-image-picker';
 import CircleAvatar from "src/components/Avatar/Circle";
 import { TouchableOpacity } from "react-native";
@@ -14,7 +14,8 @@ function Header(props){
   const styles = StyleSheet.create({
     addToMomentContainer: {
       paddingLeft: 16, paddingRight: 16, alignItems: "center", justifyContent: "center", 
-      backgroundColor: "#E8EEE8", borderRadius: 8, marginLeft: 16, marginRight: 16, flex: 1
+      backgroundColor: props.theme.colors.primary, borderRadius: 8, marginLeft: 16, marginRight: 16, flex: 1,
+      elevation:2
     }
   });
   
@@ -28,13 +29,14 @@ function Header(props){
       }
     });
   }
+  
 
   return (
     <Surface style={{ elevation: 4 }}>
       <SafeAreaView style={{ padding: 16, flexDirection: "row", justifyContent: "space-between" }}>
         <CircleAvatar size={50} uri={currentUser.profilePicture}/>
         <TouchableOpacity style={styles.addToMomentContainer} onPress={handleAddMomentPress}>
-          <Text>Tambahkan moment</Text>
+          <Text style={{color: "white",fontWeight: 'bold'}}>Tambahkan moment</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleQuickCameraPress}>
           <IconButton icon="add-a-photo"  size={24}/>
@@ -43,4 +45,4 @@ function Header(props){
     </Surface>
   )
 }
-export default withNavigation(withCurrentUser(Header));
+export default withTheme(withNavigation(withCurrentUser(Header)));

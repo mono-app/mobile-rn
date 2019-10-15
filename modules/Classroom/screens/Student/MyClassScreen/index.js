@@ -6,7 +6,7 @@ import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[] };
+const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[] };
 class MyClassScreen extends React.PureComponent {
   static navigationOptions = () => {
     return {
@@ -15,11 +15,9 @@ class MyClassScreen extends React.PureComponent {
   };
 
   loadClasses = async () => {
-    if(this._isMounted)
-      this.setState({classList: []})
+    if(this._isMounted) this.setState({classList: [], isRefreshing: true})
     const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.email);
-    if(this._isMounted)
-      this.setState({ classList, filteredClassList: classList });
+    if(this._isMounted) this.setState({ classList, filteredClassList: classList, isRefreshing: false });
    }
 
   handleClassPress = class_ => {
@@ -29,6 +27,7 @@ class MyClassScreen extends React.PureComponent {
      }
      this.props.navigation.navigate("ClassDetails", payload);
   }
+  handleRefresh = () => this.loadClasses();
 
   handleSearchPress = (searchText) => {
     this.setState({filteredClassList: []})
@@ -53,6 +52,8 @@ class MyClassScreen extends React.PureComponent {
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+
   }
 
   componentDidMount(){
@@ -80,6 +81,8 @@ class MyClassScreen extends React.PureComponent {
         <FlatList
           style={{ flex:1, backgroundColor: "white" }}
           data={this.state.filteredClassList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

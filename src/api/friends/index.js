@@ -119,7 +119,7 @@ export default class FriendsAPI{
         const filteredFriendList = friendList.filter(documentSnapshot => {
           const data = documentSnapshot.data()
 
-          return (!data.status || (data.status && data.status !== "blocked" &&  data.status !== "hide"))
+          return (!data.status || (data.status && data.status !== "blocked" && data.status !== "blocked-by" &&  data.status !== "hide"))
         })
 
         const promises = filteredFriendList.map((documentSnapshot) => {
@@ -434,6 +434,20 @@ export default class FriendsAPI{
     }
 
     return Promise.resolve(true)
+  }
+
+  static async isFriends(currentUserEmail, peopleEmail){
+    const db = firebase.firestore();
+    const friendListCollection = new FriendListCollection();
+    const peopleCollection = new PeopleCollection();
+    const friendListRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
+    const peopleRef = friendListRef.collection(peopleCollection.getName()).doc(peopleEmail);
+    const docSnapshot = await peopleRef.get();
+    
+    if(docSnapshot.exists) 
+      return Promise.resolve(true) 
+    else 
+      return Promise.resolve(false)
   }
 
 }

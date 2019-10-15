@@ -5,7 +5,7 @@ import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTutorial } from "src/api/Tutorial";
-
+import FriendRequestNotification from "src/screens/HomeScreen/Notifications/FriendRequest"
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
 import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';
@@ -105,9 +105,19 @@ function HomeScreen(props){
     <View style={styles.container}>
       <Header homeScreenTutorial={props.homeScreenTutorial} showTutorialHomeAddContact={props.showTutorialHomeAddContact}/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Chats</HeadlineTitle>
-      <ChatMenuSwitch onChange={handleMenuChange} homeScreenTutorial={props.homeScreenTutorial} 
-        showTutorialHomeChatSection={props.showTutorialHomeChatSection} showTutorialHomeNotifSection={props.showTutorialHomeNotifSection} />
-      {selectedMenu === "chat"?<ChatSection/>: <NotificationSection/>}
+      <ChatMenuSwitch onChange={handleMenuChange} 
+        homeScreenTutorial={props.homeScreenTutorial} 
+        showTutorialHomeChatSection={props.showTutorialHomeChatSection} 
+        showTutorialHomeNotifSection={props.showTutorialHomeNotifSection}
+        />
+      <FriendRequestNotification navigation={props.navigation}/>
+      
+      <View style={(selectedMenu !== "chat")?{display:"none"} :{} }>
+        <ChatSection/>
+      </View>
+      <View style={(selectedMenu === "chat")? {display:"none"} :{} }>
+        <NotificationSection/>
+      </View>
     </View>
   );
 }

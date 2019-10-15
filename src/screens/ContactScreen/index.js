@@ -12,15 +12,22 @@ function ContactScreen(props){
   const { currentUser } = props;
   const [ peopleList, setPeopleList ] = React.useState([]);
   const friendsListener = React.useRef(null);
+  const [ isRefreshing, setRefreshing ] = React.useState(true);
 
   const handleContactPress = (people) => {
     props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
   }
 
-  React.useEffect(() => {
+  const fetchData = () => {
+    setRefreshing(true)
     friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.email, (friends) => {
       setPeopleList(friends);
+      setRefreshing(false)
     })
+  }
+
+  React.useEffect(() => {
+    fetchData()
     return function cleanup(){
       if(friendsListener.current) friendsListener.current();
     }
@@ -36,6 +43,8 @@ function ContactScreen(props){
       <FlatList
         style={{ backgroundColor: "white" }}
         data={peopleList}
+        onRefresh={()=>{}} 
+        refreshing={isRefreshing} 
         keyExtractor={(item) => item.email}
         renderItem={({ item, index }) => {
           return <PeopleListItem key={index} people={item} onPress={handleContactPress}/>

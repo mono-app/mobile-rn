@@ -1,6 +1,6 @@
 import React from "react";
 import Logger from "src/api/logger";
-import moment from "moment";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 import MessagesAPI from "src/api/messages";
 import BotsAPI from "src/api/bots"
 
@@ -9,7 +9,7 @@ import ChatList from "src/components/ChatList";
 import { KeyboardAvoidingView } from "react-native";
 
 function InboundOnlyChatScreen(props){
-  const { navigation } = props;
+  const { navigation, currentUser } = props;
   const room = navigation.getParam("room", null);
   const [ messages, setMessages ] = React.useState([]);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
@@ -43,6 +43,9 @@ function InboundOnlyChatScreen(props){
   const initMessages = () => {
     messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, (messages, snapshot) => {
       Logger.log("InboundOnlyChatScreen.initMessages", messages);
+      MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then(result => {
+        if(result) props.setUnreadBot(room.id, 0)
+      })
       if( _isMounted.current){
         setMessages(MessagesAPI.appendDateSeparator(messages));
         setLastMessageSnapshot(snapshot);
@@ -67,7 +70,7 @@ function InboundOnlyChatScreen(props){
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <ChatHeader
-        navigation={navigation} title={bot.displayName} subtitle="Bot"
+        navigation={navigation} title={bot.displayName} subtitle="Bot" isFriend={true}
         profilePicture={bot.profilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop}/>
     </KeyboardAvoidingView>
@@ -75,4 +78,4 @@ function InboundOnlyChatScreen(props){
 };
 
 InboundOnlyChatScreen.navigationOptions = { header: null }
-export default InboundOnlyChatScreen;
+export default withCurrentUser(InboundOnlyChatScreen)
