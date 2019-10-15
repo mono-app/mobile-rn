@@ -38,13 +38,13 @@
 		</dict>
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSCalendarsUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSCameraUsageDescription</key>
 	<string>Mono needs your camera to capture your beautiful moments.</string>
 	<key>NSContactsUsageDescription</key>
@@ -56,13 +56,13 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Mono needs your mircrophone to send a voice message to your friends.</string>
 	<key>NSMotionUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Mono needs your Photo Library to save your photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Mono needs your Photo Library to view your photos.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
