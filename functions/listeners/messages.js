@@ -3,14 +3,26 @@ const admin = require("firebase-admin");
 
 function Messages(){}
 
-Messages.triggerNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate((documentSnapshot, context) => {
+Messages.triggerNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {
   const { roomId } = context.params;
   const db = admin.firestore();
   const message = documentSnapshot.data()
-  return db.collection("rooms").doc(roomId).update({
+  const roomDocRef = db.collection("rooms").doc(roomId)
+  await roomDocRef.update({
     "lastMessage.message": message.content,
     "lastMessage.sentTime": message.sentTime
   })
+  const docSnapshot = await roomDocRef.get()
+  const readByPayload = {}
+  docSnapshot.data().audiences.map(email=>{
+    if(email===message.senderEmail){
+      readByPayload[email] = true
+    }else{
+      readByPayload[email] = false
+    }
+    return 1
+  })
+  await documentSnapshot.ref.update({readBy: readByPayload})
 })
 
 Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {
@@ -27,6 +39,9 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   const audiences =  roomDocument.audiences.filter( (audience)=>{
     return audience !== senderEmail
   })
+
+  const senderSnapshot = await db.collection("users").doc(senderEmail).get()
+  const senderNickname = senderSnapshot.data().applicationInformation.nickName
 
   // get all audiences messagingToken  
   const promises = audiences.map(audience => {
@@ -58,10 +73,10 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
         }
       }else if(roomType==="chat"){
         type = "new-chat"
-        title = audienceData.applicationInformation.nickName
+        title = senderNickname
       }else if(roomType==="group-chat"){
         type = "new-groupchat"
-        title = audienceData.applicationInformation.nickName
+        title = senderNickname
       }
       message = {
         token: audienceData.tokenInformation.messagingToken,

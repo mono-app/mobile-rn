@@ -24,6 +24,7 @@ export default class FriendRequestListScreen extends React.PureComponent{
     return(
       <FlatList
         data={this.peoples}
+        keyExtractor={(item) => item.email}
         renderItem={ ({ item }) => {
           return <PeopleListItem 
             onPress={() => this.handlePeoplePress(item)}

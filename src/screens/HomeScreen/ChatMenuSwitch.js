@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import Tooltip from 'react-native-walkthrough-tooltip';
 import { View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Badge, Button, Text } from "react-native-paper";
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 function ChatMenuSwitch(props){
   const [ selectedMenu, setSelectedMenu ] = React.useState("");
@@ -28,11 +29,14 @@ function ChatMenuSwitch(props){
           showChildInTooltip={false}
           content={<Text>Klik disini melihat history chat</Text>}
           onClose={() => props.homeScreenTutorial.show(3)}>
-          <Button 
-            mode={selectedMenu === "chat"? "contained": "outlined"} style={{ borderRadius: 50 }}
-            onPress={handleMenuChatPress}>
-              Percakapan
-          </Button>
+            <Button 
+              mode={selectedMenu === "chat"? "contained": "outlined"} style={{ borderRadius: 50 }}
+              onPress={handleMenuChatPress}>
+                Percakapan
+            </Button>
+            {(props.unreadChatRoomList.length>0)? 
+            <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
+            : <View/>}
         </Tooltip>
       </View>
       <View style={{ marginHorizontal: 16, position: "relative" }}>
@@ -47,6 +51,9 @@ function ChatMenuSwitch(props){
             onPress={handleMenuNotificationPress}>
             Notifikasi
           </Button>
+          {(props.unreadBotRoomList.length>0)? 
+            <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
+            : <View/>}
         </Tooltip>
       </View>
     </View>
@@ -55,4 +62,4 @@ function ChatMenuSwitch(props){
 
 ChatMenuSwitch.propTypes = { onPress: PropTypes.func }
 ChatMenuSwitch.defaultProps = { onPress: () => {} }
-export default ChatMenuSwitch;
+export default withCurrentUser(ChatMenuSwitch)

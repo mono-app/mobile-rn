@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   value:{
     flex: 3,
     textAlign: "right",
-    backgroundColor: "red"
+    backgroundColor: "#EF6F6C"
   }
 });
 export default withCurrentTeacher(ScoreDetailsScreen)

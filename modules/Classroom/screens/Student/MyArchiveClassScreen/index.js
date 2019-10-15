@@ -6,7 +6,7 @@ import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[] };
+const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[] };
 
 class MyArchiveClassScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -15,12 +15,14 @@ class MyArchiveClassScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadClasses()
+
   loadClasses = async () => {
     if(this._isMounted)
-      this.setState({classList: []})
+      this.setState({classList: [], isRefreshing: true})
     const classList = await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email);
     if(this._isMounted)
-      this.setState({ classList, filteredClassList: classList });
+      this.setState({ classList, filteredClassList: classList, isRefreshing:false });
    }
 
   handleClassPress = class_ => {
@@ -54,6 +56,8 @@ class MyArchiveClassScreen extends React.PureComponent {
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+
   }
 
   componentDidMount(){
@@ -81,6 +85,8 @@ class MyArchiveClassScreen extends React.PureComponent {
         <FlatList
           style={{ flex:1, backgroundColor: "white" }}
           data={this.state.filteredClassList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

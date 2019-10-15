@@ -11,7 +11,7 @@ import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent
 import RNFetchBlob from 'react-native-fetch-blob'
 
 const INITIAL_STATE = { 
-  isLoading: true, 
+  isRefreshing: true, 
   progressPercentage: 0, 
   showProgressbar: false, 
   isDeleting: false, 
@@ -30,10 +30,10 @@ class ClassFilesScreen extends React.PureComponent {
 
   loadFiles = async () => {
     if(this._isMounted)
-      this.setState({ fileList: [], isLoading: true });
+      this.setState({ fileList: [], isRefreshing: true });
     const fileList = await FileAPI.getClassFiles(this.props.currentSchool.id, this.classId);
     if(this._isMounted)
-      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+      this.setState({ isRefreshing: false, fileList, filteredFileList: fileList  });
   }
 
   handleDownloadPress = async item => {
@@ -105,17 +105,19 @@ class ClassFilesScreen extends React.PureComponent {
     }
   }
 
+  handleRefresh = () => this.loadFiles()
+
   handleDeletePress = (item, selectedIndex) => {
     this.setState({selectedFile: item, selectedIndex})
     this.deleteDialog.toggleShow()
   }
 
   onDeletePress = async () => {
-    this.setState({isLoading: true})
+    this.setState({isRefreshing: true})
     await FileAPI.deleteClassFile(this.props.currentSchool.id,this.classId,this.state.selectedFile);
     this.deleteDialog.toggleShow()
     await this.loadFiles();
-    this.setState({isLoading: false})
+    this.setState({isRefreshing: false})
   }
 
   handleSearchPress = (searchText) => {
@@ -147,6 +149,8 @@ class ClassFilesScreen extends React.PureComponent {
     this.checkPermission = this.checkPermission.bind(this)
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+
   }
 
   componentDidMount(){
@@ -184,6 +188,8 @@ class ClassFilesScreen extends React.PureComponent {
           style={{ backgroundColor: "white", marginTop:16 }}
           data={this.state.filteredFileList}
           keyExtractor={(item) => item.id}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           renderItem={({ item }) => {
             return (
               <FileListItem 
@@ -200,7 +206,7 @@ class ClassFilesScreen extends React.PureComponent {
             >
               <View>
                 <Text>Mendownload Berkas</Text>
-                  <ProgressBar progress={this.state.progressPercentage} color="red" />
+                  <ProgressBar progress={this.state.progressPercentage} color="#EF6F6C" />
               </View>
             </Dialog.Content>
           </Dialog>

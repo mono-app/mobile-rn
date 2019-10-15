@@ -6,7 +6,7 @@ import TaskListItem from "modules/Classroom/components/TaskListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 
-const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false };
+const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false };
 
 class TaskListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -15,13 +15,15 @@ class TaskListScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadTasks()
+
   loadTasks = async () => {
     if(this._isMounted)
-      this.setState({ taskList: [] });
+      this.setState({ taskList: [], isRefreshing: true });
 
     const taskList = await TaskAPI.getActiveTasks(this.props.currentSchool.id, this.classId);
     if(this._isMounted)
-      this.setState({ taskList });
+      this.setState({ taskList, isRefreshing: false });
   }
 
   handleTaskPress = (item) => {
@@ -43,6 +45,8 @@ class TaskListScreen extends React.PureComponent {
     this.subject = this.props.navigation.getParam("subject", "");
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     this.handleTaskPress = this.handleTaskPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+
   }
 
   componentDidMount(){
@@ -82,6 +86,8 @@ class TaskListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
           data={this.state.taskList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

@@ -63,10 +63,16 @@ class NotificationListener extends React.PureComponent {
        }else if(data.type=="birthday-reminder"){
           const roomId = data.roomId
           const room = await RoomsAPI.getDetail(roomId)
-          payload = {
+          const payload = {
             room
           }
           this.props.navigation.navigate("InboundOnlyChat", payload);
+       }else if(data.type=="moment-comment"){
+         const momentId = data.momentId
+         const payload = {
+          momentId
+        }
+         this.props.navigation.navigate("MomentComments", payload)
        }
   }
 

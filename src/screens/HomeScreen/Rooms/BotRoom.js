@@ -3,7 +3,7 @@ import firebase from "react-native-firebase";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { StyleSheet } from 'react-native';
-
+import UnreadCountBadge from "src/screens/HomeScreen/UnreadCountBadge";
 import CircleAvatar from "src/components/Avatar/Circle";
 import { Text, Caption } from "react-native-paper";
 import { View, TouchableOpacity } from 'react-native';
@@ -47,10 +47,11 @@ function BotRoom(props){
             <Text>{bot.displayName}</Text>
             <Caption>{dateTimeString}</Caption>
           </View>
-          <View style={{ display: "flex", flexDirection: "row" }}>
-            <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={2} style={{ minHeight: 24 }}>
+          <View style={{ display: "flex", flexDirection: "row",justifyContent: "space-between" }}>
+            <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={2}>
               {props.room.lastMessage.message}
             </Caption>
+            <UnreadCountBadge roomId={props.room.id}/>
           </View>
         </View>
       </TouchableOpacity>
