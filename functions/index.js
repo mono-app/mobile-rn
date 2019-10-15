@@ -25,6 +25,7 @@ exports.triggerNewMessage = Messages.triggerNewMessage;
 exports.sendNotificationForNewMessage = Messages.sendNotificationForNewMessage;
 
 exports.triggerNewRoom = Room.triggerNewRoom;
+exports.requestRoomToken = Room.requestRoomToken;
 
 exports.triggerNewFriendRequest = Friends.triggerNewFriendRequest;
 exports.addFriendTrigger = Friends.addFriendTrigger;

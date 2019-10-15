@@ -23,6 +23,18 @@ RoomListener.triggerNewRoom = functions.region("asia-east2").firestore.document(
       else handleSessionCreated(session.sessionId, resolve);
     });
   })
-})
+});
+
+RoomListener.requestRoomToken = functions.region("asia-east2").https.onRequest((req, res) => {
+  const { sessionId } = req.body;
+
+  if(sessionId === undefined || sessionId === null) return;
+
+  const API_KEY = functions.config().tb.api;
+  const API_SECRET = functions.config().tb.secret;
+  const OT = new OpenTok(API_KEY, API_SECRET);
+  const token = OT.generateToken(sessionId);
+  return res.status(200).json({ error: false, result: token }).end();
+});
 
 module.exports = RoomListener;
