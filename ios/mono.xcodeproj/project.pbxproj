@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
@@ -12,6 +13,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		8F51FC1C28BDC29E9EFBA780 /* libPods-mono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBB87ECB33906D6591FD1BF8 /* libPods-mono.a */; };
 		DA46B3302339BAEF008205ED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DA46B32F2339BAEF008205ED /* GoogleService-Info.plist */; };
+		DAA3004B235583B1007DFA09 /* OTInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA3004A235583B1007DFA09 /* OTInstall.swift */; };
+		E2FC08935A5B4200B80BD5A9 /* libOpenTokReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -22,6 +25,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNFirebase;
+		};
+		DAA300422355833C007DFA09 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9C6F95B420ACE8BE00FEAD68;
+			remoteInfo = OpenTokReactNative;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -63,6 +73,7 @@
 		81A320FD4ED04309BEE8A250 /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
 		85FAEA8DDCC4439E9655E645 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		95322F625DFD4266B5C4DD88 /* libRNSpinkit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSpinkit.a; sourceTree = "<group>"; };
+		974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = OpenTokReactNative.xcodeproj; path = "../node_modules/opentok-react-native/ios/OpenTokReactNative.xcodeproj"; sourceTree = "<group>"; };
 		A1A46E847C23E66D15B9B7A0 /* Pods-monoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-monoTests.release.xcconfig"; path = "Target Support Files/Pods-monoTests/Pods-monoTests.release.xcconfig"; sourceTree = "<group>"; };
 		A7EF24A70A0F4F4CAF951CA0 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		ABF2897149BB4997A0CF1859 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
@@ -80,6 +91,8 @@
 		DA3D69542339DB3F00BD4395 /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA3D69572339DB5D00BD4395 /* libreact-native-sensitive-info.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libreact-native-sensitive-info.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA46B32F2339BAEF008205ED /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DAA30049235583B0007DFA09 /* mono-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mono-Bridging-Header.h"; sourceTree = "<group>"; };
+		DAA3004A235583B1007DFA09 /* OTInstall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTInstall.swift; sourceTree = "<group>"; };
 		E2A9ED74C38E4564A53DB8E8 /* libRCTImageResizer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTImageResizer.a; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -88,6 +101,7 @@
 		F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNCNetInfo-tvOS.a"; sourceTree = "<group>"; };
 		F6C714783E2D1B3891D96BDA /* Pods-mono.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mono.debug.xcconfig"; path = "Target Support Files/Pods-mono/Pods-mono.debug.xcconfig"; sourceTree = "<group>"; };
 		FBB87ECB33906D6591FD1BF8 /* libPods-mono.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mono.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libOpenTokReactNative.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +111,7 @@
 			files = (
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				8F51FC1C28BDC29E9EFBA780 /* libPods-mono.a in Frameworks */,
+				E2FC08935A5B4200B80BD5A9 /* libOpenTokReactNative.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,6 +138,7 @@
 		13B07FAE1A68108700A75B9A /* mono */ = {
 			isa = PBXGroup;
 			children = (
+				DAA3004A235583B1007DFA09 /* OTInstall.swift */,
 				DA46B32F2339BAEF008205ED /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -131,6 +147,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				DAA30049235583B0007DFA09 /* mono-Bridging-Header.h */,
 			);
 			name = mono;
 			sourceTree = "<group>";
@@ -153,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				81A320FD4ED04309BEE8A250 /* RNFirebase.xcodeproj */,
+				974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -239,8 +257,17 @@
 				6EE831FA71284FD9A62D0AF0 /* libRNSVG-tvOS.a */,
 				F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */,
 				27712695420E4CC18C1409BE /* libRNGooglePlaces.a */,
+				FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		DAA3003F2355833B007DFA09 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DAA300432355833C007DFA09 /* libOpenTokReactNative.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		E1E556FF4970329B9DC63735 /* Pods */ = {
@@ -289,6 +316,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 25NRQPQ9RV;
+						LastSwiftMigration = 1100;
 					};
 				};
 			};
@@ -305,6 +333,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = DAA3003F2355833B007DFA09 /* Products */;
+					ProjectRef = 974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */;
+				},
 				{
 					ProductGroup = DA3D694B2339D80B00BD4395 /* Products */;
 					ProjectRef = 81A320FD4ED04309BEE8A250 /* RNFirebase.xcodeproj */;
@@ -323,6 +355,13 @@
 			fileType = archive.ar;
 			path = libRNFirebase.a;
 			remoteRef = DA3D694E2339D80B00BD4395 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DAA300432355833C007DFA09 /* libOpenTokReactNative.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOpenTokReactNative.a;
+			remoteRef = DAA300422355833C007DFA09 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -460,6 +499,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				DAA3004B235583B1007DFA09 /* OTInstall.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +523,7 @@
 			baseConfigurationReference = F6C714783E2D1B3891D96BDA /* Pods-mono.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 25NRQPQ9RV;
@@ -572,10 +613,15 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/opentok-react-native/ios/OpenTokReactNative",
 				);
 				INFOPLIST_FILE = mono/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Mono\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -583,6 +629,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.monoapps.ios;
 				PRODUCT_NAME = Mono;
+				SWIFT_OBJC_BRIDGING_HEADER = "mono-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -592,6 +641,7 @@
 			baseConfigurationReference = 77D7EC7EB901A1FBB7282C47 /* Pods-mono.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 25NRQPQ9RV;
 				ENABLE_BITCODE = NO;
@@ -680,10 +730,15 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/opentok-react-native/ios/OpenTokReactNative",
 				);
 				INFOPLIST_FILE = mono/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Mono\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -691,6 +746,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.monoapps.ios;
 				PRODUCT_NAME = Mono;
+				SWIFT_OBJC_BRIDGING_HEADER = "mono-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

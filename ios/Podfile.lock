@@ -133,6 +133,7 @@ PODS:
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - OpenTok (2.16.3)
   - Protobuf (3.9.2)
   - QBImagePickerController (3.4.0)
   - React (0.59.9):
@@ -249,6 +250,7 @@ DEPENDENCIES:
   - Firebase/Storage (~> 5.20.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - OpenTok (= 2.16.3)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
@@ -303,6 +305,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
+    - OpenTok
     - Protobuf
     - QBImagePickerController
     - RSKImageCropper
@@ -385,6 +388,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  OpenTok: e17e1333108837cf0669be5de8f3155d1eb7ac12
   Protobuf: 67fb42ba613def994e61854de2b3164f13790cc4
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
@@ -412,6 +416,6 @@ SPEC CHECKSUMS:
   SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: b0c66bbdd3c8c163de791a7deffafac2ebbb24c5
+PODFILE CHECKSUM: b6e5c694c8527b5a66840bc4ec7c03f1219d03d4
 
 COCOAPODS: 1.8.0

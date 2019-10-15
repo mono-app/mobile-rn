@@ -21,6 +21,7 @@
     "moment": "2.24.0",
     "ngeohash": "0.6.3",
     "npm": "6.9.0",
+    "opentok-react-native": "^0.12.1",
     "pusher-js": "5.0.0",
     "react": "16.8.0",
     "react-native": "0.59.9",
