@@ -35,7 +35,6 @@ target 'mono' do
   pod 'react-native-spinkit', :path => '../node_modules/react-native-spinkit'
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-  pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'

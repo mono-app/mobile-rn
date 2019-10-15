@@ -24,7 +24,6 @@ import com.facebook.react.ReactApplication;
 import com.opentokreactnative.OTPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
-import com.oney.WebRTCModule.WebRTCModulePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -56,7 +55,6 @@ public class MainApplication extends Application implements ReactApplication {
             new OTPackage(),
             new RNFusedLocationPackage(),
             new PickerPackage(),
-          new WebRTCModulePackage(),
           new ImageResizerPackage(),
           new ImagePickerPackage(),
           new DocumentPickerPackage(),

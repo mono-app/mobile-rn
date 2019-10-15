@@ -158,7 +158,6 @@ dependencies {
     implementation project(':opentok-react-native')
     implementation project(':react-native-geolocation-service')
     implementation project(':react-native-image-crop-picker')
-    implementation project(':react-native-webrtc')
     implementation project(':react-native-google-places')
     implementation project(':react-native-image-resizer')
     implementation project(':react-native-image-picker')
