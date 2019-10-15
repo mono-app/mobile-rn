@@ -107,8 +107,8 @@ class ActionButton extends React.PureComponent{
     text="Batalkan Pertemanan" onPress={this.handleCancelRequestPress} 
     isLoading={this.state.isLoading} disabled={this.state.isLoading}/>;
 
-    const acceptFriendButton = <Button style={{ marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text="Terima Pertemanan"/>;
-    const rejectFriendButton = <Button style={styleButtonRed} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>;
+    const acceptFriendButton = <Button style={{ ...style, marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text="Terima Pertemanan"/>;
+    const rejectFriendButton = <Button style={{...style, ...styleButtonRed,  marginBottom: 16}} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>;
 
     const startChatButton = <Button style={style} onPress={this.handleStartChatPress} outlined={true} text="Mulai Percakapan"/>
 
@@ -140,7 +140,7 @@ class ActionButton extends React.PureComponent{
     }else if(peopleFriendStatus === "pendingAccept"){
       if(this.state.isLoading) return <Button style={style} text="Harap tunggu..." isLoading disabled/>
       else return (
-        <View style={style}>
+        <View>
           {acceptFriendButton}
           {rejectFriendButton}
           {startChatButton}

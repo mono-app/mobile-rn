@@ -1,7 +1,6 @@
 import React from "react";
 import firebase from "react-native-firebase";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
 import { RoomsCollection, MessagesCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { Badge } from "react-native-paper";

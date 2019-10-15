@@ -91,7 +91,7 @@ function ChatScreen(props){
         if(messages.length === 0) setMessages(MessagesAPI.welcomeMessage());
         else {
           setMessages(MessagesAPI.appendDateSeparator(messages));
-          MessagesAPI.bulkMarkAsRead(room.id, messages, currentUser.email).then()
+          MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then(countRead => {props.setUnreadChat((countRead*-1))})
         }
 
         setLastMessageSnapshot(snapshot);
