@@ -1,9 +1,4 @@
 const functions = require('firebase-functions');
-const express = require('express');
-const bearerToken = require('express-bearer-token');
-const libphonenumber = require('libphonenumber-js')
-const cors = require('cors');
-const app = express();
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 
@@ -16,6 +11,7 @@ const Student = require("./listeners/student");
 const Teacher = require("./listeners/teacher");
 const Tasks = require("./listeners/tasks");
 const Moments = require("./listeners/moments");
+const Room = require("./listeners/room");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -27,6 +23,8 @@ exports.schedulerBirthdayReminder = BirthdayReminder.schedule;
 
 exports.triggerNewMessage = Messages.triggerNewMessage;
 exports.sendNotificationForNewMessage = Messages.sendNotificationForNewMessage;
+
+exports.triggerNewRoom = Room.triggerNewRoom;
 
 exports.triggerNewFriendRequest = Friends.triggerNewFriendRequest;
 exports.addFriendTrigger = Friends.addFriendTrigger;
