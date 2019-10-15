@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Picker, TouchableOpacity, StyleSheet } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Card, Text, Caption } from "react-native-paper";
 
 import TextInput from "src/components/TextInput";
 
@@ -32,7 +32,10 @@ export default class PersonalInformationCard extends React.PureComponent{
   render(){
     return(
       <Card>
-        <Card.Title title="Informasi Pribadi" subtitle="Masukan informasi pribadi kamu. Tenang, kami akan menjaga kerahasiaan data kamu."/>
+        <Card.Title title="Informasi Pribadi"/>
+        <Caption style={{marginHorizontal:16, marginTop:0, marginBottom: 16}}>
+          Masukan informasi pribadi kamu. Tenang, kami akan menjaga kerahasiaan data kamu
+        </Caption>
         <Card.Content>
           <View>
             <Text style={styles.headerText}>Nama Depan</Text>

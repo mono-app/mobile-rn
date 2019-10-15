@@ -30,7 +30,7 @@ function AccountSetupScreen(props){
     const payload = {
       defaultGivenName: (personalInformation)?personalInformation.givenName:"",
       defaultFamilyName: (personalInformation)?personalInformation.familyName:"",
-      defaultGender: (personalInformation)?personalInformation.gender:"",
+      defaultGender: (personalInformation)?personalInformation.gender:"male",
       onFinish: finishPersonalInformationSetup
     }
     navigation.navigate("PersonalInformationSetup", payload);
