@@ -26,6 +26,7 @@ import TaskArchiveListScreen from "modules/Classroom/screens/Teacher/TaskArchive
 import ArchiveSelectClassScreen from "modules/Classroom/screens/Teacher/ArchiveSelectClassScreen"
 import AddClassFilesScreen from "modules/Classroom/screens/Teacher/AddClassFilesScreen"
 import MassScoringScreen from "modules/Classroom/screens/Teacher/MassScoringScreen"
+import MyDiscussionsScreen from "modules/Classroom/screens/MyDiscussionsScreen";
 
 const MyNavigator = createStackNavigator(
   {
@@ -52,7 +53,7 @@ const MyNavigator = createStackNavigator(
     ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
     AddClassFiles: {screen: AddClassFilesScreen},
     MassScoring: {screen: MassScoringScreen},
-
+    MyDiscussions: {screen: MyDiscussionsScreen},
   },
   {
     initialRouteName: "TeacherHome"

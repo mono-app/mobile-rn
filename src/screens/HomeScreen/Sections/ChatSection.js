@@ -44,8 +44,8 @@ function ChatSection(props){
   
   return (
     <FlatList
-      data={rooms} 
       onRefresh={()=>{}} 
+      data={rooms} 
       refreshing={isRefreshing} 
       keyExtractor={(item) => item.id}
       renderItem={({ item, index }) => {

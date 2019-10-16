@@ -162,13 +162,13 @@ class MyProfileScreen extends React.PureComponent {
         </Dialog>
       )
     }else return (
-      <View style={{ backgroundColor: "#E8EEE8" }}>
+      <View style={{flex:1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
             title="Profil Saya"
             style={{ backgroundColor: "white" }}
           />
-        <ScrollView style={{marginBottom:56}}>
+        <ScrollView>
           <TouchableOpacity onPress={() => {this.changeProfilePicture()}}>
 
           <PeopleProfileHeader

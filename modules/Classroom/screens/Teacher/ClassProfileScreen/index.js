@@ -126,13 +126,14 @@ class ClassProfileScreen extends React.PureComponent {
       );
     } else 
     return (
-      <View style={{ backgroundColor: "#E8EEE8" }}>
+      <View style={{flex:1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
             title="Info Kelas"
             style={{ backgroundColor: "white" }}
           />
-        <ScrollView style={{paddingTop: 16, marginBottom: 56}}>
+        <ScrollView>
+          <View style={{  marginTop: 16 }}/>  
           <View style={{flexDirection:"row", backgroundColor: "white"}}>
             <PeopleProfileHeader
               style={{padding:16, flex:2}}
@@ -191,12 +192,12 @@ class ClassProfileScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.handleAddTask}>
+            <TouchableOpacity onPress={this.handleTaskListScreen}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
-                    <FontAwesome name="pencil" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Tambah Tugas</Text>
+                    <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Daftar Tugas</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -204,12 +205,12 @@ class ClassProfileScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.handleTaskListScreen}>
+            <TouchableOpacity onPress={this.handleAddTask}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
-                    <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Daftar Tugas</Text>
+                    <FontAwesome name="pencil" size={24} style={{marginRight:16, width: 30}}/>
+                    <Text style={styles.label}>Tambah Tugas</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>

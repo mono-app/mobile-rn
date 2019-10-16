@@ -214,14 +214,13 @@ class AddDiscussionScreen extends React.PureComponent {
   render() {
 
     return (
-      <View style={{ backgroundColor: "#E8EEE8" }}>
+      <View style={{flex: 1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
             title="Buat Diskusi Baru"
             style={{ backgroundColor: "white" }}
           />
-        <ScrollView style={{ marginBottom:56}}>
-
+        <ScrollView>
           <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>
                   {this.subject}
@@ -281,6 +280,7 @@ class AddDiscussionScreen extends React.PureComponent {
             <View style={{ paddingVertical: 8 }} />
             <Button
               text="Buat Diskusi"
+              disabled={this.state.isLoading}
               isLoading={this.state.isLoading}
               onPress={this.handleSavePress}
               style={{marginHorizontal: 16}}

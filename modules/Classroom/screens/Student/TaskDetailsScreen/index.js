@@ -107,14 +107,14 @@ class TaskDetailsScreen extends React.PureComponent {
     }
 
     return (
-      <View>
+      <View style={{ flex: 1,  backgroundColor: "#E8EEE8" }}>
         <AppHeader
           navigation={this.props.navigation}
           title="Detail Tugas"
           style={{ backgroundColor: "white" }}
         />
         <ScrollView>
-          <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:56 }}>
+          <View>
             <View style={styles.subjectContainer}>
                   <Text style={{fontWeight: "bold", fontSize: 18}}>
                     {this.subject}
@@ -182,6 +182,7 @@ class TaskDetailsScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
+            
 
             <TouchableOpacity onPress={this.handleSubmissionTaskPress}>
               <View style={{backgroundColor:this.props.theme.colors.primary, padding: 12, margin:16, borderRadius:8 }}>
