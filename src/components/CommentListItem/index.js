@@ -4,14 +4,19 @@ import { Dimensions, View, FlatList } from "react-native";
 import { Text, Caption, Paragraph } from "react-native-paper";
 import ImageListItem from "src/components/ImageListItem"
 import SquareAvatar from "src/components/Avatar/Square";
+import SchoolAPI from "modules/Classroom/api/school";
 
-const INITIAL_STATE = { posterEmail: null, comment: {}, isLoading: true }
+const INITIAL_STATE = { posterName: "", comment: {}, isLoading: true }
 
 export default class CommentListItem extends React.Component{
 
   refreshDetail = async () => {
     this.setState({ isLoading: true });
-    const { comment } = this.props;
+    const { comment, schoolId } = this.props;
+    SchoolAPI.getUserName(schoolId, comment.posterEmail).then(name=>{
+      this.setState({posterName: name})
+    })
+
     this.setState({ isLoading: false, comment });
   }
 
@@ -49,7 +54,7 @@ export default class CommentListItem extends React.Component{
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
             <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
             <View style={{ marginLeft: 16 }}>
-              <Text style={{ fontWeight: "700" }}>{comment.posterEmail}</Text>
+              <Text style={{ fontWeight: "700" }}>{this.state.posterName}</Text>
               <Caption style={{ marginTop: 0 }}>{timeFromNow}</Caption>
             </View>
           </View>

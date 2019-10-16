@@ -1,5 +1,5 @@
 import firebase from "react-native-firebase";
-import { SchoolsCollection, ClassesCollection, TasksCollection, DiscussionsCollection, LikesCollection, CommentsCollection, ParticipantsCollection } from "src/api/database/collection";
+import { SchoolsCollection, ClassesCollection, TasksCollection, DiscussionsCollection, LikesCollection, CommentsCollection, ParticipantsCollection, UserMappingCollection } from "src/api/database/collection";
 import StorageAPI from "src/api/storage"
 import uuid from "uuid/v4"
 
@@ -45,6 +45,25 @@ export default class DiscussionAPI{
     const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
     const tasksCollectionRef = classesDocumentRef.collection(tasksCollection.getName()).doc(taskId);
     const discussionsCollectionRef = tasksCollectionRef.collection(discussionsCollection.getName());
+
+    const discussionsQuerySnapshot = await discussionsCollectionRef.orderBy("creationTime","desc").get();
+
+    const discussions = (await discussionsQuerySnapshot.docs).map((snap)=> {
+      return {id: snap.id, ...snap.data()}
+    });
+
+    return Promise.resolve(discussions)
+  }
+
+  static async getMyDiscussions(email,schoolId){
+    const db = firebase.firestore();
+    const userMappingCollection = new UserMappingCollection()
+    const schoolsCollection = new SchoolsCollection();
+    const discussionsCollection = new DiscussionsCollection();
+    
+    const userMappingRef = db.collection(userMappingCollection.getName()).doc(email);
+    const schoolsDocumentRef = userMappingRef.collection(schoolsCollection.getName()).doc(schoolId);
+    const discussionsCollectionRef = schoolsDocumentRef.collection(discussionsCollection.getName());
 
     const discussionsQuerySnapshot = await discussionsCollectionRef.orderBy("creationTime","desc").get();
 

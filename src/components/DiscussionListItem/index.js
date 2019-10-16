@@ -1,24 +1,21 @@
 import React from "react";
 import moment from "moment";
-import { Dimensions, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Card, Caption, Paragraph } from "react-native-paper";
-import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
-import DiscussionAPI from "modules/Classroom/api/discussion";
-import StudentAPI from "modules/Classroom/api/student";
-import FastImage from "react-native-fast-image";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, Card, Caption } from "react-native-paper";
 import SquareAvatar from "src/components/Avatar/Square";
-import { classBody } from "@babel/types";
+import SchoolAPI from "modules/Classroom/api/school";
 
-const INITIAL_STATE = { posterEmail: null, discussion: {}, isLoading: true}
+const INITIAL_STATE = {  discussion: {}, isLoading: true, posterName:""}
 
-export default class TimelineListItem extends React.Component{
+export default class DiscussionListItem extends React.PureComponent{
 
   refreshDetail = async () => {
     const { schoolId, discussion } = this.props;
     this.setState({ isLoading: true });
-    const student = await StudentAPI.getDetail(schoolId,discussion.posterEmail)
-    this.setState({ isLoading: false, discussion, posterName: student.name });
-
+    SchoolAPI.getUserName(schoolId, discussion.posterEmail).then(name=> {
+      this.setState({posterName: name })
+    })
+    this.setState({ isLoading: false, discussion });
   }
 
   constructor(props){
@@ -40,7 +37,7 @@ export default class TimelineListItem extends React.Component{
     }
 
     return(
-      <Card style={{ elevation: 1, marginHorizontal: 8, marginTop: 8}}>
+      <Card style={{ elevation: 1, marginHorizontal: 8, marginVertical: 4}}>
         <TouchableOpacity onPress={this.props.onPress}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
             <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>

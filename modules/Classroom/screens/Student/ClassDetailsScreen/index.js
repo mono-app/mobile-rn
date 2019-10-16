@@ -121,13 +121,13 @@ class ClassDetailsScreen extends React.PureComponent {
     } else {
       if(!this.state.class || !this.state.teacher) return null
       return (
-        <View style={{ backgroundColor: "#E8EEE8" }}>
+        <View style={{flex:1, backgroundColor: "#E8EEE8" }}>
           <AppHeader
             navigation={this.props.navigation}
             title="Info Kelas"
             style={{ backgroundColor: "white" }}
           />
-          <ScrollView style={{marginBottom: 56}}>
+          <ScrollView >
             <View style={{  marginTop: 16 }}/>  
             <View style={{flexDirection:"row", backgroundColor: "white"}}>
               <PeopleProfileHeader
@@ -204,6 +204,8 @@ class ClassDetailsScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
+         
+              
             </View>
           </ScrollView>
         </View>

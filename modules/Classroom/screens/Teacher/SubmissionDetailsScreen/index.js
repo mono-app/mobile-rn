@@ -124,9 +124,9 @@ class SubmissionDetailsScreen extends React.PureComponent {
             title="Nilai Tugas"
             style={{ backgroundColor: "white" }}
           />
-        <ScrollView style={{marginBottom:64}}>
+        <ScrollView style={{marginBottom:64, backgroundColor: "#E8EEE8"}}>
        
-          <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+          <View style={{ flex: 1 }}>
          
             <View style={{flexDirection:"row", backgroundColor: "#fff", marginTop: 16, alignItems:"center", justifyContent:"space-between"}}>
               <View style={styles.subjectContainer}>

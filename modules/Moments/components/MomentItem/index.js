@@ -78,7 +78,6 @@ function MomentItem(props){
 
   const fetchMoment = async () => {
     momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, props.currentUser.email, (newMoment) => {
-      console.log(newMoment)
       if(newMoment.postTime){
        const creationDate = momentDate(newMoment.postTime.seconds * 1000).format("DD MMMM YYYY")
        const creationTime = momentDate(newMoment.postTime.seconds * 1000).format("HH:mm")
@@ -119,8 +118,6 @@ function MomentItem(props){
           totalComments = moment.totalComments
         }
       }
-
-  
 
     return (
       <Surface style={[ styles.surface, props.style ]}>

@@ -34,8 +34,19 @@ function HomeScreen(props){
     if(_isMounted.current) setIsRefreshing(true);
     const moments = await MomentsAPI.getMoments(currentUser.email)
     Logger.log("Moments.HomeScreen.fetchMoment", moments);
+    const filteredMoments = moments.filter(item => {
+      if(props.blockedByUserList.includes(item.posterEmail)){
+        return false
+      }else if(props.blockedUserList.includes(item.posterEmail)){
+        return false
+      }else if(props.hiddenUserList.includes(item.posterEmail)){
+        return false
+      }else{
+        return true
+      }
+    })
     if(_isMounted.current){
-      setMoments(moments);
+      setMoments(filteredMoments);
       setIsRefreshing(false);
     }
   }
@@ -78,15 +89,9 @@ function HomeScreen(props){
         onRefresh={handleRefresh} 
         refreshing={isRefreshing} 
         style={{ flex: 1 }}
-        windowSize={3} initialNumToRender={5} 
+        windowSize={3} initialNumToRender={20}
         renderItem={({ item, index }) => {
-          if(props.blockedByUserList.includes(item.posterEmail)){
-            return null
-          }else if(props.blockedUserList.includes(item.posterEmail)){
-            return null
-          }else if(props.hiddenUserList.includes(item.posterEmail)){
-            return null
-          }
+          
           return <MomentItem 
             moment={item} 
             style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} 
