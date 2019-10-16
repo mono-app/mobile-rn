@@ -6,8 +6,7 @@ import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoading: true, peopleList: [], filteredPeopleList: [] };
-
+const INITIAL_STATE = { isRefreshing: true, peopleList: [], filteredPeopleList: [] };
 
 class StudentListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -16,14 +15,13 @@ class StudentListScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadStudents()
+
   loadStudents = async () => {
-    if(this._isMounted){
-      this.setState({peopleList: []})
-    }
+    if(this._isMounted) this.setState({peopleList: [], isRefreshing: true})
+    
     const peopleList = await StudentAPI.getStudents(this.props.currentSchool.id);
-    if(this._isMounted){
-      this.setState({ peopleList, filteredPeopleList: peopleList });
-    }
+    if(this._isMounted) this.setState({ peopleList, filteredPeopleList: peopleList, isRefreshing: false });
   }
 
   handleStudentPress = people => {
@@ -56,6 +54,7 @@ class StudentListScreen extends React.PureComponent {
     this.loadStudents = this.loadStudents.bind(this);
     this.handleStudentPress = this.handleStudentPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -83,6 +82,8 @@ class StudentListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredPeopleList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

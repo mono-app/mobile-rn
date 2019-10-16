@@ -115,6 +115,7 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
             style={{margin: 16}}
             text="Pulihkan Kelas"
             isLoading={this.state.isLoadingButton}
+            disabled={this.state.isLoadingButton}
             onPress={this.handleUnarchivePress}/>
         </ScrollView>
       </View>

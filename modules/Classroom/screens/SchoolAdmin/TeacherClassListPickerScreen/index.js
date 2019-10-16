@@ -7,7 +7,7 @@ import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[]  };
+const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[]  };
 
 class TeacherClassListPickerScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -16,20 +16,17 @@ class TeacherClassListPickerScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadClasses()
+
   loadClasses = async () => {
-    if(this._isMounted){
-      this.setState({classList: []})
-    }
+    if(this._isMounted) this.setState({classList: [], isRefreshing: true})
     const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
-    if(this._isMounted){
-      this.setState({ classList, filteredClassList: classList });
-    }
+    if(this._isMounted) this.setState({ classList, filteredClassList: classList, isRefreshing: false });
   }
 
   handleClassPress = class_ => {
     const classId = class_.id;
     TeacherAPI.addTeacherClass(this.teacherEmail, this.props.currentSchool.id, classId).then(() => {
-      this.setState({ isLoading: false });
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
       navigation.goBack();
@@ -57,10 +54,11 @@ class TeacherClassListPickerScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
+    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -88,6 +86,8 @@ class TeacherClassListPickerScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

@@ -72,19 +72,17 @@ export class CurrentUserProvider extends React.PureComponent{
     const blockedByCollection = new BlockedByCollection();
     const hideCollection = new HideCollection();
     const userRef = db.collection(userCollection.getName()).doc(email); 
-   
-    if(this.userListener===null){
-      this.userListener = userRef.onSnapshot((documentSnapshot) => {
-        if(documentSnapshot.exists){
-          const userData = PeopleAPI.normalizePeople(documentSnapshot);
-          Logger.log("CurrentUserProvider", userData);
-          this.setState({ user: userData });
-        }
-      });
-    }
+  
+    this.userListener = userRef.onSnapshot((documentSnapshot) => {
+      if(documentSnapshot.exists){
+        const userData = PeopleAPI.normalizePeople(documentSnapshot);
+        Logger.log("CurrentUserProvider", userData);
+        this.setState({ user: userData });
+      }
+    });
+    
     const friendListDocRef = db.collection(friendListCollection.getName()).doc(email)
     const blockedColRef = friendListDocRef.collection(blockedCollection.getName())
-    if(this.blockedUserListener===null){
       this.blockedUserListener = blockedColRef.onSnapshot((querySnapshot)=> {
         const queryDocumentSnapshotList = querySnapshot.docs
         const blockedUserList = queryDocumentSnapshotList.map(documentSnapshot => {
@@ -92,10 +90,8 @@ export class CurrentUserProvider extends React.PureComponent{
         })
         this.setState({blockedUserList: blockedUserList})
       })
-    }
 
     const blockedByColRef = friendListDocRef.collection(blockedByCollection.getName())
-    if(this.blockedByUserListener===null){
       this.blockedByUserListener = blockedByColRef.onSnapshot((querySnapshot)=> {
         const queryDocumentSnapshotList = querySnapshot.docs
         const blockedByUserList = queryDocumentSnapshotList.map(documentSnapshot => {
@@ -103,9 +99,8 @@ export class CurrentUserProvider extends React.PureComponent{
         })
         this.setState({blockedByUserList: blockedByUserList})
       })
-    }
+    
     const hideColRef = friendListDocRef.collection(hideCollection.getName())
-    if(this.hiddenUserListener===null){
         this.hiddenUserListener = hideColRef.onSnapshot((querySnapshot)=> {
         const queryDocumentSnapshotList = querySnapshot.docs
         const hiddenUserList = queryDocumentSnapshotList.map(documentSnapshot => {
@@ -113,7 +108,6 @@ export class CurrentUserProvider extends React.PureComponent{
         })
         this.setState({hiddenUserList: hiddenUserList})
       })
-    } 
   };
 
   handleUnreadChat = (roomId, number) => {

@@ -157,7 +157,6 @@ class TaskSubmissionScreen extends React.PureComponent {
     this.checkPermission = this.checkPermission.bind(this)
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
     this.handleRefresh = this.handleRefresh.bind(this);
-
   }
 
   componentDidMount(){

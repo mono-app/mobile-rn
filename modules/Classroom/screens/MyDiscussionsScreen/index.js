@@ -9,7 +9,7 @@ import {  TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentUser } from "src/api/people/CurrentUser"
 
-const INITIAL_STATE = { isLoading: true, discussionList:[], filteredDiscussionList: [] };
+const INITIAL_STATE = { isRefreshing: true, discussionList:[], filteredDiscussionList: [] };
 
 class MyDiscussionsScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -19,10 +19,12 @@ class MyDiscussionsScreen extends React.PureComponent {
   };
 
   loadDiscussions = async () => {
-    if(this._isMounted) this.setState({ discussionList: [] });
+    if(this._isMounted) this.setState({ discussionList: [], isRefreshing: true });
     const discussionList = await DiscussionAPI.getMyDiscussions(this.props.currentUser.email, this.schoolId);
-    if(this._isMounted) this.setState({ discussionList, filteredDiscussionList: discussionList });
+    if(this._isMounted) this.setState({ discussionList, filteredDiscussionList: discussionList, isRefreshing: false });
   }
+
+  handleRefresh = () => this.loadDiscussions()
 
   handleDiscussionPress = item => {
     payload = {
@@ -71,11 +73,12 @@ class MyDiscussionsScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null;
+    this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadDiscussions = this.loadDiscussions.bind(this);
     this.handleDiscussionPress = this.handleDiscussionPress.bind(this);
     this.handleLikePress = this.handleLikePress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
-    this.schoolId = this.props.navigation.getParam("schoolId", "");
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -102,6 +105,8 @@ class MyDiscussionsScreen extends React.PureComponent {
         </View>
         <FlatList
           data={this.state.filteredDiscussionList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

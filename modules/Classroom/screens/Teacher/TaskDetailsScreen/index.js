@@ -272,6 +272,7 @@ class TaskDetailsScreen extends React.PureComponent {
             <Button
                 text="Hapus Tugas"
                 isLoading={this.state.isDeleting}
+                disabled={this.state.isDeleting}
                 style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}
                 onPress={() => {this.deleteDialog.toggleShow()}}
             />
