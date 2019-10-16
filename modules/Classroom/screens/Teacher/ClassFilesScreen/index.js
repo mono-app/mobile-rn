@@ -13,7 +13,7 @@ import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher
 import RNFetchBlob from 'react-native-fetch-blob'
 
 const INITIAL_STATE = { 
-  isLoading: true, 
+  isRefreshing: true, 
   progressPercentage: 0, 
   showProgressbar: false, 
   isDeleting: false, 
@@ -30,12 +30,14 @@ class ClassFilesScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadFiles()
+
   loadFiles = async () => {
     if(this._isMounted)
-      this.setState({ fileList: [], isLoading: true });
+      this.setState({ fileList: [], isRefreshing: true });
     const fileList = await FileAPI.getClassFiles(this.props.currentSchool.id, this.classId);
     if(this._isMounted)
-      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+      this.setState({ isRefreshing: false, fileList, filteredFileList: fileList  });
   }
 
   handleDownloadPress = async item => {
@@ -81,11 +83,11 @@ class ClassFilesScreen extends React.PureComponent {
   }
 
   onDeletePress = async () => {
-    this.setState({isLoading: true})
+    this.setState({isRefreshing: true})
     await FileAPI.deleteClassFile(this.props.currentSchool.id,this.classId,this.state.selectedFile);
     this.deleteDialog.toggleShow()
     await this.loadFiles();
-    this.setState({isLoading: false})
+    this.setState({isRefreshing: false})
   }
 
   handleAddFiles = () => {
@@ -152,6 +154,7 @@ class ClassFilesScreen extends React.PureComponent {
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.checkPermission = this.checkPermission.bind(this)
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -189,6 +192,8 @@ class ClassFilesScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white", marginVertical:16 }}
           data={this.state.filteredFileList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

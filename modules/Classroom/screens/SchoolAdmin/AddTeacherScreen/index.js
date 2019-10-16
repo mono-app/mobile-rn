@@ -81,6 +81,7 @@ class AddTeacherScreen extends React.PureComponent {
                 <Button
                   text="Simpan"
                   isLoading={this.state.isLoading}
+                  disabled={this.state.isLoading}
                   onPress={this.handleSavePress}
                 />
               </Card.Content>

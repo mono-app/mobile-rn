@@ -19,10 +19,7 @@ class AnnouncementScreen extends React.PureComponent {
   handleRefresh = () => this.loadAnnouncements()
 
   loadAnnouncements = async () => {
-    if(this._isMounted){
-      this.setState({ announcementList: [], isRefreshing:true });
-    }
-   
+    if(this._isMounted) this.setState({ announcementList: [], isRefreshing:true })
     const announcementList = await AnnouncementAPI.getStudentAnnouncements(this.props.currentSchool.id,this.props.currentStudent.email)
    
     let clonedAnnouncementList = JSON.parse(JSON.stringify(announcementList));
@@ -33,10 +30,7 @@ class AnnouncementScreen extends React.PureComponent {
       }
       return {...obj, searchQuery}
     })
-
-    if(this._isMounted){
-      this.setState({ announcementList:clonedAnnouncementList, filteredAnnouncementList: clonedAnnouncementList, isRefreshing:false });
-    }
+    if(this._isMounted) this.setState({ announcementList:clonedAnnouncementList, filteredAnnouncementList: clonedAnnouncementList, isRefreshing:false });
   }
 
   handleAnnouncementPress = async item => {

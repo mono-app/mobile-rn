@@ -138,6 +138,7 @@ class ShareDiscussionScreen extends React.PureComponent {
           <Button
             text="Bagikan"
             isLoading={this.state.isShareLoading}
+            disabled={this.state.isShareLoading}
             style={{marginHorizontal: 16}}
             onPress={this.handleSharePress}
           />      

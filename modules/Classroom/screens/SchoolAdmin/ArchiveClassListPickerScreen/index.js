@@ -6,7 +6,7 @@ import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[]  };
+const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[]  };
 
 class ArchiveClassListPickerScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -17,18 +17,18 @@ class ArchiveClassListPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     if(this._isMounted){
-      this.setState({classList: []})
+      this.setState({classList: [], isRefreshing: true})
     }
     const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
     if(this._isMounted){
-      this.setState({ classList, filteredClassList: classList });
+      this.setState({ classList, filteredClassList: classList, isRefreshing: false });
     }
   }
+  handleRefresh = () => this.loadClasses()
 
   handleClassPress = class_ => {
     const classId = class_.id;
     ClassAPI.setArchive(this.props.currentSchool.id, classId).then(() => {
-      this.setState({ isLoading: false });
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
       navigation.goBack();
@@ -56,10 +56,11 @@ class ArchiveClassListPickerScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
+    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -87,6 +88,8 @@ class ArchiveClassListPickerScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

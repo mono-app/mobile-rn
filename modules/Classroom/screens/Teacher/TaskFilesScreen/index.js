@@ -17,7 +17,7 @@ import MySearchbar from "src/components/MySearchbar"
 import RNFetchBlob from 'react-native-fetch-blob'
 
 const INITIAL_STATE = {
-  isLoading: true,
+  isRefreshing: true,
   isDownloadAllLoading: false,
   progressPercentage: 0,
   showProgressbar: false,
@@ -37,9 +37,11 @@ class TaskFilesScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadFiles()
+
   loadFiles = async () => {
     if(this._isMounted)
-      this.setState({ fileList: [], isLoading: true });
+      this.setState({ fileList: [], isRefreshing: true });
 
     const fileList = await FileAPI.getStudentSubmissionFiles(
       this.props.currentSchool.id,
@@ -48,7 +50,7 @@ class TaskFilesScreen extends React.PureComponent {
       this.submissionId
     );
     if(this._isMounted)
-      this.setState({ isLoading: false, fileList, filteredFileList: fileList  });
+      this.setState({ isRefreshing: false, fileList, filteredFileList: fileList  });
   };
 
   handleDownloadPress = async item => {
@@ -126,7 +128,7 @@ class TaskFilesScreen extends React.PureComponent {
   };
 
   onDeletePress = async () => {
-    this.setState({ isLoading: true });
+    this.setState({ isRefreshing: true });
     await FileAPI.deleteSubmissionFile(
       this.props.currentSchool.id,
       this.classId,
@@ -134,7 +136,7 @@ class TaskFilesScreen extends React.PureComponent {
     );
     this.deleteDialog.toggleShow();
     await this.loadFiles();
-    this.setState({ isLoading: false });
+    this.setState({ isRefreshing: false });
   };
 
   handleSearchPress = (searchText) => {
@@ -201,7 +203,7 @@ class TaskFilesScreen extends React.PureComponent {
     this.checkPermission = this.checkPermission.bind(this)
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.requestStoragePermission = this.requestStoragePermission.bind(this);
-
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount() {
@@ -235,6 +237,8 @@ class TaskFilesScreen extends React.PureComponent {
         <View style={{ flex: 1, backgroundColor: "white" }}>
           <FlatList
             data={this.state.filteredFileList}
+            refreshing={this.state.isRefreshing} 
+            onRefresh={this.handleRefresh} 
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => {
               return (
@@ -250,6 +254,7 @@ class TaskFilesScreen extends React.PureComponent {
             text="Unduh Semua Tugas"
             style={{ margin: 16 }}
             isLoading={this.state.isDownloadAllLoading}
+            disabled={this.state.isDownloadAllLoading}
             onPress={this.handleDownloadAll}
           />
         </View>
