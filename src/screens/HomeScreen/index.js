@@ -112,10 +112,10 @@ function HomeScreen(props){
         />
       <FriendRequestNotification navigation={props.navigation}/>
       
-      <View style={(selectedMenu !== "chat")?{display:"none"} :{} }>
+      <View style={(selectedMenu !== "chat")?{ display:"none", flex: 1 } : { flex: 1 } }>
         <ChatSection/>
       </View>
-      <View style={(selectedMenu === "chat")? {display:"none"} :{} }>
+      <View style={(selectedMenu === "chat")? { display:"none", flex: 1 } : { flex: 1 } }>
         <NotificationSection/>
       </View>
     </View>
