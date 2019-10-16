@@ -118,7 +118,6 @@ export default class FriendsAPI{
         const friendList = querySnapshot.docs
         const filteredFriendList = friendList.filter(documentSnapshot => {
           const data = documentSnapshot.data()
-
           return (!data.status || (data.status && data.status !== "blocked" && data.status !== "blocked-by" &&  data.status !== "hide"))
         })
 
@@ -129,12 +128,16 @@ export default class FriendsAPI{
         })
         const friends = await Promise.all(promises);
 
+        //filter if friend is exist in users
+        const filteredFriends = friends.filter(documentSnapshot=>{
+          return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
+        })
 
-        const normalizedFriends = friends.map((documentSnapshot) => {
+        const normalizedFriends = filteredFriends.map((documentSnapshot) => {
           return PeopleAPI.normalizePeople(documentSnapshot);
         });
-        Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (friends, normalizedFriends));
 
+        Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (friends, normalizedFriends));
         callback(normalizedFriends)
       }else callback([]);
     })

@@ -60,8 +60,8 @@ function MomentItem(props){
     imagesContainer: { display: "flex", flexDirection: "row", marginTop: 4, marginBottom: 4, flexGrow: 1 },
   })
 
-  const toggleOpen = () => setIsMenuVisible(!isMenuVisible);
-  const handleMenuClose = () => setIsMenuVisible(false);
+  const toggleOpen = () => {if(_isMounted.current) setIsMenuVisible(!isMenuVisible);}
+  const handleMenuClose = () => {if(_isMounted.current) setIsMenuVisible(false);}
   const handlePicturePress = (index) => {
     payload = {
       index,
@@ -72,8 +72,7 @@ function MomentItem(props){
 
   const fetchPeople = async () => {
     const peopleData = await PeopleAPI.getDetail(moment.posterEmail)
-    if(_isMounted.current)
-      setPeople(peopleData);
+    if(_isMounted.current) setPeople(peopleData);
   }
 
   const fetchMoment = async () => {
@@ -81,10 +80,9 @@ function MomentItem(props){
       if(newMoment.postTime){
        const creationDate = momentDate(newMoment.postTime.seconds * 1000).format("DD MMMM YYYY")
        const creationTime = momentDate(newMoment.postTime.seconds * 1000).format("HH:mm")
-       setCreatedDate(creationDate+" | Jam "+ creationTime+" WIB")
+       if(_isMounted.current) setCreatedDate(creationDate+" | Jam "+ creationTime+" WIB")
       }
-      if(_isMounted.current)
-        setMoment(newMoment);
+      if(_isMounted.current) setMoment(newMoment);
     })
   }
 
