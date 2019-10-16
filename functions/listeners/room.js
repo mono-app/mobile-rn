@@ -6,7 +6,7 @@ const moment = require("moment");
 function RoomListener(){}
 
 RoomListener.triggerNewRoom = functions.region("asia-east2").firestore.document("/rooms/{roomId}").onCreate((documentSnapshot, context) => {
-  if(documentSnapshot.data().type !== "chat") return Promise.resolve(true);
+  if(documentSnapshot.data().type === "bot") return Promise.resolve(true);
 
   const handleSessionCreated = async (sessionId, resolve) => {
     const payload = { liveVoice: {session: sessionId} };
