@@ -67,7 +67,7 @@ function HomeScreen(props){
   const handleDeleteMomentYes = () => {
     deleteDialog.current.toggleShow()
     MomentsAPI.delete(selectedMoment.current.id).then(result => {
-      if(result){
+      if(result && _isMounted.current){
         setSnackbarDeleteSuccess(true)
       }
     })
