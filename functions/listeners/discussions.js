@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require("firebase-admin");
-
+const Bot = require("../lib/bot");
+const School = require("../lib/school")
 function Discussion(){}
 
 
@@ -15,6 +16,7 @@ Discussion.triggerNewDiscussion = functions.region("asia-east2").firestore.docum
   const discussionRef = schoolRef.collection("discussions").doc(discussionId)
   const data = Object.assign({classId: classId, taskId: taskId}, documentSnapshot.data())
   discussionRef.set(data)
+  
  
   return Promise.resolve(true);
 })
@@ -26,6 +28,7 @@ Discussion.sendNotificationForNewDiscussion = functions.region("asia-east2").fir
 
   // get senderId
   const senderId = discussionDocument.posterEmail
+  const senderName = await School.getUserName(schoolId, senderId)
 
   // get all teacher audience
   const db = admin.firestore();
@@ -90,11 +93,13 @@ Discussion.sendNotificationForNewDiscussion = functions.region("asia-east2").fir
   }
   // send notification to teacher and student audience except senderId
   let tempTokenArray = []
+
   // send notification to all audiences except sender
   try{
     const messagePromises = audiencesData.map(audienceData => {
       if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken &&
         !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
+
         const message = {
           token: audienceData.tokenInformation.messagingToken,
           android: { 
@@ -110,11 +115,21 @@ Discussion.sendNotificationForNewDiscussion = functions.region("asia-east2").fir
           notification: { title: "Diskusi Baru", body: discussionDocument.title }
         }
         tempTokenArray.push(audienceData.tokenInformation.messagingToken)
+
+        // Send BOT message
+        const details = {discussion: Object.assign({id: documentSnapshot.id, schoolId, classId, taskId},Object.assign(discussionDocument))}
+        const messageBot = senderName+" Membuat Diskusi Baru, Lihat Sekarang!"
+        Bot.sendBotMessage("ClassroomDiscussion",audienceData.id,details,messageBot,"new-discussion")
+        // END Send Bot Message
+
         return admin.messaging().send(message);
       }
     })
 
     await Promise.all(messagePromises);
+    
+
+
     return Promise.resolve(true);
   }catch(e){
     return Promise.resolve(e);
@@ -128,6 +143,7 @@ Discussion.sendNotificationForNewDiscussionComment = functions.region("asia-east
 
   // get senderId
   const senderId = commentDocument.posterEmail
+  const senderName = await School.getUserName(schoolId, senderId)
 
   const db = admin.firestore();
 
@@ -140,6 +156,7 @@ Discussion.sendNotificationForNewDiscussionComment = functions.region("asia-east
 
   // get creator Discussion Email
   const discussionDocumentSnapshot = await discussionsDocumentRef.get();
+  const discussionDocument = discussionDocumentSnapshot.data()
   const creatorEmail = discussionDocumentSnapshot.data().posterEmail
   const creatorDocumentRef = db.collection("users").doc(creatorEmail);
   const creatorDocumentSnapshot = await creatorDocumentRef.get();
@@ -194,6 +211,11 @@ Discussion.sendNotificationForNewDiscussionComment = functions.region("asia-east
           notification: { title: "Komentar Baru Pada Diskusi", body: commentDocument.comment }
         }
         tempTokenArray.push(audienceData.tokenInformation.messagingToken)
+        // Send BOT message
+        const details = {discussion: Object.assign({id: discussionDocumentSnapshot.id, schoolId, classId, taskId},Object.assign(discussionDocument))}
+        const messageBot = senderName+" Mengomentari Diskusi, Lihat Sekarang!"
+        Bot.sendBotMessage("ClassroomDiscussion",audienceData.id,details,messageBot,"new-discussion-comment")
+        // END Send Bot Message
         return admin.messaging().send(message);
       }
     })

@@ -18,6 +18,7 @@ function ChatBottomTextInput(props){
   const [ message, setMessage ] = React.useState("");
   const [ sessionId, setSessionId ] = React.useState(null);
   const [ token, setToken ] = React.useState(null);
+  const _isMounted = React.useRef(true);
 
   const roomListener = React.useRef(null);
 
@@ -41,19 +42,20 @@ function ChatBottomTextInput(props){
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
   const handleSessionConnected = () => Logger.log("ChatBottomTextInput.handleSessionConnected", "session connected");
-  const handleMessageChange = (newMessage) => setMessage(newMessage);
+  const handleMessageChange = (newMessage) => {if(_isMounted.current) setMessage(newMessage);}
   const handleSendPress = () => {
     const copiedMessage = JSON.parse(JSON.stringify(message));
     if(copiedMessage.trim() && props.editable ){
       props.onSendPress(copiedMessage);
     }
-    setMessage("");
+    if(_isMounted.current) setMessage("");
   };
 
   const initLiveVoice = async () => {
     Logger.log("ChatBottomTextInput.initLiveVoice#room", room);
     if(room.liveVoice === undefined) return;
-    setSessionId(room.liveVoice.session);
+
+    if(_isMounted.current) setSessionId(room.liveVoice.session);
 
     const jsonResult = await (await fetch("https://asia-east2-chat-app-fdf76.cloudfunctions.net/requestRoomToken", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
@@ -61,12 +63,13 @@ function ChatBottomTextInput(props){
       })
     })).json();
     Logger.log("ChatBottomTextInput.initLiveVoice#jsonResult", jsonResult);
-    if(!jsonResult.error) setToken(jsonResult.result);
+    if(!jsonResult.error && _isMounted.current) setToken(jsonResult.result);
   }
 
   React.useEffect(() => {
     initLiveVoice();
     return function cleanup(){
+      _isMounted.current = false
       if(roomListener.current) roomListener.current();
     }
   }, [])
