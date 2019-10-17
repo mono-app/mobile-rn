@@ -15,8 +15,9 @@ const INITIAL_STATE = { comments: [], moment: {}, people: {} }
 class CommentsScreen extends React.PureComponent{
   static navigationOptions = { headerTitle: "Komentar" };
 
-  handleSendPress = async (comment) => {
-    if(this.momentId){
+  handleSendPress = async (msg) => {
+    const comment = msg.trim()
+    if(this.momentId && comment.length>0){
       const copiedComment = JSON.parse(JSON.stringify(comment));
       if(this.txtComment) this.txtComment.clear();
       await CommentsAPI.postComment(this.momentId, copiedComment, this.props.currentUser.email);
