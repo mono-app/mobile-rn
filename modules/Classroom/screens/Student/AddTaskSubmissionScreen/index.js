@@ -27,9 +27,10 @@ export default class AddTaskSubmissionScreen extends React.PureComponent {
             <Subheading style={{fontWeight: "700"}}>Untuk melakukan penambahan berkas silahkan mengikuti langkah-langkah berikut ini</Subheading>
             
             <Subheading>1. Kunjungi situs https://mono.app</Subheading>
-            <Subheading>2. Pilih ikon + untuk menambah berkas</Subheading>
-            <Subheading>3. Pilih berkas yang ingin ditambahkan</Subheading>
-            <Subheading>4. Klik "Simpan/Tambah" berkas</Subheading>
+            <Subheading>2. Lakukan Login di website</Subheading>
+            <Subheading>3. Pilih ikon + untuk menambah berkas</Subheading>
+            <Subheading>4. Pilih berkas yang ingin ditambahkan</Subheading>
+            <Subheading>5. Klik "Simpan/Tambah" berkas</Subheading>
           </View>
         </View>
     );
