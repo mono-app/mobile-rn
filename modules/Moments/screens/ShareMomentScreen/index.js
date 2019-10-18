@@ -82,7 +82,7 @@ class ShareMomentScreen extends React.PureComponent {
       if(clonedPeopleList[i].checked){
         const peopleEmail = clonedPeopleList[i].email
         const message = "Share Moment, \nTitle: "+this.moment.content.message
-        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail);
+        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail,"chat");
     
         MessagesAPI.sendMessage(room.id, this.props.currentUser.email, message, "moment-share", {moment: {...this.moment}});
       }

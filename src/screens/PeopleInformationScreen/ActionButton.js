@@ -11,63 +11,63 @@ const INITIAL_STATE = { isLoading: false };
 class ActionButton extends React.PureComponent{
 
   handleAddFriendPress = async () => {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await new FriendsAPI().sendRequest(this.props.currentUser.email, this.props.peopleEmail, this.props.source);
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleCancelRequestPress = async () => {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await new FriendsAPI().cancelRequest(this.props.currentUser.email, this.props.peopleEmail);
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleRejectRequestPress = async () => {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await new FriendsAPI().rejectRequest(this.props.currentUser.email, this.props.peopleEmail);
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleAcceptRequestPress = async () => {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await new FriendsAPI().acceptRequest(this.props.currentUser.email, this.props.peopleEmail, this.props.source);
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleBlockPress = async ()=> {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await FriendsAPI.blockUsers(this.props.currentUser.email, this.props.peopleEmail)
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleUnblockPress = async ()=> {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await FriendsAPI.unblockUsers(this.props.currentUser.email, this.props.peopleEmail)
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleHidePress = async ()=> {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await FriendsAPI.hideUsers(this.props.currentUser.email, this.props.peopleEmail)
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleUnhidePress = async ()=> {
-    this.setState({ isLoading: true });
+    if(this._isMounted) this.setState({ isLoading: true });
     await FriendsAPI.unhideUsers(this.props.currentUser.email, this.props.peopleEmail)
     if(this.props.onComplete) await this.props.onComplete();
-    this.setState({ isLoading: false });
+    if(this._isMounted) this.setState({ isLoading: false });
   }
   
   handleStartChatPress = async () => {
-    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, this.props.peopleEmail);
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, this.props.peopleEmail,"chat");
     this.props.navigation.navigate({ routeName: "Chat", params: {room} })
   }
 
@@ -75,6 +75,7 @@ class ActionButton extends React.PureComponent{
     super(props);
 
     this.state = INITIAL_STATE;
+    this._isMounted = null
     this.handleAddFriendPress = this.handleAddFriendPress.bind(this);
     this.handleCancelRequestPress = this.handleCancelRequestPress.bind(this);
     this.handleRejectRequestPress = this.handleRejectRequestPress.bind(this);
@@ -85,6 +86,15 @@ class ActionButton extends React.PureComponent{
     this.handleUnhidePress = this.handleUnhidePress.bind(this);
     this.handleStartChatPress = this.handleStartChatPress.bind(this);
   }
+  
+  componentDidMount(){ 
+    this._isMounted = true
+  }
+  
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
 
   render(){
     const style = { marginHorizontal: 16,marginBottom:8 }

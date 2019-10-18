@@ -67,7 +67,7 @@ class MyClassScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
             navigation={this.props.navigation}
             title="Kelas Saya"

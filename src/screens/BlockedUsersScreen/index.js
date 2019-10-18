@@ -7,8 +7,7 @@ import FriendsAPI from "src/api/friends";
 import PeopleListItem from "src/components/PeopleListItem";
 
 function BlockedUsersScreen(props){
-  const { navigation, currentUser } = props;
-  const [ peopleList, setPeopleList ] = React.useState([]);
+  const { navigation, currentUser, blockedUserList } = props;
   const _isMounted = React.useRef(true);
 
   const styles = StyleSheet.create({
@@ -25,11 +24,7 @@ function BlockedUsersScreen(props){
   }
 
   React.useEffect(() => {
-    const init = async () => {
-      const blockedUsers = await FriendsAPI.getBlockedUsers(currentUser.email)
-      setPeopleList(blockedUsers)
-    }
-    init()
+  
     return function cleanup(){
       _isMounted.current=false
     }
@@ -43,10 +38,10 @@ function BlockedUsersScreen(props){
       <View style={styles.container}>
         <FlatList
           style={{ backgroundColor: "white" }}
-          data={peopleList}
+          data={blockedUserList}
           keyExtractor={(item) => item.email}
           renderItem={({ item, index }) => {
-            return <PeopleListItem key={index} people={item} onPress={handleContactPress}/>
+            return <PeopleListItem key={index} email={item} onPress={handleContactPress}/>
           }}/>
       </View>
     </Container> 

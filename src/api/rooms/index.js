@@ -157,7 +157,7 @@ export class PersonalRoomsAPI extends RoomsAPI{
     const userPath = new firebase.firestore.FieldPath("audiencesQuery", firstPeopleEmail);
     const peoplePath = new firebase.firestore.FieldPath("audiencesQuery", secondPeopleEmail);
     const roomsRef = db.collection(roomsCollection.getName());
-    const querySnapshot = await roomsRef.where(userPath, "==", true).where(peoplePath, "==", true).get();
+    const querySnapshot = await roomsRef.where(userPath, "==", true).where(peoplePath, "==", true).where('type','==',type).get();
     
     if(querySnapshot.empty){
       const audiencesPayload = {};

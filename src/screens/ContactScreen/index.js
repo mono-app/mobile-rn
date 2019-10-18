@@ -66,7 +66,7 @@ function ContactScreen(props){
         refreshing={isRefreshing} 
         keyExtractor={(item) => item.email}
         renderItem={({ item, index }) => {
-          return <PeopleListItem key={index} people={item} onPress={handleContactPress}/>
+          return <PeopleListItem key={index} email={item.email} onPress={handleContactPress}/>
         }}/>
     </View>
   )
