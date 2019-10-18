@@ -7,12 +7,14 @@ import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 import { TutorialProvider } from "src/api/Tutorial";
+import PeopleAPI from "src/api/people"
 
 console.disableYellowBox = true;
 
 const AppContainer = createAppContainer(AppNavigator);
 
 function App(){
+
   const theme = {
     ...DefaultTheme,
     colors: {
@@ -21,11 +23,25 @@ function App(){
     }
   };
 
-  const handleAppStateChange = async (nextAppState) => {
-    if(nextAppState === "inactive") VerifyPhoneAPI.cancelRequest()
+  const handleAppStateChange = (nextAppState) => {
+    const firebaseUser = firebase.auth().currentUser;
+    if(firebaseUser !== null && firebaseUser.email) {
+      if(nextAppState === "active"){
+        PeopleAPI.setOnlineStatus(firebaseUser.email, "Online");
+      }else if(nextAppState === "background"){
+        PeopleAPI.setOnlineStatus(firebaseUser.email, "Offline");
+      }else if(nextAppState === "inactive"){
+        PeopleAPI.setOnlineStatus(firebaseUser.email, "Offline");
+        VerifyPhoneAPI.cancelRequest()
+      }
+    }
   }
 
   React.useEffect(() => {
+    const firebaseUser = firebase.auth().currentUser;
+    if(firebaseUser !== null && firebaseUser.email) {
+      PeopleAPI.setOnlineStatus(firebaseUser.email, "Online");
+    }
     firebase.firestore().settings({ persistence: true });
     AppState.addEventListener("change", handleAppStateChange);
     return function cleanup(){

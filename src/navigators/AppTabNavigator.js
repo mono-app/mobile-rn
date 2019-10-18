@@ -5,7 +5,6 @@ import AppListScreen from "src/screens/AppListScreen";
 import ClassroomNavigator from "modules/Classroom/navigators/ClassroomNavigator";
 import NewsNavigator from "modules/News/navigators/NewsNavigator";
 import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
-import CameraScreen from "src/screens/CameraScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
 import ChatScreen from "src/screens/ChatScreen";
 import GroupChatScreen from "src/screens/GroupChatScreen";
@@ -18,7 +17,6 @@ export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen },
   Classroom: { screen: ClassroomNavigator, navigationOptions: { header: null }},
   // News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
-  Camera: {screen: CameraScreen},
   Chat: { screen: ChatScreen },
   GroupChat: { screen: GroupChatScreen },
   AddDiscussion: {screen: AddDiscussionScreen},

@@ -49,7 +49,7 @@ function UnreadCountBadge(props){
   }, [])
 
   if(count === 0) return null;
-  else return <Badge style={props.style}>{(count>99)?"99+":count}</Badge>
+  else return <Badge style={[{backgroundColor:"red", color:"white"}, props.style]}>{(count>99)?"99+":count}</Badge>
 }
 
 UnreadCountBadge.defaultProps = { style: {}, roomId: null }

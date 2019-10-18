@@ -36,7 +36,7 @@ function PeopleInformationScreen(props){
     if(status) setStatus(status.content);
 
     setPeople(peopleData);
-    setJoinedFrom(moment.unix(parseInt(peopleData.creationTime) / 1000).format("DD MMMM YYYY"));
+    setJoinedFrom(moment(peopleData.creationTime.seconds * 1000).format("DD MMMM YYYY"));
     setIsLoadingProfile(false);
   }
 
@@ -77,8 +77,9 @@ function PeopleInformationScreen(props){
         title={people.applicationInformation.nickName}
         subtitle={status}/>
       <View style={{ marginTop: 16, marginBottom: 16 }}>
-        <PeopleInformationContainer fieldName="Sumber" fieldValue={source.value}/>
-        <PeopleInformationContainer fieldName="Bergabung Sejak" fieldValue={moment(joinedFrom).format("DD MMMM YYYY")}/>
+      <PeopleInformationContainer fieldName="Mono ID" fieldValue={people.applicationInformation.id}/>
+      <PeopleInformationContainer fieldName="Sumber" fieldValue={source.value}/>
+      <PeopleInformationContainer fieldName="Bergabung Sejak" fieldValue={joinedFrom}/>
       </View>
       <ActionButton 
         peopleEmail={peopleEmail} source={source}
