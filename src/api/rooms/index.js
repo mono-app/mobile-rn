@@ -49,8 +49,8 @@ export default class RoomsAPI{
     const roomsCollection = new RoomsCollection();
     const roomsDocumentRef = db.collection(roomsCollection.getName()).doc(roomId);
     return roomsDocumentRef.onSnapshot((documentSnapshot)=> {
-      const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
-      callback(data)
+      const room = RoomsAPI.normalizeRoom(documentSnapshot);
+      callback(room);
     });
   }
 
