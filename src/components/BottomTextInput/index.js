@@ -1,6 +1,9 @@
 import React from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+
+import { View, TextInput } from "react-native";
 import { Surface, IconButton } from "react-native-paper";
+import { SafeAreaView } from "react-navigation";
 
 const INITIAL_STATE = { message: "" }
 
@@ -28,19 +31,21 @@ export default class BottomTextInput extends React.PureComponent{
 
   render(){
     return(
-      <Surface style={{...this.props.style, ...styles.inputBoxContainer}}>
-        <View style={{ flexDirection: "row" }}>
-          <TextInput 
-            ref={i => this.txtMessage = i} 
-            autoFocus={(this.props.autoFocus)?this.props.autoFocus:false}
-            placeholder="Type a message" 
-            style={{ flex: 1 }}
-            value={this.state.message}
-            onSubmitEditing={this.handleSendPress}
-            onChangeText={this.handleMessageChange}/>
-          <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0 }} onPress={this.handleSendPress}/>
-        </View>
-      </Surface>
+      <SafeAreaView>
+        <Surface style={{...this.props.style, ...styles.inputBoxContainer}}>
+          <View style={{ flexDirection: "row" }}>
+            <TextInput 
+              ref={i => this.txtMessage = i} 
+              autoFocus={(this.props.autoFocus)?this.props.autoFocus:false}
+              placeholder="Type a message" 
+              style={{ flex: 1 }}
+              value={this.state.message}
+              onSubmitEditing={this.handleSendPress}
+              onChangeText={this.handleMessageChange}/>
+            <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0 }} onPress={this.handleSendPress}/>
+          </View>
+        </Surface>
+      </SafeAreaView>
     )
   }
 }
