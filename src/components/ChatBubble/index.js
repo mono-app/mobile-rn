@@ -59,7 +59,7 @@ function ChatBubble(props){
       <TouchableOpacity style={styles.section} onPress={handlePress} disabled={!clickable}>
         <Text style={styles.contentColor}>
           {content}
-          <Text style={styles.empty}>±±±±±±±±±±±±±±</Text>     
+          <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
         </Text>
         <View style={styles.metadata}>
           <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
@@ -77,7 +77,11 @@ ChatBubble.defaultProps = { bubbleStyle: "myBubble" }
 ChatBubble.propTypes = { 
   onPress: PropTypes.func, clickable: PropTypes.bool,
   bubbleStyle: PropTypes.string.isRequired,
-  message: PropTypes.shape().isRequired
+  message: PropTypes.shape({
+    content: PropTypes.string.isRequired, 
+    sentTime: PropTypes.any.isRequired,
+    isSent: PropTypes.bool.isRequired
+  }).isRequired
 }
 ChatBubble.defaultProps = { onPress: () => {}, clickable: false }
 export default withTheme(ChatBubble);

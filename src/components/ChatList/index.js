@@ -9,12 +9,16 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
 
 import ChatBubble from "src/components/ChatBubble";
+import ChatBubbleWithPhoto from "src/components/ChatBubbleWithPhoto";
 import { FlatList, View } from "react-native";
 import { Chip } from "react-native-paper";
 
 function ChatList(props){
-  const { messages, currentUser, navigation } = props;
+  const { messages, currentUser, navigation, room } = props;
+  const SelectedBubble = room.audiences.length > 2? ChatBubbleWithPhoto: ChatBubble;
+
   const [ listHeight, setListHeight ] = React.useState(0);
+  
   const styles = StyleSheet.create({
     container: { flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }
   })
@@ -86,23 +90,24 @@ function ChatList(props){
       onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
       data={messages} inverted
       renderItem={({ item }) => {
+        Logger.log("ChatList.renderItem#item", item);
         const bubbleStyle = (currentUser.email !== item.senderEmail)? "peopleBubble": "myBubble";
         if(item.type === "text") {
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
         }else if(item.type === "discussion-share"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
         }else if(item.type === "new-discussion"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
         }else if(item.type === "new-discussion-comment"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleDiscussionPress(item)} message={item}/>
         }else if(item.type === "moment-share"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentPress(item)} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentPress(item)} message={item}/>
         }else if(item.type === "moment-comment"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentCommentPress(item)} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={() => handleMomentCommentPress(item)} message={item}/>
         }else if(item.type === "setup-birthday"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item}/>
         }else if(item.type === "friend-request"){
-          return <ChatBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item}/>
+          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item}/>
         }else if(item.type === "date-separator" || item.type === "lets-start-chat"){
           return (
             <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
@@ -116,7 +121,7 @@ function ChatList(props){
 
 ChatList.propTypes = { 
   onReachTop: PropTypes.func, 
-  style: PropTypes.shape(),
+  style: PropTypes.shape(), room: PropTypes.shape().isRequired,
   messages: PropTypes.arrayOf(PropTypes.shape()).isRequired
 };
 ChatList.defaultProps = { onReachTop: () => {}, style: {} }
