@@ -178,13 +178,13 @@ class TaskDetailsScreen extends React.PureComponent {
     }
 
     return (
-      <View>
+      <View style={{flex: 1}}>
         <AppHeader
           navigation={this.props.navigation}
           title="Detail Tugas"
           style={{ backgroundColor: "white" }}
         />
-        <ScrollView style={{marginBottom: 56}}>
+        <ScrollView >
           <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
             <View style={styles.subjectContainer}>
                   <Text style={{fontWeight: "bold", fontSize: 18}}>
@@ -269,12 +269,14 @@ class TaskDetailsScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-              <Button
+            <Button
                 text="Hapus Tugas"
                 isLoading={this.state.isDeleting}
+                disabled={this.state.isDeleting}
                 style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}
                 onPress={() => {this.deleteDialog.toggleShow()}}
             />
+            
             
           </View>
         </ScrollView>

@@ -38,7 +38,14 @@ class TeacherHomeScreen extends React.PureComponent {
    
     this.props.navigation.navigate("MyClass");
   }
- 
+
+  handleMyDiscussionsPress = () => {
+    payload = {
+      schoolId : this.props.currentSchool.id,
+    }
+    this.props.navigation.navigate("MyDiscussions", payload);
+  }
+
   constructor(props) {    
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
@@ -48,6 +55,7 @@ class TeacherHomeScreen extends React.PureComponent {
     this.handleDataMasterPress = this.handleDataMasterPress.bind(this);
     this.handleTeacherProfilePress = this.handleTeacherProfilePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
+    this.handleMyDiscussionsPress = this.handleMyDiscussionsPress.bind(this);
   }
 
   async componentDidMount(){
@@ -82,7 +90,7 @@ class TeacherHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
-          <SquareAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : this.state.profilePicture }/>
+          <SquareAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random" }/>
           <TouchableOpacity onPress={this.handleTeacherProfilePress} style={{marginTop:16}}>
             <Text style={{ color: this.props.theme.colors.primary }}>Lihat Profile</Text>
           </TouchableOpacity>
@@ -93,24 +101,35 @@ class TeacherHomeScreen extends React.PureComponent {
         </View>
 
         <View style={{marginBottom: 64}}/>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={this.handleClassListPress}>
-              <View style={styles.button} >
-                <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                  <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+        <View style={{display:"flex"}}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={this.handleClassListPress}>
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                  </View>
                 </View>
-              </View>
-              <Text>Lihat kelas</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleAddPress} >
-              <View style={styles.button} >
-                <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                  <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+                <Text>Lihat  kelas</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.handleAddPress} >
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+                  </View>
                 </View>
-              </View>
-              <Text>Tambah Tugas</Text>
-          </TouchableOpacity>
+                <Text>Tambah Tugas</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={this.handleMyDiscussionsPress} style={{ alignItems: "center"}}>
+                  <View style={styles.button} >
+                    <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                      <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                    </View>
+                  </View>
+                  <Text>Diskusi Saya</Text>
+              </TouchableOpacity>
+          </View>
         </View>
       </View>
     );

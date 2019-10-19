@@ -16,7 +16,7 @@ import TaskSubmissionScreen from "modules/Classroom/screens/Student/TaskSubmissi
 import AddTaskSubmissionScreen from "modules/Classroom/screens/Student/AddTaskSubmissionScreen"
 import AnnouncementScreen from "modules/Classroom/screens/Student/AnnouncementScreen"
 import StatusChangeScreen from "src/screens/StatusChangeScreen";
-import DiscussionNavigatorObj from "modules/Classroom/navigators/DiscussionNavigatorObj"
+import MyDiscussionsScreen from "modules/Classroom/screens/MyDiscussionsScreen";
 
 const MyNavigator = createStackNavigator(
   {
@@ -35,6 +35,7 @@ const MyNavigator = createStackNavigator(
     AddTaskSubmission: {screen: AddTaskSubmissionScreen},
     Announcement: {screen: AnnouncementScreen},
     StatusChange: {screen: StatusChangeScreen},
+    MyDiscussions: {screen: MyDiscussionsScreen},
   },
   {
     initialRouteName: "StudentHome"

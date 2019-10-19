@@ -7,7 +7,7 @@ import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[] };
+const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[] };
 
 class StudentClassListPickerScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -18,19 +18,19 @@ class StudentClassListPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     if(this._isMounted){
-      this.setState({classList: []})
+      this.setState({classList: [], isRefreshing: true})
     }
-    this.setState({classList: []})
     const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
     if(this._isMounted){
-      this.setState({ classList, filteredClassList: classList })
+      this.setState({ classList, filteredClassList: classList, isRefreshing: false })
     }
   }
+
+  handleRefresh = () => this.loadClasses()
 
   handleClassPress = class_ => {
     const classId = class_.id;
     StudentAPI.addStudentClass(this.studentEmail, this.props.currentSchool.id, classId).then(() => {
-      this.setState({ isLoading: false });
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
       navigation.goBack();
@@ -62,6 +62,7 @@ class StudentClassListPickerScreen extends React.PureComponent {
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
 
@@ -90,6 +91,8 @@ class StudentClassListPickerScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

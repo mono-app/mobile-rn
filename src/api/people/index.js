@@ -22,6 +22,7 @@ export default class PeopleAPI{
    */
   static normalizePeople(documentSnapshot){
     const newPeople = documentSnapshot.data();
+
     newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
 
     if(newPeople.isCompleteSetup) {
@@ -29,6 +30,7 @@ export default class PeopleAPI{
         newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
       }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
     }
+
     return newPeople;
   }
 
@@ -73,7 +75,6 @@ export default class PeopleAPI{
   }
 
   static async isMonoIdAvailable(monoId){
-    console.log(monoId)
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const userQuerySnapshot = await db.collection(userCollection.getName()).where("applicationInformation.id","==",monoId).get();

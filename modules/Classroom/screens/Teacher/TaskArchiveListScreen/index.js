@@ -6,7 +6,7 @@ import ArchiveListItem from "modules/Classroom/components/ArchiveListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
-const INITIAL_STATE = { isLoading: true, showSnackbarSuccessDeleting: false, taskList: [], filteredTaskList: [] };
+const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false, taskList: [], filteredTaskList: [] };
 
 class TaskArchiveListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -15,12 +15,12 @@ class TaskArchiveListScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadTasks()
+
   loadTasks = async () => {
-    if(this._isMounted)
-      this.setState({ taskList: [] });
+    if(this._isMounted) this.setState({ taskList: [], isRefreshing: true});
     const taskList = await TaskAPI.getExpiredTasks(this.props.currentSchool.id, this.classId);
-    if(this._isMounted)
-     this.setState({ taskList, filteredTaskList: taskList });
+    if(this._isMounted) this.setState({ taskList, filteredTaskList: taskList, isRefreshing: false });
   }
 
   handleTaskSubmissionPress = (task) => {
@@ -69,6 +69,7 @@ class TaskArchiveListScreen extends React.PureComponent {
     this.subjectDesc = this.props.navigation.getParam("subjectDesc", "");
     this.loadTasks = this.loadTasks.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -84,11 +85,11 @@ class TaskArchiveListScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
-                navigation={this.props.navigation}
-                title={this.props.navigation.getParam("subject", "")}
-                subtitle={this.props.navigation.getParam("subjectDesc", "")}
-                style={{ backgroundColor: "white" }}
-              />
+          navigation={this.props.navigation}
+          title={this.props.navigation.getParam("subject", "")}
+          subtitle={this.props.navigation.getParam("subjectDesc", "")}
+          style={{ backgroundColor: "white" }}
+        />
         <View style={{ margin: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
@@ -97,6 +98,8 @@ class TaskArchiveListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
           data={this.state.filteredTaskList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

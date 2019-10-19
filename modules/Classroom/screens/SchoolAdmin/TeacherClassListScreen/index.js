@@ -8,7 +8,7 @@ import AppHeader from "src/components/AppHeader";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoading: true, classList:[], filteredClassList:[]   };
+const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[]   };
 
 class TeacherClassListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -17,15 +17,13 @@ class TeacherClassListScreen extends React.PureComponent {
     };
   };
 
+  handleRefresh = () => this.loadClasses()
+
   loadClasses = async () => {
-    if(this._isMounted){
-      this.setState({classList: []})
-    }
+    if(this._isMounted) this.setState({classList: [], isRefreshing: true})
     const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.teacherEmail);
-    if(this._isMounted){
-      this.setState({ classList, filteredClassList: classList });
-    }
-   }
+    if(this._isMounted) this.setState({ classList, filteredClassList: classList, isRefreshing: false });
+  }
 
   handleClassPress = class_ => {
     const payload = {
@@ -67,6 +65,7 @@ class TeacherClassListScreen extends React.PureComponent {
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleAddClassPress = this.handleAddClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount(){
@@ -103,6 +102,8 @@ class TeacherClassListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

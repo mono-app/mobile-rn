@@ -72,6 +72,7 @@ export class CurrentUserProvider extends React.PureComponent{
     const blockedByCollection = new BlockedByCollection();
     const hideCollection = new HideCollection();
     const userRef = db.collection(userCollection.getName()).doc(email); 
+  
     this.userListener = userRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
         const userData = PeopleAPI.normalizePeople(documentSnapshot);
@@ -79,36 +80,34 @@ export class CurrentUserProvider extends React.PureComponent{
         this.setState({ user: userData });
       }
     });
-
+    
     const friendListDocRef = db.collection(friendListCollection.getName()).doc(email)
     const blockedColRef = friendListDocRef.collection(blockedCollection.getName())
-    this.blockedUserListener = blockedColRef.onSnapshot((querySnapshot)=> {
-      const queryDocumentSnapshotList = querySnapshot.docs
-      const blockedUserList = queryDocumentSnapshotList.map(documentSnapshot => {
-        return documentSnapshot.id
+      this.blockedUserListener = blockedColRef.onSnapshot((querySnapshot)=> {
+        const queryDocumentSnapshotList = querySnapshot.docs
+        const blockedUserList = queryDocumentSnapshotList.map(documentSnapshot => {
+          return documentSnapshot.id
+        })
+        this.setState({blockedUserList: blockedUserList})
       })
-      this.setState({blockedUserList: blockedUserList})
-    })
 
     const blockedByColRef = friendListDocRef.collection(blockedByCollection.getName())
-    this.blockedByUserListener = blockedByColRef.onSnapshot((querySnapshot)=> {
-      const queryDocumentSnapshotList = querySnapshot.docs
-      const blockedByUserList = queryDocumentSnapshotList.map(documentSnapshot => {
-        return documentSnapshot.id
+      this.blockedByUserListener = blockedByColRef.onSnapshot((querySnapshot)=> {
+        const queryDocumentSnapshotList = querySnapshot.docs
+        const blockedByUserList = queryDocumentSnapshotList.map(documentSnapshot => {
+          return documentSnapshot.id
+        })
+        this.setState({blockedByUserList: blockedByUserList})
       })
-      this.setState({blockedByUserList: blockedByUserList})
-    })
-
+    
     const hideColRef = friendListDocRef.collection(hideCollection.getName())
-    this.hiddenUserListener = hideColRef.onSnapshot((querySnapshot)=> {
-      const queryDocumentSnapshotList = querySnapshot.docs
-      const hiddenUserList = queryDocumentSnapshotList.map(documentSnapshot => {
-        return documentSnapshot.id
+        this.hiddenUserListener = hideColRef.onSnapshot((querySnapshot)=> {
+        const queryDocumentSnapshotList = querySnapshot.docs
+        const hiddenUserList = queryDocumentSnapshotList.map(documentSnapshot => {
+          return documentSnapshot.id
+        })
+        this.setState({hiddenUserList: hiddenUserList})
       })
-
-      this.setState({hiddenUserList: hiddenUserList})
-    })
-
   };
 
   handleUnreadChat = (roomId, number) => {

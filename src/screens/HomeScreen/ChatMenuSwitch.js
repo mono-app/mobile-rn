@@ -29,15 +29,17 @@ function ChatMenuSwitch(props){
           showChildInTooltip={false}
           content={<Text>Klik disini melihat history chat</Text>}
           onClose={() => props.homeScreenTutorial.show(3)}>
+          
             <Button 
               mode={selectedMenu === "chat"? "contained": "outlined"} style={{ borderRadius: 50 }}
               onPress={handleMenuChatPress}>
                 Percakapan
             </Button>
-            {(props.unreadChatRoomList.length>0)? 
+           
+        </Tooltip>
+        {(props.unreadChatRoomList.length>0)? 
             <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
             : <View/>}
-        </Tooltip>
       </View>
       <View style={{ marginHorizontal: 16, position: "relative" }}>
         <Tooltip
@@ -46,15 +48,17 @@ function ChatMenuSwitch(props){
             showChildInTooltip={false}
             content={<Text>Klik disini melihat history notifikasi</Text>}
             onClose={() => props.homeScreenTutorial.end()}>
+         
           <Button 
             mode={selectedMenu === "notification"? "contained": "outlined"} style={{ borderRadius: 50 }}
             onPress={handleMenuNotificationPress}>
             Notifikasi
           </Button>
-          {(props.unreadBotRoomList.length>0)? 
-            <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
-            : <View/>}
+        
         </Tooltip>
+        {(props.unreadBotRoomList.length>0)? 
+          <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
+          : <View/>}
       </View>
     </View>
   )

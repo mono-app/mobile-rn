@@ -4,9 +4,6 @@ import { View,FlatList, StyleSheet } from "react-native";
 import Navigator from "src/api/navigator";
 import { Appbar, Text, ActivityIndicator, Dialog, Caption, Subheading, Headline } from "react-native-paper";
 import SchoolListItem from "modules/Classroom/components/SchoolListItem"
-import TeacherAPI from "modules/Classroom/api/teacher"
-import StudentAPI from "modules/Classroom/api/student"
-import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
 import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import MySearchbar from "src/components/MySearchbar"

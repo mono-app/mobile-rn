@@ -3,6 +3,23 @@ const admin = require("firebase-admin");
 
 function Discussion(){}
 
+
+Discussion.triggerNewDiscussion = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/tasks/{taskId}/discussions/{discussionId}").onCreate(async (documentSnapshot, context) => {
+  const discussionDocument = documentSnapshot.data();
+  const { schoolId, classId, taskId, discussionId  } = context.params;
+
+  // this trigger for auto add room audiences rooms collection  
+  const db = admin.firestore();
+  const userMappingRef = db.collection("userMapping").doc(discussionDocument.posterEmail);
+  const schoolRef = userMappingRef.collection("schools").doc(schoolId)
+  const discussionRef = schoolRef.collection("discussions").doc(discussionId)
+  const data = Object.assign({classId: classId, taskId: taskId}, documentSnapshot.data())
+  discussionRef.set(data)
+ 
+  return Promise.resolve(true);
+})
+
+
 Discussion.sendNotificationForNewDiscussion = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/tasks/{taskId}/discussions/{discussionId}").onCreate(async (documentSnapshot, context) => {
   const discussionDocument = documentSnapshot.data();
   const { schoolId, classId, taskId, discussionId  } = context.params;

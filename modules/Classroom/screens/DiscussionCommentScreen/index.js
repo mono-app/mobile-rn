@@ -334,7 +334,6 @@ class DiscussionCommentScreen extends React.PureComponent {
         />
        
         <KeyboardAwareScrollView style={{flex:1}}>         
-
           <Card style={{ elevation: 1, marginTop: 8}}>
               <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
                 <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
@@ -404,11 +403,12 @@ class DiscussionCommentScreen extends React.PureComponent {
                   onChangeText={this.handleCommentChange}
                   value={this.state.comment}
                   multiline={true}
+                  maxLength={500}
                   placeholder="Tuliskan komentar kamu di sini."
                 />         
               </View>
               <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-                <Text>0/500</Text>
+                <Text>{this.state.comment.length}/500</Text>
               </View>
 
                <FlatList
@@ -437,6 +437,7 @@ class DiscussionCommentScreen extends React.PureComponent {
                 </TouchableOpacity>
                 
                 <Button
+                  disabled={this.state.isSendingComment}
                   onPress={this.handleSendCommentPress}
                   isLoading={this.state.isSendingComment}
                   style={{paddingVertical:8,paddingLeft:8,paddingRight:8,marginBottom:0}}
@@ -451,7 +452,7 @@ class DiscussionCommentScreen extends React.PureComponent {
               renderItem={({ item }) => {
                 return (
                   <CommentListItem 
-                   comment={item} onImagePress={(idx)=>{this.handlePicturePress(item.images, idx)}} 
+                    schoolId={this.schoolId} comment={item} onImagePress={(idx)=>{this.handlePicturePress(item.images, idx)}} 
                    />
                 )
               }}

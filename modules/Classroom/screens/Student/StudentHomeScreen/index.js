@@ -42,6 +42,14 @@ class StudentHomeScreen extends React.PureComponent {
     this.props.navigation.navigate("Announcement", payload);
   }
 
+  
+  handleMyDiscussionsPress = () => {
+    payload = {
+      schoolId : this.props.currentSchool.id,
+    }
+    this.props.navigation.navigate("MyDiscussions", payload);
+  }
+
   constructor(props) {    
     super(props);
     INITIAL_STATE.schoolId = SchoolAPI.currentSchoolId
@@ -50,6 +58,7 @@ class StudentHomeScreen extends React.PureComponent {
     this.handleStudentProfilePress = this.handleStudentProfilePress.bind(this);
     this.handleClassListPress = this.handleClassListPress.bind(this);
     this.handleAnnouncementPress = this.handleAnnouncementPress.bind(this);
+    this.handleMyDiscussionsPress = this.handleMyDiscussionsPress.bind(this);
   }
 
   async componentDidMount(){
@@ -95,23 +104,35 @@ class StudentHomeScreen extends React.PureComponent {
 
         <View style={{marginBottom: 64}}/>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={this.handleClassListPress}>
-              <View style={styles.button} >
-                <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                  <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+        <View style={{display:"flex"}}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={this.handleClassListPress} style={{ alignItems: "center"}}>
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                  </View>
                 </View>
-              </View>
-              <Text>Kelas Saya</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleAnnouncementPress} >
-              <View style={styles.button} >
-                <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                  <FontAwesome name="comment" style={{color: "#fff"}} size={24} />
+                <Text> Kelas Saya </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.handleAnnouncementPress} style={{ alignItems: "center"}}>
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="comment" style={{color: "#fff"}} size={24} />
+                  </View>
                 </View>
-              </View>
-              <Text>Pengumuman</Text>
-          </TouchableOpacity>
+                <Text> Pengumuman </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={this.handleMyDiscussionsPress} style={{ alignItems: "center"}}>
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                  </View>
+                </View>
+                <Text>Diskusi Saya</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );

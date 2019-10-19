@@ -65,14 +65,16 @@ function SplashScreen(props){
         doLogout()
       }
     }
-
     if(props.isLoggedIn) {
+
       if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
 
         let routeNameForReset = "MainTabNavigator";
+
         if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified){
-          
+
           if(props.currentUser.isCompleteSetup){
+
             routeNameForReset = "MainTabNavigator"
           } else {
             routeNameForReset = "AccountSetup"

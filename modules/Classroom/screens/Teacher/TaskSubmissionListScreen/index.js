@@ -6,7 +6,7 @@ import AppHeader from "src/components/AppHeader";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 
-const INITIAL_STATE = { isLoading: true };
+const INITIAL_STATE = { isRefreshing: true };
 
 class TaskSubmissionListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -15,13 +15,12 @@ class TaskSubmissionListScreen extends React.PureComponent {
     };
   };
 
-  loadSubmissions = async () => {
-    if(this._isMounted)
-      this.setState({ submissionList: [] });
+  handleRefresh = () => this.loadSubmissions()
 
+  loadSubmissions = async () => {
+    if(this._isMounted) this.setState({ submissionList: [], isRefreshing: true });
     const submissionList = await SubmissionAPI.getSubmissions(this.props.currentSchool.id, this.classId, this.taskId);
-    if(this._isMounted)
-      this.setState({ submissionList });
+    if(this._isMounted) this.setState({ submissionList, isRefreshing: false });
   }
 
   handleSubmissionPress = submission => {
@@ -77,6 +76,8 @@ class TaskSubmissionListScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.submissionList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
