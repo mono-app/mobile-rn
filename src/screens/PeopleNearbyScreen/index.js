@@ -8,13 +8,11 @@ import AppHeader from "src/components/AppHeader";
 import { View, FlatList, Platform } from "react-native";
 import Permissions from "react-native-permissions";
 import Geolocation from 'react-native-geolocation-service';
-import geohash from 'ngeohash'
 
 function PeopleNearbyScreen(props){
-  const { currentUser } = props;
   const [ isPermissionGranted, setPermissionGranted ] = React.useState([false]);
   const [ peopleList, setPeopleList ] = React.useState([]);
-  const friendsListener = React.useRef(null);
+  const _isMounted = React.useRef(true);
 
   const handleContactPress = (people) => {
     props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
@@ -43,7 +41,7 @@ function PeopleNearbyScreen(props){
 
       if(permissionResponse === "authorized"){
         // do something if authorized
-        setPermissionGranted(true)
+        if(_isMounted.current) setPermissionGranted(true)
       }else{
         // do something if unauthorized
       }
@@ -71,14 +69,14 @@ function PeopleNearbyScreen(props){
 
   const getNearbyPeople = async (latitude, longitude) => {
     const peoples = await PeopleAPI.getNearbyPeoples(props.currentUser.email, latitude,longitude,25000)
-    setPeopleList(peoples);
+    if(_isMounted.current) setPeopleList(peoples);
 
   }
 
   React.useEffect(() => {
     const init = async() => {
       const result = await checkPermission()
-      setPermissionGranted(result)
+      if(_isMounted.current) setPermissionGranted(result)
       if(!result){
         await requestPermission();
         return;
@@ -88,7 +86,8 @@ function PeopleNearbyScreen(props){
     }
     init()
 
-    return function cleanup(){
+    return ()=>{
+      _isMounted.current = false
     }
   }, [isPermissionGranted])
   
@@ -102,7 +101,7 @@ function PeopleNearbyScreen(props){
         keyExtractor={(item) => item.email}
         renderItem={({ item, index }) => {
           const distance = (item.distance)? item.distance: 0
-          return <PeopleListItem key={index} people={item} distance={distance} onPress={handleContactPress}/>
+          return <PeopleListItem key={index} email={item.email} distance={distance} onPress={handleContactPress}/>
         }}/>
     </View>
   )

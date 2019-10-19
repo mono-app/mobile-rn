@@ -40,8 +40,8 @@ function SettingsScreen(props){
   React.useEffect(() => {
     const fetchData = async () => {
       Logger.log("SettingsScreen", "get latest status");
-      const { content } = await StatusAPI.getLatestStatus(currentUser.email);
-      setStatus(content);
+      const data  = await StatusAPI.getLatestStatus(currentUser.email);
+      if(data && data.content) setStatus(data.content);
     }
     fetchData();
   }, [(currentUser.statistic && currentUser.statistic.totalStatus)?currentUser.statistic.totalStatus:0])

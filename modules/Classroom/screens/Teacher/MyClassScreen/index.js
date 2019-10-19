@@ -1,6 +1,6 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import MySearchBar from "src/components/MySearchbar";
+import MySearchbar from "src/components/MySearchbar";
 import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
@@ -67,14 +67,14 @@ class MyClassScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
             navigation={this.props.navigation}
             title="Kelas Saya"
             style={{ backgroundColor: "white" }}
           />
         <View style={{ padding: 16 }}>
-          <MySearchBar 
+          <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
             placeholder="Cari Kelas" />
         </View>

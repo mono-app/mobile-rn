@@ -1,13 +1,16 @@
 import React from "react";
 import AppHeader from "src/components/AppHeader";
 import SmartGallery from "react-native-smart-gallery";
+import { View } from "react-native";
 
 const INITIAL_STATE = { images: [] };
 
 export default class GallerySwiperScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => { return {
-    header: <AppHeader navigation={navigation} style={{ backgroundColor: "#000" }}/>
-  }}
+  static navigationOptions = () => { 
+    return {
+      header: null
+    }
+  }
   loadImages = async () => {
     const dimensions = {width: 1080, height: 1920}
     const newImages = await this.images.map((image) => {
@@ -22,7 +25,6 @@ export default class GallerySwiperScreen extends React.PureComponent {
     this.loadImages = this.loadImages.bind(this)
     this.images = this.props.navigation.getParam("images", []);
     this.initialIndex = this.props.navigation.getParam("index", 0);
-    console.log(this.images)
   }
 
   componentDidMount(){
@@ -32,15 +34,17 @@ export default class GallerySwiperScreen extends React.PureComponent {
   render() {  
     if(this.state.images.length>0){
       return (
-     
-        <SmartGallery
-          index={this.initialIndex}
-          images={this.state.images}
-          loadMinimal={true}
-          loadMinimalSize={2}
-          sensitiveScroll={false}
-  
-        />
+        <View style={{flex: 1}}>
+          <AppHeader navigation={this.props.navigation} style={{ backgroundColor: "#000" }}/>
+          <SmartGallery
+                    index={this.initialIndex}
+                    images={this.state.images}
+                    loadMinimal={true}
+                    loadMinimalSize={2}
+                    sensitiveScroll={false}
+            
+                  />
+        </View>
       );
     }
 

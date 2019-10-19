@@ -8,9 +8,11 @@ import AppHeader from "src/components/AppHeader";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 
 class ScanQRCodeSCreen extends React.PureComponent{
-  static navigationOptions = ({ navigation }) => { return {
-    header: <AppHeader navigation={navigation} style={{ backgroundColor: "transparent" }}/>
-  }}
+  static navigationOptions = () => { 
+    return {
+      header: null
+    };
+  }
 
   handleViewMyQRCodePress = () => this.props.navigation.navigate("MyQR");
   handleQRCodeScannerRead = async e => {
@@ -37,6 +39,7 @@ class ScanQRCodeSCreen extends React.PureComponent{
   render(){
     return(
       <View style={{ flex: 1 }}>
+        <AppHeader navigation={this.props.navigation} style={{ backgroundColor: "transparent" }}/>
         <QRCodeScanner
           onRead={this.handleQRCodeScannerRead}
           style={{ backgroundColor: "#EF6F6C" }}

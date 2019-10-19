@@ -33,7 +33,9 @@ export default class SignUpScreen extends React.PureComponent{
       this.setState({isError: true, errorMessage: "Password tidak boleh kosong!"});
     }else if(this.state.password !== this.state.verifyPassword){
       this.setState({isError: true, errorMessage: "Password tidak sama!"});
-    }else{
+    }else if(this.state.password.length < 6){
+      this.setState({isError: true, errorMessage: "Password minimal 6 karakter!"});
+    }else {
       let email = JSON.parse(JSON.stringify(this.state.email))
       email = email.toLowerCase()
       const isExists = await PeopleAPI.isExists(email)

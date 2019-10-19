@@ -81,7 +81,7 @@ function GroupChatScreen(props){
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <ChatHeader 
-        navigation={props.navigation} title={headerTitle} subtitle={"Online"}  
+        navigation={props.navigation} title={headerTitle} subtitle={"Online"} isFriend={true}
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8", }}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop} navigation={props.navigation} room={room}/>
       <ChatBottomTextInput room={room}

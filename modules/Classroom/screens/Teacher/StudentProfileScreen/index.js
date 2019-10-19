@@ -52,7 +52,7 @@ class StudentProfileScreen extends React.PureComponent {
   
   handleStartChatPress = async () => {
     this.setState({ isLoadingButtonChat: true });
-    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentTeacher.email, this.studentEmail);
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentTeacher.email, this.studentEmail,"chat");
     this.setState({ isLoadingButtonChat: false });
     this.props.navigation.navigate("Chat", {room} );
   }

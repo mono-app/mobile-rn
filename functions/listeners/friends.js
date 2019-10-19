@@ -1,8 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require("firebase-admin");
-const moment = require("moment");
-
-const Room = require("../lib/room");
+const Bot = require("../lib/bot");
 
 function Friends(){}
 
@@ -20,19 +18,6 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
     await userFriendListRef.set({ totalFriends: 1 })
   }
 
-  // notify receiver that requestor is requesting to be a friend
-  // search if FriendRequest bot has room with the receiver
-  const BOT_NAME = "FriendRequest";
-  const botQuery = new admin.firestore.FieldPath("audiencesQuery", BOT_NAME);
-  const receiverQuery = new admin.firestore.FieldPath("audiencesQuery", receiverEmail);
-  const roomRef = await db.collection("rooms").where(botQuery, "==", true).where(receiverQuery, "==", true).get();
-  
-  // create room first before sending a message to the bot
-  const arrRooms = roomRef.docs.map((documentSnapshot) => documentSnapshot.ref);
-  if(roomRef.empty){
-    const newRoomRef = await Room.createBotRoom(BOT_NAME, [BOT_NAME, receiverEmail]);
-    arrRooms.push(newRoomRef);
-  }
 
   // get requestor details to be sent by the bot
   const requestorRef = await db.collection("users").doc(requestorEmail).get();
@@ -40,15 +25,14 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
 
   // update the document to include requestor detail
   await documentSnapshot.ref.update({ "applicationInformation": requestor.applicationInformation })
-  await Promise.all(arrRooms.map(async (roomRef) => {
-    const messageRef = roomRef.collection("messages").doc();
-    const details = Object.assign({ targetEmail: requestorRef.id }, documentSnapshot.data());
-    await messageRef.set({
-      content: `${requestor.applicationInformation.nickName} ingin berteman dengan kamu. Lihat sekarang!`,
-      senderEmail: BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()),
-      readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "friend-request", details
-    })
-  }))
+
+  // notify receiver that requestor is requesting to be a friend
+  // Send BOT message
+  const details = Object.assign({ targetEmail: requestorRef.id }, documentSnapshot.data());
+  const messageBot= `${requestor.applicationInformation.nickName} ingin berteman dengan kamu. Lihat sekarang!`
+
+  Bot.sendBotMessage("FriendRequest",receiverEmail,details,messageBot,"friend-request")
+  // END Send Bot Message
 })
 
 

@@ -163,7 +163,7 @@ export default class MessagesAPI{
       batch.update(documentSnapshot.ref, {readBy: readBy});
     })
 
-    batch.update(roomRef, { "lastMessage.readTime": moment().unix() })
+    batch.update(roomRef, { "lastMessage.readTime": firebase.firestore.FieldValue.serverTimestamp() })
 
     await batch.commit();
    

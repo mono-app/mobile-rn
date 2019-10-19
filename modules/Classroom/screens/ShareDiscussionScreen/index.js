@@ -78,7 +78,7 @@ class ShareDiscussionScreen extends React.PureComponent {
       if(clonedPeopleList[i].checked){
         const peopleEmail = clonedPeopleList[i].id
         const message = "Share Discussion, \nTitle: "+this.discussion.title
-        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail);
+        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail,"chat");
         const schoolId = this.schoolId
         const classId = this.classId
         const taskId = this.taskId
@@ -111,7 +111,7 @@ class ShareDiscussionScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
             navigation={this.props.navigation}
             title="Bagikan ke"

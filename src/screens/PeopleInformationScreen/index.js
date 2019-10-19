@@ -11,13 +11,11 @@ import ActionButton from "src/screens/PeopleInformationScreen/ActionButton";
 import AppHeader from "src/components/AppHeader";
 import { View } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
-import Button from "src/components/Button";
-import { PersonalRoomsAPI } from "src/api/rooms";
-import { StackActions } from "react-navigation";
 
 function PeopleInformationScreen(props){
   const { currentUser } = props;
 
+  const _isMounted = React.useRef(true);
   const [ isLoadingProfile, setIsLoadingProfile ] = React.useState(true);
   const [ people, setPeople ] = React.useState(null);
   const [ peopleFriendStatus, setPeopleFriendStatus ] = React.useState(null);
@@ -29,23 +27,24 @@ function PeopleInformationScreen(props){
 
   const handleActionButtonComplete = () => fetchPeopleFriendStatus();
   const fetchPeopleInformation = async () => {
-    setIsLoadingProfile(true);
+    if(_isMounted.current) setIsLoadingProfile(true);
     const peopleData = await PeopleAPI.getDetail(peopleEmail);
     const status = await StatusAPI.getLatestStatus(peopleEmail);
     Logger.log("PeopleInformationScreen.fetchPeopleInformation", peopleData)
-    if(status) setStatus(status.content);
+    if(status && _isMounted.current) setStatus(status.content);
+    if(_isMounted.current) setPeople(peopleData);
+    if(_isMounted.current) setJoinedFrom(moment(peopleData.creationTime.seconds * 1000).format("DD MMMM YYYY"));
+    if(_isMounted.current) setIsLoadingProfile(false);
+   
 
-    setPeople(peopleData);
-    setJoinedFrom(moment.unix(parseInt(peopleData.creationTime) / 1000).format("DD MMMM YYYY"));
-    setIsLoadingProfile(false);
   }
 
   const fetchPeopleFriendStatus = async () => {
     const peopleFriendStatus = await new FriendsAPI().getFriendStatus(currentUser.email, peopleEmail);
     if(currentUser.email!==peopleEmail){
-      setPeopleFriendStatus(peopleFriendStatus);
+      if(_isMounted.current) setPeopleFriendStatus(peopleFriendStatus);
     }else{
-      setPeopleFriendStatus("myself");
+      if(_isMounted.current) setPeopleFriendStatus("myself");
     }
   }
 
@@ -54,6 +53,9 @@ function PeopleInformationScreen(props){
   React.useEffect(() => {
     fetchPeopleInformation();
     fetchPeopleFriendStatus();
+    return () => {
+      _isMounted.current = false
+    }
   }, [])
 
   if(isLoadingProfile){
@@ -77,8 +79,9 @@ function PeopleInformationScreen(props){
         title={people.applicationInformation.nickName}
         subtitle={status}/>
       <View style={{ marginTop: 16, marginBottom: 16 }}>
-        <PeopleInformationContainer fieldName="Sumber" fieldValue={source.value}/>
-        <PeopleInformationContainer fieldName="Bergabung Sejak" fieldValue={moment(joinedFrom).format("DD MMMM YYYY")}/>
+      <PeopleInformationContainer fieldName="Mono ID" fieldValue={people.applicationInformation.id}/>
+      <PeopleInformationContainer fieldName="Sumber" fieldValue={source.value}/>
+      <PeopleInformationContainer fieldName="Bergabung Sejak" fieldValue={joinedFrom}/>
       </View>
       <ActionButton 
         peopleEmail={peopleEmail} source={source}

@@ -97,21 +97,22 @@ class DiscussionCommentScreen extends React.PureComponent {
   }
 
   handleSendCommentPress = async () => {
-    if(this._isMounted)
-      this.setState({ isSendingComment:true })
-    const currentUserEmail = this.props.currentUser.email
+    const comment = JSON.parse(JSON.stringify(this.state.comment)).trim()
+    if(comment.length>0){
+      if(this._isMounted) this.setState({ isSendingComment:true })
+      const currentUserEmail = this.props.currentUser.email
 
-    data = {
-      comment: this.state.comment,
-      posterEmail: currentUserEmail,
-      location: {...this.state.locationCoordinate},
-      images: this.state.imagesPicked
+      data = {
+        comment: this.state.comment,
+        posterEmail: currentUserEmail,
+        location: {...this.state.locationCoordinate},
+        images: this.state.imagesPicked
+      }
+
+      await DiscussionAPI.sendComment(this.schoolId, this.classId, this.taskId, this.discussion.id, data)
+      await this.loadComments();
+      if(this._isMounted) this.setState({ comment:"", isSendingComment:false, locationCoordinate: null, imagesPicked: [] })
     }
-
-    await DiscussionAPI.sendComment(this.schoolId, this.classId, this.taskId, this.discussion.id, data)
-    await this.loadComments();
-    if(this._isMounted)
-      this.setState({ comment:"", isSendingComment:false, locationCoordinate: null, imagesPicked: [] })
   }
 
   handlePicturePress = (images,index) => {

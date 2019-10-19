@@ -38,7 +38,7 @@ function ChatMenuSwitch(props){
            
         </Tooltip>
         {(props.unreadChatRoomList.length>0)? 
-            <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
+            <Badge style={{position: "absolute", top: -5, right: -5,backgroundColor:"red" }}></Badge>
             : <View/>}
       </View>
       <View style={{ marginHorizontal: 16, position: "relative" }}>
@@ -57,7 +57,7 @@ function ChatMenuSwitch(props){
         
         </Tooltip>
         {(props.unreadBotRoomList.length>0)? 
-          <Badge style={{position: "absolute", top: -5, right: -5, }}></Badge>
+          <Badge style={{position: "absolute", top: -5, right: -5,backgroundColor:"red" }}></Badge>
           : <View/>}
       </View>
     </View>

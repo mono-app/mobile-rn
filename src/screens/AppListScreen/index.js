@@ -24,12 +24,8 @@ function AppListScreen(props){
   const fetchData = async () => {
     if(_isMounted.current)
       setData([]);
-    const schoolList = await SchoolAPI.getUserSchools(props.currentUser.email);
-    if(schoolList.length>0){
-      data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom", params: {introduction: false} })
-    }else{
-      data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom", params: {introduction: true} })
-    }
+      
+    data.push({ title: "Classroom", icon: <MaterialIcons name="class" size={24}/>, navigateTo: "Classroom" })
     data.push({ title: "News", icon: <MaterialCommunityIcons name="newspaper" size={24}/>, navigateTo: "News" })
     data.push({ title: "People Nearby", icon: <MaterialCommunityIcons name="newspaper" size={24}/>, navigateTo: "PeopleNearby" })
     if(_isMounted.current)

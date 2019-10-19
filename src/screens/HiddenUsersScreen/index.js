@@ -3,12 +3,10 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
 import { View, StyleSheet, FlatList } from "react-native";
-import FriendsAPI from "src/api/friends";
 import PeopleListItem from "src/components/PeopleListItem";
 
 function HiddenUsersScreen(props){
-  const { navigation, currentUser } = props;
-  const [ peopleList, setPeopleList ] = React.useState([]);
+  const { navigation, currentUser, hiddenUserList } = props;
   const _isMounted = React.useRef(true);
 
   const styles = StyleSheet.create({
@@ -25,11 +23,7 @@ function HiddenUsersScreen(props){
   }
 
   React.useEffect(() => {
-    const init = async () => {
-      const hiddenUsers = await FriendsAPI.getHiddenUsers(currentUser.email)
-      setPeopleList(hiddenUsers)
-    }
-    init()
+   
     return function cleanup(){
       _isMounted.current=false
     }
@@ -42,10 +36,10 @@ function HiddenUsersScreen(props){
       <View style={styles.container}>
         <FlatList
           style={{ backgroundColor: "white" }}
-          data={peopleList}
+          data={hiddenUserList}
           keyExtractor={(item) => item.email}
           renderItem={({ item, index }) => {
-            return <PeopleListItem key={index} people={item} onPress={handleContactPress}/>
+            return <PeopleListItem key={index} email={item} onPress={handleContactPress}/>
           }}/>
       </View>
     </Container> 

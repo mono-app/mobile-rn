@@ -1,6 +1,5 @@
 import React from "react";
 import firebase from "react-native-firebase";
-import moment from "moment";
 import libphonenumber from 'libphonenumber-js';
 import VerifyPhoneAPI from "src/api/verifyphone"
 import { StackActions, NavigationEvents, NavigationActions } from "react-navigation";
@@ -95,7 +94,8 @@ class VerifyPhoneScreen extends React.PureComponent{
         }else{
           await userDocumentRef.set({
             phoneNumber: { value: this.state.phoneNumber, isVerified: true },
-            isCompleteSetup: false
+            isCompleteSetup: false,
+            creationTime: firebase.firestore.FieldValue.serverTimestamp()
           })
         }
         this.setState({ showDialog: true, isVerificationLoading: false })
@@ -130,7 +130,7 @@ class VerifyPhoneScreen extends React.PureComponent{
           db.collection("users").doc(user.email).set({
             isCompleteSetup: false,
             phoneNumber: { value: this.state.phoneNumber, isVerified: false },
-            creationTime: parseInt(moment(user.metadata.creationTime).format("x"))
+            creationTime: firebase.firestore.FieldValue.serverTimestamp()
           })
         }else if(user && this.props.currentUser.isCompleteSetup){
           db.collection("users").doc(user.email).update({
