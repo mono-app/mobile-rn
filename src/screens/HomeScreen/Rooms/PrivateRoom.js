@@ -35,8 +35,9 @@ function PrivateRoom(props){
         const classData = await ClassAPI.getDetail(school.id,school.classId)
         if(_isMounted.current) setClass(classData)
       }else{
-        const peopleData = await PeopleAPI.getDetail(realAudience);
-        if(_isMounted.current) setPeople(peopleData);
+        PeopleAPI.getDetailWithRealTimeUpdate(realAudience, (data)=>{
+          if(_isMounted.current) setPeople(data);
+        });
       } 
       if(_isMounted.current) setIsLoading(false);
     }

@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require("firebase-admin");
-const Room = require("../lib/room");
-const moment = require("moment");
+const Bot = require("../lib/bot");
 
 function Moments(){}
 
@@ -62,29 +61,12 @@ Moments.sendNotificationForNewMomentComment = functions.region("asia-east2").fir
     const peopleCommentData = peopleCommentSnapshot.data()
 
     // notify moment's creator
-    // search if Moment bot has room with the receiver
-    const BOT_NAME = "Moment";
-    const botQuery = new admin.firestore.FieldPath("audiencesQuery", BOT_NAME);
-    const receiverQuery = new admin.firestore.FieldPath("audiencesQuery", receiverEmail);
-    const roomQuerySnapshot = await db.collection("rooms").where(botQuery, "==", true).where(receiverQuery, "==", true).get();
-    
-    // create room first before sending a message to the bot
-    const arrRooms = roomQuerySnapshot.docs.map((documentSnapshot) => documentSnapshot.ref);
-    if(roomQuerySnapshot.empty){
-      const newRoomRef = await Room.createBotRoom(BOT_NAME, [BOT_NAME, receiverEmail]);
-      arrRooms.push(newRoomRef);
-    }
+    // Send BOT message
+    const details = Object.assign({ momentId: momentId }, commentDoc);
+    const messageBot= `${peopleCommentData.applicationInformation.nickName} Mengomentari Moment Kamu. Lihat sekarang!`
 
-    await Promise.all(arrRooms.map(async (roomRef) => {
-      const messageRef = roomRef.collection("messages").doc();
-      const details = Object.assign({ momentId: momentId }, commentDoc);
-      await messageRef.set({
-        content: `${peopleCommentData.applicationInformation.nickName} Mengomentari Moment Kamu. Lihat sekarang!`,
-        senderEmail: BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()),
-        readBy: {}, sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "moment-comment", details
-      })
-    }))
-
+    Bot.sendBotMessage("Moment",receiverEmail,details,messageBot,"moment-comment")
+    // END Send Bot Message
 
   }
 })

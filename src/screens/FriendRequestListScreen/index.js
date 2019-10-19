@@ -1,5 +1,5 @@
 import React from "react";
-import { View, FlatList } from "react-native";
+import { FlatList } from "react-native";
 
 import PeopleListItem from "src/components/PeopleListItem";
 
@@ -28,7 +28,7 @@ export default class FriendRequestListScreen extends React.PureComponent{
         renderItem={ ({ item }) => {
           return <PeopleListItem 
             onPress={() => this.handlePeoplePress(item)}
-            people={item} 
+            email={item.email} 
             autoFetch={true}/>
         }}/>
     )

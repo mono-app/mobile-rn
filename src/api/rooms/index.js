@@ -31,7 +31,6 @@ export default class RoomsAPI{
       })
 
       filteredRooms.sort((a, b) => ((a.lastMessage && b.lastMessage)&&a.lastMessage.sentTime < b.lastMessage.sentTime) ? 1 : -1)
-      console.log(rooms)
       callback(filteredRooms);
     })
   }
@@ -43,6 +42,16 @@ export default class RoomsAPI{
     const documentSnapshot = await roomsDocumentRef.get();
     const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
     return Promise.resolve(data);
+  }
+
+  static getDetailWithRealTimeUpdate(roomId, callback){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const roomsDocumentRef = db.collection(roomsCollection.getName()).doc(roomId);
+    return roomsDocumentRef.onSnapshot((documentSnapshot)=> {
+      const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
+      callback(data)
+    });
   }
 
   static normalizeRoom(documentSnapshot){
@@ -116,7 +125,19 @@ export default class RoomsAPI{
       return Promise.resolve({ id: roomSnapshot.id, ...roomSnapshot.data() });
 
     }
+  }
 
+  static async setInRoomStatus(roomId, email, status){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const roomsRef = db.collection(roomsCollection.getName()).doc(roomId);
+
+    if(status){
+      roomsRef.update({inRoom: firebase.firestore.FieldValue.arrayUnion(email)})
+    }else{
+      roomsRef.update({inRoom: firebase.firestore.FieldValue.arrayRemove(email)})
+    }
+    return Promise.resolve(true)
   }
 }
 
@@ -136,7 +157,7 @@ export class PersonalRoomsAPI extends RoomsAPI{
     const userPath = new firebase.firestore.FieldPath("audiencesQuery", firstPeopleEmail);
     const peoplePath = new firebase.firestore.FieldPath("audiencesQuery", secondPeopleEmail);
     const roomsRef = db.collection(roomsCollection.getName());
-    const querySnapshot = await roomsRef.where(userPath, "==", true).where(peoplePath, "==", true).get();
+    const querySnapshot = await roomsRef.where(userPath, "==", true).where(peoplePath, "==", true).where('type','==',type).get();
     
     if(querySnapshot.empty){
       const audiencesPayload = {};

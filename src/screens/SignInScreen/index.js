@@ -11,12 +11,17 @@ import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { View, Image } from 'react-native';
-import { Paragraph } from 'react-native-paper';
+import { 
+  Dialog, Paragraph, Portal, 
+  Button as MaterialButton 
+} from "react-native-paper";
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
   const [ password, setPassword ] = React.useState("");
   const [ isLoading, setIsLoading ] = React.useState(false);
+  const [isError, setError] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   const styles = StyleSheet.create({
     container: { flexDirection: 'column', backgroundColor: '#fff', justifyContent: 'flex-start', alignItems: "center" },
@@ -34,14 +39,30 @@ function SignInScreen(props){
     if(email && password){
       setIsLoading(true);
       try{
-        const { user } = await firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password);
-        props.setCurrentUserEmail(user.email);
+        const isExists = await PeopleAPI.isExists(email)
+        if(isExists){
+          const { user } = await firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password);
+          props.setCurrentUserEmail(user.email);
+        }else{
+          setErrorMessage("Email tidak terdaftar")
+          setError(true)
+        }
+
       }catch{
-        console.log("wrong username/pass")
+        setErrorMessage("Password salah")
+        setError(true)
       }finally{
         setIsLoading(false);
       }
+    }else{
+      setErrorMessage("Tolong isi email dan password")
+      setError(true)
     }
+  }
+  
+  const handleErrorDialogDismiss = () => {
+    setError(false)
+    setErrorMessage("")
   }
 
   React.useEffect(() => {
@@ -99,6 +120,17 @@ function SignInScreen(props){
           </Paragraph>
         </View>
       </View>
+      <Portal>
+        <Dialog visible={isError} onDismiss={handleErrorDialogDismiss}>
+          <Dialog.Title>Ops!</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>{errorMessage}</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <MaterialButton onPress={handleErrorDialogDismiss}>Mengerti</MaterialButton>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </KeyboardAwareScrollView>
   );
 }

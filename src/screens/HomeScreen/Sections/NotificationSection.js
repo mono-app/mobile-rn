@@ -26,7 +26,7 @@ function NotificationSection(props){
       const rooms = querySnapshot.docs.map((documentSnapshot) => RoomsAPI.normalizeRoom(documentSnapshot));
       if(_isMounted.current) setNotifications(rooms);
       setRefreshing(false)
-
+      console.log(rooms)
     })
   }
 

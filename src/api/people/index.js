@@ -6,7 +6,7 @@ import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
 import CurrentUserAPI from "src/api/people/CurrentUser";
 import { StackActions } from "react-navigation";
-import { UserCollection, RoomsCollection, StatusCollection, FriendListCollection, PeopleCollection, BlockedCollection, BlockedByCollection } from "src/api/database/collection";
+import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import {getDistance} from 'geolib';
 import {AsyncStorage} from 'react-native';
@@ -22,14 +22,16 @@ export default class PeopleAPI{
    */
   static normalizePeople(documentSnapshot){
     const newPeople = documentSnapshot.data();
+    if(documentSnapshot.exists) {
+      newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
 
-    newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
-
-    if(newPeople.isCompleteSetup) {
-      if(newPeople.applicationInformation.profilePicture !== undefined){
-        newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
-      }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
+      if(newPeople.isCompleteSetup) {
+        if(newPeople.applicationInformation.profilePicture !== undefined){
+          newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
+        }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
+      }
     }
+    
 
     return newPeople;
   }
@@ -137,7 +139,7 @@ export default class PeopleAPI{
     if(email){
       const userCollection = new UserCollection();
       const userDocument = new Document(email);
-      const db = new firebase.firestore();
+      const db = firebase.firestore();
       const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
       const documentSnapshot = await userRef.get({ source });
       if(documentSnapshot.exists){
@@ -147,14 +149,14 @@ export default class PeopleAPI{
     }else return Promise.resolve(null);
   }
 
-  /**
-   * Get currentUserEmail from local database.
-   * @returns {Promise} - a promise that contains a `currentUserEmail` variable. return your currentUserEmail
-   */
-  async getCurrentUserEmail(){
-    const currentUserEmail = await CurrentUserAPI.getCurrentUserEmail();
-    this.currentUserEmail = JSON.parse(JSON.stringify(currentUserEmail));
-    return Promise.resolve(currentUserEmail);
+  static getDetailWithRealTimeUpdate(email, callback){
+    const db = firebase.firestore();
+    const userCollection = new UserCollection();
+    const userRef = db.collection(userCollection.getName()).doc(email);
+    return userRef.onSnapshot((documentSnapshot)=>{
+      const data = PeopleAPI.normalizePeople(documentSnapshot)
+      callback(data)
+    })
   }
 
   static async setOnlineStatus(peopleEmail, status){
@@ -164,7 +166,7 @@ export default class PeopleAPI{
     const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
     const batch = db.batch();
     batch.update(userRef, { "lastOnline.status": status });
-    batch.update(userRef, { "lastOnline.timestamp": moment().unix() });
+    batch.update(userRef, { "lastOnline.timestamp": firebase.firestore.FieldValue.serverTimestamp() });
     await batch.commit();
     return Promise.resolve(true);
   }

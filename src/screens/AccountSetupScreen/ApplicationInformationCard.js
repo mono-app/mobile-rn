@@ -49,7 +49,7 @@ export default class ApplicationInformationCard extends React.PureComponent{
               value={this.state.id} onChangeText={this.handleIdChange}/>
           </View>
           <View>
-            <Text style={styles.headerText}>Nama Panggilam</Text>
+            <Text style={styles.headerText}>Nama Panggilan</Text>
             <TextInput 
               placeholder="Nama Panggilan" textContentType="name"
               value={this.state.nickName} onChangeText={this.handleNickNameChange}/>

@@ -3,7 +3,7 @@ import moment from "moment";
 import StatusAPI from "src/api/status";
 import { useCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from "react-native";
-
+import uuid from "uuid/v4"
 import StatusInputCard from "src/screens/StatusChangeScreen/StatusInputCard";
 import AppHeader from "src/components/AppHeader";
 import { View, FlatList } from "react-native";
@@ -31,10 +31,10 @@ function StatusChangeScreen(props){
           const statusDate = moment(status.timestamp.seconds * 1000);
           if(!statusDate.isSame(currentDateSection, "date")){
             currentDateSection = moment(statusDate);
-            statusItems.push({ timestamp: moment(currentDateSection), type: "dateSeparator" })
+            statusItems.push({id: uuid(), timestamp: moment(currentDateSection), type: "dateSeparator" })
           }
-          statusItems.push({ ...status, type: "item" })
-        }else statusItems.push({ ...status, type: "itemPendingServer" });
+          statusItems.push({...status, type: "item" })
+        }else statusItems.push({...status, type: "itemPendingServer" });
       })
       setStatus(statusItems);
     })

@@ -49,6 +49,8 @@ class SplashScreen extends React.PureComponent {
       this.props.navigation.navigate("Teacher");
     }else if(userRole==="student"){
       this.props.navigation.navigate("Student");
+    }else{
+      this.props.navigation.navigate("Introduction");
     }
   }
 
@@ -71,7 +73,6 @@ class SplashScreen extends React.PureComponent {
   constructor(props){
     super(props)
     this.state = INITIAL_STATE
-    this.introduction = props.navigation.getParam("introduction", null)
     this.loadSchools = this.loadSchools.bind(this)
     this.handleSchoolPress = this.handleSchoolPress.bind(this)
     this.handleBackPress = this.handleBackPress.bind(this)
@@ -80,12 +81,14 @@ class SplashScreen extends React.PureComponent {
 
   }
 
-  componentDidMount(){
-    if(this.introduction){
-      this.props.navigation.navigate("Introduction");
-    }else{
+  async componentDidMount(){
+    const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.email);
+    if(schoolList.length>0){
       this.loadSchools();
+    }else{
+      this.props.navigation.navigate("Introduction");
     }
+  
   }
 
   render() {

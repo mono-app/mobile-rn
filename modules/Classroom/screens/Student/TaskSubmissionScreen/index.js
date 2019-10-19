@@ -170,7 +170,7 @@ class TaskSubmissionScreen extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8", paddingBottom:16 }}>
+      <View style={{ flex: 1, backgroundColor: "#fff", paddingBottom:16 }}>
         <AppHeader
             navigation={this.props.navigation}
             title={this.props.navigation.getParam("subject", "")}
