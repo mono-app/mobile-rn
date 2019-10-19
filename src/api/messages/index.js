@@ -26,7 +26,7 @@ export default class MessagesAPI{
       "Semua dimulai dari halo.",
       "Jangan lupa sapa teman kamu."
     ]
-    const randomNumber = Math.floor(Math.random() * (contents.length + 1));
+    const randomNumber = Math.floor(Math.random() * contents.length);
     const welcomeMessage = MessagesAPI.createMessageObject({ 
       type: "lets-start-chat", content: contents[randomNumber], details: {value: contents[randomNumber]} 
     });
