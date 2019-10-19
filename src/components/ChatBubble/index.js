@@ -59,7 +59,7 @@ function ChatBubble(props){
       <TouchableOpacity style={styles.section} onPress={handlePress} disabled={!clickable}>
         <Text style={styles.contentColor}>
           {content}
-          <Text style={styles.empty}>±±±±±±±±±±</Text>     
+          <Text style={styles.empty}>±±±±±±±±±±±±±±</Text>     
         </Text>
         <View style={styles.metadata}>
           <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
