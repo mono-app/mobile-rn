@@ -1,7 +1,7 @@
 import firebase from "react-native-firebase";
 import uuid from "uuid/v4";
 
-import FriendsAPI from "src/api/friends";
+import Logger from "src/api/logger";
 import StorageAPI from "src/api/storage";
 
 import { MomentsCollection, FansCollection, CommentsCollection } from "src/api/database/collection";

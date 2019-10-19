@@ -1,11 +1,9 @@
 import React from "react";
 import FastImage from "react-native-fast-image";
-import { ActivityIndicator } from "react-native-paper";
-import { View } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 
-const INITIAL_STATE = {
-  isLoaded: false,
-};
+const INITIAL_STATE = { isLoaded: false };
+
 export default class SquareAvatar extends React.PureComponent {
 
   handleLoadedImage =()=>{
