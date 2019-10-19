@@ -53,10 +53,8 @@ function ChatScreen(props){
     }
   }
 
-  const fetchPeople = () => {   
-    
+  const fetchPeople = () => {
     const audienceEmail = room.audiences.filter((audience) => audience !== currentUser.email)[0];
-
     if( _isMounted.current) setPeopleEmail(audienceEmail)
 
     PeopleAPI.getDetail(audienceEmail).then( (audienceData)=>{
@@ -64,25 +62,16 @@ function ChatScreen(props){
       let tempHeaderProfilePicture = "https://picsum.photos/200/200/?random"
       if(audienceData){
         if(audienceData.applicationInformation){
-          if( _isMounted.current) {
-            setUserRegistered(true)
-          }
+          if( _isMounted.current) setUserRegistered(true)
           tempHeaderTitle = audienceData.applicationInformation.nickName
-        }else{
-          tempHeaderTitle = "user not registered"
-        }
+        }else tempHeaderTitle = "user not registered"
         if(headerProfilePicture === "" && audienceData.profilePicture) {
           tempHeaderProfilePicture = audienceData.profilePicture
         }
-       
-      }else{
-        tempHeaderTitle = "user not registered"
-      }
+      }else tempHeaderTitle = "user not registered"
 
       if(_isMounted.current) setHeaderTitle(tempHeaderTitle)
-      
       if(_isMounted.current) setHeaderProfilePicture(tempHeaderProfilePicture);
-      
     })
 
     FriendsAPI.isFriends(currentUser.email, audienceEmail).then( isFriend => {
@@ -101,7 +90,6 @@ function ChatScreen(props){
             if(result) props.setUnreadChat(room.id, 0)
           })
         }
-
         setLastMessageSnapshot(snapshot);
       }
     })
@@ -160,20 +148,15 @@ function ChatScreen(props){
       AppState.removeEventListener("change", handleAppStateChange) 
 
     }
-  }, []);
+  }, [room, currentUser]);
 
-
-  Logger.log("ChatScreen#room", room);
-  Logger.log("ChatScreen#headerProfilePicture", headerProfilePicture)
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeader 
         navigation={navigation} title={headerTitle} subtitle={isInRoom? audienceStatus+" (live)" : audienceStatus } 
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}
-        onUserHeaderPress={handleUserHeaderPress}
-        isFriend={isFriend}
-        />
-      <ChatList messages={messages} onReachTop={handleChatListReachTop}/>
+        onUserHeaderPress={handleUserHeaderPress} isFriend={isFriend}/>
+      <ChatList messages={messages} onReachTop={handleChatListReachTop} room={room}/>
       <ChatBottomTextInput room={room} editable={isUserRegistered} onSendPress={handleSendPress}/>
     </KeyboardAvoidingView>
   )
