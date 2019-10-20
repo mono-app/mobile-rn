@@ -1,5 +1,5 @@
 import React from "react";
-import { StackActions } from "react-navigation";
+import { NavigationActions, StackActions } from "react-navigation";
 import { View,FlatList, StyleSheet } from "react-native";
 import Navigator from "src/api/navigator";
 import { Appbar, Text, ActivityIndicator, Dialog, Caption, Subheading, Headline } from "react-native-paper";
@@ -50,7 +50,13 @@ class SplashScreen extends React.PureComponent {
     }else if(userRole==="student"){
       this.props.navigation.navigate("Student");
     }else{
-      this.props.navigation.navigate("Introduction");
+      const resetAction = StackActions.reset({
+        index: 1,
+        key:"AppTab",
+        actions: [NavigationActions.navigate({ routeName: 'Home' }),
+          NavigationActions.navigate({ routeName: 'IntroductionClassroom' })],
+      });
+      this.props.navigation.dispatch(resetAction);
     }
   }
 
@@ -86,7 +92,13 @@ class SplashScreen extends React.PureComponent {
     if(schoolList.length>0){
       this.loadSchools();
     }else{
-      this.props.navigation.navigate("Introduction");
+      const resetAction = StackActions.reset({
+        index: 1,
+        key:"AppTab",
+        actions: [NavigationActions.navigate({ routeName: 'Home' }),
+          NavigationActions.navigate({ routeName: 'IntroductionClassroom' })],
+      });
+      this.props.navigation.dispatch(resetAction);
     }
   
   }
