@@ -8,10 +8,6 @@ import StudentAPI from "modules/Classroom/api/student";
 import TeacherAPI from "modules/Classroom/api/teacher";
 
 export default class RoomsAPI{
-  constructor(){
-    this.isRoomExists = this.isRoomExists.bind(this);
-  }
-
   /**
    * @param {string} email
    * @param {Function} callback 
@@ -56,30 +52,6 @@ export default class RoomsAPI{
 
   static normalizeRoom(documentSnapshot){
     return { id: documentSnapshot.id, ...documentSnapshot.data() }
-  }
-
-  /**
-   * 
-   * @param {enum} type = the type of your room `private`
-   * @param {string} audiences 
-   * @return {Promise<Object>} - { isExists: <boolean>, documentId: <string> } `true` if the room is exists, together with its id or `false` if not exists
-   */
-  isRoomExists(type, audiences=[]){
-    const roomsCollection = new RoomsCollection();
-    let firebaseCollection = roomsCollection.getFirebaseReference();
-    firebaseCollection = firebaseCollection.where("type", "==", type);
-    audiences.forEach(audience => {
-      firebaseCollection = firebaseCollection.where(
-        new firebase.firestore.FieldPath("audiencesQuery", audience), "==", true
-      )
-    })
-
-    const getQuery = new GetDocument();
-    getQuery.setGetConfiguration("default");
-    return getQuery.executeFirebaseQuery(firebaseCollection).then(snapshot => {
-      if(snapshot.empty) return { isExists: false, documentId: null }
-      else return { isExists: true, documentId: snapshot.docs[0].id }
-    })
   }
 
   static async createGroupClassRoomIfNotExists(schoolId, classId){

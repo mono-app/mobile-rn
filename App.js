@@ -42,7 +42,7 @@ function App(){
     if(firebaseUser !== null && firebaseUser.email) {
       PeopleAPI.setOnlineStatus(firebaseUser.email, "Online");
     }
-    firebase.firestore().settings({ persistence: true });
+    firebase.firestore().settings({ persistence: true, cacheSizeBytes: -1 });
     AppState.addEventListener("change", handleAppStateChange);
     return function cleanup(){
       AppState.removeEventListener("change", handleAppStateChange) 

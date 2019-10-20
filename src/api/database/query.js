@@ -46,25 +46,6 @@ export class AddDocument extends Query{
   }
 }
 
-
-export class GetDocument extends Query{  
-  /**
-   * 
-   * @param {Collection} collection 
-   * @param {Document} firebaseDocument 
-   */
-  executeQuery(collection, firebaseDocument){
-    return this.database.getDatabase()
-                        .collection(collection.getName())
-                        .doc(firebaseDocument.getId())
-                        .get(this.getConfiguration);
-  }
-
-  executeFirebaseQuery(firebaseQuery){
-    return firebaseQuery.get(this.getConfiguration);
-  }
-}
-
 export class UpdateDocument extends Query{
   /**
    * 
