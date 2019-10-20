@@ -157,7 +157,7 @@ function ChatScreen(props){
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}
         onUserHeaderPress={handleUserHeaderPress} isFriend={isFriend}/>
       <ChatList messages={messages} onReachTop={handleChatListReachTop} room={room}/>
-      <ChatBottomTextInput room={room} editable={isUserRegistered} onSendPress={handleSendPress}/>
+      <ChatBottomTextInput navigation={props.navigation} room={room} editable={isUserRegistered} onSendPress={handleSendPress}/>
     </KeyboardAvoidingView>
   )
 }
