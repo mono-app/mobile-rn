@@ -38,11 +38,11 @@ export default class BottomTextInput extends React.PureComponent{
               ref={i => this.txtMessage = i} 
               autoFocus={(this.props.autoFocus)?this.props.autoFocus:false}
               placeholder="Type a message" 
-              style={{ flex: 1 }}
+              style={{ flex: 1, maxHeight: 100 }}
               multiline={true}
               value={this.state.message}
               onChangeText={this.handleMessageChange}/>
-            <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0 }} onPress={this.handleSendPress}/>
+            <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0, alignSelf:"centers" }} onPress={this.handleSendPress}/>
           </View>
         </Surface>
       </SafeAreaView>
