@@ -24,9 +24,9 @@ export default function StatusInputCard(props){
     <Card elevation={4} style={{ padding: 16, margin: 16 }}>
       <TextInput
         textAlignVertical="top" numberOfLines={4} fontSize={24}
-        placeholder="Bagikan statusmu sekarang."
+        style={{ minHeight: 128 }} placeholder="Bagikan statusmu sekarang."
         value={status} onChangeText={handleStatusChange}
-        multiline/>
+        multiline autoFocus/>
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
         <Button mode="text"loading={isLoading} disabled={isLoading} onPress={handleSavePress}>
             Simpan
