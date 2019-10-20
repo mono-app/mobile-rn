@@ -35,8 +35,6 @@ function PeopleInformationScreen(props){
     if(_isMounted.current) setPeople(peopleData);
     if(_isMounted.current) setJoinedFrom(moment(peopleData.creationTime.seconds * 1000).format("DD MMMM YYYY"));
     if(_isMounted.current) setIsLoadingProfile(false);
-   
-
   }
 
   const fetchPeopleFriendStatus = async () => {
@@ -47,8 +45,6 @@ function PeopleInformationScreen(props){
       if(_isMounted.current) setPeopleFriendStatus("myself");
     }
   }
-
-
 
   React.useEffect(() => {
     fetchPeopleInformation();
