@@ -30,16 +30,19 @@ export default class StorageAPI{
 
     if(Platform.OS === "ios"){
       const results = await IOSImagePicker.openPicker({ mediaType: "photo", multiple });
-      const normalizedResults = results.map((image) => {
-        return { uri: image.sourceURL, size: image.size }
-      })
-      return Promise.resolve(normalizedResults);
+
+      if(multiple){
+        const normalizedResults = results.map((image) => {
+          return { uri: image.sourceURL, size: image.size }
+        })
+        return Promise.resolve(normalizedResults);
+      }else return Promise.resolve({ uri: results.sourceURL, size: results.size })
     }else if(Platform.OS === "android" && multiple){
       const results = await DocumentPicker.pickMultiple({ type: [DocumentPicker.types.images] });
       return Promise.resolve(results);
     }else if(Platform.OS === "android" && !multiple){
       const results = await DocumentPicker.pick({ type: [DocumentPicker.types.images] });
-      return Promise.resolve([results]);
+      return Promise.resolve(results);
     }
   }
 
