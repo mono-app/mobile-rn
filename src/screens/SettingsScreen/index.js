@@ -6,19 +6,20 @@ import PeopleAPI from "src/api/people";
 import DocumentPicker from "react-native-document-picker";
 import ImageCompress from "src/api/ImageCompress"
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import AppHeader from "src/components/AppHeader";
 import HeadlineTitle from "src/components/HeadlineTitle";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import { ScrollView } from "react-native-gesture-handler";
-import { View, FlatList, StyleSheet } from "react-native";
+import { ActivityIndicator, View, FlatList, StyleSheet } from "react-native";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 function SettingsScreen(props){
   const [ status, setStatus ] = React.useState("");
+  const [ isUploadingImage, setUploadingImage ] = React.useState(false);
+  
   const { currentUser, isLoggedIn } = props;
   const styles = StyleSheet.create({
     profileContainer: {
@@ -31,9 +32,14 @@ function SettingsScreen(props){
   const handleStatusPress = () => props.navigation.navigate("StatusChange");
   const handleProfilePicturePress = async () => {
     try{
+      if(isUploadingImage){
+        return
+      }
       const result = await StorageAPI.openGallery(false);
+      setUploadingImage(true)
       const compressedRes = await ImageCompress.compress(result.uri, result.size)
       await PeopleAPI.changeProfilePicture(currentUser.email, compressedRes.uri);
+      setUploadingImage(false)
     }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
   }
 
@@ -53,13 +59,16 @@ function SettingsScreen(props){
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Settings</HeadlineTitle>
       <ScrollView>
         <View style={styles.profileContainer}>
-          <PeopleProfileHeader
-            style={{ flex: 1 }}
-            onStatusPress={handleStatusPress}
-            onProfilePicturePress={handleProfilePicturePress}
-            profilePicture={currentUser.profilePicture}
-            title={currentUser.applicationInformation.nickName}
-            subtitle={status}/>
+          <View style={{ flex: 1 }}>
+            <PeopleProfileHeader
+              onStatusPress={handleStatusPress}
+              onProfilePicturePress={handleProfilePicturePress}
+              profilePicture={currentUser.profilePicture}
+              title={currentUser.applicationInformation.nickName}
+              isLoading={isUploadingImage}
+              subtitle={status}/>
+             
+          </View>
           <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
         </View>
         <View>

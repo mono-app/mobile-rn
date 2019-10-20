@@ -19,9 +19,9 @@ export default function PeopleProfileHeader(props){
     <View style={[ styles.profileContainer,props.style ]}>
       {props.onProfilePicturePress?(
         <TouchableOpacity onPress={props.onProfilePicturePress}>
-          <SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }}/>
+          <SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>
         </TouchableOpacity>
-      ):<SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }}/>}
+      ):<SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>}
 
       {props.onStatusPress?(
         <View style={styles.profileDescriptionContainer}>
