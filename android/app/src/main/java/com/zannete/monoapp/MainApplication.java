@@ -21,6 +21,7 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 
 import com.facebook.react.ReactApplication;
+import io.realm.react.RealmReactPackage;
 import com.opentokreactnative.OTPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -52,6 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RealmReactPackage(),
             new OTPackage(),
             new RNFusedLocationPackage(),
             new PickerPackage(),

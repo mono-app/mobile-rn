@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
@@ -16,6 +15,9 @@
 		DAA3004B235583B1007DFA09 /* OTInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA3004A235583B1007DFA09 /* OTInstall.swift */; };
 		E2FC08935A5B4200B80BD5A9 /* libOpenTokReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
+		460CB5DE0E83464CA9C91E3C /* libGCDWebServers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D9FE2C96E246C89E63F205 /* libGCDWebServers.a */; };
+		6D897DF95EE542F9AB1E4167 /* libRealmJS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FD8914878614C59A8B7DBA4 /* libRealmJS.a */; };
+		370A9F7B4E004CF792A1956C /* RealmJSTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 17DD9045C7194ED6BF74AA96 /* RealmJSTests.xctest */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +104,10 @@
 		F6C714783E2D1B3891D96BDA /* Pods-mono.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mono.debug.xcconfig"; path = "Target Support Files/Pods-mono/Pods-mono.debug.xcconfig"; sourceTree = "<group>"; };
 		FBB87ECB33906D6591FD1BF8 /* libPods-mono.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mono.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libOpenTokReactNative.a; sourceTree = "<group>"; };
+		251C1ECF96AB4510B744099B /* RealmJS.xcodeproj */ = {isa = PBXFileReference; name = "RealmJS.xcodeproj"; path = "../node_modules/realm/src/RealmJS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		60D9FE2C96E246C89E63F205 /* libGCDWebServers.a */ = {isa = PBXFileReference; name = "libGCDWebServers.a"; path = "libGCDWebServers.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		9FD8914878614C59A8B7DBA4 /* libRealmJS.a */ = {isa = PBXFileReference; name = "libRealmJS.a"; path = "libRealmJS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		17DD9045C7194ED6BF74AA96 /* RealmJSTests.xctest */ = {isa = PBXFileReference; name = "RealmJSTests.xctest"; path = "RealmJSTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +118,9 @@
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				8F51FC1C28BDC29E9EFBA780 /* libPods-mono.a in Frameworks */,
 				E2FC08935A5B4200B80BD5A9 /* libOpenTokReactNative.a in Frameworks */,
+				460CB5DE0E83464CA9C91E3C /* libGCDWebServers.a in Frameworks */,
+				6D897DF95EE542F9AB1E4167 /* libRealmJS.a in Frameworks */,
+				370A9F7B4E004CF792A1956C /* RealmJSTests.xctest in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +180,7 @@
 			children = (
 				81A320FD4ED04309BEE8A250 /* RNFirebase.xcodeproj */,
 				974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */,
+				251C1ECF96AB4510B744099B /* RealmJS.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -595,12 +605,16 @@
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/opentok-react-native/ios/OpenTokReactNative",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = mono/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Mono\"",
+					"\"$(SRCROOT)/Mono\"",
+					"\"$(SRCROOT)/Mono\"",
 					"\"$(SRCROOT)/Mono\"",
 				);
 				OTHER_LDFLAGS = (
@@ -712,12 +726,16 @@
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/opentok-react-native/ios/OpenTokReactNative",
+					"$(SRCROOT)/../node_modules/realm/src/**",
 				);
 				INFOPLIST_FILE = mono/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Mono\"",
+					"\"$(SRCROOT)/Mono\"",
+					"\"$(SRCROOT)/Mono\"",
 					"\"$(SRCROOT)/Mono\"",
 				);
 				OTHER_LDFLAGS = (
