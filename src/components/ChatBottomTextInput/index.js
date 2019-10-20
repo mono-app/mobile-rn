@@ -37,20 +37,20 @@ function ChatBottomTextInput(props){
   });
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
-  const handleSessionConnected = () => setIsConnected(true);
+  const handleSessionConnected = () => {if(_isMounted.current) setIsConnected(true);}
   const handleMessageChange = (newMessage) => {if(_isMounted.current) setMessage(newMessage);}
   const handleSendPress = () => {
     const copiedMessage = JSON.parse(JSON.stringify(message));
     if(copiedMessage.trim() && props.editable ){
       props.onSendPress(copiedMessage);
     }
-    setMessage("");
+    if(_isMounted.current) setMessage("");
   };
 
   const handleRoomUpdate = (room) => {
     if(room.liveVoice === undefined) return;
     if(room.liveVoice.session === undefined) return;
-    setSessionId(room.liveVoice.session);
+    if(_isMounted.current) setSessionId(room.liveVoice.session);
   };
 
   const initLiveVoice = async () => {
@@ -64,7 +64,7 @@ function ChatBottomTextInput(props){
       })
     })).json();
     Logger.log("ChatBottomTextInput.initLiveVoice#jsonResult", jsonResult);
-    if(!jsonResult.error) setToken(jsonResult.result);
+    if(!jsonResult.error && _isMounted.current) setToken(jsonResult.result);
   }
 
 
@@ -76,6 +76,7 @@ function ChatBottomTextInput(props){
     if(sessionId === null) roomListener.current = RoomsAPI.getDetailWithRealTimeUpdate(room.id, handleRoomUpdate);
     if(token === null) initLiveVoice();
     return function cleanup(){
+      _isMounted.current = false
       if(roomListener.current) roomListener.current();
     }
   }, [sessionId, token]);
