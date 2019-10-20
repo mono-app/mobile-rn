@@ -107,7 +107,7 @@ class StudentProfileScreen extends React.PureComponent {
           <View style={{ marginTop:16, paddingHorizontal: 16, paddingVertical:8, backgroundColor: "#fff" }}>
             <Text style={{fontWeight: "bold"}}>Status</Text>
             <View style={{flexDirection:"row"}}>
-            <Text>{this.state.status}</Text>
+            <Text style={{lineHeight: 20}}>{this.state.status}</Text>
             </View>
           </View>
           

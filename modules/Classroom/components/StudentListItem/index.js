@@ -51,7 +51,7 @@ export default class StudentListItem extends React.Component{
 
     return(
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>
-        <View>
+        <View style={{flex: 1}}>
           <Text style={{ fontWeight: "700" }}>{(noInduk)?noInduk:"-"} / {name}</Text>
         </View>
       </TouchableOpacity>

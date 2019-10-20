@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   label: {
+    flex:1,
     fontWeight: "normal"
   }
 })

@@ -52,8 +52,8 @@ export default class TaskListItem extends React.Component{
             <TouchableOpacity onPress={this.props.onPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <View>
-                   <Text style={{ fontWeight: "700" }}>{title}</Text>
+                  <View style={{flex:1}}>
+                   <Text style={{ fontWeight: "700", lineHeight:20 }}>{title}</Text>
                    <Paragraph style={{ color: "#5E8864", fontWeight: "bold", fontStyle:"italic" }}>Batas akhir pengumpulan</Paragraph>
                    <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>Tanggal {creationDate} | Pukul {creationTime}</Paragraph>
                   </View>

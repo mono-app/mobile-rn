@@ -55,7 +55,7 @@ export default class ClassListItem extends React.Component{
       <TouchableOpacity onPress={this.props.onPress}>
         <View style={styles.listItemContainer}>
           <View style={styles.listDescriptionContainer}>
-            <View>
+            <View style={{flex:1}}>
               <Text style={{ fontWeight: "700" }}>{subject}</Text>
               <Paragraph style={{ color: "#5E8864" }}>{info}</Paragraph>
             </View>

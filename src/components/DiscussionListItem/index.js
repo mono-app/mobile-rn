@@ -41,8 +41,8 @@ export default class DiscussionListItem extends React.PureComponent{
         <TouchableOpacity onPress={this.props.onPress}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
             <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
-            <View style={{ marginLeft: 16 }}>
-              <Text style={{ fontWeight: "700" }}>{this.state.discussion.title}</Text>
+            <View style={{ flex:1, marginLeft: 16 }}>
+              <Text style={{ fontWeight: "700", fontSize:16 }} numberOfLines={2}>{this.state.discussion.title}</Text>
               <Caption style={{ marginTop: 0 }}>Dibuat oleh {this.state.posterName}</Caption>
               <Caption style={{ marginTop: 0 }}>Diposting pada {creationDate} | Pukul {creationTime} WIB</Caption>
             </View>

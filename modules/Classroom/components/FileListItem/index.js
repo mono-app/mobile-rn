@@ -49,8 +49,8 @@ export default class FileListItem extends React.PureComponent{
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <TouchableOpacity onPress={this.props.onDownloadPress}>
-                  <View style={{display:"flex", maxWidth: "80%"}}>
-                   <Text style={{ fontWeight: "700" }}>{title}</Text>
+                  <View style={{flex:1, maxWidth: "80%"}}>
+                   <Text style={{ fontWeight: "700", lineHeight:20 }}>{title}</Text>
                    {
                     (creationTime)? 
                     <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>Diposting pada {moment(creationTime.seconds * 1000).format("DD MMMM YYYY")} | Pukul {moment(creationTime.seconds * 1000).format("HH:mm")}</Paragraph>

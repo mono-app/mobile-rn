@@ -26,7 +26,7 @@ class SplashScreen extends React.PureComponent {
     this.setState({schoolList: []});
 
     const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.email);
-    this.setState({schoolCount: schoolList.length, schoolList})
+    this.setState({schoolCount: schoolList.length, schoolList, filteredSchoolList: schoolList})
     if(schoolList.length==1){
       this.redirectScreen(schoolList[0])
     }

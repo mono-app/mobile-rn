@@ -49,8 +49,8 @@ export default class ArchiveListItem extends React.Component{
           <View  style={styles.subContainer}> 
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <View style={{marginHorizontal: 16, marginVertical: 8}}>
-                   <Subheading style={{ fontWeight: "700" }}>{title}</Subheading>
+                  <View style={{flex:1, marginHorizontal: 16, marginVertical: 8}}>
+                   <Subheading style={{ fontWeight: "700", lineHeight:20 }}>{title}</Subheading>
                   </View>
                 </View>
               </View>
