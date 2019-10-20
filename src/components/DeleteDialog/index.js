@@ -3,7 +3,7 @@ import { Dialog, Portal, Paragraph, Button } from "react-native-paper";
 
 const INITIAL_STATE = { isVisible: false }
 
-export default class DeleteDialog extends React.Component{
+export default class DeleteDialog extends React.PureComponent{
   toggleShow = () => this.setState({ isVisible: !this.state.isVisible });
 
   constructor(props){
@@ -16,7 +16,8 @@ export default class DeleteDialog extends React.Component{
   render(){
     return(
       <Portal>
-        <Dialog visible={this.state.isVisible}>
+        <Dialog visible={this.state.isVisible} 
+          onDismiss={this.toggleShow}>
           <Dialog.Title>Perhatian</Dialog.Title>
           <Dialog.Content>
             <Paragraph>{this.props.title}</Paragraph>
