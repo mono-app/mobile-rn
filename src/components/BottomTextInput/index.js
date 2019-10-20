@@ -42,7 +42,7 @@ export default class BottomTextInput extends React.PureComponent{
               multiline={true}
               value={this.state.message}
               onChangeText={this.handleMessageChange}/>
-            <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0, alignSelf:"centers" }} onPress={this.handleSendPress}/>
+            <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0, alignSelf:"center" }} onPress={this.handleSendPress}/>
           </View>
         </Surface>
       </SafeAreaView>
