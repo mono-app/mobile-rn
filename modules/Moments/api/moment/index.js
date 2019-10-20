@@ -122,7 +122,7 @@ export default class MomentAPI{
     const querySnapshots = await momentsRef.get();
 
     const moments = querySnapshots.docs.map((documentSnapshot) => MomentAPI.normalizeMoment(documentSnapshot));
-    moments.sort((a, b) => (a.postTime.seconds > b.postTime.seconds)? -1: 1);
+    moments.sort((a, b) => (a&&b) && (a.postTime.seconds > b.postTime.seconds)? -1: 1);
     return Promise.resolve(moments);
   }
 

@@ -70,14 +70,15 @@ function MomentItem(props){
     props.navigation.navigate("GallerySwiper", payload);
   }
 
-  const fetchPeople = async () => {
-    const peopleData = await PeopleAPI.getDetail(moment.posterEmail)
-    if(_isMounted.current) setPeople(peopleData);
+  const fetchPeople = () => {
+    PeopleAPI.getDetail(moment.posterEmail).then(peopleData=>{
+      if(_isMounted.current) setPeople(peopleData);
+    })
   }
 
-  const fetchMoment = async () => {
+  const fetchMoment = () => {
     momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, props.currentUser.email, (newMoment) => {
-      if(newMoment.postTime){
+      if(newMoment && newMoment.postTime){
        const creationDate = momentDate(newMoment.postTime.seconds * 1000).format("DD MMMM YYYY")
        const creationTime = momentDate(newMoment.postTime.seconds * 1000).format("HH:mm")
        if(_isMounted.current) setCreatedDate(creationDate+" | Jam "+ creationTime+" WIB")
@@ -120,14 +121,16 @@ function MomentItem(props){
     return (
       <Surface style={[ styles.surface, props.style ]}>
         <View style={{justifyContent: "space-between", flexDirection:"row"}}>
-          <View style={styles.profile}>
-            <SquareAvatar size={50} uri={people.profilePicture}/>
-            <View style={{ marginLeft: 8 }}>
-              <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
-              <Caption style={{ margin: 0 }}>{createdDate}</Caption>
+          <TouchableOpacity onPress={props.onProfilePress}>
+            <View style={styles.profile}>
+              <SquareAvatar size={50} uri={people.profilePicture}/>
+              <View style={{ marginLeft: 8 }}>
+                <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
+                <Caption style={{ margin: 0 }}>{createdDate}</Caption>
+              </View>
             </View>
-          
-          </View>
+          </TouchableOpacity>
+
           {(people.email===props.currentUser.email)?  
           <Menu
             visible={isMenuVisible}
@@ -142,7 +145,7 @@ function MomentItem(props){
           }
         </View>
         <View style={styles.textContainer}>
-          <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
+          <Text style={{ textAlign: "justify",lineHeight: 20 }} >{moment.content.message}</Text>
           {(moment.content.images.length>0)?
             <View style={{height: imageSize}}>
               <FlatList 
