@@ -47,15 +47,18 @@ export default class CommentItem extends React.PureComponent{
     return(
       <View>
         {(this.props.index===0)?<Surface style={[ styles.surface ]}>
-            <View style={styles.profile}>
-              <SquareAvatar size={50} uri={this.props.people.profilePicture}/>
-              <View style={{ marginLeft: 8 }}>
-                <Text style={{ margin: 0, fontWeight: "bold" }}>{this.props.people.applicationInformation.nickName}</Text>
-                <Caption style={{ margin: 0 }}>{createdDate}</Caption>
+            <TouchableOpacity onPress={this.props.onProfilePress}>
+              <View style={styles.profile}>
+                <SquareAvatar size={50} uri={this.props.people.profilePicture}/>
+                <View style={{ marginLeft: 8 }}>
+                  <Text style={{ margin: 0, fontWeight: "bold" }}>{this.props.people.applicationInformation.nickName}</Text>
+                  <Caption style={{ margin: 0 }}>{createdDate}</Caption>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
+
             <View style={styles.textContainer}>
-              <Text style={{ textAlign: "justify" }}>{this.props.moment.content.message}</Text>
+              <Text style={{ textAlign: "justify",lineHeight: 20 }}>{this.props.moment.content.message}</Text>
               <FlatList 
                 style={styles.imagesContainer} 
                 data={this.props.moment.content.images} 

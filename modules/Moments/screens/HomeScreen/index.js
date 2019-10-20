@@ -52,11 +52,18 @@ function HomeScreen(props){
   }
 
   const handleSharePress = (item) => {
-    payload = {
+    const payload = {
       moment: item,
       onComplete: ()=>{}
     }
     props.navigation.navigate("ShareMoment",payload)
+  }
+  
+  const handleProfilePress = (item) => {
+    const payload = {
+      peopleEmail: item.posterEmail
+    }
+    props.navigation.navigate("PeopleInformation", payload);
   }
 
   const handleDeleteMomentPress = (item) => {
@@ -99,6 +106,7 @@ function HomeScreen(props){
             onCommentPress={() => handleCommentPress(item)}
             onSharePress={() => handleSharePress(item)}
             onDeleteMomentPress={() => handleDeleteMomentPress(item)}
+            onProfilePress={() => handleProfilePress(item)}
           />
           }
          
@@ -106,7 +114,8 @@ function HomeScreen(props){
         <DeleteDialog 
           ref ={i => deleteDialog.current = i}
           title= {"Apakah anda ingin menghapus gambar ini?"}
-          onDeletePress={handleDeleteMomentYes}/>
+          onDeletePress={handleDeleteMomentYes}
+          />
         <Snackbar
           visible= {showSnackbarDeleteSuccess}
           onDismiss={() => setSnackbarDeleteSuccess(false)}
