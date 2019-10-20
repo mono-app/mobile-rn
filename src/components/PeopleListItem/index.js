@@ -2,19 +2,24 @@ import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
 import StatusAPI from "src/api/status";
-import PeopleAPI from "src/api/people"
+import PeopleAPI from "src/api/people";
+import OfflineDatabase from "src/api/database/offline";
+import { StyleSheet } from "react-native";
+
 import CircleAvatar from "src/components/Avatar/Circle";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Paragraph } from "react-native-paper";
 import ContentLoader from 'rn-content-loader'
-import {Rect} from 'react-native-svg'
+import { View, TouchableOpacity } from "react-native";
+import { Text, Paragraph } from "react-native-paper";
+import { Rect } from 'react-native-svg'
 
 function PeopleListItem(props){
   const { email } = props;
   const [ status, setStatus ] = React.useState("");
   const [ people, setPeople ] = React.useState("");
   const [ isFetching, setFetching ] = React.useState(true);
+
   const _isMounted = React.useRef(true);
+  const peopleListener = React.useRef(null);
 
   const styles = StyleSheet.create({
     userContainer: {
@@ -24,6 +29,24 @@ function PeopleListItem(props){
   })
   
   const handlePress = () => props.onPress(people);
+  const getPeople = async () => {
+    const people = await PeopleAPI.getDetail(email);
+    setPeople(people);
+  }
+
+  const fetchData = async () => {
+    setFetching(true);
+    await getPeople();
+    peopleListener.current = OfflineDatabase.addEventListener("change", "User", getPeople);
+    setFetching(false);
+  }
+
+  React.useEffect(() => {
+    fetchData();
+    return function cleanup(){
+      if(peopleListener.current) OfflineDatabase.removeEventListener(peopleListener.current);
+    }
+  }, [])
 
   React.useEffect(() => {
     setFetching(true)
@@ -33,17 +56,6 @@ function PeopleListItem(props){
         setStatus(status.content)
       }        
       if(_isMounted.current) setFetching(false)
-    }
-    const fetchData = async () => {
-      const people = await PeopleAPI.getDetail(email);
-      setPeople(people);
-      setFetching(false);
-      // PeopleAPI.getDetailWithRealTimeUpdate(email, (data)=>{
-      //   if(_isMounted.current) {
-      //     setPeople(data)
-      //     setFetching(false)
-      //   }
-      // });
     }
 
     if(props.distance===undefined){

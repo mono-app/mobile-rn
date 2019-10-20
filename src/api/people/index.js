@@ -36,6 +36,7 @@ export default class PeopleAPI{
   }
 
   static normalizeOffline(offlineUser){
+    Logger.log("PeopleAPI.normalizeOffline#offlineUser", offlineUser);
     const normalizedPeople = {};
     normalizedPeople.applicationInformation = { id: offlineUser.monoId, nickName: offlineUser.nickName };
     normalizedPeople.email = offlineUser.email;
@@ -147,9 +148,11 @@ export default class PeopleAPI{
       const connection = await getConnection();
       const userRepository = connection.getRepository("User");
       const user = await userRepository.findOne({ email });
+      Logger.log("PeopleAPI.getDetail#user", user);
       if(user === undefined) return Promise.resolve(await PeopleAPI.getFromServer(email));
       else return Promise.resolve(await PeopleAPI.normalizeOffline(user));
     }catch(err){ 
+      Logger.log("PeopleAPI.getDetail#err", err);
       if(err.name === "RepositoryNotFoundError"){
         return Promise.resolve(await PeopleAPI.getFromServer(email));
       }else Promise.reject(err);

@@ -7,6 +7,7 @@ export const UserSchema = new EntitySchema({
   columns: {
     email: { type: "varchar", primary: true },
     nickName: { type: "varchar" },
-    profilePicture: { type: "varchar", nullable: true }
+    profilePicture: { type: "varchar", nullable: true },
+    monoId: { type: "varchar", nullable: true }
   }
 });

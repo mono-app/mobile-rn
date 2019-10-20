@@ -1,3 +1,7 @@
+export class BaseModel{
+  constructor(data){ Object.assign(this, data); }
+}
+
 export class User{
   constructor(monoId, email, nickName, profilePicture){
     this.monoId = monoId;
