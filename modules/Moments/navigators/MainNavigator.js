@@ -6,6 +6,7 @@ import MomentCommentsScreen from "modules/Moments/screens/CommentsScreen";
 import ShareMomentScreen from "modules/Moments/screens/ShareMomentScreen";
 import PhotoGridPreviewScreen from "modules/Moments/screens/PhotoGridPreviewScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
+import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 
 export default MainNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -13,6 +14,7 @@ export default MainNavigator = createStackNavigator({
   MomentComments: { screen: MomentCommentsScreen },
   ShareMoment: { screen: ShareMomentScreen },
   PhotoGridPreview: { screen: PhotoGridPreviewScreen },
+  PeopleInformation: { screen: PeopleInformationScreen },
   ...DiscussionClassroomNotifNavigatorObj
 }, {
   initialRouteName: "Home",

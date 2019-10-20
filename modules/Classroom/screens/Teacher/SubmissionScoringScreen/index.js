@@ -65,7 +65,7 @@ class SubmissionScoringScreen extends React.PureComponent {
             style={{ backgroundColor: "white" }}
             title="Beri Penilaian"
           />
-        <KeyboardAwareScrollView style={{flex:1}}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
                 <View style={{ margin: 16 }}>
                   <Text style={styles.label}>Input Nilai</Text>
                 </View>

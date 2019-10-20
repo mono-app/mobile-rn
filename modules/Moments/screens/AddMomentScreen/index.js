@@ -145,7 +145,7 @@ function AddMomentScreen(props){
   }, [])
 
   return(
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} >
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
 
       <View style={{ padding: 16, flexDirection: "row", alignItems: "center" }}>

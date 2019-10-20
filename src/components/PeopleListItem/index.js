@@ -5,7 +5,7 @@ import StatusAPI from "src/api/status";
 import PeopleAPI from "src/api/people"
 import CircleAvatar from "src/components/Avatar/Circle";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Paragraph } from "react-native-paper";
+import { Text, Paragraph, Caption } from "react-native-paper";
 import ContentLoader from 'rn-content-loader'
 import {Rect} from 'react-native-svg'
 
@@ -72,12 +72,15 @@ function PeopleListItem(props){
     )
   }else{
     return(
-      <TouchableOpacity style={styles.userContainer} onPress={handlePress}>
-        <CircleAvatar size={48} uri={profilePicture} style={{ marginRight: 16 }}/>
-        <View>
-          <Text style={{ fontWeight: "700" }}>{nickName}</Text>
-          <Paragraph style={{ color: "#5E8864" }}>{status}</Paragraph>
+      <TouchableOpacity  onPress={handlePress}>
+        <View style={styles.userContainer}>
+          <CircleAvatar size={48} uri={profilePicture} style={{ marginRight: 16 }}/>
+          <View style={{flex:1}}>
+            <Text style={{ fontWeight: "700" }} numberOfLines={1}>{nickName}</Text>
+            <Paragraph style={{ color: "#5E8864" }} numberOfLines={1}>{status}</Paragraph>
+          </View>
         </View>
+
       </TouchableOpacity>
     )
   }

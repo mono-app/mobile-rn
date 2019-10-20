@@ -86,7 +86,7 @@ function AccountSetupScreen(props){
 
   Logger.log("AccountSetupScreen#canSubmit", canSubmit);
   return(
-    <KeyboardAwareScrollView style={styles.container}>
+    <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={styles.container}>
       <AppHeader style={{ backgroundColor: "transparent", elevation: 0 }}/>
       <HeadlineTitle style={{ marginHorizontal: 16 }}>Persiapan Akun</HeadlineTitle>
       <SetupListItem 

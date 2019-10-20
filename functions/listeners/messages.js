@@ -43,6 +43,10 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   const senderSnapshot = await db.collection("users").doc(senderEmail).get()
   const senderNickname = senderSnapshot.data().applicationInformation.nickName
 
+  const blockedQuerySnapshot = db.collection("friendList").doc(senderEmail).collection("blocked").get()
+  const blockedUserList = blockedQuerySnapshot.map(docSnap=>{
+    return docSnap.id
+  })
   // get all audiences messagingToken  
   const promises = audiences.map(audience => {
     const userRef = db.collection("users").doc(audience);
@@ -50,7 +54,7 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   })
   const audiencesSnapshot = await Promise.all(promises);
   const audiencesData = audiencesSnapshot.map(audienceSnapshot => {
-    const audienceData = audienceSnapshot.data();
+    const audienceData =  Object.assign({ email: audienceSnapshot.id }, audienceSnapshot.data())
     if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken){
       return audienceData;
     }
@@ -61,7 +65,7 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   // send notification to all audiences except sender
   const messagePromises = audiencesData.map(audienceData => {
     if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken && 
-      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
+      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken) && !blockedUserList.includes(audienceData.email)){
       let message = {}
       let type= "-"
       let title = ""

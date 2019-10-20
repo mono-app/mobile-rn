@@ -11,12 +11,12 @@ import { Text } from "react-native-paper";
  */
 export default function PeopleProfileHeader(props){
   const styles = StyleSheet.create({
-    profileDescriptionContainer: { width: 0, flexGrow: 1 },
-    profileContainer: { backgroundColor: "white", display: "flex", flexDirection: "row", alignItems: "flex-end" }
+    profileDescriptionContainer: { flex:1},
+    profileContainer: { backgroundColor: "white", display: "flex", flexDirection: "row",}
   })
 
   return(
-    <View style={[ styles.profileContainer, props.style ]}>
+    <View style={[ styles.profileContainer,props.style ]}>
       {props.onProfilePicturePress?(
         <TouchableOpacity onPress={props.onProfilePicturePress}>
           <SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }}/>
@@ -24,16 +24,20 @@ export default function PeopleProfileHeader(props){
       ):<SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }}/>}
 
       {props.onStatusPress?(
-        <TouchableOpacity style={styles.profileDescriptionContainer} onPress={props.onStatusPress}>
-          <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
-          <Text style={{ fontSize: 12}}>{props.subtitle}</Text>
-        </TouchableOpacity>
+        <View style={styles.profileDescriptionContainer}>
+          <TouchableOpacity onPress={props.onStatusPress}>
+            <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
+            <Text style={{ fontSize: 12, lineHeight: 20}}>{props.subtitle}</Text>
+          </TouchableOpacity>
+        </View>
+
       ):(
         <View style={styles.profileDescriptionContainer}>
           <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
-          <Text style={{ fontSize: 12}}>{props.subtitle}</Text>
+          <Text style={{ fontSize: 12, lineHeight: 20}}>{props.subtitle}</Text>
         </View>
       )}
+
     </View>
   )
 }

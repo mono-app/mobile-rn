@@ -53,6 +53,11 @@ function CommentsScreen(props){
     navigation.navigate("GallerySwiper", payload);
   };
 
+  const handleProfilePress = (people) => {
+    const payload = { peopleEmail: people.email }
+    props.navigation.navigate("PeopleInformation", payload);
+  }
+
   const loadData = async () =>{
     const moment = await MomentAPI.getDetail(momentId)
     const people = await PeopleAPI.getDetail(moment.posterEmail)
@@ -95,7 +100,7 @@ function CommentsScreen(props){
     <Container style={{ backgroundColor: "#E8EEE8" }}>
       <AppHeader navigation={navigation} style={{ backgroundColor: "white", elevation: 0 }}/>
       <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}>
-        <MomentItem moment={moment} canComment={false} onSharePress={handleSharePress} style={{ borderRadius: 0, elevation: 0 }}/>
+        <MomentItem moment={moment} canComment={false} onSharePress={handleSharePress} onProfilePress={handleProfilePress} style={{ borderRadius: 0, elevation: 0 }}/>
         <FlatList
           ref={commentFlatList} data={comments} keyExtractor={(item) => item.id}
           onContentSizeChange={handleContentSizeChange}

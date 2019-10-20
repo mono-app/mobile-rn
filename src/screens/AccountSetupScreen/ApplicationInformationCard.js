@@ -10,9 +10,12 @@ import { Tooltip } from 'react-native-elements';
 const INITIAL_STATE = { nickName: "", id: "" }
 
 export default class ApplicationInformationCard extends React.PureComponent{
-  handleNickNameChange = nickName => this.setState({nickName});
+  handleNickNameChange = nickName => {
+    this.setState({nickName});
+  }
   handleIdChange = id => {
-    const lowerId = id.toLowerCase().trim()
+    const lowerId = id.toLowerCase().trim().replace(/[^a-zA-Z0-9_.]/gi,'')
+    
     this.setState({id: lowerId})
   }
 
@@ -46,12 +49,15 @@ export default class ApplicationInformationCard extends React.PureComponent{
             </View>
             <TextInput 
               placeholder="Mono ID" autoCapitalize="none" textContentType="nickname"
-              value={this.state.id} onChangeText={this.handleIdChange}/>
+              value={this.state.id} 
+              maxLength={30}
+              onChangeText={this.handleIdChange}/>
           </View>
           <View>
             <Text style={styles.headerText}>Nama Panggilan</Text>
             <TextInput 
               placeholder="Nama Panggilan" textContentType="name"
+              maxLength={30}
               value={this.state.nickName} onChangeText={this.handleNickNameChange}/>
           </View>
         </Card.Content>

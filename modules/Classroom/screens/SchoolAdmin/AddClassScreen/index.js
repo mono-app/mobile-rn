@@ -69,7 +69,7 @@ class AddClassScreen extends React.PureComponent {
     return (
         <View style={{flex:1,display:"flex",backgroundColor: "#E8EEE8"}}>
         
-          <KeyboardAwareScrollView style={{flex:1}}>         
+          <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>         
           <Card style={styles.container}>
               <Card.Content>
                 <Title style={{ marginBottom: 8 }}>Kelas</Title>

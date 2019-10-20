@@ -167,10 +167,10 @@ class VerifyPhoneScreen extends React.PureComponent{
   render(){
     return(
       <React.Fragment>
-        <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
           <NavigationEvents onDidFocus={this.handleScreenDidFocus} onwillBlue={this.handleScreenWillBlur}/>
           <Title style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Title>
-          <Paragraph style={{ marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menanganin masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Paragraph>
+          <Paragraph style={{ marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menangani masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Paragraph>
           <View style={{flexDirection:"row"}}>
           <TextInput style={{ marginRight: 8 }} value="+62" editable={false}/>
           <TextInput 

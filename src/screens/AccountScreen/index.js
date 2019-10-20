@@ -44,7 +44,20 @@ function AccountScreen(props){
       placeholder: "DD/MM/YYYY",
       fieldValue: personalInformation.birthday,
       fieldTitle: "Tanggal Lahir",
+      datePicker: true,
       beforeSave: (value) => moment(value, "DD/MM/YYYY").isValid()
+    }
+    navigation.navigate("EditSingleField", payload);
+  }
+
+  const handleGenderPress = () => {
+    const payload = {
+      databaseCollection: "users",
+      databaseDocumentId: currentUser.email,
+      databaseFieldName: "personalInformation.gender", 
+      fieldValue: (personalInformation.gender)? personalInformation.gender: "male",
+      fieldTitle: "Jenis Kelamin",
+      genderPicker: true
     }
     navigation.navigate("EditSingleField", payload);
   }
@@ -76,7 +89,7 @@ function AccountScreen(props){
         </View>
 
         <View style={styles.groupContainer}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={handleGenderPress}>
             <View style={styles.menu}>
               <Text style={{ fontWeight: "500" }}>Gender</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
