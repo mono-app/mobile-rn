@@ -13,6 +13,8 @@ function ChatBubble(props){
   const { theme, clickable, bubbleStyle, message } = props;
   const { content, sentTime, isSent } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
+  const [ enabledMore, setEnableMore ] = React.useState("");
+  const maxContentLength = 100
 
   const myBubble = StyleSheet.create({
     container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row-reverse", alignItems: "center" },
@@ -49,16 +51,32 @@ function ChatBubble(props){
 
   const handlePress = () => props.onPress(message);
 
+  const shortnerContent = () => {
+    return content.substring(0,maxContentLength)
+  }
+
+  const handleContentMore = () => {
+    setEnableMore(false)
+  }
+
   React.useEffect(() => {
     Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
     if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
+
+    if(content.length>maxContentLength){
+      setEnableMore(true)
+    }else{
+      setEnableMore(false)
+    }
+
   }, [isSent, sentTime])
 
+  
   return (
     <View style={[ styles.container, props.style ]}>
       <TouchableOpacity style={styles.section} onPress={handlePress} disabled={!clickable}>
         <Text style={styles.contentColor}>
-          {content}
+          {(enabledMore)? shortnerContent(): content}
           <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
         </Text>
         <View style={styles.metadata}>
@@ -66,6 +84,12 @@ function ChatBubble(props){
           {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
         </View>
       </TouchableOpacity>
+
+      {(enabledMore)? 
+          <IconButton icon="zoom-out-map" color={theme.colors.placeholder} onPress={handleContentMore}/>
+      : null}
+      
+
       {clickable && bubbleStyle !== "myBubble"?(
         <IconButton icon="share" color={theme.colors.placeholder} onPress={handlePress}/>
       ): null}

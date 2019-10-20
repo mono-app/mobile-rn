@@ -20,7 +20,6 @@ function ChatBottomTextInput(props){
   const [ sessionId, setSessionId ] = React.useState(room.liveVoice === undefined? null: room.liveVoice.session);
   const [ token, setToken ] = React.useState(null);
   const [ isConnected, setIsConnected ] = React.useState(false);
-  const _isMounted = React.useRef(true);
 
   const roomListener = React.useRef(null);
 
@@ -32,25 +31,26 @@ function ChatBottomTextInput(props){
     },
     textInput: {
       backgroundColor: "#E8EEE8", borderColor: "#E8EEE8", borderWidth: 1, flexGrow: 1,
-      borderRadius: 32, paddingLeft: 16, paddingRight: 16, paddingVertical: 4, flexShrink: 1
+      borderRadius: 32, paddingLeft: 16, paddingRight: 16, paddingVertical: 4, flexShrink: 1,
+      maxHeight: 100
     }
   });
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
-  const handleSessionConnected = () => {if(_isMounted.current) setIsConnected(true);}
-  const handleMessageChange = (newMessage) => {if(_isMounted.current) setMessage(newMessage);}
+  const handleSessionConnected = () => setIsConnected(true);
+  const handleMessageChange = (newMessage) => setMessage(newMessage);
   const handleSendPress = () => {
     const copiedMessage = JSON.parse(JSON.stringify(message));
     if(copiedMessage.trim() && props.editable ){
       props.onSendPress(copiedMessage);
     }
-    if(_isMounted.current) setMessage("");
+    setMessage("");
   };
 
   const handleRoomUpdate = (room) => {
     if(room.liveVoice === undefined) return;
     if(room.liveVoice.session === undefined) return;
-    if(_isMounted.current) setSessionId(room.liveVoice.session);
+    setSessionId(room.liveVoice.session);
   };
 
   const initLiveVoice = async () => {
@@ -64,7 +64,7 @@ function ChatBottomTextInput(props){
       })
     })).json();
     Logger.log("ChatBottomTextInput.initLiveVoice#jsonResult", jsonResult);
-    if(!jsonResult.error && _isMounted.current) setToken(jsonResult.result);
+    if(!jsonResult.error) setToken(jsonResult.result);
   }
 
 
@@ -76,7 +76,6 @@ function ChatBottomTextInput(props){
     if(sessionId === null) roomListener.current = RoomsAPI.getDetailWithRealTimeUpdate(room.id, handleRoomUpdate);
     if(token === null) initLiveVoice();
     return function cleanup(){
-      _isMounted.current = false
       if(roomListener.current) roomListener.current();
     }
   }, [sessionId, token]);
