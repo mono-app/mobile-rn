@@ -11,9 +11,15 @@ const INITIAL_STATE = {
 }
 
 export default class PersonalInformationCard extends React.PureComponent{
-  handleGivenNameChange = givenName => this.setState({givenName});
-  handleFamilyNameChange = familyName => this.setState({familyName});
-  handleGenderChange = (gender, index) => this.setState({gender});
+  handleGivenNameChange = givenName => {
+    const fGinvenName = givenName.replace(/[^a-zA-Z\s]/gi,'')
+    this.setState({givenName: fGinvenName});
+  }
+  handleFamilyNameChange = familyName => {
+    const fFamilyName = familyName.replace(/[^a-zA-Z\s]/gi,'')
+    this.setState({familyName: fFamilyName});
+  }
+  handleGenderChange = (gender, index) => {this.setState({gender});}
 
   constructor(props){
     super(props);
@@ -42,6 +48,8 @@ export default class PersonalInformationCard extends React.PureComponent{
             <TextInput 
               placeholder="Nama Depan"
               textContentType="givenName"
+              autoCorrect={false}
+              maxLength={50}
               value={this.state.givenName}
               onChangeText={this.handleGivenNameChange}/>
           </View>
@@ -50,6 +58,8 @@ export default class PersonalInformationCard extends React.PureComponent{
             <TextInput 
               placeholder="Nama Belakang"
               textContentType="familyName"
+              autoCorrect={false}
+              maxLength={50}
               value={this.state.familyName}
               onChangeText={this.handleFamilyNameChange}/>
           </View>
