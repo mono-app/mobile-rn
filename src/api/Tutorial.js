@@ -13,6 +13,8 @@ export function withTutorial(Component){
             showTutorialHomeAddContact={context.showTutorialHomeAddContact}
             showTutorialHomeChatSection={context.showTutorialHomeChatSection}
             showTutorialHomeNotifSection={context.showTutorialHomeNotifSection}
+            settingScreenTutorial={context.settingScreenTutorial}
+            showTutorialSettingChangeProfilePic={context.showTutorialSettingChangeProfilePic}
         
           />}
 
@@ -35,10 +37,19 @@ export class TutorialProvider extends React.PureComponent{
       showTutorialHomeAddContact: false,
       showTutorialHomeChatSection: false,
       showTutorialHomeNotifSection: false,
+      settingScreenTutorial: {
+        start: this.handleStartSettingScreenTutorial,
+        show: (index) => this.handleShowSettingScreenTutorial(index),
+        end: this.handleEndSettingScreenTutorial,
+      },
+      showTutorialSettingChangeProfilePic: false,
     }
     this.handleStartHomeScreenTutorial = this.handleStartHomeScreenTutorial.bind(this)
     this.handleShowHomeScreenTutorial = this.handleShowHomeScreenTutorial.bind(this)
     this.handleEndHomeScreenTutorial = this.handleEndHomeScreenTutorial.bind(this)
+    this.handleStartSettingScreenTutorial = this.handleStartSettingScreenTutorial.bind(this)
+    this.handleShowSettingScreenTutorial = this.handleShowSettingScreenTutorial.bind(this)
+    this.handleEndSettingScreenTutorial = this.handleEndSettingScreenTutorial.bind(this)
   }
 
  
@@ -80,6 +91,31 @@ export class TutorialProvider extends React.PureComponent{
       showTutorialHomeNotifSection:false
     })
   }
+
+
+  handleStartSettingScreenTutorial = async () => {
+    const show = await AsyncStorage.getItem('alreadyShowSettingScreenTutorial')
+    if(!show){
+      this.handleShowSettingScreenTutorial(1)
+    }
+  }
+
+
+  handleShowSettingScreenTutorial = (index) => {
+    if(index===1){
+      this.setState({
+        showTutorialSettingChangeProfilePic:true,
+      })
+    }
+  }
+
+  handleEndSettingScreenTutorial = async () => {
+    await AsyncStorage.setItem('alreadyShowSettingScreenTutorial', "true");
+    this.setState({
+      showTutorialSettingChangeProfilePic:false,
+    })
+  }
+
 
   componentDidMount(){
     
