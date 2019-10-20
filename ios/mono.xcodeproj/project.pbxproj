@@ -5,19 +5,20 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		370A9F7B4E004CF792A1956C /* RealmJSTests.xctest in Frameworks */ = {isa = PBXBuildFile; fileRef = 17DD9045C7194ED6BF74AA96 /* RealmJSTests.xctest */; };
+		460CB5DE0E83464CA9C91E3C /* libGCDWebServers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D9FE2C96E246C89E63F205 /* libGCDWebServers.a */; };
+		6D897DF95EE542F9AB1E4167 /* libRealmJS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FD8914878614C59A8B7DBA4 /* libRealmJS.a */; };
 		8F51FC1C28BDC29E9EFBA780 /* libPods-mono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBB87ECB33906D6591FD1BF8 /* libPods-mono.a */; };
 		DA46B3302339BAEF008205ED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DA46B32F2339BAEF008205ED /* GoogleService-Info.plist */; };
 		DAA3004B235583B1007DFA09 /* OTInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA3004A235583B1007DFA09 /* OTInstall.swift */; };
 		E2FC08935A5B4200B80BD5A9 /* libOpenTokReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
-		460CB5DE0E83464CA9C91E3C /* libGCDWebServers.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D9FE2C96E246C89E63F205 /* libGCDWebServers.a */; };
-		6D897DF95EE542F9AB1E4167 /* libRealmJS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FD8914878614C59A8B7DBA4 /* libRealmJS.a */; };
-		370A9F7B4E004CF792A1956C /* RealmJSTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 17DD9045C7194ED6BF74AA96 /* RealmJSTests.xctest */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,8 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mono/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mono/main.m; sourceTree = "<group>"; };
 		175D2C8F39FF450593332C37 /* libRNGestureHandler-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNGestureHandler-tvOS.a"; sourceTree = "<group>"; };
+		17DD9045C7194ED6BF74AA96 /* RealmJSTests.xctest */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RealmJSTests.xctest; sourceTree = "<group>"; };
+		251C1ECF96AB4510B744099B /* RealmJS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RealmJS.xcodeproj; path = ../node_modules/realm/src/RealmJS.xcodeproj; sourceTree = "<group>"; };
 		27712695420E4CC18C1409BE /* libRNGooglePlaces.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGooglePlaces.a; sourceTree = "<group>"; };
 		278A72CC2C4A4561AED8C6E6 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		2AB42D0FD9E846468F7577AF /* libRNFS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFS.a; sourceTree = "<group>"; };
@@ -65,6 +68,7 @@
 		5B39B15A4A9748E3A730C402 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		5B8585CA49F2441FA444DFFA /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
 		5F5823BAB9234F5C9A713C40 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		60D9FE2C96E246C89E63F205 /* libGCDWebServers.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libGCDWebServers.a; sourceTree = "<group>"; };
 		685A5D1E4F3141998828616D /* libReactNativeCameraKit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativeCameraKit.a; sourceTree = "<group>"; };
 		6EE831FA71284FD9A62D0AF0 /* libRNSVG-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNSVG-tvOS.a"; sourceTree = "<group>"; };
 		757F103D3203287CDCB95D91 /* libPods-monoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-monoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +80,7 @@
 		85FAEA8DDCC4439E9655E645 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		95322F625DFD4266B5C4DD88 /* libRNSpinkit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSpinkit.a; sourceTree = "<group>"; };
 		974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = OpenTokReactNative.xcodeproj; path = "../node_modules/opentok-react-native/ios/OpenTokReactNative.xcodeproj"; sourceTree = "<group>"; };
+		9FD8914878614C59A8B7DBA4 /* libRealmJS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRealmJS.a; sourceTree = "<group>"; };
 		A1A46E847C23E66D15B9B7A0 /* Pods-monoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-monoTests.release.xcconfig"; path = "Target Support Files/Pods-monoTests/Pods-monoTests.release.xcconfig"; sourceTree = "<group>"; };
 		A7EF24A70A0F4F4CAF951CA0 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		ABF2897149BB4997A0CF1859 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
@@ -104,10 +109,6 @@
 		F6C714783E2D1B3891D96BDA /* Pods-mono.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mono.debug.xcconfig"; path = "Target Support Files/Pods-mono/Pods-mono.debug.xcconfig"; sourceTree = "<group>"; };
 		FBB87ECB33906D6591FD1BF8 /* libPods-mono.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mono.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libOpenTokReactNative.a; sourceTree = "<group>"; };
-		251C1ECF96AB4510B744099B /* RealmJS.xcodeproj */ = {isa = PBXFileReference; name = "RealmJS.xcodeproj"; path = "../node_modules/realm/src/RealmJS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		60D9FE2C96E246C89E63F205 /* libGCDWebServers.a */ = {isa = PBXFileReference; name = "libGCDWebServers.a"; path = "libGCDWebServers.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		9FD8914878614C59A8B7DBA4 /* libRealmJS.a */ = {isa = PBXFileReference; name = "libRealmJS.a"; path = "libRealmJS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		17DD9045C7194ED6BF74AA96 /* RealmJSTests.xctest */ = {isa = PBXFileReference; name = "RealmJSTests.xctest"; path = "RealmJSTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +121,7 @@
 				E2FC08935A5B4200B80BD5A9 /* libOpenTokReactNative.a in Frameworks */,
 				460CB5DE0E83464CA9C91E3C /* libGCDWebServers.a in Frameworks */,
 				6D897DF95EE542F9AB1E4167 /* libRealmJS.a in Frameworks */,
-				370A9F7B4E004CF792A1956C /* RealmJSTests.xctest in Resources */,
+				370A9F7B4E004CF792A1956C /* RealmJSTests.xctest in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +269,9 @@
 				F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */,
 				27712695420E4CC18C1409BE /* libRNGooglePlaces.a */,
 				FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */,
+				60D9FE2C96E246C89E63F205 /* libGCDWebServers.a */,
+				9FD8914878614C59A8B7DBA4 /* libRealmJS.a */,
+				17DD9045C7194ED6BF74AA96 /* RealmJSTests.xctest */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
