@@ -113,7 +113,7 @@ function CommentsScreen(props){
   return(
     <Container style={{ backgroundColor: "#E8EEE8" }}>
       <AppHeader navigation={navigation} style={{ backgroundColor: "white", elevation: 0 }}/>
-      <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}>
+      <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ flex: 1 }}>
         <MomentItem moment={moment} canComment={false} onSharePress={handleSharePress} onProfilePress={handleProfilePress} style={{ borderRadius: 0, elevation: 0 }}/>
         <FlatList
           ref={commentFlatList} data={comments} keyExtractor={(item) => item.id}
