@@ -120,20 +120,19 @@ export default class FriendsAPI{
           const data = documentSnapshot.data()
           return (!data.status || (data.status && data.status !== "blocked" && data.status !== "blocked-by" &&  data.status !== "hide"))
         })
+         const promises = filteredFriendList.map((documentSnapshot) => {
+          const userDocument = new Document(documentSnapshot.id);
+          const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+          return userRef.get();
+        })
+        const friends = await Promise.all(promises);
 
-        // const promises = filteredFriendList.map((documentSnapshot) => {
-        //   const userDocument = new Document(documentSnapshot.id);
-        //   const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-        //   return userRef.get();
-        // })
-        // const friends = await Promise.all(promises);
+        //filter if friend is exist in users
+        const filteredFriends = friends.filter(documentSnapshot=>{
+          return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
+        })
 
-        // //filter if friend is exist in users
-        // const filteredFriends = friends.filter(documentSnapshot=>{
-        //   return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
-        // })
-
-        const normalizedFriends = filteredFriendList.map((documentSnapshot) => {
+        const normalizedFriends = filteredFriends.map((documentSnapshot) => {
           return FriendsAPI.normalizeFriend(documentSnapshot);
         });
 
