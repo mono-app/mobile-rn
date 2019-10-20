@@ -38,10 +38,8 @@ function HomeScreen(props){
     props.navigation.navigate("ShareMoment", payload)
   }
   
-  const handleProfilePress = (item) => {
-    const payload = {
-      peopleEmail: item.posterEmail
-    }
+  const handleProfilePress = (people) => {
+    const payload = { peopleEmail: people.email }
     props.navigation.navigate("PeopleInformation", payload);
   }
 
@@ -93,7 +91,7 @@ function HomeScreen(props){
           return (
             <MomentItem 
               moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} 
-              onCommentPress={handleCommentPress} onSharePress={handleSharePress} onDeleteMomentPress={handleDeleteMomentPress}/>
+              onCommentPress={handleCommentPress} onSharePress={handleSharePress} onDeleteMomentPress={handleDeleteMomentPress} onProfilePress={handleProfilePress}/>
           )
         }
       }/>

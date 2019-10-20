@@ -37,29 +37,17 @@ function MomentItem(props){
   const handleDeleteMomentPress = () => props.onDeleteMomentPress(moment);
   const handleCommentPress = () => props.onCommentPress(moment);
   const handleSharePress = () => props.onSharePress(moment);
-
-  const toggleOpen = () => {if(_isMounted.current) setIsMenuVisible(!isMenuVisible);}
-  const handleMenuClose = () => {if(_isMounted.current) setIsMenuVisible(false);}
-  const handlePicturePress = (index) => {
-    payload = {
-      index,
-      images: moment.content.images
-    }
-    props.navigation.navigate("GallerySwiper", payload);
-  }
-
+  const handleProfilePress = () => props.onProfilePress(people)
+  
   const fetchPeople = () => {
     PeopleAPI.getDetail(moment.posterEmail).then(peopleData=>{
       if(_isMounted.current) setPeople(peopleData);
     })
-  const fetchPeople = async () => {
-    const peopleData = await PeopleAPI.getDetail(moment.posterEmail)
-    if(_isMounted.current) setPeople(peopleData);
   }
 
-  const fetchMoment = async () => {
+  const fetchMoment = () => {
     momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, currentUser.email, (newMoment) => {
-      if(newMoment.postTime){
+      if(newMoment && newMoment.postTime){
        const creationDate = momentDate(newMoment.postTime.seconds * 1000).format("DD MMMM YYYY")
        const creationTime = momentDate(newMoment.postTime.seconds * 1000).format("HH:mm")
        if(_isMounted.current) setCreatedDate(creationDate+" | Jam "+ creationTime + " WIB");
@@ -80,7 +68,7 @@ function MomentItem(props){
 
   
   let totalComments = ""
-  if(moment.totalComments){
+  if(moment && moment.totalComments){
     if(moment.totalComments >= 99) totalComments = "99+"
     else totalComments = moment.totalComments
   }
@@ -90,17 +78,19 @@ function MomentItem(props){
   return (
     <Surface style={[ styles.surface, props.style ]}>
       <View style={{ justifyContent: "space-between", flexDirection:"row" }}>
-        <View style={styles.profile}>
-          <SquareAvatar size={50} uri={people.profilePicture}/>
-          <View style={{ marginLeft: 8 }}>
-            <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
-            <Caption style={{ margin: 0 }}>{createdDate}</Caption>
+        <TouchableOpacity onPress={handleProfilePress}>
+          <View style={styles.profile}>
+            <SquareAvatar size={50} uri={people.profilePicture}/>
+            <View style={{ marginLeft: 8 }}>
+              <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
+              <Caption style={{ margin: 0 }}>{createdDate}</Caption>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
         {(people.email === currentUser.email)? <VerticalMenu onDeleteMomentPress={handleDeleteMomentPress}/>:null}
       </View>
       <View style={styles.textContainer}>
-        <Text style={{ textAlign: "justify" }}>{moment.content.message}</Text>
+        <Text style={{ textAlign: "justify", lineHeight: 20 }}>{moment.content.message}</Text>
         <ImageList images={moment.content.images}/>
       </View>
       <View style={styles.actionContainer}>
