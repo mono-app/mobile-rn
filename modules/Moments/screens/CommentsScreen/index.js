@@ -11,8 +11,9 @@ import Container from "src/components/Container";
 import AppHeader from "src/components/AppHeader";
 import CommentItem from "./CommentItem";
 import MomentItem from "modules/Moments/components/MomentItem";
-import { FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Text } from "react-native-paper";
 
 function CommentsScreen(props){
   const { navigation, currentUser } = props;
@@ -22,6 +23,7 @@ function CommentsScreen(props){
   const [ moment, setMoment ] = React.useState(null);
   const [ people, setPeople ] = React.useState(null);
   const [ comments, setComments ] = React.useState([]);
+  const [ isMomentDeleted, setMomentDeleted ] = React.useState(false);
 
   const _isMounted = React.useRef(false);
   const listener = React.useRef(null);
@@ -61,7 +63,10 @@ function CommentsScreen(props){
   const loadData = async () =>{
     const moment = await MomentAPI.getDetail(momentId)
     const people = await PeopleAPI.getDetail(moment.posterEmail)
-    if(_isMounted.current){
+    console.log("momentmomentmoment")
+    console.log(moment)
+    if(_isMounted.current && moment){
+      if(!moment.postTime) setMomentDeleted(true)
       setMoment(moment);
       setPeople(people);
     }
@@ -94,8 +99,17 @@ function CommentsScreen(props){
       if(momentListener.current) momentListener.current();
     }
   }, []);
-  
-  if(!people || !moment) return <LoadingDialog visible={true}/>
+  if(isMomentDeleted){
+    return(
+      <Container style={{ backgroundColor: "white" }}>
+        <AppHeader navigation={navigation} style={{ backgroundColor: "white", elevation: 0 }}/>
+        <View>
+          <Text style={{paddingTop:32, color:"red",textAlign: 'center'}}>Moment Sudah Terhapus</Text>
+        </View>
+      </Container>)
+  }else if(!people || !moment) {
+      return <LoadingDialog visible={true}/>
+  }
   return(
     <Container style={{ backgroundColor: "#E8EEE8" }}>
       <AppHeader navigation={navigation} style={{ backgroundColor: "white", elevation: 0 }}/>
