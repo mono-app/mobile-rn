@@ -37,6 +37,8 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 
+import org.pgsqlite.SQLitePluginPackage;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,9 +54,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new OTPackage(),
-            new RNFusedLocationPackage(),
-            new PickerPackage(),
+          new SQLitePluginPackage(),
+          new OTPackage(),
+          new RNFusedLocationPackage(),
+          new PickerPackage(),
           new ImageResizerPackage(),
           new ImagePickerPackage(),
           new DocumentPickerPackage(),

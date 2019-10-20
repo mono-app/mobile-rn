@@ -1,6 +1,8 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
 import VerifyPhoneAPI from "src/api/verifyphone";
+import OfflineSyncAPI from "src/api/sync";
+import OfflineDatabase from "src/api/database/offline";
 import AppNavigator from "src/navigators/AppNavigator";
 import { AppState } from "react-native";
 import { createAppContainer } from 'react-navigation';
@@ -37,7 +39,11 @@ function App(){
     }
   }
 
+
   React.useEffect(() => {
+    OfflineDatabase.openConnection();
+    OfflineSyncAPI.listen();
+
     const firebaseUser = firebase.auth().currentUser;
     if(firebaseUser !== null && firebaseUser.email) {
       PeopleAPI.setOnlineStatus(firebaseUser.email, "Online");
@@ -45,9 +51,11 @@ function App(){
     firebase.firestore().settings({ persistence: true, cacheSizeBytes: -1 });
     AppState.addEventListener("change", handleAppStateChange);
     return function cleanup(){
-      AppState.removeEventListener("change", handleAppStateChange) 
+      AppState.removeEventListener("change", handleAppStateChange);
+      OfflineSyncAPI.removeListeners();
+      OfflineDatabase.closeConnection();
     }
-  })
+  }, [])
 
   return(
     <PaperProvider theme={theme}>

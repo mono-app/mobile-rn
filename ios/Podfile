@@ -38,6 +38,8 @@ target 'mono' do
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
+  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+
 end
 
 post_install do |installer|

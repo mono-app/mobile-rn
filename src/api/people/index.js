@@ -1,15 +1,16 @@
-import React from "react";
 import firebase from "react-native-firebase";
-import moment from "moment";
 import uuid from "uuid/v4";
 import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
 import CurrentUserAPI from "src/api/people/CurrentUser";
+import Logger from "src/api/logger";
 import { StackActions } from "react-navigation";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
-import {getDistance} from 'geolib';
-import {AsyncStorage} from 'react-native';
+import { getDistance } from 'geolib';
+
+import { getConnection } from "typeorm";
+import { User } from "src/api/database/models";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -22,18 +23,24 @@ export default class PeopleAPI{
    */
   static normalizePeople(documentSnapshot){
     const newPeople = documentSnapshot.data();
+    Logger.log("PeopleAPI.normalizePeople#newPeople", newPeople);
     if(documentSnapshot.exists) {
       newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
-
       if(newPeople.isCompleteSetup) {
         if(newPeople.applicationInformation.profilePicture !== undefined){
           newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
         }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
       }
     }
-    
-
     return newPeople;
+  }
+
+  static normalizeOffline(offlineUser){
+    const normalizedPeople = {};
+    normalizedPeople.applicationInformation = { id: offlineUser.monoId, nickName: offlineUser.nickName };
+    normalizedPeople.email = offlineUser.email;
+    normalizedPeople.profilePicture = offlineUser.profilePicture;
+    return normalizedPeople;
   }
 
   /**
@@ -135,17 +142,44 @@ export default class PeopleAPI{
    * @param {String} source - default value `default`, available value `cache`, `server`, `default`
    * @returns {Promise} - object of user in firebase, or null if cannot find
    */
-  static async getDetail(email=null, source="default"){
-    if(email){
-      const userCollection = new UserCollection();
-      const userDocument = new Document(email);
-      const db = firebase.firestore();
-      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      const documentSnapshot = await userRef.get({ source });
-      if(documentSnapshot.exists){
-        const userData = PeopleAPI.normalizePeople(documentSnapshot);
-        return Promise.resolve(userData);
-      }else return Promise.resolve(null);
+  static async getDetail(email=null){
+    try{
+      const connection = await getConnection();
+      const userRepository = connection.getRepository("User");
+      const user = await userRepository.findOne({ email });
+      if(user === undefined) return Promise.resolve(await PeopleAPI.getFromServer(email));
+      else return Promise.resolve(await PeopleAPI.normalizeOffline(user));
+    }catch(err){ 
+      if(err.name === "RepositoryNotFoundError"){
+        return Promise.resolve(await PeopleAPI.getFromServer(email));
+      }else Promise.reject(err);
+    }
+  }
+
+  static async saveOffline(userData){
+    Logger.log("PeopleAPI.saveOffline#userData", userData);
+    
+    const mUser = new User();
+    mUser.monoId = userData.applicationInformation.id;
+    mUser.email = userData.email;
+    mUser.profilePicture = userData.profilePicture;
+    mUser.nickName = userData.applicationInformation.nickName;
+
+    const connection = await getConnection();
+    const userRepository = connection.getRepository("User");
+    await userRepository.save(mUser);
+  }
+
+  static async getFromServer(email, syncOffline=true){
+    const userCollection = new UserCollection();
+    const userDocument = new Document(email);
+    const db = firebase.firestore();
+    const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+    const documentSnapshot = await userRef.get();
+    if(documentSnapshot.exists){
+      const userData = PeopleAPI.normalizePeople(documentSnapshot);
+      if(syncOffline) await PeopleAPI.saveOffline(userData);
+      return Promise.resolve(userData);
     }else return Promise.resolve(null);
   }
 

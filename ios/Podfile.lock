@@ -169,6 +169,8 @@ PODS:
     - React
   - react-native-spinkit (1.0.2):
     - React
+  - react-native-sqlite-storage (4.1.0):
+    - React
   - React/Core (0.59.9):
     - yoga (= 0.59.9.React)
   - React/CxxBridge (0.59.9):
@@ -260,6 +262,7 @@ DEPENDENCIES:
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-spinkit (from `../node_modules/react-native-spinkit`)
+  - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/cxxreact (from `../node_modules/react-native`)
@@ -339,6 +342,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-spinkit:
     :path: "../node_modules/react-native-spinkit"
+  react-native-sqlite-storage:
+    :path: "../node_modules/react-native-sqlite-storage"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
   RNCAsyncStorage:
@@ -398,6 +403,7 @@ SPEC CHECKSUMS:
   react-native-maps: 190c02ca533fddac5bb49cf17bdece3644612107
   react-native-netinfo: 0da34082d2cec3100c9b5073bb217e35f1142bdd
   react-native-spinkit: 9a5d2f95aa975d5660fd3e76b7eac38e7329e46c
+  react-native-sqlite-storage: f06bfba10f67f989c00b6a699b9c2b80a816edbe
   ReactNativePermissions: 7cfad56d13c8961cd2a1005b4955b1400c79ef3e
   RNCAsyncStorage: 2e2e3feb9bdadc752a026703d8c4065ca912e75a
   RNFirebase: 891477280514b0cef3225cc48709cabedd192d5e
@@ -410,6 +416,6 @@ SPEC CHECKSUMS:
   SDWebImage: 96d7f03415ccb28d299d765f93557ff8a617abd8
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: d5972fd851b3e1012b1e1b81749b2a87735fa1a5
+PODFILE CHECKSUM: 4fb5210e81e48bfe36e8d7bfa5215a8c3de1da2c
 
 COCOAPODS: 1.8.0

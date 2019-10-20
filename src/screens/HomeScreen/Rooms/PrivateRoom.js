@@ -31,11 +31,11 @@ function PrivateRoom(props){
     const fetchData = async () => {
       const { audiences, type, school } = props.room;
       const realAudience = audiences.filter((audience) => audience !== currentUser.email)[0];
-      if(type==="group-chat"){
-        const classData = await ClassAPI.getDetail(school.id,school.classId)
+      if(type === "group-chat"){
+        const classData = await ClassAPI.getDetail(school.id, school.classId)
         if(_isMounted.current) setClass(classData)
       }else{
-        PeopleAPI.getDetailWithRealTimeUpdate(realAudience, (data)=>{
+        PeopleAPI.getDetailWithRealTimeUpdate(realAudience, (data) => {
           if(_isMounted.current) setPeople(data);
         });
       } 

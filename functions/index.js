@@ -12,6 +12,7 @@ const Teacher = require("./listeners/teacher");
 const Tasks = require("./listeners/tasks");
 const Moments = require("./listeners/moments");
 const Room = require("./listeners/room");
+const User = require("./listeners/user");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -26,6 +27,8 @@ exports.sendNotificationForNewMessage = Messages.sendNotificationForNewMessage;
 
 exports.triggerNewRoom = Room.triggerNewRoom;
 exports.requestRoomToken = Room.requestRoomToken;
+
+exports.triggerUserChange = User.triggerUserChange;
 
 exports.triggerNewFriendRequest = Friends.triggerNewFriendRequest;
 exports.addFriendTrigger = Friends.addFriendTrigger;

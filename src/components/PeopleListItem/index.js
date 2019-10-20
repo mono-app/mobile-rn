@@ -35,12 +35,15 @@ function PeopleListItem(props){
       if(_isMounted.current) setFetching(false)
     }
     const fetchData = async () => {
-      PeopleAPI.getDetailWithRealTimeUpdate(email, (data)=>{
-        if(_isMounted.current) {
-          setPeople(data)
-          setFetching(false)
-        }
-      });
+      const people = await PeopleAPI.getDetail(email);
+      setPeople(people);
+      setFetching(false);
+      // PeopleAPI.getDetailWithRealTimeUpdate(email, (data)=>{
+      //   if(_isMounted.current) {
+      //     setPeople(data)
+      //     setFetching(false)
+      //   }
+      // });
     }
 
     if(props.distance===undefined){
