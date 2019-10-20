@@ -334,7 +334,7 @@ class DiscussionCommentScreen extends React.PureComponent {
             style={{ backgroundColor: "#fff" }}
         />
        
-        <KeyboardAwareScrollView style={{flex:1}}>         
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>         
           <Card style={{ elevation: 1, marginTop: 8}}>
               <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
                 <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>

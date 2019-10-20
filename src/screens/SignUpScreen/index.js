@@ -57,7 +57,7 @@ export default class SignUpScreen extends React.PureComponent{
 
   render(){
     return(
-      <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+      <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
         <Title>Form Registrasi Pengguna Baru</Title>
         <Paragraph style={{ marginBottom: 16 }}>Masukan email dan password untuk mendaftar pada aplikasi ini. Mohon untuk tidak pernah membagikan password kepada siapapun</Paragraph>
         <View>

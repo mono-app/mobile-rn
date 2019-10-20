@@ -33,6 +33,13 @@ class CommentsScreen extends React.PureComponent{
       this.setState({moment, people})
   }
 
+  handleProfilePress = () => {
+    const payload = {
+      peopleEmail: this.state.people.email
+    }
+    this.props.navigation.navigate("PeopleInformation", payload);
+  }
+
   handleSharePress = () => {
     payload = {
       moment: this.state.moment,
@@ -63,6 +70,7 @@ class CommentsScreen extends React.PureComponent{
     this.loadData = this.loadData.bind(this)
     this.handleSharePress = this.handleSharePress.bind(this)
     this.handlePicturePress = this.handlePicturePress.bind(this)
+    this.handleProfilePress = this.handleProfilePress.bind(this)
   }
 
   async componentDidMount(){
@@ -109,7 +117,7 @@ class CommentsScreen extends React.PureComponent{
     return(
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
 
-        <KeyboardAwareScrollView ref={i => this.keyboardAwareScrollView = i} contentContainerStyle={{ flex: 1 }}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} ref={i => this.keyboardAwareScrollView = i} contentContainerStyle={{ flex: 1 }}>
           
           <FlatList
             ref={i=> this.commentFlatList = i}
@@ -123,6 +131,7 @@ class CommentsScreen extends React.PureComponent{
                 moment={this.state.moment}
                 onSharePress={this.handleSharePress}
                 onPicturePress={this.handlePicturePress}
+                onProfilePress={this.handleProfilePress}
               />
             }}/>
 
