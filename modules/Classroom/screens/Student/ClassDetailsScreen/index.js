@@ -1,22 +1,18 @@
 import React from "react";
-import { View,StyleSheet } from "react-native";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import {
-  ActivityIndicator,
-  Dialog,
-  Text,
-  Caption,
-} from "react-native-paper";
-import AppHeader from "src/components/AppHeader";
 import ClassAPI from "modules/Classroom/api/class";
 import TeacherAPI from "modules/Classroom/api/teacher";
+import RoomsAPI from "src/api/rooms"
+import Logger from "src/api/logger";
+import { StyleSheet } from "react-native";
+import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+
+import AppHeader from "src/components/AppHeader";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
+import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-native";
+import { IconButton, Dialog, Text, Caption } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
-import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
-import { IconButton } from "react-native-paper";
-import RoomsAPI from "src/api/rooms"
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {} };
 class ClassDetailsScreen extends React.PureComponent {
@@ -76,7 +72,7 @@ class ClassDetailsScreen extends React.PureComponent {
 
   handleGroupChatPress = async () => {
     const room = await RoomsAPI.createGroupClassRoomIfNotExists(this.props.currentSchool.id, this.classId)
-    console.log(room)
+    Logger.log("Classroom.Student.ClassDetailScreen.handleGroupChatPress#room", room);
     if(room){
       this.props.navigation.navigate("GroupChat", { room });
     }
@@ -135,7 +131,7 @@ class ClassDetailsScreen extends React.PureComponent {
                 profilePicture="https://picsum.photos/200/200/?random"
                 title={this.state.class.subject}
                 />
-              <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+              <View style={{ flex:1, justifyContent: "center", alignItems: "flex-end", paddingRight: 16 }}>
                 <TouchableOpacity onPress={this.handleGroupChatPress}>
                   <IconButton icon="comment" size={32}></IconButton>
                 </TouchableOpacity>

@@ -1,149 +1,112 @@
 import React from "react";
-import { View, FlatList } from "react-native";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { withCurrentUser } from "src/api/people/CurrentUser"
-import CommentsAPI from "modules/Moments/api/comments";
-import BottomTextInput from "src/components/BottomTextInput";
-import CommentItem from "./CommentItem";
-import { ActivityIndicator, Text, Dialog, Caption } from "react-native-paper";
-
 import PeopleAPI from "src/api/people";
 import MomentAPI from "modules/Moments/api/moment";
+import CommentsAPI from "modules/Moments/api/comments";
+import Logger from "src/api/logger";
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
-const INITIAL_STATE = { comments: [], moment: {}, people: {} }
+import BottomTextInput from "src/components/BottomTextInput";
+import LoadingDialog from "src/components/LoadingDialog";
+import Container from "src/components/Container";
+import AppHeader from "src/components/AppHeader";
+import CommentItem from "./CommentItem";
+import MomentItem from "modules/Moments/components/MomentItem";
+import { FlatList } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-class CommentsScreen extends React.PureComponent{
-  static navigationOptions = { headerTitle: "Komentar" };
+function CommentsScreen(props){
+  const { navigation, currentUser } = props;
+  
+  const momentId = navigation.getParam("momentId", null);
 
-  handleSendPress = async (msg) => {
+  const [ moment, setMoment ] = React.useState(null);
+  const [ people, setPeople ] = React.useState(null);
+  const [ comments, setComments ] = React.useState([]);
+
+  const _isMounted = React.useRef(false);
+  const listener = React.useRef(null);
+  const momentListener = React.useRef(null);
+  const commentFlatList = React.useRef(null);
+  const txtComment = React.useRef(null);
+
+  const handleContentSizeChange = () => { 
+    if(commentFlatList.current) {
+      setTimeout(() => commentFlatList.current.scrollToEnd(), 200);
+    }
+  }
+  const handleSendPress = async (msg) => {
     const comment = msg.trim()
-    if(this.momentId && comment.length>0){
+    if(momentId && comment.length>0){
       const copiedComment = JSON.parse(JSON.stringify(comment));
-      if(this.txtComment) this.txtComment.clear();
-      await CommentsAPI.postComment(this.momentId, copiedComment, this.props.currentUser.email);
-      
-      setTimeout(() => this.commentFlatList.scrollToEnd(), 200)
+      if(txtComment.current) txtComment.current.clear();
+      await CommentsAPI.postComment(momentId, copiedComment, currentUser.email);
     }
   }
 
-  loadData = async () =>{
-    const moment = await MomentAPI.getDetail(this.momentId)
+  const handleSharePress = () => {
+    payload = { moment, onComplete: () => {} }
+    navigation.navigate("ShareMoment", payload)
+  }
+  
+  const handlePicturePress = (index) => {
+    payload = { index, images: moment.content.images }
+    navigation.navigate("GallerySwiper", payload);
+  };
+
+  const loadData = async () =>{
+    const moment = await MomentAPI.getDetail(momentId)
     const people = await PeopleAPI.getDetail(moment.posterEmail)
-    if(this._isMounted)
-      this.setState({moment, people})
+    if(_isMounted.current){
+      setMoment(moment);
+      setPeople(people);
+    }
   }
 
-  handleProfilePress = () => {
-    const payload = {
-      peopleEmail: this.state.people.email
-    }
-    this.props.navigation.navigate("PeopleInformation", payload);
+  const listenForComments = () => {
+    listener.current = CommentsAPI.getCommentsWithRealTimeUpdate(momentId, (comments) => {
+      if(_isMounted.current) setComments(comments);
+    });
   }
 
-  handleSharePress = () => {
-    payload = {
-      moment: this.state.moment,
-      onComplete: ()=>{}
-    }
-    this.props.navigation.navigate("ShareMoment",payload)
+  const listenForMoment = () => {
+    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(momentId, currentUser.email, (newMoment) => {
+      Logger.log("CommentsScreen.listenForMoment#newMoment", newMoment);
+      if(_isMounted.current) setMoment(newMoment);
+    });
   }
+
+  React.useEffect(() => {
+    Logger.log("CommentsScreen#momentId", momentId);
+    _isMounted.current = true;
+
+    loadData();
+    listenForComments();
+    listenForMoment();
+
+    return function cleanup(){
+      _isMounted.current = false;
+      if(listener.current) listener.current()
+      if(momentListener.current) momentListener.current();
+    }
+  }, []);
   
-  handlePicturePress = (index) => {
-    payload = {
-      index,
-      images: this.state.moment.content.images
-    }
-    this.props.navigation.navigate("GallerySwiper", payload);
-  }
-
-  constructor(props){
-    super(props);
-    this.state = INITIAL_STATE;
-    this._isMounted = null;
-    this.txtComment = null;
-    this.keyboardAwareScrollView = null;
-    this.commentFlatList = null
-    this.listener = null;
-    this.momentListener = null;
-    this.momentId = this.props.navigation.getParam("momentId", null);
-    this.handleSendPress = this.handleSendPress.bind(this)
-    this.loadData = this.loadData.bind(this)
-    this.handleSharePress = this.handleSharePress.bind(this)
-    this.handlePicturePress = this.handlePicturePress.bind(this)
-    this.handleProfilePress = this.handleProfilePress.bind(this)
-  }
-
-  async componentDidMount(){
-    this._isMounted = true;
-    await this.loadData()
-    if(this.keyboardAwareScrollView !== null) this.keyboardAwareScrollView.scrollToEnd(true);
-    this.listener = CommentsAPI.getCommentsWithRealTimeUpdate(this.momentId, comments => {
-      if(comments.length>0){
-        if(this._isMounted)
-          this.setState({ comments })
-      }else{
-        if(this._isMounted)
-          this.setState({ comments: [{id: "-1"}] })
-      }
-    })
-    this.momentListener = MomentAPI.getDetailWithRealTimeUpdate(this.momentId, (newMoment) => {
-      const clonedComments = JSON.parse(JSON.stringify(this.state.comments))
-      if(this._isMounted)
-        this.setState({moment:newMoment, comments: clonedComments});
-    })
-
-  }
-
-  componentWillUnmount(){ 
-    this._isMounted = false;
-    if(this.listener) this.listener(); 
-    if(this.momentListener) this.momentListener(); 
-  }
-  
-  render(){
-    if(!this.state.people.applicationInformation || !this.state.moment.content){
-      return (
-        <Dialog visible={true}>
-          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-            <ActivityIndicator/>
-            <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
-            </View>
-          </Dialog.Content>
-        </Dialog>
-      )
-    }
-    return(
-      <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
-
-        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} ref={i => this.keyboardAwareScrollView = i} contentContainerStyle={{ flex: 1 }}>
-          
-          <FlatList
-            ref={i=> this.commentFlatList = i}
-            data={this.state.comments}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => {
-              return <CommentItem 
-                {...item} 
-                index={index} 
-                people={this.state.people} 
-                moment={this.state.moment}
-                onSharePress={this.handleSharePress}
-                onPicturePress={this.handlePicturePress}
-                onProfilePress={this.handleProfilePress}
-              />
-            }}/>
-
-          <BottomTextInput 
-            ref={i => this.txtComment = i}
-            autoFocus={false}
-            onSendPress={this.handleSendPress}
-            />
-        </KeyboardAwareScrollView>
-      </View>
-    )
-  }
+  if(!people || !moment) return <LoadingDialog visible={true}/>
+  return(
+    <Container style={{ backgroundColor: "#E8EEE8" }}>
+      <AppHeader navigation={navigation} style={{ backgroundColor: "white", elevation: 0 }}/>
+      <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}>
+        <MomentItem moment={moment} canComment={false} onSharePress={handleSharePress} style={{ borderRadius: 0, elevation: 0 }}/>
+        <FlatList
+          ref={commentFlatList} data={comments} keyExtractor={(item) => item.id}
+          onContentSizeChange={handleContentSizeChange}
+          renderItem={({ item, index }) => {
+            return <CommentItem comment={item} people={people} onSharePress={handleSharePress} onPicturePress={handlePicturePress}/>
+          }}/>
+        <BottomTextInput ref={txtComment} autoFocus={false} onSendPress={handleSendPress}/>
+      </KeyboardAwareScrollView>
+    </Container>
+  )
 }
 
+CommentsScreen.navigationOptions = { header: null }
 export default withCurrentUser(CommentsScreen);

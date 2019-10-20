@@ -4,10 +4,12 @@ import Logger from "src/api/logger";
 import { withTheme } from "react-native-paper";
 import { StyleSheet } from "react-native";
 
+import { ActivityIndicator } from "react-native";
 import { IconButton } from "react-native-paper";
 import { OTSubscriber } from "opentok-react-native";
 
 function SpeakerButton(props){
+  const { isLoading } = props;
   const { colors } = props.theme;
   const [ isActive, setIsActive ] = React.useState(false);
   const [ showSubscriber, setShowSubscriber ] = React.useState(false);
@@ -19,15 +21,15 @@ function SpeakerButton(props){
     default: { marginHorizontal: 0 }
   })
 
-  const subscriberEventHandlers = { error: handleError, otrnError: handleError }
-
   const handleError = (err) => Logger.log("SpeakerButton.handleError#err", err);
   const handlePress = () => {
     setShowSubscriber(!showSubscriber);
     setIsActive(!isActive);
   }
 
-  Logger.log("SpeakerButton#showSubscriber", showSubscriber);
+  const subscriberEventHandlers = { error: handleError, otrnError: handleError }
+
+  if(isLoading) return <ActivityIndicator size="small" color={colors.disabled} style={[ styles.default, props.style ]}/>
   return (
     <React.Fragment>
       {showSubscriber?(

@@ -2,11 +2,13 @@ import React from "react";
 import DocumentPicker from 'react-native-document-picker';
 import Logger from "src/api/logger";
 import MomentAPI from "modules/Moments/api/moment";
+import StorageAPI from "src/api/storage";
 import uuid from "uuid/v4"
 import Permissions from "react-native-permissions";
 import IOSImagePicker from "react-native-image-crop-picker";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { Platform } from "react-native";
+
 import ImageListItem from "src/components/ImageListItem"
 import Button from "src/components/Button";
 import CircleAvatar from "src/components/Avatar/Circle";
@@ -34,8 +36,7 @@ function AddMomentScreen(props){
   }
   const handleSubmitMoment = async () => {
     if(_isMounted.current) setIsSubmitting(true);
-    const payload = { message: content, images }
-    await MomentAPI.publishMoment(currentUser.email, payload);
+    await MomentAPI.publishMoment(currentUser.email, { message: content, images });
     if(_isMounted.current){
       setContent("");
       setIsSubmitting(false)
@@ -44,30 +45,12 @@ function AddMomentScreen(props){
   }
 
   const handleGalleryPress = async () => {
-    const isPermissionGranted = await checkPermission();
-    if(!isPermissionGranted){
-      await requestStoragePermission();
-      return;
-    }
-
     try{
-      let results;
-      if(Platform.OS === "ios"){
-        results = await IOSImagePicker.openPicker({ mediaType: "photo", multiple: true });
-
-        // Normalize image result from ios
-        results = results.map((image) => {
-          return { uri: image.sourceURL, size: image.size }
-        })
-      }else if(Platform.OS === "android"){
-        results = await DocumentPicker.pickMultiple({ type: [DocumentPicker.types.images] });
-      }
-      Logger.log("AddMomentScreen.handleGalleryPress:results", results);
-
+      const selectedImages = await StorageAPI.openGallery();
       const clonnedImages = Array.from(images);
-      for (const res of results) {
-        const compressedRes = await ImageCompress.compress(res.uri, res.size)
-        clonnedImages.push({id: uuid(), ...compressedRes});
+      for (const selectedImage of selectedImages) {
+        const compressedRes = await ImageCompress.compress(selectedImage.uri, selectedImage.size)
+        clonnedImages.push({ id: uuid(), ...compressedRes });
       }
       if(_isMounted.current) setImages(clonnedImages)
     }catch(err){ Logger.log("AddMomentScreen.handleGalleryPress#err", err)}

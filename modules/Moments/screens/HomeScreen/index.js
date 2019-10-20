@@ -1,12 +1,15 @@
 import React from "react";
 import MomentsAPI from "modules/Moments/api/moment";
 import Logger from "src/api/logger";
-import { FlatList, SafeAreaView, StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import { StyleSheet } from "react-native";
+
 import MomentItem from "modules/Moments/components/MomentItem";
 import Header from "modules/Moments/screens/HomeScreen/Header";
-import { Snackbar } from "react-native-paper";
 import DeleteDialog from "src/components/DeleteDialog";
+import { FlatList } from "react-native";
+import { Snackbar } from "react-native-paper";
+import { SafeAreaView } from "react-navigation";
 
 function HomeScreen(props){
   const _isMounted = React.useRef(true);
@@ -30,33 +33,9 @@ function HomeScreen(props){
     props.navigation.navigate("MomentComments", payload)
   }
 
-  const fetchMoments = async () => {
-    if(_isMounted.current) setIsRefreshing(true);
-    const moments = await MomentsAPI.getMoments(currentUser.email)
-    Logger.log("Moments.HomeScreen.fetchMoment", moments);
-    const filteredMoments = moments.filter(item => {
-      if(props.blockedByUserList.includes(item.posterEmail)){
-        return false
-      }else if(props.blockedUserList.includes(item.posterEmail)){
-        return false
-      }else if(props.hiddenUserList.includes(item.posterEmail)){
-        return false
-      }else{
-        return true
-      }
-    })
-    if(_isMounted.current){
-      setMoments(filteredMoments);
-      setIsRefreshing(false);
-    }
-  }
-
   const handleSharePress = (item) => {
-    const payload = {
-      moment: item,
-      onComplete: ()=>{}
-    }
-    props.navigation.navigate("ShareMoment",payload)
+    payload = { moment: item, onComplete: () => {} }
+    props.navigation.navigate("ShareMoment", payload)
   }
   
   const handleProfilePress = (item) => {
@@ -80,50 +59,53 @@ function HomeScreen(props){
     })
   }
 
+  const fetchMoments = async () => {
+    if(_isMounted.current) setIsRefreshing(true);
+    const moments = await MomentsAPI.getMoments(currentUser.email)
+    Logger.log("Moments.HomeScreen.fetchMoment#moments", moments);
+    
+    const filteredMoments = moments.filter(item => {
+      if(props.blockedByUserList.includes(item.posterEmail)) return false
+      else if(props.blockedUserList.includes(item.posterEmail)) return false
+      else if(props.hiddenUserList.includes(item.posterEmail)) return false
+      else return true
+    });
+
+    if(_isMounted.current){
+      setMoments(filteredMoments);
+      setIsRefreshing(false);
+    }
+  }
+
   React.useEffect(() => {
     fetchMoments();
-    props.navigation.addListener("didFocus", (payload) => {
-      if(payload.action.type === "Navigation/COMPLETE_TRANSITION") fetchMoments();
-    })
     return () => { _isMounted.current = false };
   }, []);
 
+  Logger.log("Moment.HomeScreen", "re-render");
   return(
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={moments} 
-        keyExtractor={(item) => item.id}
-        onRefresh={handleRefresh} 
-        refreshing={isRefreshing} 
-        style={{ flex: 1 }}
-        windowSize={3} initialNumToRender={20}
+        data={moments}  keyExtractor={(item) => item.id}
+        onRefresh={handleRefresh}  refreshing={isRefreshing} 
+        style={{ flex: 1 }} windowSize={3} initialNumToRender={20}
         renderItem={({ item, index }) => {
-          
-          return <MomentItem 
-            moment={item} 
-            style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} 
-            navigation={props.navigation}
-            onCommentPress={() => handleCommentPress(item)}
-            onSharePress={() => handleSharePress(item)}
-            onDeleteMomentPress={() => handleDeleteMomentPress(item)}
-            onProfilePress={() => handleProfilePress(item)}
-          />
-          }
-         
-        }/>
-        <DeleteDialog 
-          ref ={i => deleteDialog.current = i}
-          title= {"Apakah anda ingin menghapus gambar ini?"}
-          onDeletePress={handleDeleteMomentYes}
-          />
-        <Snackbar
-          visible= {showSnackbarDeleteSuccess}
-          onDismiss={() => setSnackbarDeleteSuccess(false)}
-          style={{backgroundColor:"#0EAD69"}}
-          duration={Snackbar.DURATION_SHORT}>
+          return (
+            <MomentItem 
+              moment={item} style={{ marginTop: (index === 0)?8: 4, marginBottom: 8, marginHorizontal: 4 }} 
+              onCommentPress={handleCommentPress} onSharePress={handleSharePress} onDeleteMomentPress={handleDeleteMomentPress}/>
+          )
+        }
+      }/>
+      <DeleteDialog ref={deleteDialog} title= {"Apakah anda ingin menghapus gambar ini?"} onDeletePress={handleDeleteMomentYes}/>
+      <Snackbar
+        visible= {showSnackbarDeleteSuccess}
+        onDismiss={() => setSnackbarDeleteSuccess(false)}
+        style={{ backgroundColor:"#0EAD69" }}
+        duration={Snackbar.DURATION_SHORT}>
           Berhasil Menghapus
-        </Snackbar>
-  </SafeAreaView>
+      </Snackbar>
+    </SafeAreaView>
   )
 }
 

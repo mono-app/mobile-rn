@@ -6,8 +6,13 @@ import { View } from "react-native";
 import { Appbar, Subheading, Caption } from "react-native-paper";
 
 function AppHeader(props){
-  const styles = StyleSheet.create({ default: {} })
-  const handleBackPress = () => props.navigation.goBack();
+  const styles = StyleSheet.create({ default: { elevation: 0 } })
+
+  const handleBackPress = () => {
+    if(props.overrideBack === null) props.navigation.goBack();
+    else props.overrideBack();
+  }
+
   return(
     <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
       {props.navigation?(
@@ -25,7 +30,11 @@ AppHeader.propTypes = {
   title: PropTypes.string,
   navigation: PropTypes.any, 
   style: PropTypes.object,
-  subtitle: PropTypes.string
+  subtitle: PropTypes.string,
+  overrideBack: PropTypes.func
 }
-AppHeader.defaultProps = { navigation: null, title: null, style: null, subtitle: null }
+AppHeader.defaultProps = { 
+  navigation: null, title: null, style: null, subtitle: null,
+  overrideBack: null
+}
 export default AppHeader;

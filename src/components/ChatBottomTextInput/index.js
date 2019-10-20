@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
+import RoomsAPI from "src/api/rooms";
 import { StyleSheet } from "react-native";
 import { TB_API_KEY } from "react-native-dotenv";
 import { withCurrentUser } from "src/api/people/CurrentUser";
@@ -16,8 +17,9 @@ function ChatBottomTextInput(props){
   const { room, currentUser } = props;
 
   const [ message, setMessage ] = React.useState("");
-  const [ sessionId, setSessionId ] = React.useState(null);
+  const [ sessionId, setSessionId ] = React.useState(room.liveVoice === undefined? null: room.liveVoice.session);
   const [ token, setToken ] = React.useState(null);
+  const [ isConnected, setIsConnected ] = React.useState(false);
   const _isMounted = React.useRef(true);
 
   const roomListener = React.useRef(null);
@@ -34,60 +36,68 @@ function ChatBottomTextInput(props){
     }
   });
 
-  const sessionEventHandler = {
-    sessionConnected: handleSessionConnected,
-    error: handleError,
-    otrnError: handleError
-  }
-
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
-  const handleSessionConnected = () => Logger.log("ChatBottomTextInput.handleSessionConnected", "session connected");
+  const handleSessionConnected = () => setIsConnected(true);
   const handleMessageChange = (newMessage) => {if(_isMounted.current) setMessage(newMessage);}
   const handleSendPress = () => {
     const copiedMessage = JSON.parse(JSON.stringify(message));
     if(copiedMessage.trim() && props.editable ){
       props.onSendPress(copiedMessage);
     }
-    if(_isMounted.current) setMessage("");
+    setMessage("");
+  };
+
+  const handleRoomUpdate = (room) => {
+    if(room.liveVoice === undefined) return;
+    if(room.liveVoice.session === undefined) return;
+    setSessionId(room.liveVoice.session);
   };
 
   const initLiveVoice = async () => {
+    Logger.log("ChatBottomTextInput.initLiveVoice#sessionId", sessionId);
+    if(sessionId === null) return;
+
     Logger.log("ChatBottomTextInput.initLiveVoice#room", room);
-    if(room.liveVoice === undefined) return;
-
-    if(_isMounted.current) setSessionId(room.liveVoice.session);
-
     const jsonResult = await (await fetch("https://asia-east2-chat-app-fdf76.cloudfunctions.net/requestRoomToken", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
-        roomId: room.id, sessionId: room.liveVoice.session, userEmail: currentUser.email
+        roomId: room.id, sessionId: sessionId, userEmail: currentUser.email
       })
     })).json();
     Logger.log("ChatBottomTextInput.initLiveVoice#jsonResult", jsonResult);
-    if(!jsonResult.error && _isMounted.current) setToken(jsonResult.result);
+    if(!jsonResult.error) setToken(jsonResult.result);
   }
 
+
   React.useEffect(() => {
-    initLiveVoice();
+    if(room.id === undefined) return;
+    Logger.log("ChatBottomTextInput#sessionId", sessionId);
+    Logger.log("ChatBottomTextInput#token", token);
+
+    if(sessionId === null) roomListener.current = RoomsAPI.getDetailWithRealTimeUpdate(room.id, handleRoomUpdate);
+    if(token === null) initLiveVoice();
     return function cleanup(){
-      _isMounted.current = false
       if(roomListener.current) roomListener.current();
     }
-  }, [])
+  }, [sessionId, token]);
 
-  Logger.log("ChatBottomTextInput#sessionId", sessionId);
-  Logger.log("ChatBottomTextInput#token", token);
+  const sessionEventHandler = {
+    sessionConnected: handleSessionConnected,
+    error: handleError,
+    otrnError: handleError
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      {sessionId === null || token === null?(
+      {(sessionId !== null && token !== null)?(
+        <OTSession apiKey={TB_API_KEY} sessionId={sessionId} token={token} eventHandlers={sessionEventHandler} style={{ display: "flex", flexDirection: "row" }}>
+          <MicButton style={{ marginRight: 8 }} isLoading={!isConnected}/> 
+          <SpeakerButton style={{ marginRight: 8 }} isLoading={!isConnected}/>
+        </OTSession>
+      ):(
         <React.Fragment>
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
         </React.Fragment>
-      ):(
-        <OTSession apiKey={TB_API_KEY} sessionId={sessionId} token={token} eventHandlers={sessionEventHandler} style={{ display: "flex", flexDirection: "row" }}>
-          <MicButton style={{ marginRight: 8 }}/> 
-          <SpeakerButton style={{ marginRight: 8 }}/>
-        </OTSession>
       )}
       <TextInput style={styles.textInput} autoFocus multiline value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
