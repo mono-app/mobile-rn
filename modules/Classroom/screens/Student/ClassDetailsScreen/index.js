@@ -13,8 +13,11 @@ import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-nat
 import { IconButton, Dialog, Text, Caption } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
+import TaskAPI from "modules/Classroom/api/task"
+import StudentAPI from "modules/Classroom/api/student"
+import FileAPI from "modules/Classroom/api/file"
 
-const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {} };
+const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {}, totalTask:0, totalStudent:0, totalFiles: 0 };
 class ClassDetailsScreen extends React.PureComponent {
   static navigationOptions = () => {
     return {
@@ -25,11 +28,24 @@ class ClassDetailsScreen extends React.PureComponent {
   loadClassInformation = async () => {
     if(this._isMounted)
       this.setState({ isLoadingProfile: true });
-
+      TaskAPI.getTotalActiveTasks(this.props.currentSchool.id, this.classId).then(totalTask => {
+        this.setState({totalTask})
+      })
+  
+      StudentAPI.getTotalClassStudent(this.props.currentSchool.id, this.classId).then(totalStudent => {
+        this.setState({totalStudent})
+      })
+  
+      FileAPI.getTotalClassFiles(this.props.currentSchool.id, this.classId).then(totalFiles => {
+        this.setState({totalFiles})
+      })
     const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
     if(class_.profilePicture && this._isMounted){
       this.setState({ profilePicture: student.profilePicture.downloadUrl });
     }
+    
+    
+
     if(this._isMounted)
       this.setState({ isLoadingProfile: false, class: class_ });
   };
@@ -169,6 +185,7 @@ class ClassDetailsScreen extends React.PureComponent {
                       <Text style={styles.label}>Daftar Murid</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalStudent}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
@@ -182,6 +199,7 @@ class ClassDetailsScreen extends React.PureComponent {
                       <Text style={styles.label}>Berkas</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalFiles}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
@@ -195,6 +213,7 @@ class ClassDetailsScreen extends React.PureComponent {
                       <Text style={styles.label}>Daftar Tugas</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalTask}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>

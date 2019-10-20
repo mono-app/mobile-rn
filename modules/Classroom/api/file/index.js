@@ -24,6 +24,18 @@ export default class FileAPI{
     return Promise.resolve(files)
   }
 
+  static async getTotalClassFiles(schoolId, classId) {
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const filesCollection = new FilesCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const filesCollectionRef = classesDocumentRef.collection(filesCollection.getName());
+    const filesQuerySnapshot = await filesCollectionRef.get();
+    return Promise.resolve(filesQuerySnapshot.size)
+  }
+
   static async getStudentSubmissionFiles(schoolId, classId, taskId, submissionId) {
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
