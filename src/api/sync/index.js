@@ -2,7 +2,7 @@ import firebase from "react-native-firebase";
 import Logger from "src/api/logger";
 import OfflineDatabase from "src/api/database/offline";
 import { getConnection } from "typeorm";
-import { BaseModel } from "src/api/database/models";
+import { Document } from "src/api/database/models";
 
 function OfflineSyncAPI(){}
 
@@ -18,14 +18,17 @@ OfflineSyncAPI.deleteChanges = async (id) => {
 OfflineSyncAPI.applyChanges = async (rawData) => {
   const { id, data } = rawData;
   Logger.log("OfflineSyncAPI.applyChanges#data.value", data.value);
-  const model = new BaseModel(data.value);
+  const model = new Document();
+  model.id = data.primary.value;
+  model.collection = data.collection;
+  model.jsonValue = JSON.stringify(data.value);
   Logger.log("OfflineSyncAPI.applyChanges#model", model);
 
   try{
     const connection = await getConnection();
-    const repository = connection.getRepository(data.schema);
+    const repository = connection.getRepository("Document");
     await repository.save(model);
-    OfflineDatabase.triggerEvent("change", data.schema);
+    OfflineDatabase.triggerEvent("change", data.collection);
     await OfflineSyncAPI.deleteChanges(id);
   }catch(err){
     Logger.log("OfflineSyncAPI.applyChanges#err.name", err.name);
@@ -52,7 +55,7 @@ OfflineSyncAPI.listen = () => {
 
       Logger.log("OfflineSyncAPI.listen#user.email", user.email);
       const db = firebase.firestore();
-      const changesRef = db.collection("changes").where("recipient", "==", user.email).where("isApplied", "==", false);
+      const changesRef = db.collection("changes").where("recipient", "==", user.email);
       OfflineSyncAPI.changesListener = changesRef.onSnapshot(OfflineSyncAPI.handleChanges)
     }else {
       if(OfflineSyncAPI.changesListener) OfflineSyncAPI.changesListener();

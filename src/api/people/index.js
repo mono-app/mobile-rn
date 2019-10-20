@@ -10,7 +10,7 @@ import { Document } from "src/api/database/document";
 import { getDistance } from 'geolib';
 
 import { getConnection } from "typeorm";
-import { User } from "src/api/database/models";
+import { Document as DocumentSchema } from "src/api/database/models";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -37,11 +37,14 @@ export default class PeopleAPI{
 
   static normalizeOffline(offlineUser){
     Logger.log("PeopleAPI.normalizeOffline#offlineUser", offlineUser);
-    const normalizedPeople = {};
-    normalizedPeople.applicationInformation = { id: offlineUser.monoId, nickName: offlineUser.nickName };
-    normalizedPeople.email = offlineUser.email;
-    normalizedPeople.profilePicture = offlineUser.profilePicture;
-    return normalizedPeople;
+    const newPeople = JSON.parse(offlineUser.jsonValue);
+    newPeople.email = JSON.parse(JSON.stringify(offlineUser.id));
+    if(newPeople.isCompleteSetup) {
+      if(newPeople.applicationInformation.profilePicture !== undefined){
+        newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
+      }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
+    }
+    return newPeople;
   }
 
   /**
@@ -146,9 +149,10 @@ export default class PeopleAPI{
   static async getDetail(email=null){
     try{
       const connection = await getConnection();
-      const userRepository = connection.getRepository("User");
-      const user = await userRepository.findOne({ email });
+      const repository = connection.getRepository("Document");
+      const user = await repository.findOne({ id: email, collection: "users" });
       Logger.log("PeopleAPI.getDetail#user", user);
+      Logger.log("PeopleAPI.getDetail#email", email);
       if(user === undefined) return Promise.resolve(await PeopleAPI.getFromServer(email));
       else return Promise.resolve(await PeopleAPI.normalizeOffline(user));
     }catch(err){ 
@@ -162,18 +166,18 @@ export default class PeopleAPI{
   static async saveOffline(userData){
     Logger.log("PeopleAPI.saveOffline#userData", userData);
     
-    const mUser = new User();
-    mUser.monoId = userData.applicationInformation.id;
-    mUser.email = userData.email;
-    mUser.profilePicture = userData.profilePicture;
-    mUser.nickName = userData.applicationInformation.nickName;
+    const mUser = new DocumentSchema();
+    mUser.id = userData.email;
+    mUser.collection = "users";
+    mUser.jsonValue = JSON.stringify(userData);
 
     const connection = await getConnection();
-    const userRepository = connection.getRepository("User");
+    const userRepository = connection.getRepository("Document");
     await userRepository.save(mUser);
   }
 
   static async getFromServer(email, syncOffline=true){
+    Logger.log("PeopleAPI.getFromServer#email", email);
     const userCollection = new UserCollection();
     const userDocument = new Document(email);
     const db = firebase.firestore();

@@ -1,13 +1,12 @@
 import { EntitySchema } from "typeorm";
 
-import { User } from "src/api/database/models";
+import { Document } from "src/api/database/models";
 
-export const UserSchema = new EntitySchema({
-  name: "User", target: User,
+export const DocumentSchema = new EntitySchema({
+  name: "Document", target: Document,
   columns: {
-    email: { type: "varchar", primary: true },
-    nickName: { type: "varchar" },
-    profilePicture: { type: "varchar", nullable: true },
-    monoId: { type: "varchar", nullable: true }
+    id: { type: "varchar", primary: true },
+    collection: { type: "varchar", primary: true },
+    jsonValue: { type: "varchar" }
   }
 });

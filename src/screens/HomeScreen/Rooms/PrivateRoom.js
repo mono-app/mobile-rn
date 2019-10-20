@@ -2,9 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import PeopleAPI from "src/api/people";
+import ClassAPI from "modules/Classroom/api/class";
+import OfflineDatabase from "src/api/database/offline";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from 'react-native';
-import ClassAPI from "modules/Classroom/api/class";
+
 import CircleAvatar from "src/components/Avatar/Circle";
 import UnreadCountBadge from "src/screens/HomeScreen/UnreadCountBadge";
 import { Text, Caption } from "react-native-paper";
@@ -12,10 +14,14 @@ import { View, TouchableOpacity } from 'react-native';
 
 function PrivateRoom(props){
   const { currentUser, room } = props; 
-  const _isMounted = React.useRef(true);
+  const [ realAudience ] = room.audiences.filter((audience) => audience !== currentUser.email);
+
   const [ isLoading, setIsLoading ] = React.useState(true);
   const [ people, setPeople ] = React.useState(null);
   const [ class_, setClass ] = React.useState(null);
+
+  const _isMounted = React.useRef(true);
+  const peopleListener = React.useRef(null);
 
   const styles = StyleSheet.create({
     chatContainer: {
@@ -26,26 +32,31 @@ function PrivateRoom(props){
 
   const handleRoomPress = () => props.onPress(room);
 
+  const fetchPeople = async () => {
+    const people = await PeopleAPI.getDetail(realAudience);
+    setPeople(people);
+  }
+
+  const fetchData = async () => {
+    const { type, school } = props.room;
+    if(type === "group-chat"){
+      const classData = await ClassAPI.getDetail(school.id, school.classId)
+      if(_isMounted.current) setClass(classData)
+    }else{
+      await fetchPeople();
+      peopleListener.current = OfflineDatabase.addEventListener("change", "users", fetchPeople);
+    } 
+    if(_isMounted.current) setIsLoading(false);
+  }
+
   React.useEffect(() => {
     if(_isMounted.current) setIsLoading(true);
-    const fetchData = async () => {
-      const { audiences, type, school } = props.room;
-      const realAudience = audiences.filter((audience) => audience !== currentUser.email)[0];
-      if(type === "group-chat"){
-        const classData = await ClassAPI.getDetail(school.id, school.classId)
-        if(_isMounted.current) setClass(classData)
-      }else{
-        PeopleAPI.getDetailWithRealTimeUpdate(realAudience, (data) => {
-          if(_isMounted.current) setPeople(data);
-        });
-      } 
-      if(_isMounted.current) setIsLoading(false);
-    }
     fetchData();
     return () => {
       _isMounted.current = false;
+      if(peopleListener.current) OfflineDatabase.removeEventListener(peopleListener.current);
     };
-  }, [])
+  }, [realAudience])
 
   const sentTime = room.lastMessage.sentTime? new moment.unix(room.lastMessage.sentTime.seconds): null;
   let dateTimeString = null;

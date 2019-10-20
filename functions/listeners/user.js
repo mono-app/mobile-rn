@@ -8,12 +8,6 @@ UserListener.triggerUserChange = functions.region("asia-east2").firestore.docume
   const changes = documentSnapshot.after.data();
 
   if(changes.isCompleteSetup){
-    const payload = { 
-      monoId: changes.applicationInformation.id, nickName: changes.applicationInformation.nickName,
-      email: userId
-    };
-    if(changes.applicationInformation.profilePicture !== undefined) payload.profilePicture = changes.applicationInformation.profilePicture.downloadUrl;
-
     const db = admin.firestore();
     const friendListRef = db.collection("friendList").doc(userId).collection("people");
     const changesRef = db.collection("changes");
@@ -23,7 +17,7 @@ UserListener.triggerUserChange = functions.region("asia-east2").firestore.docume
     const promises = friends.map((friend) => {
       const changePayload = {
         recipient: friend, createdTime: admin.firestore.FieldValue.serverTimestamp(),
-        isApplied: false, schema: "User", task: "modify", value: payload
+        primary: { key: "id", value: userId }, collection: "users", task: "modify", value: changes
       }
 
       const newChange = changesRef.doc();

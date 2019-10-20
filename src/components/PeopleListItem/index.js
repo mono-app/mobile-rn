@@ -37,7 +37,7 @@ function PeopleListItem(props){
   const fetchData = async () => {
     setFetching(true);
     await getPeople();
-    peopleListener.current = OfflineDatabase.addEventListener("change", "User", getPeople);
+    peopleListener.current = OfflineDatabase.addEventListener("change", "users", getPeople);
     setFetching(false);
   }
 
@@ -63,8 +63,6 @@ function PeopleListItem(props){
     }else{
       if(_isMounted.current) setStatus("jarak < "+props.distance+" meters");
     }
-    
-    fetchData();
     return () => {
       if(_isMounted.current) _isMounted.current = false
     }

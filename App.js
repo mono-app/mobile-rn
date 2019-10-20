@@ -39,10 +39,13 @@ function App(){
     }
   }
 
+  const initOffline = async () => {
+    await OfflineDatabase.openConnection();
+    OfflineSyncAPI.listen();
+  }
 
   React.useEffect(() => {
-    OfflineDatabase.openConnection();
-    OfflineSyncAPI.listen();
+    initOffline();
 
     const firebaseUser = firebase.auth().currentUser;
     if(firebaseUser !== null && firebaseUser.email) {

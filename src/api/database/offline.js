@@ -2,7 +2,7 @@ import uuid from "uuid/v4";
 import Logger from "src/api/logger";
 import { createConnection } from "typeorm";
 
-import { UserSchema } from "src/api/database/schemas";
+import { DocumentSchema } from "src/api/database/schemas";
 
 function OfflineDatabase(){}
 
@@ -12,9 +12,8 @@ OfflineDatabase.removeEventListener = (id) => delete OfflineDatabase.eventListen
 OfflineDatabase.openConnection = async () => {
   await OfflineDatabase.closeConnection();
   OfflineDatabase.connection = await createConnection({
-    type: "react-native", database: "mono", location: "default", 
-    synchronize: true, logging: true,
-    entities: [ UserSchema ]
+    type: "react-native", database: "mono", location: "default", logging: true,
+    entities: [ DocumentSchema ]
   });
 };
 
@@ -22,18 +21,18 @@ OfflineDatabase.closeConnection = async () => {
   if(OfflineDatabase.connection) await OfflineDatabase.connection.close();
 }
 
-OfflineDatabase.addEventListener = (event, schema, callback) => {
+OfflineDatabase.addEventListener = (event, collection, callback) => {
   const id = uuid();
-  const payload = { [id]: {event, schema, callback} }
+  const payload = { [id]: {event, collection, callback} }
   OfflineDatabase.eventListeners = Object.assign(OfflineDatabase.eventListeners, payload);
   Logger.log("OfflineDatabase.addEventListener#eventListeners", OfflineDatabase.eventListeners);
   return id;
 }
 
-OfflineDatabase.triggerEvent = (event, schema) => {
+OfflineDatabase.triggerEvent = (event, collection) => {
   const listeners = Object.keys(OfflineDatabase.eventListeners).map((id) => {
     const listener = OfflineDatabase.eventListeners[id];
-    if(listener.event === event && listener.schema === schema) return listener;
+    if(listener.event === event && listener.collection === collection) return listener;
     else return null;
   }).filter((listener) => listener !== null);
 
