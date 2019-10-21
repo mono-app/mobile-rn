@@ -11,6 +11,7 @@ import DeleteDialog from "src/components/DeleteDialog";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import RNFetchBlob from 'react-native-fetch-blob'
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { 
   isRefreshing: true, 
@@ -180,7 +181,7 @@ class TaskSubmissionScreen extends React.PureComponent {
         <View style={{margin: 16 }}>
           <MySearchbar 
               onSubmitEditing={this.handleSearchPress}
-              placeholder="Cari Berkas" />
+              placeholder={this.props.t("searchFiles")} />
         </View>
         
         <View style={{backgroundColor: "#0ead69",
@@ -188,7 +189,7 @@ class TaskSubmissionScreen extends React.PureComponent {
           <TouchableOpacity onPress={this.handleAddFiles} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
           <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
             <Text style={{fontWeight:"bold", color:"#fff"}}>
-               TAMBAH FILE TUGAS
+               {this.props.t("addTaskFiles")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -221,10 +222,10 @@ class TaskSubmissionScreen extends React.PureComponent {
         </Portal>
         <DeleteDialog 
         ref ={i => this.deleteDialog = i}
-        title= {"Apakah anda ingin menghapus berkas ini?"}
+        title= {this.props.t("deleteFileAsk")}
         onDeletePress={this.onDeletePress}/>
       </View>
     );
   }
 }
-export default withCurrentStudent(TaskSubmissionScreen)
+export default withTranslation()(withCurrentStudent(TaskSubmissionScreen))

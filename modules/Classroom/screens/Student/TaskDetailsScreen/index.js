@@ -11,6 +11,7 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withTheme } from "react-native-paper";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isFetching: true, task:{}, showSnackbarFailDeleting: false, totalSubmission:0, totalDiscussion: 0 };
 
@@ -98,8 +99,8 @@ class TaskDetailsScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -125,28 +126,28 @@ class TaskDetailsScreen extends React.PureComponent {
             </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Nama Tugas</Text>
+                  <Text style={styles.label}>{this.props.t("taskName")}</Text>
                   <Text style={styles.value}>{this.state.task.title}</Text>
                   
                 </View>
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Tanggal Pengumpulan</Text>   
+                  <Text style={styles.label}>{this.props.t("dueDate")}</Text>   
                   <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("DD MMMM YYYY"):""}</Text>
                   
                 </View>
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Jam Pengumpulan</Text>
+                  <Text style={styles.label}>{this.props.t("dueTime")}</Text>
                   <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("HH:mm"):""}</Text>
                   
                 </View>
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Detail Tugas</Text>
+                  <Text style={styles.label}>{this.props.t("taskDetails")}</Text>
                   <Text style={styles.value}>{this.state.task.details}</Text>
                  
                 </View>
@@ -157,7 +158,7 @@ class TaskDetailsScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="file-o" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text>Lihat pengumpulan</Text>
+                    <Text>{this.props.t("seeSubmissions")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalSubmission}</Text>
@@ -173,7 +174,7 @@ class TaskDetailsScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="comments-o" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text>Diskusi</Text>
+                    <Text>{this.props.t("discussion")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalDiscussion}</Text>
@@ -182,11 +183,10 @@ class TaskDetailsScreen extends React.PureComponent {
                 </View>
               </View>
             </TouchableOpacity>
-            
 
             <TouchableOpacity onPress={this.handleSubmissionTaskPress}>
               <View style={{backgroundColor:this.props.theme.colors.primary, padding: 12, margin:16, borderRadius:8 }}>
-                  <Text style={{alignSelf: "center",alignItems:"center", color: "#fff"}}>Kumpulkan Tugas</Text>
+                  <Text style={{alignSelf: "center",alignItems:"center", color: "#fff"}}>{this.props.t("submitTask")}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -224,4 +224,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
-export default withTheme(withCurrentStudent(TaskDetailsScreen))
+export default withTranslation()(withTheme(withCurrentStudent(TaskDetailsScreen)))

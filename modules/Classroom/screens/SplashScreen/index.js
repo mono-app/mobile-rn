@@ -7,6 +7,7 @@ import SchoolListItem from "modules/Classroom/components/SchoolListItem"
 import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import MySearchbar from "src/components/MySearchbar"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -110,8 +111,8 @@ class SplashScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -126,8 +127,8 @@ class SplashScreen extends React.PureComponent {
         </Appbar.Header>
         <View style={{flex: 1, backgroundColor: "white", marginTop: 16}}>
           <View style={{marginTop:36}}/>
-          <Headline style={{alignSelf: "center"}}>Selamat Datang di Classroom</Headline>
-          <Subheading style={{alignSelf: "center"}}>Silahkan pilih asal sekolah</Subheading>
+          <Headline style={{alignSelf: "center"}}>{this.props.t("welcomeClassroom")}</Headline>
+          <Subheading style={{alignSelf: "center"}}>{this.props.t("selectSchool")}</Subheading>
 
           <View style={{ padding: 16 }}>
             <MySearchbar 
@@ -152,10 +153,9 @@ class SplashScreen extends React.PureComponent {
   }
 }
 
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#E8EEE8"},
   
 });
 
-export default withCurrentUser(SplashScreen)
+export default withTranslation()(withCurrentUser(SplashScreen))

@@ -17,6 +17,7 @@ import StorageAPI from "src/api/storage";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import ImageCompress from "src/api/ImageCompress"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isLoadingProfile: true, 
   status:"", 
@@ -47,7 +48,7 @@ class MyProfileScreen extends React.PureComponent {
   loadStatus = async () => {
     let status = await StatusAPI.getLatestStatus(this.props.currentStudent.email);
     if(!status){
-      status = { content: "Tulis statusmu disini..." };
+      status = { content: this.props.t("writeStatusHere") };
     } 
     if(this._isMounted)
       this.setState({ status: status.content });
@@ -155,8 +156,8 @@ class MyProfileScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -165,7 +166,7 @@ class MyProfileScreen extends React.PureComponent {
       <View style={{flex:1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Profil Saya"
+            title={this.props.t("myProfile")}
             style={{ backgroundColor: "white" }}
           />
         <ScrollView>
@@ -181,7 +182,7 @@ class MyProfileScreen extends React.PureComponent {
 
           <TouchableOpacity onPress={this.handleStatusPress}>
             <View style={styles.statusContainer}>
-              <Text style={styles.label}>Status saya</Text>
+              <Text style={styles.label}>{this.props.t("myStatus")}</Text>
               <View style={{flexDirection:"row"}}>
                 <Text>{this.state.status}</Text>
               </View>
@@ -190,30 +191,30 @@ class MyProfileScreen extends React.PureComponent {
 
           <View style={{  marginBottom: 16 }}>  
            <PeopleInformationContainer
-              fieldName="Bergabung Sejak"
+              fieldName={this.props.t("joinDate")}
               fieldValue={(this.props.currentStudent.creationTime)?moment(this.props.currentStudent.creationTime.seconds * 1000).format("DD MMMM YYYY"): ""}/>
           </View>
           
           <View style={{  marginBottom: 16 }}>
             
             <PeopleInformationContainer
-              fieldName="Alamat"
+              fieldName={this.props.t("address")}
               fieldValue={this.props.currentStudent.address}/>
             <PeopleInformationContainer
-              fieldName="Nomor Telepon"
+              fieldName={this.props.t("phoneNo")}
               fieldValue={this.props.currentStudent.phone}/>
             <PeopleInformationContainer
               fieldName="Email"
               fieldValue={this.props.currentStudent.email}/>
             <PeopleInformationContainer
-              fieldName="Jenis Kelamin"
+              fieldName={this.props.t("gender")}
               fieldValue={this.props.currentStudent.gender}/>
           </View>
           <View style={{  marginBottom: 16 }}>
             <TouchableOpacity onPress={this.handleMyClassPress}>
             <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Jumlah Kelas</Text>
+                  <Text style={styles.label}>{this.props.t("totalClass")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalActiveClass}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -224,7 +225,7 @@ class MyProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleMyArchiveClassPress}>
               <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Riwayat Kelas</Text>
+                  <Text style={styles.label}>{this.props.t("classHistory")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalArchiveClass}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -280,4 +281,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default withCurrentUser(withCurrentStudent(MyProfileScreen))
+export default withTranslation()(withCurrentUser(withCurrentStudent(MyProfileScreen)))

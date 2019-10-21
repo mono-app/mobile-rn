@@ -53,7 +53,7 @@ const MyNavigator = createStackNavigator(
     ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
     AddClassFiles: {screen: AddClassFilesScreen},
     MassScoring: {screen: MassScoringScreen},
-    MyDiscussions: {screen: MyDiscussionsScreen},
+    MyDiscussions: {screen: MyDiscussionsScreen, navigationOptions: { header: null}},
   },
   {
     initialRouteName: "TeacherHome"

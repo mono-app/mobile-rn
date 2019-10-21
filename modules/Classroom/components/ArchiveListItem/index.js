@@ -5,6 +5,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text,Subheading, Paragraph, Card } from "react-native-paper";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { task: {}, isFetching: false }
 
@@ -12,7 +13,7 @@ const INITIAL_STATE = { task: {}, isFetching: false }
  * @param {string} title 
  * @param {string} classId
  */
-export default class ArchiveListItem extends React.Component{
+class ArchiveListItem extends React.Component{
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
@@ -56,18 +57,18 @@ export default class ArchiveListItem extends React.Component{
               </View>
               <View style={{  borderBottomWidth:1, borderBottomColor: "#E8EEE8", paddingVertical: 8}}>
                 <View style={{marginHorizontal: 16}}>
-                  <Text style={{ fontWeight: "700", marginTop: 8 }}>Detail Tugas</Text>
+                  <Text style={{ fontWeight: "700", marginTop: 8 }}>{this.props.t("dueDateTitle")}</Text>
                   <Paragraph>{details}</Paragraph>
-                  <Text style={{ fontWeight: "700", marginTop: 8 }}>Batas Akhir Pengumpulan</Text>
-                  <Text >Tanggal {creationDate}</Text>
-                  <Text >Pukul {creationTime}</Text>
+                  <Text style={{ fontWeight: "700", marginTop: 8 }}>{this.props.t("taskDetails")}</Text>
+                  <Text >{this.props.t("date")} {creationDate}</Text>
+                  <Text >{this.props.t("time")} {creationTime}</Text>
                 </View>
               </View>
               <TouchableOpacity onPress={this.props.onSubmissionPress}>
                 <View style={styles.listItemContainer}>
                   <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 16}]}>
                         <View>
-                          <Text style={{ fontWeight: "700" }}>Lihat Pengumpulan</Text>
+                          <Text style={{ fontWeight: "700" }}>{this.props.t("seeSubmissions")}</Text>
                         </View>
                         <View style={{flexDirection:"row",textAlign: "right"}}>
                           <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -79,7 +80,7 @@ export default class ArchiveListItem extends React.Component{
                 <View style={styles.listItemContainer}>
                   <View style={[styles.listDescriptionContainer,{paddingHorizontal: 16, paddingVertical: 16}]}>
                     <View>
-                      <Text style={{ fontWeight: "700" }}>Diskusi</Text>
+                      <Text style={{ fontWeight: "700" }}>{this.props.t("discussion")}</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -114,3 +115,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   }
 })
+
+export default withTranslation()(ArchiveListItem)

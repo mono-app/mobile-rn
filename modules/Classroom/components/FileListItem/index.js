@@ -5,6 +5,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph, Card } from "react-native-paper";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
 
@@ -12,7 +13,7 @@ const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
  * @param {string} title 
  * @param {string} classId
  */
-export default class FileListItem extends React.PureComponent{
+class FileListItem extends React.PureComponent{
   constructor(props){
     super(props);
 
@@ -53,7 +54,7 @@ export default class FileListItem extends React.PureComponent{
                    <Text style={{ fontWeight: "700", lineHeight:20 }}>{title}</Text>
                    {
                     (creationTime)? 
-                    <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>Diposting pada {moment(creationTime.seconds * 1000).format("DD MMMM YYYY")} | Pukul {moment(creationTime.seconds * 1000).format("HH:mm")}</Paragraph>
+                    <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>{this.props.t("postedAt")} {moment(creationTime.seconds * 1000).format("DD MMMM YYYY")} | {this.props.t("time")} {moment(creationTime.seconds * 1000).format("HH:mm")}</Paragraph>
                     : 
                     <Text/>
                     } 
@@ -96,3 +97,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
+
+export default withTranslation()(FileListItem)

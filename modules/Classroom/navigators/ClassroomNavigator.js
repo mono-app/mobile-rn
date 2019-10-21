@@ -6,7 +6,7 @@ import StudentNavigator from "./StudentNavigator";
 
 export default ClassroomNavigator = createSwitchNavigator(
   {
-    Splash: { screen: SplashScreen },
+    Splash: { screen: SplashScreen, navigationOptions: { header:null } },
     SchoolAdmin : { screen: SchoolAdminNavigator },
     Teacher : { screen: TeacherNavigator },
     Student : { screen: StudentNavigator },

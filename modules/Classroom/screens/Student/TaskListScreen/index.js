@@ -5,6 +5,7 @@ import TaskAPI from "modules/Classroom/api/task";
 import TaskListItem from "modules/Classroom/components/TaskListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false };
 
@@ -64,7 +65,7 @@ class TaskListScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Daftar Tugas"
+            title={this.props.t("taskList")}
             style={{ backgroundColor: "white" }}
           />
         <View style={{marginTop: 16,
@@ -102,7 +103,7 @@ class TaskListScreen extends React.PureComponent {
           onDismiss={() => this.setState({ showSnackbarSuccessDeleting: false })}
           style={{backgroundColor:"#0ead69"}}
           duration={Snackbar.DURATION_SHORT}>
-          Tugas Berhasil Dihapus
+          {this.props.t("deleteTaskSuccess")}
         </Snackbar>
       </View>
     );
@@ -118,4 +119,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
-export default withCurrentStudent(TaskListScreen)
+export default withTranslation()(withCurrentStudent(TaskListScreen))

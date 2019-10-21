@@ -7,6 +7,7 @@ import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -81,8 +82,8 @@ class StudentHomeScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -94,10 +95,10 @@ class StudentHomeScreen extends React.PureComponent {
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }/>
           <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
-            <Text style={{ color: this.props.theme.colors.primary }}>Lihat Profile</Text>
+            <Text style={{ color: this.props.theme.colors.primary }}>{this.props.t("seeProfile")}</Text>
           </TouchableOpacity>
           <Title style={{marginTop: 22}}>
-            Selamat Datang,
+            {this.props.t("welcomeComa")}
           </Title>
           <Subheading>{this.props.currentStudent.name}</Subheading>
         </View>
@@ -112,7 +113,7 @@ class StudentHomeScreen extends React.PureComponent {
                     <FontAwesome name="list" style={{color: "#fff"}} size={24} />
                   </View>
                 </View>
-                <Text> Kelas Saya </Text>
+                <Text>{this.props.t("myClass")}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.handleAnnouncementPress} style={{ alignItems: "center"}}>
                 <View style={styles.button} >
@@ -120,7 +121,7 @@ class StudentHomeScreen extends React.PureComponent {
                     <FontAwesome name="comment" style={{color: "#fff"}} size={24} />
                   </View>
                 </View>
-                <Text> Pengumuman </Text>
+                <Text> {this.props.t("announcement")} </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonContainer}>
@@ -130,7 +131,7 @@ class StudentHomeScreen extends React.PureComponent {
                     <FontAwesome name="list" style={{color: "#fff"}} size={24} />
                   </View>
                 </View>
-                <Text>Diskusi Saya</Text>
+                <Text>{this.props.t("myDiscussion")}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -176,4 +177,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withCurrentUser(withCurrentStudent(withTheme(StudentHomeScreen)))
+export default withTranslation()(withCurrentUser(withCurrentStudent(withTheme(StudentHomeScreen))))

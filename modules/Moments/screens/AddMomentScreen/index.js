@@ -35,13 +35,15 @@ function AddMomentScreen(props){
     if(_isMounted.current) setContent(content) 
   }
   const handleSubmitMoment = async () => {
-    if(_isMounted.current) setIsSubmitting(true);
-    await MomentAPI.publishMoment(currentUser.email, { message: content, images });
-    if(_isMounted.current){
-      setContent("");
-      setIsSubmitting(false)
+    if(content.trim().length>0){
+      if(_isMounted.current) setIsSubmitting(true);
+      await MomentAPI.publishMoment(currentUser.email, { message: content, images });
+      if(_isMounted.current){
+        setContent("");
+        setIsSubmitting(false)
+      }
+      props.navigation.goBack();
     }
-    props.navigation.goBack();
   }
 
   const handleGalleryPress = async () => {

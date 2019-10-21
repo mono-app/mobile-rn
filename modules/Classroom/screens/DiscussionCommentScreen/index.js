@@ -21,6 +21,7 @@ import uuid from "uuid/v4"
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import ImagePicker from 'react-native-image-picker';
 import ImageCompress from "src/api/ImageCompress"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -302,24 +303,19 @@ class DiscussionCommentScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
       )
     }
-    const window = Dimensions.get("window");
     let creationDate = "";  
     let creationTime = "";
 
     if(this.state.discussion.creationTime){
        creationDate = moment(this.state.discussion.creationTime.seconds * 1000).format("DD MMMM YYYY");
        creationTime = moment(this.state.discussion.creationTime.seconds * 1000).format("HH:mm");
-    }
-    let remainingImageCount = 0;
-    if(this.state.discussion.images && this.state.discussion.images.length>4){
-      remainingImageCount = this.state.discussion.images.length-4;
     }
 
     const isAllowNotification = this.checkNotifAllowed()
@@ -340,7 +336,7 @@ class DiscussionCommentScreen extends React.PureComponent {
                 <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
                 <View style={{ marginLeft: 16 }}>
                   <Text style={{ fontWeight: "700" }}>{this.state.posterName}</Text>
-                  <Caption style={{ marginTop: 0 }}>{creationDate} | Jam {creationTime} WIB</Caption>
+                  <Caption style={{ marginTop: 0 }}>{creationDate} | {this.props.t("time2")} {creationTime} WIB</Caption>
                 </View>
               </View>
               <View style={{ paddingHorizontal: 16}}>
@@ -376,21 +372,21 @@ class DiscussionCommentScreen extends React.PureComponent {
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }}>
                 <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4 }}/>
-                <Caption>Komentar</Caption>
+                <Caption>{this.props.t("comments")}</Caption>
               </TouchableOpacity>
               <TouchableOpacity onPress={this.handleSharePress} style={{ flexDirection: "row", alignItems: "center" }}>
                 <MaterialCommunityIcons name="share" size={16} style={{ marginRight: 4 }}/>
-                <Caption>Bagikan</Caption>
+                <Caption>{this.props.t("share")}</Caption>
               </TouchableOpacity>
                 {(isAllowNotification)? 
                   <TouchableOpacity onPress={this.handleNotifPress} style={{ flexDirection: "row", alignItems: "center" }}>
                     <MaterialCommunityIcons name="bell-off" size={16} style={{ marginRight: 4 }}/>
-                    <Caption>Matikan</Caption>
+                    <Caption>{this.props.t("turnOff")}</Caption>
                   </TouchableOpacity>
                   : 
                   <TouchableOpacity onPress={this.handleNotifPress} style={{ flexDirection: "row", alignItems: "center" }}>
                     <MaterialCommunityIcons name="bell" size={16} style={{ marginRight: 4 }}/>
-                    <Caption>Aktifkan</Caption>
+                    <Caption>{this.props.t("turnOn")}</Caption>
                   </TouchableOpacity>
                   }
              
@@ -500,4 +496,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
-export default withCurrentUser(DiscussionCommentScreen)
+export default withTranslation()(withCurrentUser(DiscussionCommentScreen))

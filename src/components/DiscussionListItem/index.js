@@ -1,13 +1,14 @@
 import React from "react";
 import moment from "moment";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { Text, Card, Caption } from "react-native-paper";
 import SquareAvatar from "src/components/Avatar/Square";
 import SchoolAPI from "modules/Classroom/api/school";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {  discussion: {}, isLoading: true, posterName:""}
 
-export default class DiscussionListItem extends React.PureComponent{
+class DiscussionListItem extends React.PureComponent{
 
   refreshDetail = async () => {
     const { schoolId, discussion } = this.props;
@@ -43,8 +44,8 @@ export default class DiscussionListItem extends React.PureComponent{
             <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
             <View style={{ flex:1, marginLeft: 16 }}>
               <Text style={{ fontWeight: "700", fontSize:16 }} numberOfLines={2}>{this.state.discussion.title}</Text>
-              <Caption style={{ marginTop: 0 }}>Dibuat oleh {this.state.posterName}</Caption>
-              <Caption style={{ marginTop: 0 }}>Diposting pada {creationDate} | Pukul {creationTime} WIB</Caption>
+              <Caption style={{ marginTop: 0 }}>{this.props.t("createdBy")} {this.state.posterName}</Caption>
+              <Caption style={{ marginTop: 0 }}>{this.props.t("postedAt")}: {creationDate} | {this.props.t("time")}: {creationTime} WIB</Caption>
             </View>
           </View>
          
@@ -55,7 +56,4 @@ export default class DiscussionListItem extends React.PureComponent{
     )
   }
 }
-
-const styles = StyleSheet.create({
- 
-})
+export default withTranslation()(DiscussionListItem)

@@ -8,6 +8,7 @@ import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, discussionList:[], filteredDiscussionList: [] };
 
@@ -118,7 +119,7 @@ class DiscussionsScreen extends React.PureComponent {
         <View style={{margin: 16 }}>
             <MySearchbar 
               onSubmitEditing={this.handleSearchPress}
-              placeholder="Cari Diskusi" />
+              placeholder={this.props.t("searchDiscussion")} />
         </View>
         
         <View style={{backgroundColor: "#0ead69",
@@ -126,7 +127,7 @@ class DiscussionsScreen extends React.PureComponent {
           <TouchableOpacity onPress={this.handleAddDiscussion} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
           <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
             <Text style={{fontWeight:"bold", color:"#fff"}}>
-               BUAT DISKUSI BARU
+               {this.props.t("createNewDiscussion")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -149,4 +150,4 @@ class DiscussionsScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentUser(DiscussionsScreen)
+export default withTranslation()(withCurrentUser(DiscussionsScreen))

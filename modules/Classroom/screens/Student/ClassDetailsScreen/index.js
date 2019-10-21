@@ -5,7 +5,7 @@ import RoomsAPI from "src/api/rooms"
 import Logger from "src/api/logger";
 import { StyleSheet } from "react-native";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
-
+import { withTranslation } from 'react-i18next';
 import AppHeader from "src/components/AppHeader";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
@@ -136,7 +136,7 @@ class ClassDetailsScreen extends React.PureComponent {
         <View style={{flex:1, backgroundColor: "#E8EEE8" }}>
           <AppHeader
             navigation={this.props.navigation}
-            title="Info Kelas"
+            title={this.props.t("classInfo")}
             style={{ backgroundColor: "white" }}
           />
           <ScrollView >
@@ -156,21 +156,21 @@ class ClassDetailsScreen extends React.PureComponent {
          
             <View style={{  marginVertical: 16 }}>  
               <PeopleInformationContainer
-                fieldName="Ruangan"
+                fieldName={this.props.t("room")}
                 fieldValue={this.state.class.room}/>
               <PeopleInformationContainer
                 fieldName="Semester"
                 fieldValue={this.state.class.semester}/>
             <PeopleInformationContainer
-                fieldName="Tahun Ajaran"
+                fieldName={this.props.t("academicYear")}
                 fieldValue={this.state.class.academicYear}/>
               <PeopleInformationContainer
-                fieldName="Guru"
+                fieldName={this.props.t("teacher")}
                 fieldValue={this.state.teacher.name}/>
             </View>
             
             <View style={{  padding: 16, backgroundColor: "#fff" }}>
-              <Text style={{fontWeight: "bold"}}>Informasi Kelas</Text>
+              <Text style={{fontWeight: "bold"}}>{this.props.t("classInfo")}</Text>
               <View style={{flexDirection:"row"}}>
                 <Text>{this.state.class.information}</Text>
               </View>
@@ -182,7 +182,7 @@ class ClassDetailsScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"row"}}>
                       <FontAwesome name="users" size={24} style={{marginRight:16, width: 30}}/>
-                      <Text style={styles.label}>Daftar Murid</Text>
+                      <Text style={styles.label}>{this.props.t("studentList")}</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.totalStudent}</Text>
@@ -196,7 +196,7 @@ class ClassDetailsScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"row"}}>
                       <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
-                      <Text style={styles.label}>Berkas</Text>
+                      <Text style={styles.label}>{this.props.t("files")}</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.totalFiles}</Text>
@@ -210,7 +210,7 @@ class ClassDetailsScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"row"}}>
                       <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
-                      <Text style={styles.label}>Daftar Tugas</Text>
+                      <Text style={styles.label}>{this.props.t("taskList")}</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.totalTask}</Text>
@@ -258,4 +258,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default withCurrentStudent(ClassDetailsScreen)
+export default withTranslation()(withCurrentStudent(ClassDetailsScreen))

@@ -11,6 +11,7 @@ import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { PersonalRoomsAPI } from "src/api/rooms";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
@@ -82,8 +83,8 @@ class StudentProfileScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -92,7 +93,7 @@ class StudentProfileScreen extends React.PureComponent {
       <View style={{ backgroundColor: "#E8EEE8"}}>
         <AppHeader
           navigation={this.props.navigation}
-          title="Profil Murid"
+          title={this.props.t("studentProfile")}
           style={{ backgroundColor: "white" }}
         />
         <ScrollView style={{marginBottom:56}}>
@@ -113,30 +114,30 @@ class StudentProfileScreen extends React.PureComponent {
           
           <View style={{  marginVertical: 16 }}>
              <PeopleInformationContainer
-              fieldName="Bergabung Sejak"
+              fieldName={this.props.t("joinDate")}
               fieldValue={(this.state.student.creationTime)? moment(this.state.student.creationTime.seconds * 1000).format("DD MMMM YYYY") : ""}/>
             <PeopleInformationContainer
-              fieldName="Alamat"
+              fieldName={this.props.t("address")}
               fieldValue={this.state.student.address}/>
             <PeopleInformationContainer
-              fieldName="Nomor Telepon"
+              fieldName={this.props.t("phoneNo")}
               fieldValue={this.state.student.phone}/>
             <PeopleInformationContainer
               fieldName="Email"
               fieldValue={this.state.student.id}/>
             <PeopleInformationContainer
-              fieldName="Jenis Kelamin"
+              fieldName={this.props.t("gender")}
               fieldValue={this.state.student.gender}/>
           
           </View>
           <View>
             <PeopleInformationContainer
-              fieldName="Jumlah Kelas"
+              fieldName={this.props.t("totalClass")}
               fieldValue="-"/>
           </View>
           <Button 
           disabled={(this.props.currentStudent.email===this.studentEmail)?true:false}
-          text="Mulai Percakapan" 
+          text={this.props.t("startConversation")}
           isLoading={this.state.isLoadingButtonChat} 
           style={{margin: 16}} 
           onPress={this.handleStartChatPress}></Button>
@@ -146,4 +147,4 @@ class StudentProfileScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentStudent(StudentProfileScreen)
+export default withTranslation()(withCurrentStudent(StudentProfileScreen))
