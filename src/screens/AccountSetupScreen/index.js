@@ -10,6 +10,7 @@ import SetupListItem from "src/screens/AccountSetupScreen/SetupListItem";
 import { View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Logger from "src/api/logger";
+import { withTranslation } from 'react-i18next';
 
 function AccountSetupScreen(props){
   const { navigation, currentUser } = props;
@@ -88,15 +89,15 @@ function AccountSetupScreen(props){
   return(
     <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={styles.container}>
       <AppHeader style={{ backgroundColor: "transparent", elevation: 0 }}/>
-      <HeadlineTitle style={{ marginHorizontal: 16 }}>Persiapan Akun</HeadlineTitle>
+      <HeadlineTitle style={{ marginHorizontal: 16 }}>{this.props.t("accountPrepare")}</HeadlineTitle>
       <SetupListItem 
-        title="Data Pribadi" subtitle="Mono berjanji untuk mejaga kerahasiaan data pribadi kamu"
+        title={this.props.t("personalData")} subtitle={this.props.t("personalDataDesc")}
         onPress={handlePersonalInformationPress} isComplete={isPersonalInformationComplete}/>
       <SetupListItem 
-        title="Informasi Akun" subtitle="Pastikan tidak memberikan data sensitif." 
+        title={this.props.t("accountInfo")} subtitle={this.props.t("accountInfoDesc")} 
         onPress={handleApplicationInformationPress} isComplete={isApplicationInformationComplete}/>
       <View style={styles.cardContainer}>
-        <Button text="Sempurna" onPress={handleCompleteClick} isLoading={isLoading} disabled={!canSubmit}/>
+        <Button text={this.props.t("perfect")} onPress={handleCompleteClick} isLoading={isLoading} disabled={!canSubmit}/>
       </View>
       
     </KeyboardAwareScrollView>
@@ -104,4 +105,4 @@ function AccountSetupScreen(props){
 }
 
 AccountSetupScreen.navigationOptions = { header: null }
-export default withCurrentUser(AccountSetupScreen);
+export default withTranslation()(withCurrentUser(AccountSetupScreen))
