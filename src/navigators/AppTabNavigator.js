@@ -15,7 +15,7 @@ import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import IntroductionClassroomScreen from "modules/Classroom/screens/IntroductionScreen";
 
 export default AppTabNavigator =  createStackNavigator({
-  Home: { screen: AppListScreen },
+  Home: { screen: AppListScreen, navigationOptions: { header: null } },
   Classroom: { screen: ClassroomNavigator, navigationOptions: { header: null }},
   // News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
   IntroductionClassroom: { screen: IntroductionClassroomScreen },

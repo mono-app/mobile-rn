@@ -9,8 +9,8 @@ import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/D
 import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 
 export default MainNavigator = createStackNavigator({
-  Home: { screen: HomeScreen },
-  AddMoment: { screen: AddMomentScreen },
+  Home: { screen: HomeScreen, navigationOptions: { header: null } },
+  AddMoment: { screen: AddMomentScreen, navigationOptions: { header: null }  },
   MomentComments: { screen: MomentCommentsScreen },
   ShareMoment: { screen: ShareMomentScreen },
   PhotoGridPreview: { screen: PhotoGridPreviewScreen },

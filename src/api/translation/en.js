@@ -62,8 +62,22 @@ const translate = {
   acceptFriend: "Accept Friend",
   rejectFriend: "Reject Friend Request",
   startConversation: "Start Conversation",
-  myContactLabel: "My Contacts",
+  myContactLabel: "My Contact",
   searchContact: "Search Contact",
+  application: "Application",
+  deleteSuccess: "Delete Success",
+  deleteMomentAsk: "Are you sure to delete this moment?",
+  deletePicAsk: "Are you sure to delete this picture?",
+  addMoment: "New moment",
+  like: "Like",
+  comments: "Comments",
+  share: "Share",
+  justFriend: "Just Friend",
+  addMomentAsk: "What's on your mind?",
+  publish: "Publish",
+
+
+
 
 }
 export default translate

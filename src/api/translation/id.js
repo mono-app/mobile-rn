@@ -64,6 +64,17 @@ const translate = {
   startConversation: "Mulai Percakapan",
   myContactLabel: "Kontak-ku",
   searchContact: "Cari Kontak",
+  application: "Aplikasi",
+  deleteSuccess: "Berhasil Menghapus",
+  deleteMomentAsk: "Apakah anda ingin menghapus moment ini?",
+  deletePicAsk: "Apakah anda ingin menghapus gambar ini?",
+  addMoment: "Tambahkan moment",
+  like: "Suka",
+  comments: "Komentar",
+  share: "Bagikan",
+  justFriend: "Hanya teman",
+  addMomentAsk: "Apa yang sedang Anda pikirkan?",
+  publish: "Publikasi",
   
   
 }

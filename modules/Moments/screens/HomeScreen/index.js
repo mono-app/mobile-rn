@@ -3,7 +3,7 @@ import MomentsAPI from "modules/Moments/api/moment";
 import Logger from "src/api/logger";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { StyleSheet } from "react-native";
-
+import { withTranslation } from 'react-i18next';
 import MomentItem from "modules/Moments/components/MomentItem";
 import Header from "modules/Moments/screens/HomeScreen/Header";
 import DeleteDialog from "src/components/DeleteDialog";
@@ -83,6 +83,7 @@ function HomeScreen(props){
   Logger.log("Moment.HomeScreen", "re-render");
   return(
     <SafeAreaView style={styles.container}>
+      <Header/>
       <FlatList
         data={moments}  keyExtractor={(item) => item.id}
         onRefresh={handleRefresh}  refreshing={isRefreshing} 
@@ -95,17 +96,17 @@ function HomeScreen(props){
           )
         }
       }/>
-      <DeleteDialog ref={deleteDialog} title= {"Apakah anda ingin menghapus gambar ini?"} onDeletePress={handleDeleteMomentYes}/>
+      <DeleteDialog ref={deleteDialog} title= {props.t("deleteMomentAsk")} onDeletePress={handleDeleteMomentYes}/>
       <Snackbar
         visible= {showSnackbarDeleteSuccess}
         onDismiss={() => setSnackbarDeleteSuccess(false)}
         style={{ backgroundColor:"#0EAD69" }}
         duration={Snackbar.DURATION_SHORT}>
-          Berhasil Menghapus
+          {props.t("deleteSuccess")}
       </Snackbar>
     </SafeAreaView>
   )
 }
 
-HomeScreen.navigationOptions = { header: <Header/> }
-export default withCurrentUser(HomeScreen);
+HomeScreen.navigationOptions = { header: null }
+export default withTranslation()(withCurrentUser(HomeScreen))

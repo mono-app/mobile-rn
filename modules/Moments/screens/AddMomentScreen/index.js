@@ -8,7 +8,7 @@ import Permissions from "react-native-permissions";
 import IOSImagePicker from "react-native-image-crop-picker";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { Platform } from "react-native";
-
+import { withTranslation } from 'react-i18next';
 import ImageListItem from "src/components/ImageListItem"
 import Button from "src/components/Button";
 import CircleAvatar from "src/components/Avatar/Circle";
@@ -152,21 +152,21 @@ function AddMomentScreen(props){
         <CircleAvatar size={50} style={{ marginRight: 8 }} uri={currentUser.profilePicture}/>
         <View style={{ justifyContent: "center" }}>
           <Text style={{ fontWeight: "bold", margin: 0 }}>{currentUser.applicationInformation.nickName}</Text>
-          <Caption style={{ margin: 0 }}><MaterialIcons size={12} name="lock"/> Hanya teman</Caption>
+          <Caption style={{ margin: 0 }}><MaterialIcons size={12} name="lock"/> {props.t("justFriend")}</Caption>
         </View>
       </View>
 
       <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
         <TextInput
           textAlignVertical="top" numberOfLines={4} fontSize={24}
-          placeholder="Apa yang sedang Anda pikirkan?" style={{ minHeight: 180, maxHeight: 240 }}
+          placeholder={props.t("addMomentAsk")} style={{ minHeight: 180, maxHeight: 240 }}
           value={content} onChangeText={handleContentChange} multiline/>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <View style={{ flexDirection: "row" }}>
             <IconButton size={24} icon="photo-library" color="rgba(0, 0, 0, .56)" onPress={handleGalleryPress}/>
             <IconButton size={24} icon="photo-camera" color="rgba(0, 0, 0, .56)" onPress={handleCameraPress}/>
           </View>
-          <Button isLoading={isSubmitting} disabled={isSubmitting} onPress={handleSubmitMoment} text="Publikasi"/>
+          <Button isLoading={isSubmitting} disabled={isSubmitting} onPress={handleSubmitMoment} text={props.t("publish")}/>
         </View>
       </View>
       
@@ -177,11 +177,11 @@ function AddMomentScreen(props){
         
       <DeleteDialog 
           ref ={i => setDeleteDialog(i)}
-          title= {"Apakah anda ingin menghapus gambar ini?"}
+          title= {props.t("deletePicAsk")}
           onDeletePress={onDeletePress}/>
     </KeyboardAwareScrollView>
   )
 }
 
 AddMomentScreen.navigationOptions = { header: null }
-export default withCurrentUser(AddMomentScreen);
+export default withTranslation()(withCurrentUser(AddMomentScreen))
