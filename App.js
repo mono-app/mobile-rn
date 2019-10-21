@@ -1,13 +1,15 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
 import VerifyPhoneAPI from "src/api/verifyphone";
+import PeopleAPI from "src/api/people"
+import OfflineDatabase from "src/api/database/offline";
 import AppNavigator from "src/navigators/AppNavigator";
 import { AppState } from "react-native";
 import { createAppContainer } from 'react-navigation';
+
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 import { TutorialProvider } from "src/api/Tutorial";
-import PeopleAPI from "src/api/people"
 
 console.disableYellowBox = true;
 
@@ -38,6 +40,8 @@ function App(){
   }
 
   React.useEffect(() => {
+    OfflineDatabase.initialize();
+    
     const firebaseUser = firebase.auth().currentUser;
     if(firebaseUser !== null && firebaseUser.email) {
       PeopleAPI.setOnlineStatus(firebaseUser.email, "Online");
@@ -47,7 +51,7 @@ function App(){
     return function cleanup(){
       AppState.removeEventListener("change", handleAppStateChange) 
     }
-  })
+  }, [])
 
   return(
     <PaperProvider theme={theme}>
