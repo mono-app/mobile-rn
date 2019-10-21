@@ -9,6 +9,7 @@ import Container from "src/components/Container";
 import Button from "src/components/Button";
 import ApplicationInformationCard from "src/screens/AccountSetupScreen/ApplicationInformationCard";
 import PeopleAPI from "src/api/people";
+import { withTranslation } from 'react-i18next';
 
 function ApplicationInformationSetupScreen(props){
   const { navigation } = props;
@@ -26,6 +27,7 @@ function ApplicationInformationSetupScreen(props){
 
   const handleSavePress = async () => {
     setLoading(true)
+
     let data = JSON.parse(JSON.stringify(applicationInformationCard.current.getState()))
     data.id = data.id.trim()
     data.nickName = data.nickName.trim()
@@ -35,7 +37,7 @@ function ApplicationInformationSetupScreen(props){
         onFinish(data);
         navigation.goBack();
       }else{
-        setErrorMessage("Mono ID sudah digunakan!")
+        setErrorMessage(props.t("monoIdAlreadyUsed"))
         setError(true)
       }
     }
@@ -51,8 +53,8 @@ function ApplicationInformationSetupScreen(props){
     <Container style={{ }}>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <View style={styles.content}>
-        <ApplicationInformationCard ref={applicationInformationCard} defaultId={defaultId} defaultNickName={defaultNickName}/>
-        <Button style={{ marginTop: 8 }} text="Simpan" isLoading={isLoading} disabled={isLoading} onPress={handleSavePress}/>
+        <ApplicationInformationCard t={props.t} ref={applicationInformationCard} defaultId={defaultId} defaultNickName={defaultNickName}/>
+        <Button style={{ marginTop: 8 }} text={props.t("save")} isLoading={isLoading} disabled={isLoading} onPress={handleSavePress}/>
       </View>
       <Portal>
         <Dialog visible={isError} onDismiss={handleErrorDialogDismiss}>
@@ -68,4 +70,4 @@ function ApplicationInformationSetupScreen(props){
     </Container>
   );
 }
-export default ApplicationInformationSetupScreen;
+export default withTranslation()(ApplicationInformationSetupScreen);

@@ -43,6 +43,8 @@ const translate = {
   gender: "Gender",
   male: "Male",
   female: "Female",
+  monoIdAlreadyUsed: "Mono ID is not available",
+  save: "Save",
 
 
 }

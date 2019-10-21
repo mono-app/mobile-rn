@@ -43,7 +43,8 @@ const translate = {
   gender: "Jenis Kelamin",
   male: "Laki-Laki",
   female: "Perempuan",
-
+  monoIdAlreadyUsed: "Mono ID sudah digunakan!",
+  save: "Simpan",
   
 }
 export default translate

@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Picker, StyleSheet } from "react-native";
 import { Card, Text, Caption } from "react-native-paper";
-import { withTranslation } from 'react-i18next';
 import TextInput from "src/components/TextInput";
 
 const INITIAL_STATE = {
@@ -82,4 +81,4 @@ const styles = StyleSheet.create({
   headerText: { paddingBottom: 4 }
 })
 
-export default withTranslation()(PersonalInformationCard)
+export default PersonalInformationCard

@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { withTranslation } from 'react-i18next';
 import TextInput from "src/components/TextInput";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Card, Text } from "react-native-paper";
@@ -41,7 +40,7 @@ class ApplicationInformationCard extends React.PureComponent{
               <Text style={styles.headerText}>Mono ID</Text>
               <Tooltip backgroundColor="grey" 
                 popover={
-                  <Text style={{ color: "white" }}>{this.props.t("monoIdDesc")}}</Text>
+                  <Text style={{ color: "white" }}>{this.props.t("monoIdDesc")}</Text>
                 }
                 height={64} width={256}>
                 <Icon style={{ marginLeft: 4 }} name="question-circle" size={14}/> 
@@ -70,4 +69,4 @@ const styles = StyleSheet.create({
   headerText: { paddingBottom: 4 }
 })
 
-export default withTranslation()(ApplicationInformationCard)
+export default ApplicationInformationCard
