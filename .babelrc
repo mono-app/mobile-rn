@@ -1,6 +1,7 @@
 {
   "plugins": [
-    ["module-resolver", {"root": ["."]}]
+    ["module-resolver", { "root": ["."] }],
+    ["@babel/plugin-proposal-decorators", { "legacy": true }]
   ],
   "presets": [ "module:metro-react-native-babel-preset", "module:react-native-dotenv" ]
 }
