@@ -26,7 +26,7 @@ const translate = {
   phoneVerifyDescLabel: "Please verify your phone number. We will sent you the verification code OTP. Be sure that your phone number is active, Format: 62xxxxxxxxxxx",
   example: "Example",
   verificationCode: "Verification Code",
-  success: "Sukses",
+  success: "Success",
   registrationSuccess: "Registration Success!",
   accountInfo: "Account Information",
   accountInfoDesc: "Don't put your sensitive information.",

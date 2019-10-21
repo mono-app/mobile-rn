@@ -89,15 +89,15 @@ function AccountSetupScreen(props){
   return(
     <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={styles.container}>
       <AppHeader style={{ backgroundColor: "transparent", elevation: 0 }}/>
-      <HeadlineTitle style={{ marginHorizontal: 16 }}>{this.props.t("accountPrepare")}</HeadlineTitle>
+      <HeadlineTitle style={{ marginHorizontal: 16 }}>{props.t("accountPrepare")}</HeadlineTitle>
       <SetupListItem 
-        title={this.props.t("personalData")} subtitle={this.props.t("personalDataDesc")}
+        title={props.t("personalData")} subtitle={props.t("personalDataDesc")}
         onPress={handlePersonalInformationPress} isComplete={isPersonalInformationComplete}/>
       <SetupListItem 
-        title={this.props.t("accountInfo")} subtitle={this.props.t("accountInfoDesc")} 
+        title={props.t("accountInfo")} subtitle={props.t("accountInfoDesc")} 
         onPress={handleApplicationInformationPress} isComplete={isApplicationInformationComplete}/>
       <View style={styles.cardContainer}>
-        <Button text={this.props.t("perfect")} onPress={handleCompleteClick} isLoading={isLoading} disabled={!canSubmit}/>
+        <Button text={props.t("perfect")} onPress={handleCompleteClick} isLoading={isLoading} disabled={!canSubmit}/>
       </View>
       
     </KeyboardAwareScrollView>
