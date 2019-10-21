@@ -151,7 +151,7 @@ function ChatScreen(props){
   }, [room, currentUser]);
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
+    <KeyboardAvoidingView keyboardShouldPersistTaps={'handled'} behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeader 
         navigation={navigation} title={headerTitle} subtitle={isInRoom? audienceStatus+" (live)" : audienceStatus } 
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}

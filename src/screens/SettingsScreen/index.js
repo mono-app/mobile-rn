@@ -15,8 +15,6 @@ import { ActivityIndicator, View, FlatList, StyleSheet } from "react-native";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
-import Tooltip from 'react-native-walkthrough-tooltip';
-import { Text } from "react-native-paper";
 
 function SettingsScreen(props){
   const [ status, setStatus ] = React.useState("");
@@ -80,7 +78,7 @@ function SettingsScreen(props){
             data={[
               {title: "Show my QR Code", icon: <FontAwesome name="qrcode" size={24}/>, navigateTo: "MyQR"},
               {title: "Account", icon: <MaterialIcons name="vpn-key" size={24}/>, navigateTo: "Account"},
-              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "Chats"},
+              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "ChatSettings"},
               {title: "Privacy", icon: <MaterialIcons name="lock" size={24}/>, navigateTo: "Privacy"},
               {title: "Help", icon: <FontAwesome name="question-circle" size={24}/>, navigateTo: "Help"}
             ]}

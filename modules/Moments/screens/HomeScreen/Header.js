@@ -29,7 +29,6 @@ function Header(props){
       }
     });
   }
-  
 
   return (
     <Surface style={{ elevation: 4 }}>

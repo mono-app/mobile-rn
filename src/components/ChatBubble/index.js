@@ -3,8 +3,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import Logger from "src/api/logger";
 import { withTheme } from "react-native-paper";
-
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Text, Caption, IconButton } from "react-native-paper";
 
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
@@ -14,6 +13,7 @@ function ChatBubble(props){
   const { content, sentTime, isSent } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
   const [ enabledMore, setEnableMore ] = React.useState("");
+  const [ isSelected, setSelected ] = React.useState(false);
   const maxContentLength = 100
 
   const myBubble = StyleSheet.create({
@@ -59,6 +59,10 @@ function ChatBubble(props){
     setEnableMore(false)
   }
 
+  const handleOnLongPress = (ref) => {
+   
+  }
+
   React.useEffect(() => {
     Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
     if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
@@ -70,20 +74,37 @@ function ChatBubble(props){
     }
 
   }, [isSent, sentTime])
-
+ 
   
   return (
-    <View style={[ styles.container, props.style ]}>
-      <TouchableOpacity style={styles.section} onPress={handlePress} disabled={!clickable}>
-        <Text style={styles.contentColor}>
-          {(enabledMore)? shortnerContent(): content}
-          <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
-        </Text>
-        <View style={styles.metadata}>
-          <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
-          {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
-        </View>
-      </TouchableOpacity>
+    <View style={[ styles.container, props.style]}>
+        {(clickable)? 
+        <TouchableOpacity style={[styles.section]} onPress={handlePress}>
+          <Text style={styles.contentColor} >
+            {(enabledMore)? shortnerContent(): content}
+            <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
+          </Text>
+          <View style={styles.metadata}>
+            <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+            {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
+          </View>
+        </TouchableOpacity>
+        : 
+        <TouchableWithoutFeedback onPress={handleOnLongPress()}>
+
+          <View style={[styles.section]}>
+            <Text style={[styles.contentColor]} >
+              {(enabledMore)? shortnerContent(): content}
+              <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
+            </Text>
+            <View style={[styles.metadata]}>
+              <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+              {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+        }
+       
 
       {(enabledMore)? 
           <IconButton icon="zoom-out-map" color={theme.colors.placeholder} onPress={handleContentMore}/>
@@ -93,6 +114,7 @@ function ChatBubble(props){
       {clickable && bubbleStyle !== "myBubble"?(
         <IconButton icon="share" color={theme.colors.placeholder} onPress={handlePress}/>
       ): null}
+      
     </View>
   )
 }

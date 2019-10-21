@@ -6,21 +6,25 @@ import MyQRScreen from "src/screens/MyQRScreen";
 import EditSingleFieldScreen from "src/screens/EditSingleFieldScreen";
 import StatusChangeScreen from "src/screens/StatusChangeScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
-import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
+import ScanQRCodeScreen from "src/screens/ScanQRCodeScreen";
 import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import PrivacyScreen from "src/screens/PrivacyScreen";
 import BlockedUsersScreen from "src/screens/BlockedUsersScreen";
 import HiddenUsersScreen from "src/screens/HiddenUsersScreen";
 import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
+import ChatSettingsScreen from "src/screens/ChatSettingsScreen"
+import ChatSolidColorPickerScreen from "src/screens/ChatSolidColorPickerScreen"
 
 export default SettingTabNavigator = createStackNavigator({
   Home: { screen: SettingsScreen },
   Account: { screen: AccountScreen },
   Privacy: {screen: PrivacyScreen},
+  ChatSettings: {screen: ChatSettingsScreen},
   BlockedUsers: {screen: BlockedUsersScreen},
   HiddenUsers: {screen: HiddenUsersScreen},
   MyQR: { screen: MyQRScreen },
-  ScanQRCode: { screen: ScanQRCodeSCreen },
+  ChatSolidColorPicker: { screen: ChatSolidColorPickerScreen },
+  ScanQRCode: { screen: ScanQRCodeScreen },
   PeopleInformation: { screen: PeopleInformationScreen },
   EditSingleField: { screen: EditSingleFieldScreen },
   SettingEditSingleFieldScreen: { screen: EditSingleFieldScreen },
