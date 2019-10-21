@@ -56,7 +56,8 @@ class SignUpScreen extends React.PureComponent{
 
   render(){
     return(
-      <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
+      <KeyboardAwareScrollView style={{flex: 1}} keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
+        <View style={{marginTop:128}}>
           <Title>{this.props.t("signUpLabel")}</Title>
           <Paragraph style={{ marginBottom: 16 }}>{this.props.t("signUpLabelDesc")}</Paragraph>
           <View style={{marginBottom: 128}}>
@@ -85,13 +86,14 @@ class SignUpScreen extends React.PureComponent{
               </Dialog.Actions>
             </Dialog>
           </Portal>
+        </View>
       </KeyboardAwareScrollView>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 32, flex: 1, alignItems: "stretch", justifyContent: "center" },
+  container: { paddingHorizontal: 32, alignItems: "stretch", justifyContent: "center" },
   backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })
 

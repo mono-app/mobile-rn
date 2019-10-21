@@ -18,7 +18,6 @@ console.disableYellowBox = true;
 
 const AppContainer = createAppContainer(AppNavigator);
 const deviceLanguage = Platform.OS === 'ios' ? NativeModules.SettingsManager.settings.AppleLocale: NativeModules.I18nManager.localeIdentifier;
-
 const languageDetector = {
   type: 'languageDetector',
   async: true,

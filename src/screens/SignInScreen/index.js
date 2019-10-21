@@ -97,7 +97,7 @@ function SignInScreen(props){
   }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
 
   return (
-    <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
+    <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
       <Image style={styles.logo} source={Logo}/>
       <View style={styles.contentWrapper}>
         <Paragraph style={styles.title}>
