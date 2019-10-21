@@ -25,7 +25,7 @@ export default SettingTabNavigator = createStackNavigator({
   MyQR: { screen: MyQRScreen },
   ChatSolidColorPicker: { screen: ChatSolidColorPickerScreen },
   ScanQRCode: { screen: ScanQRCodeScreen },
-  PeopleInformation: { screen: PeopleInformationScreen },
+  PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   EditSingleField: { screen: EditSingleFieldScreen },
   SettingEditSingleFieldScreen: { screen: EditSingleFieldScreen },
   StatusChange: { screen: StatusChangeScreen },

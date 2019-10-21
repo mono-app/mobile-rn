@@ -45,7 +45,25 @@ const translate = {
   female: "Female",
   monoIdAlreadyUsed: "Mono ID is not available",
   save: "Save",
-
+  addFriendHelpLabel: "Click here to add friend",
+  attention: "Attention",
+  chatHistoryHelpLabel: "Click here to see chat history",
+  conversation: "Conversation",
+  notifHistoryHelpLabel: "Click here to see notification history",
+  notification: "Notification",
+  friendRequest: "Friend Request",
+  addFriendQrLabel: "Add Friend using QR Code",
+  joinDate: "Join Date",
+  source: "Source",
+  loadData: "Loading data",
+  pleaseWait: "Please Wait...",
+  addFriend: "Add Friend",
+  cancelFriend: "Cancel Friend Request",
+  acceptFriend: "Accept Friend",
+  rejectFriend: "Reject Friend Request",
+  startConversation: "Start Conversation",
+  myContactLabel: "My Contacts",
+  searchContact: "Search Contact",
 
 }
 export default translate

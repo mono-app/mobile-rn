@@ -11,6 +11,7 @@ import ActionButton from "src/screens/PeopleInformationScreen/ActionButton";
 import AppHeader from "src/components/AppHeader";
 import { View } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
+import { withTranslation } from 'react-i18next';
 
 function PeopleInformationScreen(props){
   const { currentUser } = props;
@@ -35,8 +36,6 @@ function PeopleInformationScreen(props){
     if(_isMounted.current) setPeople(peopleData);
     if(_isMounted.current) setJoinedFrom(moment(peopleData.creationTime.seconds * 1000).format("DD MMMM YYYY"));
     if(_isMounted.current) setIsLoadingProfile(false);
-   
-
   }
 
   const fetchPeopleFriendStatus = async () => {
@@ -47,9 +46,7 @@ function PeopleInformationScreen(props){
       if(_isMounted.current) setPeopleFriendStatus("myself");
     }
   }
-
-
-
+  
   React.useEffect(() => {
     fetchPeopleInformation();
     fetchPeopleFriendStatus();
@@ -64,8 +61,8 @@ function PeopleInformationScreen(props){
         <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
           <ActivityIndicator/>
           <View>
-            <Text>Sedang memuat data</Text>
-            <Caption>Harap tunggu...</Caption>
+            <Text>{props.t("loadData")}</Text>
+            <Caption>{props.t("pleaseWait")}</Caption>
           </View>
         </Dialog.Content>
       </Dialog>
@@ -80,8 +77,8 @@ function PeopleInformationScreen(props){
         subtitle={status}/>
       <View style={{ marginTop: 16, marginBottom: 16 }}>
       <PeopleInformationContainer fieldName="Mono ID" fieldValue={people.applicationInformation.id}/>
-      <PeopleInformationContainer fieldName="Sumber" fieldValue={source.value}/>
-      <PeopleInformationContainer fieldName="Bergabung Sejak" fieldValue={joinedFrom}/>
+      <PeopleInformationContainer fieldName={props.t("source")} fieldValue={source.value}/>
+      <PeopleInformationContainer fieldName={props.t("joinDate")} fieldValue={joinedFrom}/>
       </View>
       <ActionButton 
         peopleEmail={peopleEmail} source={source}
@@ -90,5 +87,6 @@ function PeopleInformationScreen(props){
     </View>
   )
 }
+
 PeopleInformationScreen.navigationOptions = { header: null };
-export default withCurrentUser(PeopleInformationScreen);
+export default withTranslation()(withCurrentUser(PeopleInformationScreen))

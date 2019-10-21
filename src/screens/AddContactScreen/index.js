@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
+import { withTranslation } from 'react-i18next';
 import AppHeader from "src/components/AppHeader";
 import MonoIDSearch from "src/screens/AddContactScreen/MonoIDSearch";
 import { Text } from "react-native-paper";
@@ -35,7 +35,7 @@ function AddContactScreen(props){
           <View style={{ display: "flex", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <View style={{ display: "flex", flexDirection: "column" }}>
               <Text style={{ fontWeight: "500", fontSize: 16 }}>Scan</Text>
-              <Text>Menambahkan teman dengan QR code</Text>
+              <Text>{props.t("addFriendQrLabel")}</Text>
             </View>
             <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
           </View>
@@ -44,5 +44,5 @@ function AddContactScreen(props){
     </KeyboardAwareScrollView>
   )
 }
-AddContactScreen.navigationOptions = { header: null }
-export default withCurrentUser(AddContactScreen);
+
+export default withTranslation()(withCurrentUser(AddContactScreen))

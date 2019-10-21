@@ -24,7 +24,7 @@ export default AppTabNavigator =  createStackNavigator({
   AddDiscussion: {screen: AddDiscussionScreen},
   Discussions: {screen: DiscussionsScreen},
   // PeopleNearby: { screen: PeopleNearbyScreen },
-  PeopleInformation: { screen: PeopleInformationScreen },
+  PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   ...MomentNavigatorObj,
   ...DiscussionClassroomNotifNavigatorObj,
   

@@ -7,6 +7,7 @@ import HeadlineTitle from "src/components/HeadlineTitle";
 import AppHeader from "src/components/AppHeader";
 import { View, FlatList } from "react-native";
 import MySearchbar from "src/components/MySearchbar"
+import { withTranslation } from 'react-i18next';
 
 function ContactScreen(props){
   const { currentUser } = props;
@@ -53,11 +54,11 @@ function ContactScreen(props){
   return(
     <View style={{ flex: 1 }}>
       <AppHeader style={{ backgroundColor: "transparent" }}/>
-      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Kontak-ku</HeadlineTitle>
+      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>{props.t("myContactLabel")}</HeadlineTitle>
       <View style={{ padding: 16 }}>
         <MySearchbar 
               onSubmitEditing={handleSearchPress}
-              placeholder="Cari kontak" />
+              placeholder={props.t("searchContact")} />
       </View>
       <FlatList
         style={{ backgroundColor: "white" }}
@@ -72,4 +73,4 @@ function ContactScreen(props){
   )
 }
 ContactScreen.navigationOptions = { header: null }
-export default withCurrentUser(ContactScreen);
+export default withTranslation()(withCurrentUser(ContactScreen))

@@ -17,10 +17,10 @@ import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
 
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
-  AddContact: { screen: AddContactScreen },
+  AddContact: { screen: AddContactScreen, navigationOptions: { header: null } },
   ScanQRCode: { screen: ScanQRCodeSCreen },
   PeopleSearchResult: { screen: PeopleSearchResult },
-  PeopleInformation: { screen: PeopleInformationScreen },
+  PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   FriendRequestList: { screen: FriendRequestListScreen },
   Chat: { screen: ChatScreen },
   InboundOnlyChat: { screen: InboundOnlyChatScreen },

@@ -45,6 +45,26 @@ const translate = {
   female: "Perempuan",
   monoIdAlreadyUsed: "Mono ID sudah digunakan!",
   save: "Simpan",
+  addFriendHelpLabel: "Klik disini untuk menambahkan teman",
+  attention: "Perhatian",
+  chatHistoryHelpLabel: "Klik disini melihat history chat",
+  conversation: "Percakapan",
+  notifHistoryHelpLabel: "Klik disini melihat history notifikasi",
+  notification: "Notifikasi",
+  friendRequest: "Permintaan Pertemanan",
+  addFriendQrLabel: "Menambahkan teman dengan QR code",
+  joinDate: "Bergabung Sejak",
+  source: "Sumber",
+  loadData: "Sedang memuat data",
+  pleaseWait: "Harap tunggu...",
+  addFriend: "Jadikan Teman",
+  cancelFriend: "Batalkan Pertemanan",
+  acceptFriend: "Terima Pertemanan",
+  rejectFriend: "Tolak Pertemanan",
+  startConversation: "Mulai Percakapan",
+  myContactLabel: "Kontak-ku",
+  searchContact: "Cari Kontak",
+  
   
 }
 export default translate
