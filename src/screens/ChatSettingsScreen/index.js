@@ -4,9 +4,9 @@ import HeadlineTitle from "src/components/HeadlineTitle";
 import AppHeader from "src/components/AppHeader";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
-import { Button, Paragraph, Menu, Divider, Provider, Modal, Text, Portal } from 'react-native-paper';
-import { Avatar, Card, Title } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Provider, Modal, Text, Portal } from 'react-native-paper';
+import { Card } from 'react-native-paper';
+import { withTranslation } from 'react-i18next';
 import Toast from 'react-native-easy-toast'
 import Utils from 'src/api/utils'
 import {AsyncStorage} from 'react-native';
@@ -53,7 +53,7 @@ function ChatSettingsScreen(props){
     <Provider style={{ flex: 1, backgroundColor: "white" }}>
       <Portal>
         <AppHeader style={{ backgroundColor: "transparent" }} navigation={props.navigation}/>
-        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Pengaturan Chat</HeadlineTitle>
+        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>{props.t("chatSetting")}</HeadlineTitle>
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={openWallpaperModal}>
             <View style={styles.menu}>
@@ -85,4 +85,4 @@ function ChatSettingsScreen(props){
   )
 }
 ChatSettingsScreen.navigationOptions = { header: null }
-export default withCurrentUser(ChatSettingsScreen);
+export default withTranslation()(withCurrentUser(ChatSettingsScreen))

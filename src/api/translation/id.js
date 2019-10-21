@@ -75,7 +75,15 @@ const translate = {
   justFriend: "Hanya teman",
   addMomentAsk: "Apa yang sedang Anda pikirkan?",
   publish: "Publikasi",
-  
-  
+  shareStatusNow: "Bagikan statusmu sekarang.",
+  seeMyQrCode: "Lihat QR Code Saya",
+  scanQrDesc: "Scan QR Code diatas ini untuk menambahkan aku dalam daftar pertemanan-mu",
+  logoutAsk: "Apakah Anda yakin ingin keluar dari aplikasi ini?",
+  logoutDesc: "Anda harus masuk lagi ke aplikasi ini untuk tetap dapat menerima pesan.",
+  cancel: "Batal",
+  logout: "Keluar",
+  birthDate: "Tanggal Lahir",
+  chatSetting: "Pengaturan Chat",
+  myPrivacy: "Privasi Saya",
 }
 export default translate

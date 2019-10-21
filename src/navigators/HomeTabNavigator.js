@@ -18,7 +18,7 @@ import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
   AddContact: { screen: AddContactScreen, navigationOptions: { header: null } },
-  ScanQRCode: { screen: ScanQRCodeSCreen },
+  ScanQRCode: { screen: ScanQRCodeSCreen, navigationOptions: { header: null }  },
   PeopleSearchResult: { screen: PeopleSearchResult },
   PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   FriendRequestList: { screen: FriendRequestListScreen },
@@ -26,7 +26,7 @@ export default HomeTabNavigator = createStackNavigator({
   InboundOnlyChat: { screen: InboundOnlyChatScreen },
   NotificationBot: { screen: NotificationBotScreen },
   GroupChat: { screen: GroupChatScreen },
-  MyQR: { screen: MyQRScreen },
+  MyQR: { screen: MyQRScreen , navigationOptions: { header: null } },
   EditSingleField: { screen: EditSingleFieldScreen },
   ...DiscussionClassroomNotifNavigatorObj,
   ...MomentNavigatorObj

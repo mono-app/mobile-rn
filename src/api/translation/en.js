@@ -31,7 +31,7 @@ const translate = {
   accountInfo: "Account Information",
   accountInfoDesc: "Don't put your sensitive information.",
   monoIdDesc: "Mono ID is unique ID that used for your identity.",
-  nickName: "Nick Name",
+  nickName: "Nickname",
   personalData: "Personal Data",
   personalDataDesc: "Mono commited to protect your personal data",
   perfect: "Complete",
@@ -75,6 +75,16 @@ const translate = {
   justFriend: "Just Friend",
   addMomentAsk: "What's on your mind?",
   publish: "Publish",
+  shareStatusNow: "Share your status.",
+  seeMyQrCode: "See my QR Code",
+  scanQrDesc: "Scan This QR Code to add me become friends",
+  logoutAsk: "Are you sure to logout?",
+  logoutDesc: "You have to logged in to get new messages.",
+  cancel: "Cancel",
+  logout: "Sign Out",
+  birthDate: "Birth Date",
+  chatSetting: "Chat Settings",
+  myPrivacy: "My Privacy",
 
 
 
