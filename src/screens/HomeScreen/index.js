@@ -5,6 +5,7 @@ import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTutorial } from "src/api/Tutorial";
+
 import FriendRequestNotification from "src/screens/HomeScreen/Notifications/FriendRequest"
 import Header from 'src/screens/HomeScreen/Header';
 import HeadlineTitle from 'src/components/HeadlineTitle';
