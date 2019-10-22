@@ -22,6 +22,7 @@ export function withCurrentUser(Component){
             setUnreadBot={context.handleUnreadBot}
             unreadChatRoomList={context.unreadChatRoomList}
             unreadBotRoomList={context.unreadBotRoomList}
+            clearUnreadNotification={context.clearUnreadNotification}
           />}
 
       </CurrentUserContext.Consumer>
@@ -49,6 +50,7 @@ export class CurrentUserProvider extends React.PureComponent{
       handleCurrentUserEmail: this.handleCurrentUserEmail,
       handleUnreadChat: this.handleUnreadChat,
       handleUnreadBot: this.handleUnreadBot,
+      clearUnreadNotification: this.handleClearUnreadNotification,
       blockedUserList: [],
       blockedByUserList: [],
       hiddenUserList: [],
@@ -59,6 +61,8 @@ export class CurrentUserProvider extends React.PureComponent{
     this.handleCurrentUserEmail = this.handleCurrentUserEmail.bind(this);
     this.handleUnreadBot = this.handleUnreadBot.bind(this);
     this.handleUnreadChat = this.handleUnreadChat.bind(this);
+    this.clearUnreadNotification = this.handleClearUnreadNotification.bind(this);
+    
   }
 
   handleCurrentUserEmail = async (email) => {
@@ -140,6 +144,10 @@ export class CurrentUserProvider extends React.PureComponent{
     }
 
     this.setState({unreadBotRoomList: clonedBotRoomList})
+  }
+
+  handleClearUnreadNotification = () => {
+    this.setState({unreadChatRoomList:[], unreadBotRoomList: []})
   }
 
   componentDidMount(){

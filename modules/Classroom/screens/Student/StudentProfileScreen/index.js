@@ -100,7 +100,7 @@ class StudentProfileScreen extends React.PureComponent {
           <View style={{marginTop: 16}}/>
           <PeopleProfileHeader
             style={{padding:16}}
-            profilePicture="https://picsum.photos/200/200/?random"
+            profilePicture={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }
             title={this.state.student.name}
             subtitle= {"NIM: " + ((this.state.student.noInduk)?this.state.student.noInduk:"-")}/>
 

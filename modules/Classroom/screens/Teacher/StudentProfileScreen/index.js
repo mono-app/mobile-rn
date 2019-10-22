@@ -18,8 +18,9 @@ const INITIAL_STATE = {
   isLoadingButtonChat: false,
   student: {}, 
   status: "", 
-  totalClass:0  }
-
+  totalClass:0,  
+  profilePicture: "https://picsum.photos/200/200/?random"
+}
 
 class StudentProfileScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -40,7 +41,6 @@ class StudentProfileScreen extends React.PureComponent {
 
     if(this._isMounted)
       this.setState({ isLoadingProfile: false, student, totalClass });
-
   }
 
   loadStatus = async () => {
@@ -100,7 +100,7 @@ class StudentProfileScreen extends React.PureComponent {
           <View style={{marginTop: 16}}/>
           <PeopleProfileHeader
             style={{padding:16}}
-            profilePicture="https://picsum.photos/200/200/?random"
+            profilePicture={(this.state.student.profilePicture)? this.state.student.profilePicture.downloadUrl : this.state.profilePicture }
             title={this.state.student.name}
             subtitle= {"NIM " + ((!this.state.student)?this.state.student.noInduk:"-")}/>
 

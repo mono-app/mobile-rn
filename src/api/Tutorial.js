@@ -15,7 +15,7 @@ export function withTutorial(Component){
             showTutorialHomeNotifSection={context.showTutorialHomeNotifSection}
             settingScreenTutorial={context.settingScreenTutorial}
             showTutorialSettingChangeProfilePic={context.showTutorialSettingChangeProfilePic}
-        
+            resetTutorial={context.resetTutorial}
           />}
 
       </TutorialContext.Consumer>
@@ -29,6 +29,7 @@ export class TutorialProvider extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = { 
+      resetTutorial: this.handleResetTutorial,
       homeScreenTutorial: {
         start: this.handleStartHomeScreenTutorial,
         show: (index) => this.handleShowHomeScreenTutorial(index),
@@ -44,6 +45,7 @@ export class TutorialProvider extends React.PureComponent{
       },
       showTutorialSettingChangeProfilePic: false,
     }
+    this.handleResetTutorial = this.handleResetTutorial.bind(this)
     this.handleStartHomeScreenTutorial = this.handleStartHomeScreenTutorial.bind(this)
     this.handleShowHomeScreenTutorial = this.handleShowHomeScreenTutorial.bind(this)
     this.handleEndHomeScreenTutorial = this.handleEndHomeScreenTutorial.bind(this)
@@ -52,14 +54,17 @@ export class TutorialProvider extends React.PureComponent{
     this.handleEndSettingScreenTutorial = this.handleEndSettingScreenTutorial.bind(this)
   }
 
+  handleResetTutorial = () => {
+    AsyncStorage.setItem('alreadyShowHomeScreenTutorial','')
+    AsyncStorage.setItem('alreadyShowSettingScreenTutorial','');
+  }
  
   handleStartHomeScreenTutorial = async () => {
     const show = await AsyncStorage.getItem('alreadyShowHomeScreenTutorial')
-    if(!show){
+    if(show !== "true"){
       this.handleShowHomeScreenTutorial(1)
     }
   }
-
 
   handleShowHomeScreenTutorial = (index) => {
     if(index===1){
@@ -95,7 +100,7 @@ export class TutorialProvider extends React.PureComponent{
 
   handleStartSettingScreenTutorial = async () => {
     const show = await AsyncStorage.getItem('alreadyShowSettingScreenTutorial')
-    if(!show){
+    if(show !== "true"){
       this.handleShowSettingScreenTutorial(1)
     }
   }

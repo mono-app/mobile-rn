@@ -11,6 +11,7 @@ import { View } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Logger from "src/api/logger";
 import { withTranslation } from 'react-i18next';
+import { withTutorial } from "src/api/Tutorial";
 
 function AccountSetupScreen(props){
   const { navigation, currentUser } = props;
@@ -81,6 +82,7 @@ function AccountSetupScreen(props){
   React.useEffect(() => {
     Logger.log("AccountSetupScreen#isApplicationInformationComplete", isApplicationInformationComplete);
     Logger.log("AccountSetupScreen#isPersonalInformationComplete", isPersonalInformationComplete);
+    props.resetTutorial()
     if(isApplicationInformationComplete && isPersonalInformationComplete) setCanSubmit(true);
     else setCanSubmit(false);
   }, [isApplicationInformationComplete, isPersonalInformationComplete])
@@ -105,4 +107,4 @@ function AccountSetupScreen(props){
 }
 
 AccountSetupScreen.navigationOptions = { header: null }
-export default withTranslation()(withCurrentUser(AccountSetupScreen))
+export default withTranslation()(withTutorial(withCurrentUser(AccountSetupScreen)))

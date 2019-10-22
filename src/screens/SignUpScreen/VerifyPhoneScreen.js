@@ -73,26 +73,51 @@ class VerifyPhoneScreen extends React.PureComponent{
     const response = true
     if(response){
       VerifyPhoneAPI.currentNexmoRequestId = null
+      // create user in database first
       try{
-        await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
         const db = firebase.firestore();
         const userDocumentRef = db.collection("users").doc(this.email)
         const userSnapshot = await userDocumentRef.get()
+        
         if(userSnapshot.exists){
-          await userDocumentRef.update({
-            phoneNumber: { value: this.state.phoneNumber, isVerified: true }
-          })
+          try{
+            await userDocumentRef.update({
+              phoneNumber: { value: this.state.phoneNumber, isVerified: true }
+            })
+            this.setState({ showDialog: true, isVerificationLoading: false })
+          }catch (err){
+            this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
+          }
+
         }else{
-          await userDocumentRef.set({
-            phoneNumber: { value: this.state.phoneNumber, isVerified: true },
-            isCompleteSetup: false,
-            creationTime: firebase.firestore.FieldValue.serverTimestamp()
-          })
+          try{
+            await firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+            await userDocumentRef.set({
+              phoneNumber: { value: this.state.phoneNumber, isVerified: true },
+              isCompleteSetup: false,
+              creationTime: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            this.setState({ showDialog: true, isVerificationLoading: false })
+          }catch(error){
+            var errorCode = error.code;
+            if(errorCode==="auth/email-already-in-use"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Email already in use"})
+            }else if(errorCode==="auth/invalid-email"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "invalid email"})
+            }else if(errorCode==="auth/operation-not-allowed"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Operation not allowed"})
+            }else if(errorCode==="auth/weak-password"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Weak password"})
+            }else{
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
+            }
+          }
         }
-        this.setState({ showDialog: true, isVerificationLoading: false })
-      }catch{
+      }catch (err){
         this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
       }
+
+     
      
     }else this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("wrongVerificationCode"), isVerificationLoading: false})
     

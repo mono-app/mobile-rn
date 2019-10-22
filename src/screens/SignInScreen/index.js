@@ -39,6 +39,7 @@ function SignInScreen(props){
       try{
         const isExists = await PeopleAPI.isExists(email)
         if(isExists){
+          props.clearUnreadNotification()
           const { user } = await firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password);
           props.setCurrentUserEmail(user.email);
         }else{
@@ -46,7 +47,8 @@ function SignInScreen(props){
           setError(true)
         }
 
-      }catch{
+      }catch (err){
+        console.log(err)
         setErrorMessage(t("wrongPassword"))
         setError(true)
       }finally{
