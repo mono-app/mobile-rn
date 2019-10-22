@@ -5,15 +5,16 @@ import Logger from "src/api/logger";
 import { withTheme } from "react-native-paper";
 import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Text, Caption, IconButton } from "react-native-paper";
+import MessageAPI from "src/api/messages";
 
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 function ChatBubble(props){
-  const { theme, clickable, bubbleStyle, message } = props;
+  const { theme, clickable, bubbleStyle, message, roomId } = props;
   const { content, sentTime, isSent } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
   const [ enabledMore, setEnableMore ] = React.useState("");
-  const [ isSelected, setSelected ] = React.useState(false);
+  const [ isClicked, setClicked ] = React.useState(false);
   const maxContentLength = 100
 
   const myBubble = StyleSheet.create({
@@ -49,7 +50,11 @@ function ChatBubble(props){
 
   const styles = props.bubbleStyle === "myBubble"? myBubble: peopleBubble;
 
-  const handlePress = () => props.onPress(message);
+  const handlePress = () => {
+    MessageAPI.setMessageStatusClicked(roomId, message.id)
+    setClicked(true)
+    props.onPress(message);
+  }
 
   const shortnerContent = () => {
     return content.substring(0,maxContentLength)
@@ -64,6 +69,8 @@ function ChatBubble(props){
   }
 
   React.useEffect(() => {
+    setClicked(message.isClicked===true)
+
     Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
     if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
 
@@ -79,10 +86,10 @@ function ChatBubble(props){
   return (
     <View style={[ styles.container, props.style]}>
         {(clickable)? 
-        <TouchableOpacity style={[styles.section]} onPress={handlePress}>
+        <TouchableOpacity style={[styles.section, (!isClicked)?{backgroundColor:"#0EAD69"}:{}]} onPress={handlePress}>
           <Text style={styles.contentColor} >
             {(enabledMore)? shortnerContent(): content}
-            <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
+            <Text style={[styles.empty, (!isClicked)?{color:"#0EAD69"}:{} ]}>±±±±±±±±±±±±±</Text>     
           </Text>
           <View style={styles.metadata}>
             <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>

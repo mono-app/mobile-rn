@@ -169,4 +169,13 @@ export default class MessagesAPI{
    
     return Promise.resolve(true);
   }
+
+  static async setMessageStatusClicked(roomId, messageId){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const messagesCollection = new MessagesCollection();
+    const roomRef = db.collection(roomsCollection.getName()).doc(roomId);
+    const messageRef = roomRef.collection(messagesCollection.getName()).doc(messageId);
+    messageRef.update({isClicked: true})
+  }
 }
