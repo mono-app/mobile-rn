@@ -184,7 +184,7 @@ class MyProfileScreen extends React.PureComponent {
             <View style={styles.statusContainer}>
               <Text style={styles.label}>{this.props.t("myStatus")}</Text>
               <View style={{flexDirection:"row"}}>
-                <Text>{this.state.status}</Text>
+                <Text numberOfLines={2}>{this.state.status}</Text>
               </View>
             </View>
           </TouchableOpacity>

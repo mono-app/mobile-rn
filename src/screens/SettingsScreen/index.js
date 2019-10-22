@@ -23,8 +23,8 @@ function SettingsScreen(props){
   const { currentUser, isLoggedIn } = props;
   const styles = StyleSheet.create({
     profileContainer: {
-      backgroundColor: "white", flexDirection: "row", display: "flex",
-      padding: 16, paddingTop: 32, paddingBottom: 32, alignItems: "center",
+      flex:1,backgroundColor: "white", flexDirection: "row", display: "flex",
+      paddingHorizontal: 16, paddingVertical: 32, alignItems: "center",
       borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
     }
   });
@@ -61,6 +61,7 @@ function SettingsScreen(props){
       <ScrollView>
         <View style={styles.profileContainer}>
             <PeopleProfileHeader
+              style={{flex:1}}
               onStatusPress={handleStatusPress}
               onProfilePicturePress={handleProfilePicturePress}
               profilePicture={currentUser.profilePicture}

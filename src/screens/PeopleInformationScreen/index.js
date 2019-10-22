@@ -9,7 +9,7 @@ import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import ActionButton from "src/screens/PeopleInformationScreen/ActionButton";
 import AppHeader from "src/components/AppHeader";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import { withTranslation } from 'react-i18next';
 
@@ -68,7 +68,7 @@ function PeopleInformationScreen(props){
       </Dialog>
     )
   }else return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
       <PeopleProfileHeader
         style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}
@@ -76,15 +76,15 @@ function PeopleInformationScreen(props){
         title={people.applicationInformation.nickName}
         subtitle={status}/>
       <View style={{ marginTop: 16, marginBottom: 16 }}>
-      <PeopleInformationContainer fieldName="Mono ID" fieldValue={people.applicationInformation.id}/>
-      <PeopleInformationContainer fieldName={props.t("source")} fieldValue={source.value}/>
-      <PeopleInformationContainer fieldName={props.t("joinDate")} fieldValue={joinedFrom}/>
+        <PeopleInformationContainer fieldName="Mono ID" fieldValue={people.applicationInformation.id}/>
+        <PeopleInformationContainer fieldName={props.t("source")} fieldValue={source.value}/>
+        <PeopleInformationContainer fieldName={props.t("joinDate")} fieldValue={joinedFrom}/>
       </View>
       <ActionButton 
         peopleEmail={peopleEmail} source={source}
         peopleFriendStatus={peopleFriendStatus} 
         onComplete={handleActionButtonComplete}/>
-    </View>
+    </ScrollView>
   )
 }
 

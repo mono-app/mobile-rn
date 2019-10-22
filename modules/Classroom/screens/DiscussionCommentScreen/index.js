@@ -4,7 +4,7 @@ import { ActivityIndicator, Dialog, Text, Card, Caption, Paragraph, Snackbar } f
 import AppHeader from "src/components/AppHeader";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import moment from "moment";
 import Permissions from "react-native-permissions";
 import TextInput from "src/components/TextInput";
@@ -333,7 +333,7 @@ class DiscussionCommentScreen extends React.PureComponent {
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>         
           <Card style={{ elevation: 1, marginTop: 8}}>
               <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-                <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
                 <View style={{ marginLeft: 16 }}>
                   <Text style={{ fontWeight: "700" }}>{this.state.posterName}</Text>
                   <Caption style={{ marginTop: 0 }}>{creationDate} | {this.props.t("time2")} {creationTime} WIB</Caption>
@@ -394,7 +394,7 @@ class DiscussionCommentScreen extends React.PureComponent {
           </Card>
             <Card style={{marginHorizontal: 8,marginTop:8, padding:8}}>
               <View style={{flexDirection:"row", alignItems:"center"}}>
-                <SquareAvatar size={30} uri={"https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={30} uri={"https://picsum.photos/200/200/?random"}/>
                 <TextInput
                   style={{ flex:1, marginBottom: 0, marginLeft:8 }}
                   onChangeText={this.handleCommentChange}

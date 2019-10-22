@@ -5,7 +5,7 @@ import { Text, Card, Caption, Paragraph } from "react-native-paper";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import FastImage from "react-native-fast-image";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 
 const INITIAL_STATE = { posterEmail: null, discussion: {}, isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
 
@@ -56,7 +56,7 @@ export default class TimelineListItem extends React.Component{
       <Card style={{ elevation: 1, marginHorizontal: 8, marginTop: 8}}>
         <TouchableOpacity onPress={this.props.onPress}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-            <SquareAvatar size={40} uri={newPoster.applicationInformation.profilePicture}/>
+            <CircleAvatar size={40} uri={newPoster.applicationInformation.profilePicture}/>
             <View style={{ marginLeft: 16 }}>
               <Text style={{ fontWeight: "700" }}>{discussion.posterEmail}</Text>
               <Caption style={{ marginTop: 0 }}>{timeFromNow}</Caption>

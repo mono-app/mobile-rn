@@ -11,7 +11,7 @@ function StatusInputCard(props){
   const [ isLoading, setIsLoading ] = React.useState(false);
   const { currentUser } = useCurrentUser();
 
-  handleStatusChange = (status) => setStatus(status);
+  handleStatusChange = (status) => setStatus(status.replace("  "," "));
   handleSavePress = async () => {
     setIsLoading(true);
     await StatusAPI.postStatus(currentUser.email, status)
@@ -23,8 +23,8 @@ function StatusInputCard(props){
   return(
     <Card elevation={4} style={{ padding: 16, margin: 16 }}>
       <TextInput
-        textAlignVertical="top" numberOfLines={4} fontSize={24}
-        style={{ minHeight: 128 }} placeholder={props.t("shareStatusNow")}
+        textAlignVertical="top" numberOfLines={4} fontSize={24} maxLength={256}
+        style={{ minHeight: 128, maxHeight: 128}} placeholder={props.t("shareStatusNow")}
         value={status} onChangeText={handleStatusChange}
         multiline autoFocus/>
       <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>

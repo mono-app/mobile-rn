@@ -7,7 +7,7 @@ import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { default as momentDate } from "moment"
 import { withTranslation } from 'react-i18next';
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import LikeButton from "modules/Moments/components/MomentItem/LikeButton";
 import VerticalMenu from "modules/Moments/components/MomentItem/VerticalMenu";
 import ImageList from "modules/Moments/components/MomentItem/ImageList";
@@ -79,7 +79,7 @@ function MomentItem(props){
       <View style={{ justifyContent: "space-between", flexDirection:"row" }}>
         <TouchableOpacity onPress={handleProfilePress}>
           <View style={styles.profile}>
-            <SquareAvatar size={50} uri={people.profilePicture}/>
+            <CircleAvatar size={50} uri={people.profilePicture}/>
             <View style={{ marginLeft: 8 }}>
               <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
               <Caption style={{ margin: 0 }}>{createdDate}</Caption>

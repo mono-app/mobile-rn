@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ActivityIndicator, Caption, Dialog, Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
@@ -90,7 +90,7 @@ class TeacherHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
-          <SquareAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random" }/>
+          <CircleAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random" }/>
           <TouchableOpacity onPress={this.handleTeacherProfilePress} style={{marginTop:16}}>
             <Text style={{ color: this.props.theme.colors.primary }}>Lihat Profile</Text>
           </TouchableOpacity>

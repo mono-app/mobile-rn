@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ActivityIndicator, Caption, Dialog, Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
@@ -93,7 +93,7 @@ class StudentHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
-          <SquareAvatar size={100} uri={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }/>
+          <CircleAvatar size={100} uri={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }/>
           <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
             <Text style={{ color: this.props.theme.colors.primary }}>{this.props.t("seeProfile")}</Text>
           </TouchableOpacity>

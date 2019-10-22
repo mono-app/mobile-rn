@@ -4,7 +4,7 @@ import { ActivityIndicator, Title, Dialog, Text, Caption } from "react-native-pa
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import ClassAPI from "modules/Classroom/api/class";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
@@ -195,7 +195,7 @@ class StudentProfileScreen extends React.PureComponent {
             <Title style={{ marginLeft: 16}}>{(this.state.student.noInduk)? this.state.student.noInduk  : "-"} / {this.state.student.name}</Title>
             <View style={styles.profileContainer}>
               <Text style={{  fontSize: 16 }}></Text>            
-              <SquareAvatar size={100} uri={(this.state.student.profilePicture)? this.state.student.profilePicture.downloadUrl : this.state.profilePicture }/>
+              <CircleAvatar size={100} uri={(this.state.student.profilePicture)? this.state.student.profilePicture.downloadUrl : this.state.profilePicture }/>
             </View>
             <View>
               <TouchableOpacity onPress={this.handleNamePress}>

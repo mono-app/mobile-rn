@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import { View, TouchableOpacity } from "react-native";
 import { Text, Card, Caption } from "react-native-paper";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import SchoolAPI from "modules/Classroom/api/school";
 import { withTranslation } from 'react-i18next';
 
@@ -41,7 +41,7 @@ class DiscussionListItem extends React.PureComponent{
       <Card style={{ elevation: 1, marginHorizontal: 8, marginVertical: 4}}>
         <TouchableOpacity onPress={this.props.onPress}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-            <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
+            <CircleAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
             <View style={{ flex:1, marginLeft: 16 }}>
               <Text style={{ fontWeight: "700", fontSize:16 }} numberOfLines={2}>{this.state.discussion.title}</Text>
               <Caption style={{ marginTop: 0 }}>{this.props.t("createdBy")} {this.state.posterName}</Caption>

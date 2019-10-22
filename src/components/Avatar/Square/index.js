@@ -17,7 +17,6 @@ export default class SquareAvatar extends React.PureComponent {
     this.handleLoadedImage = this.handleLoadedImage.bind(this)
   }
 
-  
   componentDidMount(){
     this._isMounted = true
   }

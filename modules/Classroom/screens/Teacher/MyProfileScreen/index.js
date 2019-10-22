@@ -181,7 +181,7 @@ class MyProfileScreen extends React.PureComponent {
             <View style={ styles.statusContainer }>
               <View>
                   <Text style={styles.label}>Status saya</Text>
-                  <Text>{this.state.status}</Text>
+                  <Text numberOfLines={2}>{this.state.status}</Text>
               </View>
               <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
             </View>
