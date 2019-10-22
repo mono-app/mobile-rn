@@ -37,7 +37,7 @@ export default class IntroductionScreen extends React.PureComponent {
                 <Image source={require('./images/intromono3.jpg')} 
                   resizeMode='contain'
                   style={{
-                    maxHeight: height-65,
+                    maxHeight: height-40,
                     maxWidth: width,
                     }} />
               </View>
