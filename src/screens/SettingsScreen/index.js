@@ -3,27 +3,28 @@ import Logger from "src/api/logger";
 import StatusAPI from "src/api/status";
 import StorageAPI from "src/api/storage";
 import PeopleAPI from "src/api/people";
-import DocumentPicker from "react-native-document-picker";
+import { withTutorial } from "src/api/Tutorial";
 import ImageCompress from "src/api/ImageCompress"
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import AppHeader from "src/components/AppHeader";
 import HeadlineTitle from "src/components/HeadlineTitle";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import { ScrollView } from "react-native-gesture-handler";
-import { View, FlatList, StyleSheet } from "react-native";
+import { ActivityIndicator, View, FlatList, StyleSheet } from "react-native";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 function SettingsScreen(props){
   const [ status, setStatus ] = React.useState("");
+  const [ isUploadingImage, setUploadingImage ] = React.useState(false);
+  
   const { currentUser, isLoggedIn } = props;
   const styles = StyleSheet.create({
     profileContainer: {
-      backgroundColor: "white", flexDirection: "row", display: "flex",
-      padding: 16, paddingTop: 32, paddingBottom: 32, alignItems: "center",
+      flex:1,backgroundColor: "white", flexDirection: "row", display: "flex",
+      paddingHorizontal: 16, paddingVertical: 32, alignItems: "center",
       borderBottomWidth: 1, borderBottomColor: "#E8EEE8"
     }
   });
@@ -31,9 +32,14 @@ function SettingsScreen(props){
   const handleStatusPress = () => props.navigation.navigate("StatusChange");
   const handleProfilePicturePress = async () => {
     try{
+      if(isUploadingImage){
+        return
+      }
       const result = await StorageAPI.openGallery(false);
+      setUploadingImage(true)
       const compressedRes = await ImageCompress.compress(result.uri, result.size)
       await PeopleAPI.changeProfilePicture(currentUser.email, compressedRes.uri);
+      setUploadingImage(false)
     }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
   }
 
@@ -44,6 +50,7 @@ function SettingsScreen(props){
       if(data && data.content) setStatus(data.content);
     }
     fetchData();
+    props.settingScreenTutorial.start()
   }, [(currentUser.statistic && currentUser.statistic.totalStatus)?currentUser.statistic.totalStatus:0])
 
   if(!isLoggedIn) return null;
@@ -53,21 +60,26 @@ function SettingsScreen(props){
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Settings</HeadlineTitle>
       <ScrollView>
         <View style={styles.profileContainer}>
-          <PeopleProfileHeader
-            style={{ flex: 1 }}
-            onStatusPress={handleStatusPress}
-            onProfilePicturePress={handleProfilePicturePress}
-            profilePicture={currentUser.profilePicture}
-            title={currentUser.applicationInformation.nickName}
-            subtitle={status}/>
+            <PeopleProfileHeader
+              style={{flex:1}}
+              onStatusPress={handleStatusPress}
+              onProfilePicturePress={handleProfilePicturePress}
+              profilePicture={currentUser.profilePicture}
+              title={currentUser.applicationInformation.nickName}
+              isLoading={isUploadingImage}
+              subtitle={status}
+              showTutorialSettingChangeProfilePic = {props.showTutorialSettingChangeProfilePic}
+              settingScreenTutorial = {props.settingScreenTutorial}
+              />
           <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
         </View>
+
         <View>
           <FlatList
             data={[
               {title: "Show my QR Code", icon: <FontAwesome name="qrcode" size={24}/>, navigateTo: "MyQR"},
               {title: "Account", icon: <MaterialIcons name="vpn-key" size={24}/>, navigateTo: "Account"},
-              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "Chats"},
+              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "ChatSettings"},
               {title: "Privacy", icon: <MaterialIcons name="lock" size={24}/>, navigateTo: "Privacy"},
               {title: "Help", icon: <FontAwesome name="question-circle" size={24}/>, navigateTo: "Help"}
             ]}
@@ -82,4 +94,4 @@ function SettingsScreen(props){
   )
 }
 SettingsScreen.navigationOptions = { header: null }
-export default withCurrentUser(SettingsScreen);
+export default withTutorial(withCurrentUser(SettingsScreen));

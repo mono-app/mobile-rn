@@ -3,16 +3,19 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import Logger from "src/api/logger";
 import { withTheme } from "react-native-paper";
-
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Text, Caption, IconButton } from "react-native-paper";
+import MessageAPI from "src/api/messages";
 
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 function ChatBubble(props){
-  const { theme, clickable, bubbleStyle, message } = props;
+  const { theme, clickable, bubbleStyle, message, roomId } = props;
   const { content, sentTime, isSent } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
+  const [ enabledMore, setEnableMore ] = React.useState("");
+  const [ isClicked, setClicked ] = React.useState(false);
+  const maxContentLength = 100
 
   const myBubble = StyleSheet.create({
     container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row-reverse", alignItems: "center" },
@@ -47,28 +50,78 @@ function ChatBubble(props){
 
   const styles = props.bubbleStyle === "myBubble"? myBubble: peopleBubble;
 
-  const handlePress = () => props.onPress(message);
+  const handlePress = () => {
+    MessageAPI.setMessageStatusClicked(roomId, message.id)
+    setClicked(true)
+    props.onPress(message);
+  }
+
+  const shortnerContent = () => {
+    return content.substring(0,maxContentLength)
+  }
+
+  const handleContentMore = () => {
+    setEnableMore(false)
+  }
+
+  const handleOnLongPress = (ref) => {
+   
+  }
 
   React.useEffect(() => {
+    setClicked(message.isClicked===true)
+
     Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
     if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
-  }, [isSent, sentTime])
 
+    if(content.length>maxContentLength){
+      setEnableMore(true)
+    }else{
+      setEnableMore(false)
+    }
+
+  }, [isSent, sentTime])
+ 
+  
   return (
-    <View style={[ styles.container, props.style ]}>
-      <TouchableOpacity style={styles.section} onPress={handlePress} disabled={!clickable}>
-        <Text style={styles.contentColor}>
-          {content}
-          <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
-        </Text>
-        <View style={styles.metadata}>
-          <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
-          {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
-        </View>
-      </TouchableOpacity>
+    <View style={[ styles.container, props.style]}>
+        {(clickable)? 
+        <TouchableOpacity style={[styles.section, (!isClicked)?{backgroundColor:"#0EAD69"}:{}]} onPress={handlePress}>
+          <Text style={styles.contentColor} >
+            {(enabledMore)? shortnerContent(): content}
+            <Text style={[styles.empty, (!isClicked)?{color:"#0EAD69"}:{} ]}>±±±±±±±±±±±±±</Text>     
+          </Text>
+          <View style={styles.metadata}>
+            <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+            {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
+          </View>
+        </TouchableOpacity>
+        : 
+        <TouchableWithoutFeedback onPress={handleOnLongPress()}>
+
+          <View style={[styles.section]}>
+            <Text style={[styles.contentColor]} >
+              {(enabledMore)? shortnerContent(): content}
+              <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
+            </Text>
+            <View style={[styles.metadata]}>
+              <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+              {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+        }
+       
+
+      {(enabledMore)? 
+          <IconButton icon="zoom-out-map" color={theme.colors.placeholder} onPress={handleContentMore}/>
+      : null}
+      
+
       {clickable && bubbleStyle !== "myBubble"?(
         <IconButton icon="share" color={theme.colors.placeholder} onPress={handlePress}/>
       ): null}
+      
     </View>
   )
 }

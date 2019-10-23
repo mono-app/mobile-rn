@@ -9,12 +9,12 @@ import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/D
 import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 
 export default MainNavigator = createStackNavigator({
-  Home: { screen: HomeScreen },
-  AddMoment: { screen: AddMomentScreen },
-  MomentComments: { screen: MomentCommentsScreen },
-  ShareMoment: { screen: ShareMomentScreen },
+  Home: { screen: HomeScreen, navigationOptions: { header: null } },
+  AddMoment: { screen: AddMomentScreen, navigationOptions: { header: null }  },
+  MomentComments: { screen: MomentCommentsScreen, navigationOptions: { header: null }  },
+  ShareMoment: { screen: ShareMomentScreen, navigationOptions: { header: null }  },
   PhotoGridPreview: { screen: PhotoGridPreviewScreen },
-  PeopleInformation: { screen: PeopleInformationScreen },
+  PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null }  },
   ...DiscussionClassroomNotifNavigatorObj
 }, {
   initialRouteName: "Home",

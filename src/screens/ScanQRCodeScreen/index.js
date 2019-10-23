@@ -6,6 +6,7 @@ import { Button } from "react-native-paper";
 import FriendsAPI from "src/api/friends"
 import AppHeader from "src/components/AppHeader";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import { withTranslation } from 'react-i18next';
 
 class ScanQRCodeSCreen extends React.PureComponent{
   static navigationOptions = () => { 
@@ -46,11 +47,11 @@ class ScanQRCodeSCreen extends React.PureComponent{
           showMarker={true}
           checkAndroid6Permissions={true}/>
         <View style={{ padding: 16 }}>
-          <Button onPress={this.handleViewMyQRCodePress}>Lihat QR Code Saya</Button>
+          <Button onPress={this.handleViewMyQRCodePress}>{this.props.t("seeMyQrCode")}</Button>
         </View>
       </View>
     )
   }
 }
 
-export default withCurrentUser(ScanQRCodeSCreen)
+export default withTranslation()(withCurrentUser(ScanQRCodeSCreen))

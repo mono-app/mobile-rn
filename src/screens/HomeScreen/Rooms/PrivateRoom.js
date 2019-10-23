@@ -63,7 +63,7 @@ function PrivateRoom(props){
               {(props.room.type==="group-chat")? 
                 <CircleAvatar size={50} uri="https://picsum.photos/200/200/?random"/>
               : 
-                <CircleAvatar size={50} uri={people.profilePicture}/>
+                <CircleAvatar size={50} uri={(people.profilePicture)? people.profilePicture: "https://picsum.photos/200/200/?random"}/>
               }
             </View>
           <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>

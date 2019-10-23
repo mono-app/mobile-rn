@@ -5,7 +5,7 @@ import RoomsAPI from "src/api/rooms"
 import Logger from "src/api/logger";
 import { StyleSheet } from "react-native";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
-
+import { withTranslation } from 'react-i18next';
 import AppHeader from "src/components/AppHeader";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
@@ -13,8 +13,11 @@ import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-nat
 import { IconButton, Dialog, Text, Caption } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
+import TaskAPI from "modules/Classroom/api/task"
+import StudentAPI from "modules/Classroom/api/student"
+import FileAPI from "modules/Classroom/api/file"
 
-const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {} };
+const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {}, totalTask:0, totalExpiredTask:0, totalStudent:0, totalFiles: 0 };
 class ClassDetailsScreen extends React.PureComponent {
   static navigationOptions = () => {
     return {
@@ -25,11 +28,26 @@ class ClassDetailsScreen extends React.PureComponent {
   loadClassInformation = async () => {
     if(this._isMounted)
       this.setState({ isLoadingProfile: true });
-
+      TaskAPI.getTotalActiveTasks(this.props.currentSchool.id, this.classId).then(totalTask => {
+        this.setState({totalTask})
+      })
+      TaskAPI.getTotalExpiredTasks(this.props.currentSchool.id, this.classId).then(totalExpiredTask => {
+        this.setState({totalExpiredTask})
+      })
+      StudentAPI.getTotalClassStudent(this.props.currentSchool.id, this.classId).then(totalStudent => {
+        this.setState({totalStudent})
+      })
+  
+      FileAPI.getTotalClassFiles(this.props.currentSchool.id, this.classId).then(totalFiles => {
+        this.setState({totalFiles})
+      })
     const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
     if(class_.profilePicture && this._isMounted){
       this.setState({ profilePicture: student.profilePicture.downloadUrl });
     }
+    
+    
+
     if(this._isMounted)
       this.setState({ isLoadingProfile: false, class: class_ });
   };
@@ -60,6 +78,17 @@ class ClassDetailsScreen extends React.PureComponent {
     this.props.navigation.navigate("TaskList", payload)
   }
 
+  handleExpiredTaskListScreen = () => {
+    payload = {
+      schoolId: this.props.currentSchool.id,
+      classId: this.classId,
+      subject: this.state.class.subject,
+      subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
+    }
+
+    this.props.navigation.navigate("ExpiredTaskList", payload)
+  }
+
   handleClassFilesScreenPress = () => {
     payload = {
       schoolId: this.props.currentSchool.id,
@@ -87,6 +116,7 @@ class ClassDetailsScreen extends React.PureComponent {
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
     this.handleClassFilesScreenPress = this.handleClassFilesScreenPress.bind(this);
     this.handleGroupChatPress = this.handleGroupChatPress.bind(this);
+    this.handleExpiredTaskListScreen = this.handleExpiredTaskListScreen.bind(this);
   }
 
   componentDidMount() {
@@ -120,7 +150,7 @@ class ClassDetailsScreen extends React.PureComponent {
         <View style={{flex:1, backgroundColor: "#E8EEE8" }}>
           <AppHeader
             navigation={this.props.navigation}
-            title="Info Kelas"
+            title={this.props.t("classInfo")}
             style={{ backgroundColor: "white" }}
           />
           <ScrollView >
@@ -140,21 +170,21 @@ class ClassDetailsScreen extends React.PureComponent {
          
             <View style={{  marginVertical: 16 }}>  
               <PeopleInformationContainer
-                fieldName="Ruangan"
+                fieldName={this.props.t("room")}
                 fieldValue={this.state.class.room}/>
               <PeopleInformationContainer
                 fieldName="Semester"
                 fieldValue={this.state.class.semester}/>
             <PeopleInformationContainer
-                fieldName="Tahun Ajaran"
+                fieldName={this.props.t("academicYear")}
                 fieldValue={this.state.class.academicYear}/>
               <PeopleInformationContainer
-                fieldName="Guru"
+                fieldName={this.props.t("teacher")}
                 fieldValue={this.state.teacher.name}/>
             </View>
             
             <View style={{  padding: 16, backgroundColor: "#fff" }}>
-              <Text style={{fontWeight: "bold"}}>Informasi Kelas</Text>
+              <Text style={{fontWeight: "bold"}}>{this.props.t("classInfo")}</Text>
               <View style={{flexDirection:"row"}}>
                 <Text>{this.state.class.information}</Text>
               </View>
@@ -166,9 +196,10 @@ class ClassDetailsScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"row"}}>
                       <FontAwesome name="users" size={24} style={{marginRight:16, width: 30}}/>
-                      <Text style={styles.label}>Daftar Murid</Text>
+                      <Text style={styles.label}>{this.props.t("studentList")}</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalStudent}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
@@ -179,9 +210,10 @@ class ClassDetailsScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"row"}}>
                       <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
-                      <Text style={styles.label}>Berkas</Text>
+                      <Text style={styles.label}>{this.props.t("files")}</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalFiles}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
@@ -192,15 +224,29 @@ class ClassDetailsScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                     <View style={{flexDirection:"row"}}>
                       <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
-                      <Text style={styles.label}>Daftar Tugas</Text>
+                      <Text style={styles.label}>{this.props.t("taskList")}</Text>
                     </View>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalTask}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-         
+              <TouchableOpacity onPress={this.handleExpiredTaskListScreen}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <View style={{flexDirection:"row"}}>
+                      <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
+                      <Text style={styles.label}>{this.props.t("expiredTaskList")}</Text>
+                    </View>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalExpiredTask}</Text>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
               
             </View>
           </ScrollView>
@@ -239,4 +285,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default withCurrentStudent(ClassDetailsScreen)
+export default withTranslation()(withCurrentStudent(ClassDetailsScreen))

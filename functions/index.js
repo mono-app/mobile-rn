@@ -39,6 +39,7 @@ exports.triggerUnhideFriends = Friends.triggerUnhideFriends
 exports.sendNotificationForNewDiscussion = Discussions.sendNotificationForNewDiscussion;
 exports.sendNotificationForNewDiscussionComment = Discussions.sendNotificationForNewDiscussionComment;
 exports.triggerNewDiscussion = Discussions.triggerNewDiscussion;
+exports.triggerNewDiscussionComment = Discussions.triggerNewDiscussionComment
 
 exports.addStudentClassTrigger = Student.addStudentClassTrigger;
 exports.deletedStudentClassTrigger = Student.deletedStudentClassTrigger;

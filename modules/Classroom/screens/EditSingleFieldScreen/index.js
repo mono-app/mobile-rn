@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Card, Title, Caption, Drawer } from "react-native-paper";
-
+import AppHeader from "src/components/AppHeader";
 import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
 import { Collection } from "src/api/database/collection";
@@ -21,8 +21,9 @@ export default class EditSingleFieldScreen extends React.PureComponent{
     if(this.beforeSave){
       canSave = this.beforeSave(this.state.defaultValue);
     }else canSave = true;
+    const val = JSON.parse(JSON.stringify(this.state.defaultValue))
 
-    if(canSave){
+    if(canSave&&val.trim().length>0){
       const schoolId = this.props.navigation.getParam("schoolId", null);
       const databaseCollection = this.props.navigation.getParam("databaseCollection", null);
       const databaseDocumentId = this.props.navigation.getParam("databaseDocumentId", null);

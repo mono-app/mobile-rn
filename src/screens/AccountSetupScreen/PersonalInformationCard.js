@@ -1,7 +1,6 @@
 import React from "react";
-import { View, Picker, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Picker, StyleSheet } from "react-native";
 import { Card, Text, Caption } from "react-native-paper";
-
 import TextInput from "src/components/TextInput";
 
 const INITIAL_STATE = {
@@ -10,7 +9,7 @@ const INITIAL_STATE = {
   gender: "male"
 }
 
-export default class PersonalInformationCard extends React.PureComponent{
+class PersonalInformationCard extends React.PureComponent{
   handleGivenNameChange = givenName => {
     const fGinvenName = givenName.replace(/[^a-zA-Z\s]/gi,'')
     this.setState({givenName: fGinvenName});
@@ -38,15 +37,15 @@ export default class PersonalInformationCard extends React.PureComponent{
   render(){
     return(
       <Card>
-        <Card.Title title="Informasi Pribadi"/>
+        <Card.Title title={this.props.t("personalInfo")}/>
         <Caption style={{marginHorizontal:16, marginTop:0, marginBottom: 16}}>
-          Masukan informasi pribadi kamu. Tenang, kami akan menjaga kerahasiaan data kamu
+          {this.props.t("personalInfoDesc")}
         </Caption>
         <Card.Content>
           <View>
-            <Text style={styles.headerText}>Nama Depan</Text>
+            <Text style={styles.headerText}>{this.props.t("firstName")}</Text>
             <TextInput 
-              placeholder="Nama Depan"
+              placeholder={this.props.t("firstName")}
               textContentType="givenName"
               autoCorrect={false}
               maxLength={50}
@@ -54,9 +53,9 @@ export default class PersonalInformationCard extends React.PureComponent{
               onChangeText={this.handleGivenNameChange}/>
           </View>
           <View>
-            <Text style={styles.headerText}>Nama Belakang</Text>
+            <Text style={styles.headerText}>{this.props.t("lastName")}</Text>
             <TextInput 
-              placeholder="Nama Belakang"
+              placeholder={this.props.t("lastName")}
               textContentType="familyName"
               autoCorrect={false}
               maxLength={50}
@@ -64,12 +63,12 @@ export default class PersonalInformationCard extends React.PureComponent{
               onChangeText={this.handleFamilyNameChange}/>
           </View>
           <View>
-            <Text style={styles.headerText}>Jenis Kelamin</Text>
+            <Text style={styles.headerText}>{this.props.t("gender")}</Text>
             <Picker
               selectedValue={this.state.gender}
               onValueChange={this.handleGenderChange}>
-              <Picker.Item label="Perempuan" value="female" />
-              <Picker.Item label="Laki-Laki" value="male" />
+              <Picker.Item label={this.props.t("female")} value="female" />
+              <Picker.Item label={this.props.t("male")} value="male" />
             </Picker>
           </View>
         </Card.Content>
@@ -81,3 +80,5 @@ export default class PersonalInformationCard extends React.PureComponent{
 const styles = StyleSheet.create({
   headerText: { paddingBottom: 4 }
 })
+
+export default PersonalInformationCard

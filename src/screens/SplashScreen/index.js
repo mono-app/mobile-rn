@@ -25,6 +25,7 @@ function SplashScreen(props){
 
       const firebaseUser = firebase.auth().currentUser;
       if(firebaseUser !== null) {
+        props.clearUnreadNotification()
         props.setCurrentUserEmail(firebaseUser.email, props.navigation);
         const fcmToken = await firebase.messaging().getToken();
         if (fcmToken) {

@@ -41,8 +41,8 @@ export default class ShareDiscussionListItem extends React.Component{
       <TouchableOpacity onPress={this.props.onPress}>
           <View style={styles.listItemContainer}>
             <View style={styles.listDescriptionContainer}>
-              <View>
-                <Text style={{ fontWeight: "700" }}>{name}</Text>
+              <View style={{flex: 1}}>
+                <Text style={{ fontWeight: "700",lineHeight:20 }}>{name}</Text>
               </View>
               {(checked)? 
                 <Icon name="check-circle" size={16} color="#0EAD69" style={{marginTop: 2, marginRight: 4}}/> 

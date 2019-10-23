@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-
+import { withTranslation } from 'react-i18next';
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
 import Button from "src/components/Button";
@@ -33,10 +33,10 @@ function PersonalInformationSetupScreen(props){
     <Container style={{ }}>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <View style={styles.content}>
-        <PersonalInformationCard ref={personalInformationCard} defaultGivenName={defaultGivenName} defaultFamilyName={defaultFamilyName} defaultGender={defaultGender}/>
-        <Button style={{ marginTop: 8 }} text="Simpan" onPress={handleSavePress}/>
+        <PersonalInformationCard t={props.t} ref={personalInformationCard} defaultGivenName={defaultGivenName} defaultFamilyName={defaultFamilyName} defaultGender={defaultGender}/>
+        <Button style={{ marginTop: 8 }} text={props.t("save")} onPress={handleSavePress}/>
       </View>
     </Container>
   );
 }
-export default PersonalInformationSetupScreen;
+export default withTranslation()(PersonalInformationSetupScreen)

@@ -4,12 +4,10 @@ import AppHeader from "src/components/AppHeader";
 import { View, FlatList } from "react-native";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
-
+import { withTranslation } from 'react-i18next';
 import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import HeadlineTitle from "src/components/HeadlineTitle";
-
 import { withCurrentUser } from "src/api/people/CurrentUser";
-import SchoolAPI from "modules/Classroom/api/school";
 
 function AppListScreen(props){  
 
@@ -42,7 +40,7 @@ function AppListScreen(props){
   return(
     <View style={{ flex: 1 }}>
       <AppHeader style={{ backgroundColor: "transparent" }}/>
-      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>Aplikasi</HeadlineTitle>
+      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}>{props.t("application")}</HeadlineTitle>
       <FlatList
         data={data}
         renderItem={({ item, index }) => {
@@ -52,4 +50,4 @@ function AppListScreen(props){
   )
 }
 AppListScreen.navigationOptions = { header: null }
-export default withCurrentUser(AppListScreen);
+export default withTranslation()(withCurrentUser(AppListScreen))

@@ -5,6 +5,7 @@ import { withNavigation } from "react-navigation";
 import { PersonalRoomsAPI } from "src/api/rooms";
 import Button from "src/components/Button";
 import { View } from "react-native";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isLoading: false };
 
@@ -103,7 +104,7 @@ class ActionButton extends React.PureComponent{
     if(!peopleFriendStatus || this.state.isLoading) return <Button style={style} isLoading disabled>Harap tunggu...</Button>
 
     const addFriendButton = <Button 
-    style={style} text="Jadikan Teman"
+    style={style} text={this.props.t("addFriend")}
     onPress={this.handleAddFriendPress} 
     isLoading={this.state.isLoading} disabled={this.state.isLoading}/>;
 
@@ -114,13 +115,13 @@ class ActionButton extends React.PureComponent{
 
     const cancelRequestButton = <Button 
     style={[ style, styleButtonRed ]}
-    text="Batalkan Pertemanan" onPress={this.handleCancelRequestPress} 
+    text={this.props.t("cancelFriend")} onPress={this.handleCancelRequestPress} 
     isLoading={this.state.isLoading} disabled={this.state.isLoading}/>;
 
-    const acceptFriendButton = <Button style={{ ...style, marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text="Terima Pertemanan"/>;
-    const rejectFriendButton = <Button style={{...style, ...styleButtonRed,  marginBottom: 16}} onPress={this.handleRejectRequestPress} text="Tolak Pertemanan"/>;
+    const acceptFriendButton = <Button style={{ ...style, marginBottom: 16 }} onPress={this.handleAcceptRequestPress} text={this.props.t("acceptFriend")}/>;
+    const rejectFriendButton = <Button style={{...style, ...styleButtonRed,  marginBottom: 16}} onPress={this.handleRejectRequestPress} text={this.props.t("rejectFriend")}/>;
 
-    const startChatButton = <Button style={style} onPress={this.handleStartChatPress} outlined={true} text="Mulai Percakapan"/>
+    const startChatButton = <Button style={style} onPress={this.handleStartChatPress} outlined={true} text={this.props.t("startConversation")}/>
 
     if(peopleFriendStatus === "myself"){
       return null
@@ -148,7 +149,7 @@ class ActionButton extends React.PureComponent{
         </View>
       )
     }else if(peopleFriendStatus === "pendingAccept"){
-      if(this.state.isLoading) return <Button style={style} text="Harap tunggu..." isLoading disabled/>
+      if(this.state.isLoading) return <Button style={style} text={this.props.t("pleaseWait")} isLoading disabled/>
       else return (
         <View>
           {acceptFriendButton}
@@ -172,4 +173,4 @@ class ActionButton extends React.PureComponent{
 }
 
 ActionButton.defaultProps = { peopleFriendStatus: null, peopleEmail: null }
-export default withNavigation(withCurrentUser(ActionButton));
+export default withTranslation()(withNavigation(withCurrentUser(ActionButton)))

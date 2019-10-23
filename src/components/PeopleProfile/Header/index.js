@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 /**
  * @param {string} nickName
@@ -17,12 +18,18 @@ export default function PeopleProfileHeader(props){
 
   return(
     <View style={[ styles.profileContainer,props.style ]}>
-      {props.onProfilePicturePress?(
-        <TouchableOpacity onPress={props.onProfilePicturePress}>
-          <SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }}/>
-        </TouchableOpacity>
-      ):<SquareAvatar uri={props.profilePicture} style={{ marginRight: 16 }}/>}
-
+      <Tooltip
+          isVisible={props.showTutorialSettingChangeProfilePic}
+          placement="bottom"
+          showChildInTooltip={true}
+          content={<Text>Klik foto profile untuk mengganti foto</Text>}
+          onClose={() => props.settingScreenTutorial.end()}>
+        {props.onProfilePicturePress?(
+          <TouchableOpacity onPress={props.onProfilePicturePress}>
+            <CircleAvatar uri={props.profilePicture} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>
+          </TouchableOpacity>
+        ):<CircleAvatar uri={props.profilePicture} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>}
+      </Tooltip>
       {props.onStatusPress?(
         <View style={styles.profileDescriptionContainer}>
           <TouchableOpacity onPress={props.onStatusPress}>

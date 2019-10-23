@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
+import { withTranslation } from 'react-i18next';
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
@@ -30,7 +30,7 @@ function AccountScreen(props){
       databaseDocumentId: currentUser.email,
       databaseFieldName: "applicationInformation.nickName", 
       fieldValue: applicationInformation.nickName,
-      fieldTitle: "Nama Panggilan",
+      fieldTitle: props.t("nickName"),
     }
     navigation.navigate("EditSingleField", payload);
   }
@@ -43,7 +43,7 @@ function AccountScreen(props){
       caption: "Format tanggal lahir: 22/12/2007",
       placeholder: "DD/MM/YYYY",
       fieldValue: personalInformation.birthday,
-      fieldTitle: "Tanggal Lahir",
+      fieldTitle: props.t("birthDate"),
       datePicker: true,
       beforeSave: (value) => moment(value, "DD/MM/YYYY").isValid()
     }
@@ -56,7 +56,7 @@ function AccountScreen(props){
       databaseDocumentId: currentUser.email,
       databaseFieldName: "personalInformation.gender", 
       fieldValue: (personalInformation.gender)? personalInformation.gender: "male",
-      fieldTitle: "Jenis Kelamin",
+      fieldTitle: props.t("gender"),
       genderPicker: true
     }
     navigation.navigate("EditSingleField", payload);
@@ -72,7 +72,7 @@ function AccountScreen(props){
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={handleNickNamePress}>
             <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>Nama Panggilan</Text>
+              <Text style={{ fontWeight: "500" }}>{props.t("nickName")}</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 <Text>{applicationInformation.nickName}</Text>
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -86,12 +86,18 @@ function AccountScreen(props){
               <Text>{applicationInformation.id}</Text>
             </View>
           </View>
+          <View style={styles.menu}>
+            <Text style={{ fontWeight: "500" }}>Email</Text>
+            <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+              <Text>{currentUser.email}</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={handleGenderPress}>
             <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>Gender</Text>
+              <Text style={{ fontWeight: "500" }}>{props.t("gender")}</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 {personalInformation.gender?(
                   <Text>{personalInformation.gender === "male"? "Pria": "Wanita"}</Text>
@@ -102,11 +108,11 @@ function AccountScreen(props){
           </TouchableOpacity>
           <TouchableOpacity onPress={handleBirthdayPress}>
             <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>Tanggal Lahir</Text>
+              <Text style={{ fontWeight: "500" }}>{props.t("birthDate")}</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 {personalInformation.birthday?(
                   <Text>{moment(personalInformation.birthday, "DD/MM/YYYY").format("DD MMM YYYY")}</Text>
-                ):null}
+                ):<Text>-</Text>}
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>
             </View>
@@ -116,7 +122,7 @@ function AccountScreen(props){
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={handleSignOutPress}>
             <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>Sign Out</Text>
+              <Text style={{ fontWeight: "500" }}>{props.t("logout")}</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>
@@ -128,4 +134,4 @@ function AccountScreen(props){
   )
 }
 AccountScreen.navigationOptions = { header: null } 
-export default withCurrentUser(AccountScreen)
+export default withTranslation()(withCurrentUser(AccountScreen))

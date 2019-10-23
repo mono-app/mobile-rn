@@ -8,6 +8,7 @@ import DiscussionAPI from "modules/Classroom/api/discussion";
 import {  TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, discussionList:[], filteredDiscussionList: [] };
 
@@ -36,13 +37,6 @@ class MyDiscussionsScreen extends React.PureComponent {
 
     this.props.navigation.navigate("DiscussionComment", payload);
   }
-
-  handleLikePress = async (item) => {
-    const currentUserEmail= this.props.currentUser.email
-    await DiscussionAPI.like(this.schoolId, this.classId, this.taskId, item.id, currentUserEmail);
-    this.loadDiscussions();
-  }
-
   
   handleSearchPress = (searchText) => {
     if(this._isMounted)
@@ -76,7 +70,6 @@ class MyDiscussionsScreen extends React.PureComponent {
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadDiscussions = this.loadDiscussions.bind(this);
     this.handleDiscussionPress = this.handleDiscussionPress.bind(this);
-    this.handleLikePress = this.handleLikePress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.handleRefresh = this.handleRefresh.bind(this);
   }
@@ -95,13 +88,13 @@ class MyDiscussionsScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff"}}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Diskusi Saya"
+            title={this.props.t("myDiscussion")}
             style={{ backgroundColor: "white" }}
           />
         <View style={{margin: 16 }}>
             <MySearchbar 
               onSubmitEditing={this.handleSearchPress}
-              placeholder="Cari Diskusi" />
+              placeholder={this.props.t("searchDiscussion")} />
         </View>
         <FlatList
           data={this.state.filteredDiscussionList}
@@ -121,4 +114,4 @@ class MyDiscussionsScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentUser(MyDiscussionsScreen)
+export default withTranslation()(withCurrentUser(MyDiscussionsScreen))

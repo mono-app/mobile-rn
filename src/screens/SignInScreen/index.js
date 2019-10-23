@@ -5,16 +5,13 @@ import PeopleAPI from "src/api/people"
 import UserMappingAPI from "src/api/usermapping"
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
 import Logo from "assets/logo-vertical.png";
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { View, Image } from 'react-native';
-import { 
-  Dialog, Paragraph, Portal, 
-  Button as MaterialButton 
-} from "react-native-paper";
+import {Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
+import { withTranslation } from 'react-i18next';
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -22,14 +19,15 @@ function SignInScreen(props){
   const [ isLoading, setIsLoading ] = React.useState(false);
   const [isError, setError] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
+  const { t } = props;
 
   const styles = StyleSheet.create({
-    container: { flexDirection: 'column', backgroundColor: '#fff', justifyContent: 'flex-start', alignItems: "center" },
+    container: { flex:1, flexDirection: 'column', backgroundColor: '#fff', justifyContent: 'flex-start', alignItems: "stretch" },
     contentWrapper: { paddingLeft: 32, paddingRight: 32 },
     formWrapper: { justifyContent: 'space-between' },
     title: { marginBottom: 16, fontSize: 14, lineHeight: 14 * 1.5 },
     createAccountContainer: { position: 'absolute', bottom: 32, left: 0, right: 0 },
-    logo: { width: 150, height: 150, resizeMode: "contain", marginHorizontal: 32, marginVertical: 64 }
+    logo: { width: 150, height: 150, alignSelf:"center" ,resizeMode: "contain", marginHorizontal: 32, marginVertical: 64 }
   });
 
   const handleEmailChange = (email) => setEmail(email);
@@ -41,21 +39,23 @@ function SignInScreen(props){
       try{
         const isExists = await PeopleAPI.isExists(email)
         if(isExists){
+          props.clearUnreadNotification()
           const { user } = await firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password);
           props.setCurrentUserEmail(user.email);
         }else{
-          setErrorMessage("Email tidak terdaftar")
+          setErrorMessage(t('emailNotRegistered'))
           setError(true)
         }
 
-      }catch{
-        setErrorMessage("Password salah")
+      }catch (err){
+        console.log(err)
+        setErrorMessage(t("wrongPassword"))
         setError(true)
       }finally{
         setIsLoading(false);
       }
     }else{
-      setErrorMessage("Tolong isi email dan password")
+      setErrorMessage(t("pleaseFillEmPass"))
       setError(true)
     }
   }
@@ -99,24 +99,23 @@ function SignInScreen(props){
   }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
 
   return (
-    <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
+    <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
       <Image style={styles.logo} source={Logo}/>
       <View style={styles.contentWrapper}>
         <Paragraph style={styles.title}>
-          Masukan alamat Email dan Password anda kemudian tekan Masuk
+          {t("loginLabel")}
         </Paragraph>
         <View style={styles.formWrapper}>
           <TextInput
-            placeholder="Alamat Email" textContentType="emailAddress" autoCapitalize="none"
+            placeholder="Email" textContentType="emailAddress" autoCapitalize="none"
             value={email} onChangeText={handleEmailChange} style={{ paddingVertical: 16, marginBottom: 8 }}/>
           <TextInput
             placeholder="Password" textContentType="password"
             secureTextEntry={true} value={password} style={{ paddingVertical: 16 }}
             onChangeText={handlePasswordChange}/>
-          <Button onPress={handleLoginpress} isLoading={isLoading} disabled={isLoading} text="Masuk" style={{ marginBottom: 4 }}/>
-          <Button onPress={handleCreateAccountPress} text="Buat Akun" outlined/>
+          <Button onPress={handleLoginpress} isLoading={isLoading} disabled={isLoading} text={t('login')} style={{ marginBottom: 4 }}/>
+          <Button onPress={handleCreateAccountPress} text={t("createAccount")} outlined/>
           <Paragraph style={{ fontWeight: '500', textAlign: 'center' }}>
-            Saya lupa password saya. Reset Password
           </Paragraph>
         </View>
       </View>
@@ -127,11 +126,11 @@ function SignInScreen(props){
             <Paragraph>{errorMessage}</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <MaterialButton onPress={handleErrorDialogDismiss}>Mengerti</MaterialButton>
+            <MaterialButton onPress={handleErrorDialogDismiss}>{t("understand")}</MaterialButton>
           </Dialog.Actions>
         </Dialog>
       </Portal>
     </KeyboardAwareScrollView>
   );
 }
-export default withCurrentUser(SignInScreen);
+export default withTranslation()(withCurrentUser(SignInScreen));

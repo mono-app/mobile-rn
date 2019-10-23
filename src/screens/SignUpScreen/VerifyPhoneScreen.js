@@ -4,7 +4,7 @@ import libphonenumber from 'libphonenumber-js';
 import VerifyPhoneAPI from "src/api/verifyphone"
 import { StackActions, NavigationEvents, NavigationActions } from "react-navigation";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-
+import { withTranslation } from 'react-i18next';
 import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
@@ -27,9 +27,8 @@ class VerifyPhoneScreen extends React.PureComponent{
   handleAskOTP = async () => {
     this.setState({isVerificationLoading: true})
     const phoneNum = this.validatePhoneNumber(this.state.phoneNumber,"ID","62")
-    if(!phoneNum){
-      this.setState({ snackbarFailMessage: "Nomor Telepon Tidak Valid", showSnackbarFailVerification:true })
-    }else{
+    if(!phoneNum) this.setState({ snackbarFailMessage: this.props.t("invalidPhone"), showSnackbarFailVerification:true })
+    else {
       const isAvailable = await VerifyPhoneAPI.isAvailable(this.email, phoneNum)
       if(isAvailable){
         //const response = await VerifyPhoneAPI.sendCode(phoneNum)
@@ -40,9 +39,7 @@ class VerifyPhoneScreen extends React.PureComponent{
           VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
           this.setState({ isAskingOTP: true, otpRequestId })
         }
-      }else{
-        this.setState({ snackbarFailMessage: "Nomor Telepon Sudah Digunakan", showSnackbarFailVerification:true })
-      }
+      }else this.setState({ snackbarFailMessage: this.props.t("phoneAlreadyUsed"), showSnackbarFailVerification:true })
     }
     this.setState({isVerificationLoading: false})
   }
@@ -52,13 +49,11 @@ class VerifyPhoneScreen extends React.PureComponent{
     // countryCode: ID
     let result = phoneNumber0.toString()
     if(result.length<=2) return null
-
     const phoneNumber1 = libphonenumber.parsePhoneNumberFromString(result, countryCode)
     if(phoneNumber1 && phoneNumber1.isPossible()){
       // check if there is `+` 
       if(result.substring(0,1)==="+") result = result.substr(1);
       if(!result.toLowerCase().match(/^[0-9]+$/)) return null;
-
       // change 0 to numCode 
       if(result.substring(0,1)==="0"){
         result = result.substr(1);
@@ -74,38 +69,58 @@ class VerifyPhoneScreen extends React.PureComponent{
 
   handleVerifyClick = async () => {
     this.setState({isVerificationLoading: true})
-
     //const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
     const response = true
     if(response){
       VerifyPhoneAPI.currentNexmoRequestId = null
-
-      
+      // create user in database first
       try{
-        await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
-        
         const db = firebase.firestore();
         const userDocumentRef = db.collection("users").doc(this.email)
         const userSnapshot = await userDocumentRef.get()
+        
         if(userSnapshot.exists){
-          await userDocumentRef.update({
-            phoneNumber: { value: this.state.phoneNumber, isVerified: true }
-          })
+          try{
+            await userDocumentRef.update({
+              phoneNumber: { value: this.state.phoneNumber, isVerified: true }
+            })
+            this.setState({ showDialog: true, isVerificationLoading: false })
+          }catch (err){
+            this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
+          }
+
         }else{
-          await userDocumentRef.set({
-            phoneNumber: { value: this.state.phoneNumber, isVerified: true },
-            isCompleteSetup: false,
-            creationTime: firebase.firestore.FieldValue.serverTimestamp()
-          })
+          try{
+            await firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+            await userDocumentRef.set({
+              phoneNumber: { value: this.state.phoneNumber, isVerified: true },
+              isCompleteSetup: false,
+              creationTime: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            this.setState({ showDialog: true, isVerificationLoading: false })
+          }catch(error){
+            var errorCode = error.code;
+            if(errorCode==="auth/email-already-in-use"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Email already in use"})
+            }else if(errorCode==="auth/invalid-email"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "invalid email"})
+            }else if(errorCode==="auth/operation-not-allowed"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Operation not allowed"})
+            }else if(errorCode==="auth/weak-password"){
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Weak password"})
+            }else{
+              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
+            }
+          }
         }
-        this.setState({ showDialog: true, isVerificationLoading: false })
-      }catch{
-        this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Koneksi bermasalah", isVerificationLoading: false})
+      }catch (err){
+        this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
       }
+
      
-    }else{
-      this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Kode Verifikasi Salah", isVerificationLoading: false})
-    }
+     
+    }else this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("wrongVerificationCode"), isVerificationLoading: false})
+    
 
   }
 
@@ -118,9 +133,7 @@ class VerifyPhoneScreen extends React.PureComponent{
     );
   }
 
-  handleScreenWillBlur = () => {
-    if(this.authListener) this.authListener();
-  }
+  handleScreenWillBlur = () => { if(this.authListener) this.authListener() }
 
   handleScreenDidFocus = () => {
     this.authListener = firebase.auth().onAuthStateChanged(user => {
@@ -138,10 +151,8 @@ class VerifyPhoneScreen extends React.PureComponent{
           })
         }
       }
-
     })
   }
-
 
   constructor(props){
     super(props);
@@ -169,35 +180,35 @@ class VerifyPhoneScreen extends React.PureComponent{
       <React.Fragment>
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
           <NavigationEvents onDidFocus={this.handleScreenDidFocus} onwillBlue={this.handleScreenWillBlur}/>
-          <Title style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>Verifikasi Nomor HP-mu</Title>
-          <Paragraph style={{ marginBottom: 16 }}>Mohon verifikasi nomor HP-mu agar kami lebih mudah dalam menangani masalah. Kami akan mengirimkan kode verifikasi OTP kepada Anda. Pastikan nomor yang dimasukan adalah aktif. Format: 62xxxxxxxxx</Paragraph>
+          <Title style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>{this.props.t("phoneVerifyLabel")}</Title>
+          <Paragraph style={{ marginBottom: 16 }}>{this.props.t('phoneVerifyDescLabel')}</Paragraph>
           <View style={{flexDirection:"row"}}>
           <TextInput style={{ marginRight: 8 }} value="+62" editable={false}/>
           <TextInput 
           style={{flex:1}}
-            placeholder="Contoh: 81215288888" textContentType="telephoneNumber" keyboardType="number-pad"
+            placeholder={this.props.t("example")+": 81215288888"} textContentType="telephoneNumber" keyboardType="number-pad"
             editable={!this.state.isAskingOTP} value={this.state.phoneNumber}
             onChangeText={this.handlePhoneNumberChange}/>
             </View>
           {(this.state.isAskingOTP)?(
             <View>
               <TextInput
-                placeholder="Kode Verifikasi" keyboardType="number-pad"
+                placeholder={this.props.t("verificationCode")} keyboardType="number-pad"
                 value={this.state.otp} onChangeText={this.handleOTPChange} autoFocus/>
-              <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":"Verifikasi"}/>
+              <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("verify")}/>
             </View>
-          ):(<Button onPress={this.handleAskOTP} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":"Minta Kode Verifikasi"}/>)}
+          ):(<Button onPress={this.handleAskOTP} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("askVerificationCode")}/>)}
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
-            <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>Saya punya akun. Kembali ke Sign In</Text>
+            <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
           </TouchableOpacity>
           <Portal>
             <Dialog visible={this.state.showDialog}>
-              <Dialog.Title>Sukses</Dialog.Title>
+              <Dialog.Title>{this.props.t("success")}</Dialog.Title>
               <Dialog.Content>
-                <Paragraph>Registrasi Sukses!</Paragraph>
+                <Paragraph>{this.props.t("registrationSuccess")}</Paragraph>
               </Dialog.Content>
               <Dialog.Actions>
-                <MaterialButton onPress={this.handleContinueClick}>Lanjutkan</MaterialButton>
+                <MaterialButton onPress={this.handleContinueClick}>{this.props.t("next")}</MaterialButton>
               </Dialog.Actions>
             </Dialog>
           </Portal>
@@ -218,4 +229,4 @@ const styles = StyleSheet.create({
   backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })
 
-export default withCurrentUser(VerifyPhoneScreen);
+export default withTranslation()(withCurrentUser(VerifyPhoneScreen))

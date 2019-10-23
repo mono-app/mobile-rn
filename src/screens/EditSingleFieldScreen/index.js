@@ -14,6 +14,7 @@ import Container from "src/components/Container";
 import { Title, Caption, Text } from "react-native-paper";
 import { View, Picker } from "react-native";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { withTranslation } from 'react-i18next';
 
 function EditSingleFieldScreen(props){
   const { navigation } = props;
@@ -76,7 +77,7 @@ function EditSingleFieldScreen(props){
     if(beforeSave) canSave = await beforeSave(defaultValue);
     else canSave = true;
 
-    if(canSave){
+    if(canSave&&defaultValue.trim().length>0){
 
       const collection = new Collection(databaseCollection);
       const myDocument = new Document(databaseDocumentId);
@@ -131,7 +132,7 @@ function EditSingleFieldScreen(props){
        
         {caption !== null?<Caption>{caption}</Caption>:null}
         <View style={{ paddingVertical: 8 }}/>
-        <Button text="Simpan" isLoading={isLoading} onPress={handleSavePress}/>
+        <Button text={props.t("save")} isLoading={isLoading} onPress={handleSavePress}/>
       </View>
       <DateTimePicker
           date={(isDatePicker && defaultValue)?moment(defaultValue, "DD-MM-YYYY").toDate():new Date()}
@@ -144,4 +145,4 @@ function EditSingleFieldScreen(props){
   )
 }
 EditSingleFieldScreen.navigationOptions = { header: null }
-export default withNavigation(EditSingleFieldScreen);
+export default withTranslation()(withNavigation(EditSingleFieldScreen))
