@@ -122,8 +122,7 @@ class DiscussionsScreen extends React.PureComponent {
               placeholder={this.props.t("searchDiscussion")} />
         </View>
         
-        <View style={{backgroundColor: "#0ead69",
-                      padding: 16}}>
+        <View style={{backgroundColor: "#0ead69", padding: 16}}>
           <TouchableOpacity onPress={this.handleAddDiscussion} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
           <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
             <Text style={{fontWeight:"bold", color:"#fff"}}>

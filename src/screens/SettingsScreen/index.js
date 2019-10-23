@@ -85,7 +85,7 @@ function SettingsScreen(props){
               onProfilePicturePress={handleProfilePicturePress}
               tutorial = {props.settingScreenTutorial}
               profilePicture={currentUser.profilePicture.downloadUrl}
-              showTutorialSettingChangeProfilePic={props.z}
+              showTutorialSettingChangeProfilePic={props.z}/>
           <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
         </View>
 
