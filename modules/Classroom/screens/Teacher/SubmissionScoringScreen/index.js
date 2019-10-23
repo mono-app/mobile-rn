@@ -7,6 +7,7 @@ import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -67,7 +68,7 @@ class SubmissionScoringScreen extends React.PureComponent {
           />
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
                 <View style={{ margin: 16 }}>
-                  <Text style={styles.label}>Input Nilai</Text>
+                  <Text style={styles.label}>{this.props.t("inputScore")}</Text>
                 </View>
                 <View style={{ marginHorizontal: 16 }}>
                   <TextInput
@@ -78,7 +79,7 @@ class SubmissionScoringScreen extends React.PureComponent {
                     onChangeText={this.handleScoreChange}/>
                 </View>
                 <View style={{ marginHorizontal: 16, marginBottom:16 }}>
-                  <Text style={styles.label}>Note</Text>
+                  <Text style={styles.label}>{this.props.t("note")}</Text>
                 </View>
                 <View style={{ marginHorizontal: 16 }}>
                   <TextInput
@@ -93,7 +94,7 @@ class SubmissionScoringScreen extends React.PureComponent {
                 
                 {(this.state.type===1||this.state.type===2) ? 
                   <Button
-                  text="Simpan"
+                  text={this.props.t("save")}
                   isLoading={this.state.isLoading}
                   disabled={this.state.isLoading}
                   onPress={this.handleSavePress}
@@ -104,7 +105,7 @@ class SubmissionScoringScreen extends React.PureComponent {
                 <Portal>
                   <Dialog
                     visible={this.state.visible}>
-                    <Dialog.Title>Pilih Format Penilaian</Dialog.Title>
+                    <Dialog.Title>{this.props.t("selectScoreFormat")}</Dialog.Title>
                     <Dialog.Content>
                     <RadioButton.Group
                       onValueChange={checked => this.setState({ checked })}
@@ -114,13 +115,13 @@ class SubmissionScoringScreen extends React.PureComponent {
                         <RadioButton
                           value={1}
                         />
-                       <Text>Angka</Text>
+                       <Text>{this.props.t("number")}</Text>
                       </View>
                       <View style={{flexDirection: "row", alignItems:"center"}}>
                         <RadioButton
                           value={2}
                         />
-                        <Text>Alphabet</Text>
+                        <Text>{this.props.t("alphabet")}</Text>
                       </View>
                     </RadioButton.Group>
                   
@@ -144,4 +145,4 @@ const styles = StyleSheet.create({
   smallDescription: { fontSize: 12, textAlign: "left", color: "#5E8864" },
   label: { fontSize: 14, textAlign: "left", color: "#000000" }
 });
-export default withCurrentTeacher(SubmissionScoringScreen)
+export default withTranslation()(withCurrentTeacher(SubmissionScoringScreen))

@@ -10,6 +10,7 @@ import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isLoading: true, showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
@@ -87,8 +88,8 @@ class ScoreDetailsScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -98,7 +99,7 @@ class ScoreDetailsScreen extends React.PureComponent {
           <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
             <AppHeader
               navigation={this.props.navigation}
-              title="Lihat Nilai"
+              title={this.props.t("scoreDetails")}
               style={{ backgroundColor: "white" }}
             />
             <ScrollView style={{ marginBottom: 56 }}>
@@ -107,7 +108,7 @@ class ScoreDetailsScreen extends React.PureComponent {
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <FontAwesome name="pencil" size={24} style={{marginRight:8, width: 30}}/>
-                    <Text style={[styles.label, {fontWeight: "bold", fontSize: 18}]}>Beri Penilaian Lainnya</Text>
+                    <Text style={[styles.label, {fontWeight: "bold", fontSize: 18}]}>{this.props.t("addAnotherScore")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
@@ -126,7 +127,7 @@ class ScoreDetailsScreen extends React.PureComponent {
               <View style={{marginTop: 16}}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Mata Pelajaran</Text>
+                    <Text style={styles.label}>{this.props.t("subject")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.class_.subject}</Text>
                     </View>
@@ -134,7 +135,7 @@ class ScoreDetailsScreen extends React.PureComponent {
                 </View>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Kelas</Text>
+                    <Text style={styles.label}>{this.props.t("class")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.class_.room}</Text>
                     </View>
@@ -142,7 +143,7 @@ class ScoreDetailsScreen extends React.PureComponent {
                 </View>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Tahun Pelajaran</Text>
+                    <Text style={styles.label}>{this.props.t("academicYear")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.class_.academicYear}</Text>
                     </View>
@@ -158,7 +159,7 @@ class ScoreDetailsScreen extends React.PureComponent {
                 </View>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={[styles.label, {color: "#0ead69"}]}>Total nilai</Text>
+                    <Text style={[styles.label, {color: "#0ead69"}]}>{this.props.t("totalScore")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.submission.score}</Text>
                     </View>
@@ -166,8 +167,8 @@ class ScoreDetailsScreen extends React.PureComponent {
                 </View>
                 <View style={styles.listItemContainer}>
                   <View style={{...styles.listDescriptionContainer}}>
-                    <Text style={{...styles.label, color: "#0ead69"}}>Catatan Tambahan</Text>
-                    <Text style={{flex:3, textAlign:"right"}}>Makan malam setiap malam dengerin lagu eminem</Text>
+                    <Text style={{...styles.label, color: "#0ead69"}}>{this.props.t("note")}</Text>
+                    <Text style={{flex:3, textAlign:"right"}}></Text>
                   </View>
                 </View>
               </View>
@@ -206,4 +207,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF6F6C"
   }
 });
-export default withCurrentTeacher(ScoreDetailsScreen)
+export default withTranslation()(withCurrentTeacher(ScoreDetailsScreen))

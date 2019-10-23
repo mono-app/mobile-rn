@@ -81,8 +81,8 @@ class TeacherHomeScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -104,7 +104,7 @@ class TeacherHomeScreen extends React.PureComponent {
             </TouchableOpacity>
           </Tooltip>
           <Title style={{marginTop: 22}}>
-            Selamat Datang,
+            {this.props.t("welcomeComa")}
           </Title>
           <Subheading>{this.props.currentTeacher.name}</Subheading>
         </View>
@@ -118,7 +118,7 @@ class TeacherHomeScreen extends React.PureComponent {
                     <FontAwesome name="list" style={{color: "#fff"}} size={24} />
                   </View>
                 </View>
-                <Text>Lihat  kelas</Text>
+                <Text>{this.props.t("myClass")}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.handleAddPress} >
                 <View style={styles.button} >
@@ -126,7 +126,7 @@ class TeacherHomeScreen extends React.PureComponent {
                     <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
                   </View>
                 </View>
-                <Text>Tambah Tugas</Text>
+                <Text>{this.props.t("addTask")}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonContainer}>
@@ -136,7 +136,7 @@ class TeacherHomeScreen extends React.PureComponent {
                       <FontAwesome name="list" style={{color: "#fff"}} size={24} />
                     </View>
                   </View>
-                  <Text>Diskusi Saya</Text>
+                  <Text>{this.props.t("myDiscussion")}</Text>
               </TouchableOpacity>
           </View>
         </View>

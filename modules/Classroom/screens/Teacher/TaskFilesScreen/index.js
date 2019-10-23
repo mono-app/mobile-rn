@@ -15,6 +15,7 @@ import Button from "src/components/Button";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import MySearchbar from "src/components/MySearchbar"
 import RNFetchBlob from 'react-native-fetch-blob'
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isRefreshing: true,
@@ -220,7 +221,7 @@ class TaskFilesScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
           navigation={this.props.navigation}
-          title="Tugas"
+          title={this.props.t("task")}
           style={{ backgroundColor: "white" }}
         />
         <View style={styles.subjectContainer}>
@@ -232,7 +233,7 @@ class TaskFilesScreen extends React.PureComponent {
         <View style={{ margin: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Tugas" />
+            placeholder={this.props.t("searchTask")} />
         </View>
         <View style={{ flex: 1, backgroundColor: "white" }}>
           <FlatList
@@ -251,7 +252,7 @@ class TaskFilesScreen extends React.PureComponent {
             }}
           />
           <Button
-            text="Unduh Semua Tugas"
+            text={this.props.t("downoadAllTask")}
             style={{ margin: 16 }}
             isLoading={this.state.isDownloadAllLoading}
             disabled={this.state.isDownloadAllLoading}
@@ -264,7 +265,7 @@ class TaskFilesScreen extends React.PureComponent {
               style={{ flexDirection: "row", justifyContent: "space-evenly" }}
             >
               <View>
-                <Text>Mendownload Tugas</Text>
+                <Text>{this.props.t("downloadingTask")}</Text>
                 <ProgressBar
                   progress={this.state.progressPercentage}
                   color="#EF6F6C"
@@ -276,7 +277,7 @@ class TaskFilesScreen extends React.PureComponent {
         </Portal>
         <DeleteDialog
           ref={i => (this.deleteDialog = i)}
-          title={"Apakah anda ingin menghapus file ini?"}
+          title={this.props.t("deleteFileAsk")}
           onDeletePress={this.onDeletePress}
         />
       </View>
@@ -299,4 +300,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
-export default withCurrentTeacher(TaskFilesScreen)
+export default withTranslation()(withCurrentTeacher(TaskFilesScreen))

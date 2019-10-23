@@ -5,6 +5,7 @@ import MySearchbar from "src/components/MySearchbar"
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, peopleList: [], filteredPeopleList: [] };
 class StudentListScreen extends React.PureComponent {
@@ -69,13 +70,13 @@ class StudentListScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
        <AppHeader
           navigation={this.props.navigation}
-          title="Daftar Murid"
+          title={this.props.t("studentList")}
           style={{ backgroundColor: "white" }}
         />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Murid" />
+            placeholder={this.props.t("searchStudent")} />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
@@ -96,4 +97,4 @@ class StudentListScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentTeacher(StudentListScreen)
+export default withTranslation()(withCurrentTeacher(StudentListScreen))

@@ -138,8 +138,8 @@ class ClassDetailsScreen extends React.PureComponent {
           >
             <ActivityIndicator />
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>

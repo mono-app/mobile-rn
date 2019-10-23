@@ -19,6 +19,7 @@ import TaskAPI from "modules/Classroom/api/task"
 import StudentAPI from "modules/Classroom/api/student"
 import FileAPI from "modules/Classroom/api/file"
 import { IconButton } from "react-native-paper";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null, totalTask:0, totalStudent:0, totalFiles: 0 };
 class ClassProfileScreen extends React.PureComponent {
@@ -131,8 +132,8 @@ class ClassProfileScreen extends React.PureComponent {
           >
             <ActivityIndicator />
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -142,7 +143,7 @@ class ClassProfileScreen extends React.PureComponent {
       <View style={{flex:1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Info Kelas"
+            title={this.props.t("classInfo")}
             style={{ backgroundColor: "white" }}
           />
         <ScrollView>
@@ -161,18 +162,18 @@ class ClassProfileScreen extends React.PureComponent {
           </View>
           <View style={{  marginVertical: 16 }}>  
             <PeopleInformationContainer
-              fieldName="Ruangan"
+              fieldName={this.props.t("room")}
               fieldValue={this.state.class.room}/>
             <PeopleInformationContainer
-              fieldName="Semester"
+              fieldName={this.props.t("semester")}
               fieldValue={this.state.class.semester}/>
            <PeopleInformationContainer
-              fieldName="Tahun Ajaran"
+              fieldName={this.props.t("academicYear")}
               fieldValue={this.state.class.academicYear}/>
           </View>
           
           <View style={{  padding: 16, backgroundColor: "#fff" }}>
-            <Text style={{fontWeight: "bold"}}>Informasi Kelas</Text>
+            <Text style={{fontWeight: "bold"}}>{this.props.t("classInfo")}</Text>
             <View style={{flexDirection:"row"}}>
               <Text>{this.state.class.information}</Text>
             </View>
@@ -184,7 +185,7 @@ class ClassProfileScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="users" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Daftar Murid</Text>
+                    <Text style={styles.label}>{this.props.t("studentList")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalStudent}</Text>
@@ -198,7 +199,7 @@ class ClassProfileScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="paperclip" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Berkas</Text>
+                    <Text style={styles.label}>{this.props.t("files")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalFiles}</Text>
@@ -212,7 +213,7 @@ class ClassProfileScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Daftar Tugas</Text>
+                    <Text style={styles.label}>{this.props.t("taskList")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalTask}</Text>
@@ -226,7 +227,7 @@ class ClassProfileScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="pencil" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Tambah Tugas</Text>
+                    <Text style={styles.label}>{this.props.t("addTask")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -239,7 +240,7 @@ class ClassProfileScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="pencil" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text style={styles.label}>Penilaian Massal</Text>
+                    <Text style={styles.label}>{this.props.t("massScoring")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -283,4 +284,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default withCurrentTeacher(ClassProfileScreen)
+export default withTranslation()(withCurrentTeacher(ClassProfileScreen))

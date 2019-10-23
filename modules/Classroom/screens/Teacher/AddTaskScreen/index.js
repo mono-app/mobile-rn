@@ -11,6 +11,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import moment from "moment";
 import { StackActions } from "react-navigation";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -108,7 +109,7 @@ class AddTaskScreen extends React.PureComponent {
       <View style={{ backgroundColor: "#E8EEE8" }}>
          <AppHeader
           navigation={this.props.navigation}
-          title="Tambah Tugas"
+          title={this.props.t("addTask")}
           style={{ backgroundColor: "white" }}
         />
         <ScrollView style={{marginBottom:56}}>
@@ -128,7 +129,7 @@ class AddTaskScreen extends React.PureComponent {
                     <MaterialIcons name="web-asset" size={45} style={{marginRight: 8}}/>
                     {!this.state.classId ? (
                       <View>
-                        <Text style={styles.label}>Pilih Kelas Saya</Text>
+                        <Text style={styles.label}>{this.props.t("selectMyClass")}</Text>
                       </View>
                     ) : (
                       <View>
@@ -151,7 +152,7 @@ class AddTaskScreen extends React.PureComponent {
 
           <View style={{ marginTop: 16, padding: 16, backgroundColor: "#fff" }}>
             <View style={{ marginTop: 16 }}>
-              <Text style={styles.label}>Judul Tugas</Text>
+              <Text style={styles.label}>{this.props.t("taskTitle")}</Text>
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8" }}
                 value={this.state.taskTitle}
@@ -159,7 +160,7 @@ class AddTaskScreen extends React.PureComponent {
               />
             </View>
             <View style={{ marginTop: 16 }}>
-              <Text style={styles.label}>Batas Pengumpulan</Text>
+              <Text style={styles.label}>{this.props.t("dueDateTitle")}</Text>
               <TouchableOpacity onPress={this.showDateTimePicker}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
@@ -178,7 +179,7 @@ class AddTaskScreen extends React.PureComponent {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: 16 }}>
-              <Text style={styles.label}>Detail Tugas</Text>
+              <Text style={styles.label}>{this.props.t("taskDetails")}</Text>
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
                 value={this.state.taskDetail}
@@ -189,7 +190,7 @@ class AddTaskScreen extends React.PureComponent {
             </View>
             <View style={{ paddingVertical: 8 }} />
             <Button
-              text="Simpan"
+              text={this.props.t("save")}
               isLoading={this.state.isLoading}
               disabled={this.state.isLoading}
               onPress={this.handleSavePress}
@@ -236,4 +237,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 });
-export default withCurrentTeacher(AddTaskScreen)
+export default withTranslation()(withCurrentTeacher(AddTaskScreen))
