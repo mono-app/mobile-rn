@@ -152,9 +152,8 @@ android {
     }
 }
 
- 
-
 dependencies {
+    implementation project(':watermelondb')
     implementation project(':opentok-react-native')
     implementation project(':react-native-geolocation-service')
     implementation project(':react-native-image-crop-picker')
@@ -199,3 +198,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
