@@ -1,11 +1,6 @@
 import React from "react";
 import { View, FlatList, StyleSheet, Platform } from "react-native";
-import {
-  ProgressBar,
-  Text,
-  Dialog,
-  Portal
-} from "react-native-paper";
+import { ProgressBar, Text, Dialog, Portal } from "react-native-paper";
 import Permissions from "react-native-permissions";
 import FileListItem from "modules/Classroom/components/FileListItem";
 import AppHeader from "src/components/AppHeader";
@@ -236,6 +231,8 @@ class TaskFilesScreen extends React.PureComponent {
             placeholder={this.props.t("searchTask")} />
         </View>
         <View style={{ flex: 1, backgroundColor: "white" }}>
+          {(this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+
           <FlatList
             data={this.state.filteredFileList}
             refreshing={this.state.isRefreshing} 

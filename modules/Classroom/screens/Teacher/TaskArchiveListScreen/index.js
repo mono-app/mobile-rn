@@ -6,6 +6,7 @@ import ArchiveListItem from "modules/Classroom/components/ArchiveListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import { withTranslation } from 'react-i18next';
+import { Text } from "react-native-paper"
 
 const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false, taskList: [], filteredTaskList: [] };
 
@@ -96,6 +97,7 @@ class TaskArchiveListScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchTask")} />
         </View>
+        {(this.state.filteredTaskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
           data={this.state.filteredTaskList}

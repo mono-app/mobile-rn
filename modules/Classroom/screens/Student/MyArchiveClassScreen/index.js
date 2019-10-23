@@ -6,6 +6,7 @@ import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withTranslation } from 'react-i18next';
+import { Text } from "react-native-paper"
 
 const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[] };
 
@@ -83,6 +84,7 @@ class MyArchiveClassScreen extends React.PureComponent {
               onSubmitEditing={this.handleSearchPress}
               placeholder={this.props.t("searchClass")} />
         </View>
+        {(this.state.filteredClassList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ flex:1, backgroundColor: "white" }}
           data={this.state.filteredClassList}

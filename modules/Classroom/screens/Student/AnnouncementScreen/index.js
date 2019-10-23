@@ -7,6 +7,7 @@ import AnnouncementAPI from "modules/Classroom/api/announcement";
 import ClassAPI from "modules/Classroom/api/class";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withTranslation } from 'react-i18next';
+import { Text } from "react-native-paper"
 
 const INITIAL_STATE = { isRefreshing: true, announcementList:[], filteredAnnouncementList:[]  };
 
@@ -96,6 +97,7 @@ class AnnouncementScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchAnnouncement")} />
         </View>
+        {(this.state.filteredAnnouncementList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredAnnouncementList}
