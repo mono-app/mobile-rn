@@ -16,7 +16,6 @@ console.disableYellowBox = true;
 const AppContainer = createAppContainer(AppNavigator);
 
 function App(){
-
   const theme = {
     ...DefaultTheme,
     colors: {

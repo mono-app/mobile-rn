@@ -1,5 +1,8 @@
-import { appSchema, Database } from "@nozbe/watermelondb";
 import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
+import Logger from "src/api/logger";
+import { appSchema, Database } from "@nozbe/watermelondb";
+import { synchronize } from "@nozbe/watermelondb/sync";
+import { DB_SYNCHRONIZER } from "react-native-dotenv";
 
 import UsersSchema from "src/schemas/users";
 import PersonalInformationsSchema from "src/schemas/personalInformations";
@@ -18,6 +21,7 @@ function OfflineDatabase(){}
 OfflineDatabase.adapter = null;
 OfflineDatabase.database = null;
 OfflineDatabase.schema = null;
+OfflineDatabase.isSynchronizing = false;
 OfflineDatabase.initialize = () => {
   OfflineDatabase.schema = appSchema({
     version: 1,
@@ -31,6 +35,35 @@ OfflineDatabase.initialize = () => {
   OfflineDatabase.database = new Database({
     adapter: OfflineDatabase.adapter, actionsEnabled: true,
     modelClasses: [ User, PersonalInformation, ApplicationInformation, ProfilePicture, PhoneNumber ]
+  })
+}
+
+OfflineDatabase.pullChanges = async ({ lastPulledAt }) => {
+  const response = await fetch(`${DB_SYNCHRONIZER}/sync?lastPulledAt=${lastPulledAt}`);
+  if(!response.ok) throw new Error(await response.text());
+
+  const { changes, timestamp } = await response.json();
+  return { changes, timestamp };
+}
+
+OfflineDatabase.pushChanges = async ({ changes, lastPulledAt }) => {
+  const response = await fetch(`${DB_SYNCHRONIZER}/sync?lastPulledAt=${lastPulledAt}`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(changes)
+  });
+
+  if(!response.ok) throw new Error(await response.text())
+  else Promise.resolve();
+}
+
+OfflineDatabase.synchronize = async () => {
+  Logger.log("OfflineDatabase.synchronize#isSynchronizing", OfflineDatabase.isSynchronizing);
+  if(OfflineDatabase.isSynchronizing) return;
+  else OfflineDatabase.isSynchronizing = true;
+  synchronize({
+    database: OfflineDatabase.database,
+    pullChanges: OfflineDatabase.pullChanges,
+    pushChanges: OfflineDatabase.pushChanges
   })
 }
 

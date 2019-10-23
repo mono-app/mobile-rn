@@ -12,8 +12,9 @@ function ContactScreen(props){
   const { currentUser } = props;
   const [ peopleList, setPeopleList ] = React.useState([]);
   const [ filteredPeopleList, setFilteredPeopleList ] = React.useState([]);
-  const friendsListener = React.useRef(null);
   const [ isRefreshing, setRefreshing ] = React.useState(true);
+
+  const friendsListener = React.useRef(null);
 
   const handleContactPress = (people) => {
     props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
@@ -55,9 +56,7 @@ function ContactScreen(props){
       <AppHeader style={{ backgroundColor: "transparent" }}/>
       <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Kontak-ku</HeadlineTitle>
       <View style={{ padding: 16 }}>
-        <MySearchbar 
-              onSubmitEditing={handleSearchPress}
-              placeholder="Cari kontak" />
+        <MySearchbar onSubmitEditing={handleSearchPress} placeholder="Cari kontak" />
       </View>
       <FlatList
         style={{ backgroundColor: "white" }}
