@@ -9,10 +9,8 @@ function CircleAvatar(props){
   const _isMounted = React.useRef(true);
 
   const radius = size? size/2: 25;
-  const mySize = size? size: 50;
-
   const styles ={
-    default: { width: mySize, height: mySize, borderRadius: radius }
+    default: { width: size, height: size, borderRadius: radius }
   }
 
   const handleLoadedImage =()=>{
@@ -38,9 +36,9 @@ function CircleAvatar(props){
 }
 
 CircleAvatar.propTypes = { 
-  size: PropTypes.number.isRequired,
+  size: PropTypes.number,
   style: PropTypes.any,
   uri: PropTypes.string.isRequired
 }
-CircleAvatar.defaultProps = { style: {} }
+CircleAvatar.defaultProps = { style: {}, size: 50 }
 export default CircleAvatar;

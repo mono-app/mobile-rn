@@ -1,19 +1,23 @@
-import React from "react";
 import firebase from "react-native-firebase";
-import moment from "moment";
 import uuid from "uuid/v4";
 import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
-import CurrentUserAPI from "src/api/people/CurrentUser";
-import { StackActions } from "react-navigation";
+import OfflineDatabase from "src/api/database/offline";
+import Logger from "src/api/logger";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
-import {getDistance} from 'geolib';
-import {AsyncStorage} from 'react-native';
+import { getDistance } from 'geolib';
+import { Q } from "@nozbe/watermelondb";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
     this.currentUserEmail = currentUserEmail;
+  }
+
+  static async normalize(user){
+    const applicationInformation = await user.applicationInformation.fetch();
+    const profilePicture = await user.profilePicture.fetch();
+    return { me: user, applicationInformation, profilePicture }
   }
 
   /**
@@ -83,22 +87,6 @@ export default class PeopleAPI{
     return Promise.resolve(userQuerySnapshot.empty);
   }
 
-  /**
-   * 
-   * @param {String} email 
-   * @param {Navigator} navigator 
-   */
-  async handleSignedIn(email, navigator){
-    const userData = await this.getDetail(email);
-    if(userData){
-      await CurrentUserAPI.storeBasicInformation(userData);
-      CurrentUserAPI.listenChanges();
-
-      const routeNameForReset = (userData.isCompleteSetup)? "MainTabNavigator": "AccountSetup";
-      navigator.resetTo(routeNameForReset, StackActions);
-    }else throw "Cannot find user in the database. Application error.";
-  }
-
   static async storeMessagingToken(peopleEmail, messagingToken){
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
@@ -112,21 +100,17 @@ export default class PeopleAPI{
    * @param {String} peopleEmail 
    * @param {String} storagePath - Firebase Storage Path
    */
-  static changeProfilePicture(peopleEmail, imagePath){
-    let profilePictureUrl = null;
+  static async changeProfilePicture(peopleEmail, imagePath){
+    Logger.log("PeopleAPI.changeProfilePicture#peopleEmail", peopleEmail);
     const storagePath = `/main/profilePicture/${uuid()}.png`;
-    return StorageAPI.uploadFile(storagePath, imagePath).then((downloadUrl) => {
-      profilePictureUrl = `${downloadUrl}`;
-      const db = firebase.firestore();
-      const batch = db.batch();
+    const downloadUrl = await StorageAPI.uploadFile(storagePath, imagePath);
+    Logger.log("PeopleAPI.changeProfilePicture#downloadUrl", downloadUrl);
 
-      const userCollection = new UserCollection();
-      const userDocument = new Document(peopleEmail);
-      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      batch.update(userRef, { "applicationInformation.profilePicture": {storagePath, downloadUrl} })
-      batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
-      return batch.commit();
-    }).then(() => profilePictureUrl);
+    const usersCollection = OfflineDatabase.database.collections.get("users");
+    const [ user ] = await usersCollection.query(Q.where("email", peopleEmail)).fetch();
+    const profilePicture = await user.profilePicture.fetch();
+    await profilePicture.changeProfilePicture(downloadUrl, storagePath);
+    OfflineDatabase.synchronize();
   }
 
   /**

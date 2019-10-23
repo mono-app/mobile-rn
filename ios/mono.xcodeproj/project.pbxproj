@@ -10,6 +10,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		49D1DB9009C847E98876FDA7 /* libWatermelonDB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82A38F2046A9495E95159394 /* libWatermelonDB.a */; };
 		8F51FC1C28BDC29E9EFBA780 /* libPods-mono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBB87ECB33906D6591FD1BF8 /* libPods-mono.a */; };
 		DA46B3302339BAEF008205ED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DA46B32F2339BAEF008205ED /* GoogleService-Info.plist */; };
 		DAA3004B235583B1007DFA09 /* OTInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA3004A235583B1007DFA09 /* OTInstall.swift */; };
@@ -24,6 +25,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNFirebase;
+		};
+		DA5407B4235DB0C800BBE868 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B92720BDDE6D451FA99365E0 /* WatermelonDB.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E660D5E213BCCD300189354;
+			remoteInfo = WatermelonDB;
 		};
 		DAA300422355833C007DFA09 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -70,6 +78,7 @@
 		7EBFE57A9C7A41BB84AE223E /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		81849C1C96724AC8A4C79D57 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		81A320FD4ED04309BEE8A250 /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
+		82A38F2046A9495E95159394 /* libWatermelonDB.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libWatermelonDB.a; sourceTree = "<group>"; };
 		85FAEA8DDCC4439E9655E645 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		95322F625DFD4266B5C4DD88 /* libRNSpinkit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSpinkit.a; sourceTree = "<group>"; };
 		974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = OpenTokReactNative.xcodeproj; path = "../node_modules/opentok-react-native/ios/OpenTokReactNative.xcodeproj"; sourceTree = "<group>"; };
@@ -79,6 +88,7 @@
 		AE47B2AE2A2043B19C39F1F3 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCAsyncStorage.a; sourceTree = "<group>"; };
 		AF7C6BFB3E084A0C8224A6E4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		B3C8000E649442BD9EBC1FAE /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
+		B92720BDDE6D451FA99365E0 /* WatermelonDB.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = WatermelonDB.xcodeproj; path = "../node_modules/@nozbe/watermelondb/native/ios/WatermelonDB.xcodeproj"; sourceTree = "<group>"; };
 		BE6C8E3F068C4B77A4F7E9E3 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		BF2B66A9DA2344559C5BBD5B /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; };
 		C1A739ED874A48C7B99CBD65 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -111,6 +121,7 @@
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				8F51FC1C28BDC29E9EFBA780 /* libPods-mono.a in Frameworks */,
 				E2FC08935A5B4200B80BD5A9 /* libOpenTokReactNative.a in Frameworks */,
+				49D1DB9009C847E98876FDA7 /* libWatermelonDB.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +181,7 @@
 			children = (
 				81A320FD4ED04309BEE8A250 /* RNFirebase.xcodeproj */,
 				974916F58218419BB8832A94 /* OpenTokReactNative.xcodeproj */,
+				B92720BDDE6D451FA99365E0 /* WatermelonDB.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -257,8 +269,17 @@
 				F17B1902AC5E42E285BE966E /* libRNCNetInfo-tvOS.a */,
 				27712695420E4CC18C1409BE /* libRNGooglePlaces.a */,
 				FCCA923CF59F43638E0030F5 /* libOpenTokReactNative.a */,
+				82A38F2046A9495E95159394 /* libWatermelonDB.a */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		DA5407B1235DB0C800BBE868 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DA5407B5235DB0C800BBE868 /* libWatermelonDB.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		DAA3003F2355833B007DFA09 /* Products */ = {
@@ -339,6 +360,10 @@
 					ProductGroup = DA3D694B2339D80B00BD4395 /* Products */;
 					ProjectRef = 81A320FD4ED04309BEE8A250 /* RNFirebase.xcodeproj */;
 				},
+				{
+					ProductGroup = DA5407B1235DB0C800BBE868 /* Products */;
+					ProjectRef = B92720BDDE6D451FA99365E0 /* WatermelonDB.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -353,6 +378,13 @@
 			fileType = archive.ar;
 			path = libRNFirebase.a;
 			remoteRef = DA3D694E2339D80B00BD4395 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DA5407B5235DB0C800BBE868 /* libWatermelonDB.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libWatermelonDB.a;
+			remoteRef = DA5407B4235DB0C800BBE868 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		DAA300432355833C007DFA09 /* libOpenTokReactNative.a */ = {
@@ -594,12 +626,14 @@
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/opentok-react-native/ios/OpenTokReactNative",
+					"$(SRCROOT)/../node_modules/@nozbe/watermelondb/native/ios/WatermelonDB/SupportingFiles/**",
 				);
 				INFOPLIST_FILE = mono/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Mono\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -710,12 +744,14 @@
 					"$(SRCROOT)/../node_modules/react-native-webrtc/ios/RCTWebRTC/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/opentok-react-native/ios/OpenTokReactNative",
+					"$(SRCROOT)/../node_modules/@nozbe/watermelondb/native/ios/WatermelonDB/SupportingFiles/**",
 				);
 				INFOPLIST_FILE = mono/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Mono\"",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
