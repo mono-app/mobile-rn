@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, Title, Card,Snackbar } from "react-native-paper";
 import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
-import AppHeader from "src/components/AppHeader";
+import { withTranslation } from 'react-i18next';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import ClassAPI from "modules/Classroom/api/class";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
@@ -35,7 +35,7 @@ class AddClassScreen extends React.PureComponent {
   handleAcademicYearChange = academicYear => this.setState({ academicYear });
 
   handleSavePress = () => {
-    this.setState({ isLoading: true });
+
     classInformation = {
       room: this.state.room,
       semester: this.state.semester,
@@ -43,6 +43,12 @@ class AddClassScreen extends React.PureComponent {
       academicYear: this.state.academicYear,
       isArchive: false
     };
+    if(classInformation.academicYear.trim().length>0&&
+    classInformation.subject.trim().length>0&&
+    classInformation.semester.trim().length>0&&
+    classInformation.room.trim().length>0){
+    this.setState({ isLoading: true });
+
     new ClassAPI()
       .addClass(this.props.currentSchool.id, classInformation)
       .then(() => {
@@ -51,6 +57,7 @@ class AddClassScreen extends React.PureComponent {
 
       })
       .catch(err => console.log(err));
+    }
   };
 
   constructor(props) {
@@ -72,43 +79,43 @@ class AddClassScreen extends React.PureComponent {
           <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>         
           <Card style={styles.container}>
               <Card.Content>
-                <Title style={{ marginBottom: 8 }}>Kelas</Title>
+                <Title style={{ marginBottom: 8 }}>{this.props.t("class")}</Title>
                 <Text style={styles.smallDescription}>
-                  Masukkan data kelas yang akan anda buat.
+                  {this.props.t("addClassLabel")}
                 </Text>
                 <View style={{ marginTop: 16 }}>
-                  <Text style={styles.label}>Tahun Ajaran</Text>
+                  <Text style={styles.label}>{this.props.t("academicYear")}</Text>
                   <TextInput
                     style={{ marginBottom: 0 }}
-                    placeholder="Tahun Ajaran"
+                    placeholder={this.props.t("academicYear")}
                     value={this.state.academicYear}
                     onChangeText={this.handleAcademicYearChange}
                   />
                 </View>
                 <View style={{ marginTop: 16 }}>
-                  <Text style={styles.label}>Semester</Text>
+                  <Text style={styles.label}>{this.props.t("semester")}</Text>
                   <TextInput
                     style={{ marginBottom: 0 }}
-                    placeholder="Semester"
+                    placeholder={this.props.t("semester")}
                     value={this.state.semester}
                     keyboardType="numeric"
                     onChangeText={this.handleSemesterChange}
                   />
                 </View>
                 <View style={{ marginTop: 16 }}>
-                  <Text style={styles.label}>Ruangan</Text>
+                  <Text style={styles.label}>{this.props.t("room")}</Text>
                   <TextInput
                     style={{ marginBottom: 0 }}
-                    placeholder="cth: IPS 1"
+                    placeholder={this.props.t("example") +": IPS 1"}
                     value={this.state.room}
                     onChangeText={this.handleRoomChange}
                   />
                 </View>
                 <View style={{ marginTop: 16 }}>
-                  <Text style={styles.label}>Mata Pelajaran</Text>
+                  <Text style={styles.label}>{this.props.t("subject")}</Text>
                   <TextInput
                     style={{ marginBottom: 0 }}
-                    placeholder="Mata Pelajaran"
+                    placeholder={this.props.t("subject")}
                     value={this.state.subject}
                     onChangeText={this.handleSubjectChange}
                   />
@@ -116,7 +123,7 @@ class AddClassScreen extends React.PureComponent {
                 
                 <View style={{ paddingVertical: 8 }} />
                 <Button
-                  text="Simpan"
+                  text={this.props.t("save")}
                   isLoading={this.state.isLoading}
                   disabled={this.state.isLoading}
                   onPress={this.handleSavePress}
@@ -129,7 +136,7 @@ class AddClassScreen extends React.PureComponent {
           onDismiss={() => this.setState({ showSnackbar: false })}
           style={{backgroundColor:"#0ead69"}}
           duration={Snackbar.DURATION_SHORT}>
-          Berhasil menambahkan kelas
+          {this.props.t("addClassSuccess")}
         </Snackbar>
       </View>
     );
@@ -141,4 +148,4 @@ const styles = StyleSheet.create({
   smallDescription: { fontSize: 12, textAlign: "left", color: "#5E8864" },
   label: { fontSize: 14, textAlign: "left", color: "#000000" }
 });
-export default withCurrentSchoolAdmin(AddClassScreen)
+export default withTranslation()(withCurrentSchoolAdmin(AddClassScreen))

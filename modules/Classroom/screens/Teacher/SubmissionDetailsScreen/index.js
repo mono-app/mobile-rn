@@ -167,7 +167,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Semester</Text>
+                  <Text style={styles.label}>{this.props.t("semester")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.class_.semester}</Text>
                   </View>

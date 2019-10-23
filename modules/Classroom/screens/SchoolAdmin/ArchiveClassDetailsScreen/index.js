@@ -13,6 +13,7 @@ import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import Button from "src/components/Button";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isLoadingProfile: true, isLoadingButton: false ,class: null };
 
@@ -67,13 +68,11 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
     if (this.state.isLoadingProfile) {
       return (
         <Dialog visible={true}>
-          <Dialog.Content
-            style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-          >
+          <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator />
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -83,7 +82,7 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
       <View style={{ flex:1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Info Kelas"
+            title={this.props.t("classInfo")}
             style={{ backgroundColor: "white" }}
           />
         <ScrollView style={{marginBottom:56}}>
@@ -95,25 +94,25 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
 
           <View style={{  marginVertical: 16 }}>  
             <PeopleInformationContainer
-              fieldName="Ruangan"
+              fieldName={this.props.t("room")}
               fieldValue={this.state.class.room}/>
             <PeopleInformationContainer
-              fieldName="Semester"
+              fieldName={this.props.t("semester")}
               fieldValue={this.state.class.semester}/>
            <PeopleInformationContainer
-              fieldName="Tahun Ajaran"
+              fieldName={this.props.t("academicYear")}
               fieldValue={this.state.class.academicYear}/>
           </View>
           
           <View style={{  padding: 16, backgroundColor: "#fff" }}>
-            <Text style={{fontWeight: "bold"}}>Informasi Kelas</Text>
+            <Text style={{fontWeight: "bold"}}>{this.props.t("classInfo")}</Text>
             <View style={{flexDirection:"row"}}>
               <Text>{this.state.class.information}</Text>
             </View>
           </View>
           <Button
             style={{margin: 16}}
-            text="Pulihkan Kelas"
+            text={this.props.t("setClassToActive")}
             isLoading={this.state.isLoadingButton}
             disabled={this.state.isLoadingButton}
             onPress={this.handleUnarchivePress}/>
@@ -122,4 +121,4 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
     )
   }
 }
-export default withCurrentSchoolAdmin(ArchiveClassDetailsScreen)
+export default withTranslation()(withCurrentSchoolAdmin(ArchiveClassDetailsScreen))

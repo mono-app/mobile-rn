@@ -8,6 +8,7 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0, profilePicture: "https://picsum.photos/200/200/?random"}
 
@@ -41,7 +42,7 @@ class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "name", 
       fieldValue: this.state.student.name,
-      fieldTitle: "Edit Nama Murid",
+      fieldTitle: this.props.t("editStudentName"),
       onRefresh: (data) => {
         const newClass = JSON.parse(JSON.stringify(this.state.student));
         newClass.name = data;
@@ -58,7 +59,7 @@ class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "address", 
       fieldValue: this.state.student.address,
-      fieldTitle: "Edit Alamat",
+      fieldTitle: this.props.t("editAddress"),
       onRefresh: (data) => {
         const newClass = JSON.parse(JSON.stringify(this.state.student));
         newClass.address = data;
@@ -75,7 +76,7 @@ class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "phone", 
       fieldValue: this.state.student.phone,
-      fieldTitle: "Edit Telepon",
+      fieldTitle: this.props.t("editPhone"),
       isNumber: true,
       onRefresh: (data) => {
         const newClass = JSON.parse(JSON.stringify(this.state.student));
@@ -93,7 +94,7 @@ class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "id", 
       fieldValue: this.state.student.id,
-      fieldTitle: "Edit Email",
+      fieldTitle: this.props.t("editEmail"),
       onRefresh: (data) => {
         const newClass = JSON.parse(JSON.stringify(this.state.student));
         newClass.email = data;
@@ -110,7 +111,7 @@ class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "noInduk", 
       fieldValue: this.state.student.noInduk,
-      fieldTitle: "Edit No Induk",
+      fieldTitle: this.props.t("editStudentId"),
       isNumber: true,
       onRefresh: (data) => {
         const newClass = JSON.parse(JSON.stringify(this.state.student));
@@ -128,7 +129,7 @@ class StudentProfileScreen extends React.PureComponent {
       databaseDocumentId: this.studentEmail,
       databaseFieldName: "gender", 
       fieldValue: this.state.student.gender,
-      fieldTitle: "Edit Jenis Kelamin",
+      fieldTitle: this.props.t("editGender"),
       isGender: true,
       onRefresh: (data) => {
         const newClass = JSON.parse(JSON.stringify(this.state.student));
@@ -177,8 +178,8 @@ class StudentProfileScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -201,7 +202,7 @@ class StudentProfileScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleNamePress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Nama murid</Text>
+                    <Text style={styles.label}>{this.props.t("studentName")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.student.name}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -212,7 +213,7 @@ class StudentProfileScreen extends React.PureComponent {
               <TouchableOpacity  onPress={this.handleAddressPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Alamat</Text>
+                    <Text style={styles.label}>{this.props.t("address")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.student.address}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -223,7 +224,7 @@ class StudentProfileScreen extends React.PureComponent {
               <TouchableOpacity  onPress={this.handlePhonePress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Nomor Telepon</Text>
+                    <Text style={styles.label}>{this.props.t("phoneNo")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <Text>{this.state.student.phone}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -245,7 +246,7 @@ class StudentProfileScreen extends React.PureComponent {
               <TouchableOpacity  onPress={this.handleNoIndukPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>No Induk</Text>
+                    <Text style={styles.label}>{this.props.t("studentNo")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.student.noInduk}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -256,7 +257,7 @@ class StudentProfileScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleGenderPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Jenis Kelamin</Text>
+                    <Text style={styles.label}>{this.props.t("gender")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.student.gender}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -267,7 +268,7 @@ class StudentProfileScreen extends React.PureComponent {
               <TouchableOpacity onPress={this.handleClassListPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
-                    <Text style={styles.label}>Jumlah Kelas</Text>
+                    <Text style={styles.label}>{this.props.t("totalClass")}</Text>
                     <View style={{flexDirection:"row", textAlign: "right"}}>
                       <Text>{this.state.totalActiveClass}</Text>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -312,4 +313,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
-export default withCurrentSchoolAdmin(StudentProfileScreen)
+export default withTranslation()(withCurrentSchoolAdmin(StudentProfileScreen))
