@@ -141,5 +141,7 @@ const translate = {
   expiredTaskList: "Daftar Tugas yang Berakhir",
   askVerificationCode: "Minta Kode Verifikasi",
   verify: "Verifikasi",
+  tutorialSeeProfile: "Klik di sini untuk melihat profile kamu",
+  tutorialChangeProfile: "Klik foto profile untuk mengganti foto",
 }
 export default translate

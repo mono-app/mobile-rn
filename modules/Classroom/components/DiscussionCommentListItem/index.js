@@ -6,15 +6,16 @@ import ImageListItem from "src/components/ImageListItem"
 import CircleAvatar from "src/components/Avatar/Circle";
 import SchoolAPI from "modules/Classroom/api/school";
 
-const INITIAL_STATE = { posterName: "", comment: {}, isLoading: true }
+const INITIAL_STATE = { posterName: "", comment: {}, isLoading: true, profilePicture: "https://picsum.photos/200/200/?random" }
 
-export default class CommentListItem extends React.Component{
+export default class DiscussionCommentListItem extends React.Component{
 
   refreshDetail = async () => {
     this.setState({ isLoading: true });
     const { comment, schoolId } = this.props;
-    SchoolAPI.getUserName(schoolId, comment.posterEmail).then(name=>{
-      this.setState({posterName: name})
+    SchoolAPI.getUserDetails(schoolId, comment.posterEmail).then(people=>{
+      this.setState({posterName: people.name})
+      if(people.profilePicture && people.profilePicture.downloadUrl) this.setState({profilePicture: people.profilePicture.downloadUrl})
     })
 
     this.setState({ isLoading: false, comment });
@@ -52,7 +53,7 @@ export default class CommentListItem extends React.Component{
     return(
       <View style={{ marginTop: 8, borderBottomWidth:1, borderBottomColor: "#E8EEE8"}}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-            <CircleAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
+            <CircleAvatar size={40} uri={this.state.profilePicture}/>
             <View style={{ marginLeft: 16 }}>
               <Text style={{ fontWeight: "700" }}>{this.state.posterName}</Text>
               <Caption style={{ marginTop: 0 }}>{timeFromNow}</Caption>

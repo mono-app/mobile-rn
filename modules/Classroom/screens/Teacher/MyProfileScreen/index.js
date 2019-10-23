@@ -17,12 +17,15 @@ import StorageAPI from "src/api/storage";
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import ImageCompress from "src/api/ImageCompress"
+import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
+import Key from "src/helper/key"
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
   status:"", 
   totalClass: 0,
-  profilePicture: "https://picsum.photos/200/200/?random" 
+  profilePicture: "https://picsum.photos/200/200/?random",
+  isUploadingImage: false
 }
 
 class MyProfileScreen extends React.PureComponent {
@@ -67,7 +70,7 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   
-  changeProfilePicture = async () => {
+  handleProfilePicturePress = async () => {
     const isPermissionGranted = await this.checkPermission();
     if(!isPermissionGranted){
       await this.requestStoragePermission();
@@ -77,6 +80,8 @@ class MyProfileScreen extends React.PureComponent {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
       });
+      this.setState({isUploadingImage: true})
+
       const storagePath = "/modules/classroom/teachers/"+uuid()
       const compressedRes = await ImageCompress.compress(res.uri, res.size)
 
@@ -90,6 +95,7 @@ class MyProfileScreen extends React.PureComponent {
         throw err;
       }
     }
+    this.setState({isUploadingImage: false})
   }
 
  
@@ -134,13 +140,15 @@ class MyProfileScreen extends React.PureComponent {
     this.handleClassListPress = this.handleClassListPress.bind(this);
     this.checkPermission = this.checkPermission.bind(this)
     this.loadStatus = this.loadStatus.bind(this);
-
+    this.handleProfilePicturePress = this.handleProfilePicturePress.bind(this);
+    
   }
 
   componentDidMount(){ 
     this._isMounted = true
     this.loadTotalClass();
     this.loadStatus();
+    this.props.classroomTutorial.show(Key.KEY_TUTORIAL_CLASSROOM_CHANGE_PROFILE_PIC)
   }
   
   componentWillUnmount() {
@@ -168,15 +176,15 @@ class MyProfileScreen extends React.PureComponent {
             style={{ backgroundColor: "white" }}
           />
         <ScrollView style={{ marginBottom: 56 }}>
-          <TouchableOpacity onPress={this.changeProfilePicture}>
-
             <PeopleProfileHeader
+              onProfilePicturePress={this.handleProfilePicturePress}
               style={{padding:16}}
+              isLoading={this.state.isUploadingImage}
+              showTutorialChangeProfilePic = {this.props.showTutorialChangeProfilePic}
+              tutorial = {this.props.classroomTutorial}
               profilePicture={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : this.state.profilePicture }
               title={this.props.currentTeacher.name}
               subtitle= {"NIK: " + this.props.currentTeacher.nik}/>
-          </TouchableOpacity>
-
           <TouchableOpacity onPress={this.handleStatusPress}>
             <View style={ styles.statusContainer }>
               <View>
@@ -282,4 +290,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
-export default withCurrentUser(withCurrentTeacher(MyProfileScreen))
+export default withCurrentUser(withTutorialClassroom(withCurrentTeacher(MyProfileScreen)))

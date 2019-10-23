@@ -141,5 +141,8 @@ const translate = {
   expiredTaskList: "Expired Task List",
   askVerificationCode: "Send Verification Code",
   verify: "Verify",
+  tutorialSeeProfile: "Click here to see your profile",
+  tutorialChangeProfile: "Click here to change profile picture",
+
 }
 export default translate

@@ -8,7 +8,7 @@ import { Provider, Modal, Text, Portal } from 'react-native-paper';
 import { Card } from 'react-native-paper';
 import { withTranslation } from 'react-i18next';
 import Toast from 'react-native-easy-toast'
-import Utils from 'src/api/utils'
+import Key from 'src/helper/key'
 import {AsyncStorage} from 'react-native';
 
 function ChatSettingsScreen(props){
@@ -27,7 +27,7 @@ function ChatSettingsScreen(props){
   });
 
   const handleDefaultColorPress = () => {
-    AsyncStorage.setItem(Utils.KEY_STORAGE_CHAT_BACKGROUND, "#fff");
+    AsyncStorage.setItem(Key.KEY_CHAT_BACKGROUND, "#fff");
     toastRef.current.show('Chat background default', 1000);
     closeWallpaperModal()
   }

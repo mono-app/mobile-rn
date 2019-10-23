@@ -5,12 +5,13 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import Tooltip from 'react-native-walkthrough-tooltip';
+import { withTranslation } from 'react-i18next';
 
 /**
  * @param {string} nickName
  * @param {string} status
  */
-export default function PeopleProfileHeader(props){
+function PeopleProfileHeader(props){
   const styles = StyleSheet.create({
     profileDescriptionContainer: { flex:1},
     profileContainer: { backgroundColor: "white", display: "flex", flexDirection: "row",}
@@ -19,16 +20,16 @@ export default function PeopleProfileHeader(props){
   return(
     <View style={[ styles.profileContainer,props.style ]}>
       <Tooltip
-          isVisible={props.showTutorialSettingChangeProfilePic}
+          isVisible={props.showTutorialChangeProfilePic}
           placement="bottom"
           showChildInTooltip={true}
-          content={<Text>Klik foto profile untuk mengganti foto</Text>}
-          onClose={() => props.settingScreenTutorial.end()}>
+          content={<Text>{props.t("tutorialChangeProfile")}</Text>}
+          onClose={() => props.tutorial.close()}>
         {props.onProfilePicturePress?(
           <TouchableOpacity onPress={props.onProfilePicturePress}>
-            <CircleAvatar uri={props.profilePicture} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>
+            <CircleAvatar uri={props.profilePicture} size={50} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>
           </TouchableOpacity>
-        ):<CircleAvatar uri={props.profilePicture} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>}
+        ):<CircleAvatar uri={props.profilePicture} size={50} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>}
       </Tooltip>
       {props.onStatusPress?(
         <View style={styles.profileDescriptionContainer}>
@@ -57,4 +58,6 @@ PeopleProfileHeader.propTypes = {
   subtitle: PropTypes.string,
   style: PropTypes.object
 }
-PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "", style: {} }
+PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "", style: {}, showTutorialChangeProfilePic:false, tutorial: {}, isLoading:false }
+
+export default withTranslation()(PeopleProfileHeader)

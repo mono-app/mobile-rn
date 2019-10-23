@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
 import { CurrentTeacherProvider } from "modules/Classroom/api/teacher/CurrentTeacher"
-
+import { TutorialClassroomProvider } from "modules/Classroom/api/TutorialClassroom"
 import EditSingleFieldScreen from "modules/Classroom/screens/EditSingleFieldScreen";
 import TeacherHomeScreen from "modules/Classroom/screens/Teacher/TeacherHomeScreen";
 import MyProfileScreen from "modules/Classroom/screens/Teacher/MyProfileScreen";
@@ -30,29 +30,29 @@ import MyDiscussionsScreen from "modules/Classroom/screens/MyDiscussionsScreen";
 
 const MyNavigator = createStackNavigator(
   {
-    TeacherHome: { screen: TeacherHomeScreen },
-    EditSingleField: { screen: EditSingleFieldScreen },
-    EditTaskSingleField: { screen: EditTaskSingleFieldScreen },
-    MyProfile: { screen: MyProfileScreen },
-    StatusChange : { screen: StatusChangeScreen },
-    MyClass : { screen: MyClassScreen },
-    ClassProfile : { screen: ClassProfileScreen },
-    StudentList : { screen: StudentListScreen },
-    StudentProfile : { screen: StudentProfileScreen },
-    AddTask: {screen: AddTaskScreen},
-    AddTaskClassPicker: {screen: AddTaskClassPickerScreen},
-    TaskList: {screen: TaskListScreen},
-    TaskDetails: {screen: TaskDetailsScreen},
-    TaskSubmissionList: {screen: TaskSubmissionListScreen},
-    ClassFiles: {screen: ClassFilesScreen},
-    SubmissionDetails: {screen: SubmissionDetailsScreen},
-    SubmissionScoring: {screen: SubmissionScoringScreen},
-    ScoreDetails: {screen: ScoreDetailsScreen},
-    TaskFiles: {screen: TaskFilesScreen},
-    TaskArchiveList: {screen: TaskArchiveListScreen},
-    ArchiveSelectClass: {screen: ArchiveSelectClassScreen},
-    AddClassFiles: {screen: AddClassFilesScreen},
-    MassScoring: {screen: MassScoringScreen},
+    TeacherHome: { screen: TeacherHomeScreen, navigationOptions: { header: null}},
+    EditSingleField: { screen: EditSingleFieldScreen, navigationOptions: { header: null}},
+    EditTaskSingleField: { screen: EditTaskSingleFieldScreen, navigationOptions: { header: null}},
+    MyProfile: { screen: MyProfileScreen, navigationOptions: { header: null}},
+    StatusChange : { screen: StatusChangeScreen, navigationOptions: { header: null}},
+    MyClass : { screen: MyClassScreen, navigationOptions: { header: null}},
+    ClassProfile : { screen: ClassProfileScreen, navigationOptions: { header: null}},
+    StudentList : { screen: StudentListScreen, navigationOptions: { header: null}},
+    StudentProfile : { screen: StudentProfileScreen, navigationOptions: { header: null}},
+    AddTask: {screen: AddTaskScreen, navigationOptions: { header: null}},
+    AddTaskClassPicker: {screen: AddTaskClassPickerScreen, navigationOptions: { header: null}},
+    TaskList: {screen: TaskListScreen, navigationOptions: { header: null}},
+    TaskDetails: {screen: TaskDetailsScreen, navigationOptions: { header: null}},
+    TaskSubmissionList: {screen: TaskSubmissionListScreen, navigationOptions: { header: null}},
+    ClassFiles: {screen: ClassFilesScreen, navigationOptions: { header: null}},
+    SubmissionDetails: {screen: SubmissionDetailsScreen, navigationOptions: { header: null}},
+    SubmissionScoring: {screen: SubmissionScoringScreen, navigationOptions: { header: null}},
+    ScoreDetails: {screen: ScoreDetailsScreen, navigationOptions: { header: null}},
+    TaskFiles: {screen: TaskFilesScreen, navigationOptions: { header: null}},
+    TaskArchiveList: {screen: TaskArchiveListScreen, navigationOptions: { header: null}},
+    ArchiveSelectClass: {screen: ArchiveSelectClassScreen, navigationOptions: { header: null}},
+    AddClassFiles: {screen: AddClassFilesScreen, navigationOptions: { header: null}},
+    MassScoring: {screen: MassScoringScreen, navigationOptions: { header: null}},
     MyDiscussions: {screen: MyDiscussionsScreen, navigationOptions: { header: null}},
   },
   {
@@ -64,9 +64,11 @@ export default class TeacherNavigator extends React.PureComponent{
   static router = MyNavigator.router;
   render(){
     return (
-      <CurrentTeacherProvider>
-        <MyNavigator navigation={this.props.navigation}/>
-      </CurrentTeacherProvider>
+      <TutorialClassroomProvider>
+        <CurrentTeacherProvider>
+          <MyNavigator navigation={this.props.navigation}/>
+        </CurrentTeacherProvider>
+      </TutorialClassroomProvider>
     )
   }
 }

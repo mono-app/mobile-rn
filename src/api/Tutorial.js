@@ -14,7 +14,7 @@ export function withTutorial(Component){
             showTutorialHomeChatSection={context.showTutorialHomeChatSection}
             showTutorialHomeNotifSection={context.showTutorialHomeNotifSection}
             settingScreenTutorial={context.settingScreenTutorial}
-            showTutorialSettingChangeProfilePic={context.showTutorialSettingChangeProfilePic}
+            showTutorialChangeProfilePic={context.showTutorialChangeProfilePic}
             resetTutorial={context.resetTutorial}
           />}
 
@@ -41,9 +41,9 @@ export class TutorialProvider extends React.PureComponent{
       settingScreenTutorial: {
         start: this.handleStartSettingScreenTutorial,
         show: (index) => this.handleShowSettingScreenTutorial(index),
-        end: this.handleEndSettingScreenTutorial,
+        close: this.handleEndSettingScreenTutorial,
       },
-      showTutorialSettingChangeProfilePic: false,
+      showTutorialChangeProfilePic: false,
     }
     this.handleResetTutorial = this.handleResetTutorial.bind(this)
     this.handleStartHomeScreenTutorial = this.handleStartHomeScreenTutorial.bind(this)
@@ -61,6 +61,7 @@ export class TutorialProvider extends React.PureComponent{
  
   handleStartHomeScreenTutorial = async () => {
     const show = await AsyncStorage.getItem('alreadyShowHomeScreenTutorial')
+
     if(show !== "true"){
       this.handleShowHomeScreenTutorial(1)
     }
@@ -97,7 +98,6 @@ export class TutorialProvider extends React.PureComponent{
     })
   }
 
-
   handleStartSettingScreenTutorial = async () => {
     const show = await AsyncStorage.getItem('alreadyShowSettingScreenTutorial')
     if(show !== "true"){
@@ -109,7 +109,7 @@ export class TutorialProvider extends React.PureComponent{
   handleShowSettingScreenTutorial = (index) => {
     if(index===1){
       this.setState({
-        showTutorialSettingChangeProfilePic:true,
+        showTutorialChangeProfilePic:true,
       })
     }
   }
@@ -117,18 +117,8 @@ export class TutorialProvider extends React.PureComponent{
   handleEndSettingScreenTutorial = async () => {
     await AsyncStorage.setItem('alreadyShowSettingScreenTutorial', "true");
     this.setState({
-      showTutorialSettingChangeProfilePic:false,
+      showTutorialChangeProfilePic:false,
     })
-  }
-
-
-  componentDidMount(){
-    
-  }
-
-  componentWillUnmount(){
- 
-    
   }
 
   render(){

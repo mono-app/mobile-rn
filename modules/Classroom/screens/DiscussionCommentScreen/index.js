@@ -13,7 +13,7 @@ import Button from "src/components/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { default as MaterialCommunityIcons } from "react-native-vector-icons/MaterialCommunityIcons";
 import StudentAPI from "modules/Classroom/api/student";
-import CommentListItem from "src/components/CommentListItem";
+import DiscussionCommentListItem from "modules/Classroom/components/DiscussionCommentListItem";
 import DeleteDialog from "src/components/DeleteDialog";
 import ImageListItem from "src/components/ImageListItem"
 import DocumentPicker from 'react-native-document-picker';
@@ -448,7 +448,7 @@ class DiscussionCommentScreen extends React.PureComponent {
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
                 return (
-                  <CommentListItem 
+                  <DiscussionCommentListItem 
                     schoolId={this.schoolId} comment={item} onImagePress={(idx)=>{this.handlePicturePress(item.images, idx)}} 
                    />
                 )
