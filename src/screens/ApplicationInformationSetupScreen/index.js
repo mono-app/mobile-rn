@@ -63,7 +63,7 @@ function ApplicationInformationSetupScreen(props){
             <Paragraph>{errorMessage}</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <MaterialButton onPress={handleErrorDialogDismiss}>Mengerti</MaterialButton>
+            <MaterialButton onPress={handleErrorDialogDismiss}>{props.t("understand")}</MaterialButton>
           </Dialog.Actions>
         </Dialog>
       </Portal>

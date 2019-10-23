@@ -91,6 +91,20 @@ export default class TaskAPI{
     return Promise.resolve(task)
   }
 
+  static async getTotalExpiredTasks(schoolId, classId) {
+    const db = firebase.firestore();
+    const classesCollection = new ClassesCollection();
+    const schoolsCollection = new SchoolsCollection();
+    const tasksCollection = new TasksCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const tasksCollectionRef = classesDocumentRef.collection(tasksCollection.getName()).orderBy('dueDate').endAt(new Date());
+    
+    const taskSnapshot = await tasksCollectionRef.get();
+
+    return Promise.resolve(taskSnapshot.size)
+  }
+
   
   async getDetail(schoolId, classId, taskId, source = "default") {
     const db = new firebase.firestore();

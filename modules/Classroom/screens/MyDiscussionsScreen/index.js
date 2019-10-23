@@ -37,13 +37,6 @@ class MyDiscussionsScreen extends React.PureComponent {
 
     this.props.navigation.navigate("DiscussionComment", payload);
   }
-
-  handleLikePress = async (item) => {
-    const currentUserEmail= this.props.currentUser.email
-    await DiscussionAPI.like(this.schoolId, this.classId, this.taskId, item.id, currentUserEmail);
-    this.loadDiscussions();
-  }
-
   
   handleSearchPress = (searchText) => {
     if(this._isMounted)
@@ -77,7 +70,6 @@ class MyDiscussionsScreen extends React.PureComponent {
     this.schoolId = this.props.navigation.getParam("schoolId", "");
     this.loadDiscussions = this.loadDiscussions.bind(this);
     this.handleDiscussionPress = this.handleDiscussionPress.bind(this);
-    this.handleLikePress = this.handleLikePress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);
     this.handleRefresh = this.handleRefresh.bind(this);
   }

@@ -6,7 +6,7 @@ const translate = {
   login: 'Login',
   createAccount: 'Create Account',
   forgotPassLabel: 'I forgot my password.',
-  understand: 'Understand',
+  understand: 'Got it',
   emailCantEmpty: 'Email cannot be empty!',
   wrongEmailFormat: 'Wrong email format!',
   passCantEmpty: 'Password cannot be empty!',
@@ -29,7 +29,7 @@ const translate = {
   success: "Success",
   registrationSuccess: "Registration Success!",
   accountInfo: "Account Information",
-  accountInfoDesc: "Don't put your sensitive information.",
+  accountInfoDesc: "Don't input any sensitive information.",
   monoIdDesc: "Mono ID is unique ID that used for your identity.",
   nickName: "Nickname",
   personalData: "Personal Data",
@@ -138,6 +138,8 @@ const translate = {
   turnOn: "Turn On",
   searchDiscussion: "Search Discussion",
   createdBy: "Created By",
-
+  expiredTaskList: "Expired Task List",
+  askVerificationCode: "Send Verification Code",
+  verify: "Verify",
 }
 export default translate

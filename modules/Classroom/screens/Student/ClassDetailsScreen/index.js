@@ -17,7 +17,7 @@ import TaskAPI from "modules/Classroom/api/task"
 import StudentAPI from "modules/Classroom/api/student"
 import FileAPI from "modules/Classroom/api/file"
 
-const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {}, totalTask:0, totalStudent:0, totalFiles: 0 };
+const INITIAL_STATE = { isLoadingProfile: true, class: null, teacher: {}, totalTask:0, totalExpiredTask:0, totalStudent:0, totalFiles: 0 };
 class ClassDetailsScreen extends React.PureComponent {
   static navigationOptions = () => {
     return {
@@ -31,7 +31,9 @@ class ClassDetailsScreen extends React.PureComponent {
       TaskAPI.getTotalActiveTasks(this.props.currentSchool.id, this.classId).then(totalTask => {
         this.setState({totalTask})
       })
-  
+      TaskAPI.getTotalExpiredTasks(this.props.currentSchool.id, this.classId).then(totalExpiredTask => {
+        this.setState({totalExpiredTask})
+      })
       StudentAPI.getTotalClassStudent(this.props.currentSchool.id, this.classId).then(totalStudent => {
         this.setState({totalStudent})
       })
@@ -76,6 +78,17 @@ class ClassDetailsScreen extends React.PureComponent {
     this.props.navigation.navigate("TaskList", payload)
   }
 
+  handleExpiredTaskListScreen = () => {
+    payload = {
+      schoolId: this.props.currentSchool.id,
+      classId: this.classId,
+      subject: this.state.class.subject,
+      subjectDesc: this.state.class.room+" | "+this.state.class.academicYear+" | Semester "+this.state.class.semester
+    }
+
+    this.props.navigation.navigate("ExpiredTaskList", payload)
+  }
+
   handleClassFilesScreenPress = () => {
     payload = {
       schoolId: this.props.currentSchool.id,
@@ -103,6 +116,7 @@ class ClassDetailsScreen extends React.PureComponent {
     this.handleStudentListScreen = this.handleStudentListScreen.bind(this);
     this.handleClassFilesScreenPress = this.handleClassFilesScreenPress.bind(this);
     this.handleGroupChatPress = this.handleGroupChatPress.bind(this);
+    this.handleExpiredTaskListScreen = this.handleExpiredTaskListScreen.bind(this);
   }
 
   componentDidMount() {
@@ -219,7 +233,20 @@ class ClassDetailsScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-         
+              <TouchableOpacity onPress={this.handleExpiredTaskListScreen}>
+                <View style={styles.listItemContainer}>
+                  <View style={styles.listDescriptionContainer}>
+                    <View style={{flexDirection:"row"}}>
+                      <FontAwesome name="list-alt" size={24} style={{marginRight:16, width: 30}}/>
+                      <Text style={styles.label}>{this.props.t("expiredTaskList")}</Text>
+                    </View>
+                    <View style={{flexDirection:"row",textAlign: "right"}}>
+                      <Text>{this.state.totalExpiredTask}</Text>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
               
             </View>
           </ScrollView>

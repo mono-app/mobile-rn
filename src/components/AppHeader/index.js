@@ -18,9 +18,9 @@ function AppHeader(props){
       {props.navigation?(
         <Appbar.BackAction onPress={handleBackPress}/>
       ): null}
-      <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
-        <Subheading>{props.title}</Subheading>
-        <Caption>{props.caption}</Caption>
+      <View style={{ flex:1,paddingRight:16, display: "flex", flexDirection: "column" }}>
+        <Subheading numberOfLines={1}>{props.title}</Subheading>
+        {(props.subtitle)? <Caption numberOfLines={1}>{props.subtitle}</Caption>: null}
       </View>
     </Appbar.Header>
   )

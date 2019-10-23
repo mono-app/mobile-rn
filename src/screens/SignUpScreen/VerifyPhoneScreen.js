@@ -195,9 +195,9 @@ class VerifyPhoneScreen extends React.PureComponent{
               <TextInput
                 placeholder={this.props.t("verificationCode")} keyboardType="number-pad"
                 value={this.state.otp} onChangeText={this.handleOTPChange} autoFocus/>
-              <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":"Verifikasi"}/>
+              <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("verify")}/>
             </View>
-          ):(<Button onPress={this.handleAskOTP} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":"Minta Kode Verifikasi"}/>)}
+          ):(<Button onPress={this.handleAskOTP} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("askVerificationCode")}/>)}
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
             <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
           </TouchableOpacity>

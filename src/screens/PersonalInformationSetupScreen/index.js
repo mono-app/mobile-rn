@@ -34,7 +34,7 @@ function PersonalInformationSetupScreen(props){
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <View style={styles.content}>
         <PersonalInformationCard t={props.t} ref={personalInformationCard} defaultGivenName={defaultGivenName} defaultFamilyName={defaultFamilyName} defaultGender={defaultGender}/>
-        <Button style={{ marginTop: 8 }} text="Simpan" onPress={handleSavePress}/>
+        <Button style={{ marginTop: 8 }} text={props.t("save")} onPress={handleSavePress}/>
       </View>
     </Container>
   );

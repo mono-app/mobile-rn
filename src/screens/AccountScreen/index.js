@@ -30,7 +30,7 @@ function AccountScreen(props){
       databaseDocumentId: currentUser.email,
       databaseFieldName: "applicationInformation.nickName", 
       fieldValue: applicationInformation.nickName,
-      fieldTitle: "Nama Panggilan",
+      fieldTitle: props.t("nickName"),
     }
     navigation.navigate("EditSingleField", payload);
   }
@@ -43,7 +43,7 @@ function AccountScreen(props){
       caption: "Format tanggal lahir: 22/12/2007",
       placeholder: "DD/MM/YYYY",
       fieldValue: personalInformation.birthday,
-      fieldTitle: "Tanggal Lahir",
+      fieldTitle: props.t("birthDate"),
       datePicker: true,
       beforeSave: (value) => moment(value, "DD/MM/YYYY").isValid()
     }
@@ -56,7 +56,7 @@ function AccountScreen(props){
       databaseDocumentId: currentUser.email,
       databaseFieldName: "personalInformation.gender", 
       fieldValue: (personalInformation.gender)? personalInformation.gender: "male",
-      fieldTitle: "Jenis Kelamin",
+      fieldTitle: props.t("gender"),
       genderPicker: true
     }
     navigation.navigate("EditSingleField", payload);
@@ -112,7 +112,7 @@ function AccountScreen(props){
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 {personalInformation.birthday?(
                   <Text>{moment(personalInformation.birthday, "DD/MM/YYYY").format("DD MMM YYYY")}</Text>
-                ):null}
+                ):<Text>-</Text>}
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>
             </View>

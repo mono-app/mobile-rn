@@ -12,9 +12,9 @@ import moment from "moment"
 import DateTimePicker from "react-native-modal-datetime-picker";
 
 export default class EditTaskSingleFieldScreen extends React.PureComponent{
-  static navigationOptions = {
-    headerStyle: { backgroundColor: "#E8EEE8", elevation: 0 }
-  }
+  static navigationOptions = () => {
+    return { header: null };
+  };
 
   handleDefaultValueChange = defaultValue => this.setState({ defaultValue });
 
@@ -101,66 +101,69 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
   render(){
     const placeholder = (this.placeholder !== "")? this.placeholder: this.state.defaultValue;
     return(
-      <View style={styles.container}>
-        <Title style={{ marginBottom: 8 }}>{this.title}</Title>
-        {(this.isGender)?
-          <Card style={{paddingTop: 8}}>
-            <Drawer.Section>
-              <Drawer.Item
-                label="Pria"
-                active={this.state.defaultValue === 'pria'}
-                onPress={() => { this.setState({ defaultValue: 'pria' }); }}
-              />
-              <Drawer.Item
-                label="Wanita"
-                active={this.state.defaultValue === 'wanita'}
-                onPress={() => { this.setState({ defaultValue: 'wanita' }); }}
-              />
-            </Drawer.Section>
-          </Card>
-          :
-          (this.isDatetimePicker)?
-          <TouchableOpacity onPress={this.showDateTimePicker}>
-            <View style={styles.listItemContainer}>
-              <View style={styles.listDescriptionContainer}>
-                {(this.pickerType=="date")? 
-                  <Text style={styles.label}>{moment(this.state.defaultValue).format("DD MMMM YYYY")}</Text>
-                : 
-                  <Text style={styles.label}>{moment(this.state.defaultValue).format("HH:mm")}</Text>
-                }
+      <View style={{flex:1}}>
+        <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
+        <View style={styles.container}>
+          <Title style={{ marginBottom: 8 }}>{this.title}</Title>
+          {(this.isGender)?
+            <Card style={{paddingTop: 8}}>
+              <Drawer.Section>
+                <Drawer.Item
+                  label="Pria"
+                  active={this.state.defaultValue === 'pria'}
+                  onPress={() => { this.setState({ defaultValue: 'pria' }); }}
+                />
+                <Drawer.Item
+                  label="Wanita"
+                  active={this.state.defaultValue === 'wanita'}
+                  onPress={() => { this.setState({ defaultValue: 'wanita' }); }}
+                />
+              </Drawer.Section>
+            </Card>
+            :
+            (this.isDatetimePicker)?
+            <TouchableOpacity onPress={this.showDateTimePicker}>
+              <View style={styles.listItemContainer}>
+                <View style={styles.listDescriptionContainer}>
+                  {(this.pickerType=="date")? 
+                    <Text style={styles.label}>{moment(this.state.defaultValue).format("DD MMMM YYYY")}</Text>
+                  : 
+                    <Text style={styles.label}>{moment(this.state.defaultValue).format("HH:mm")}</Text>
+                  }
 
-                <View style={{flexDirection:"row",textAlign: "right"}}>
-                  <EvilIcons name="calendar" size={24} style={{ color: "#5E8864" }}/>
+                  <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <EvilIcons name="calendar" size={24} style={{ color: "#5E8864" }}/>
+                  </View>
                 </View>
               </View>
-            </View>
-          </TouchableOpacity>
-          :
-          <TextInput
-            style={(this.isMultiline)?{textAlignVertical: "top" }:{}}
-            placeholder={placeholder}
-            value={this.state.defaultValue}
-            multiline={this.isMultiline}
-            numberOfLines={(this.isMultiline)?3:1}
-            keyboardType={this.keyboardType}
-            onChangeText={this.handleDefaultValueChange}/>
-        }
-        
-        {this.caption !== null?(
-          <Caption>{this.caption}</Caption>
-        ):null}
-        <View style={{ paddingVertical: 8 }}/>
-        <Button
-          text="Simpan"
-          isLoading={this.state.isLoading}
-          onPress={this.handleSavePress}/>
-          <DateTimePicker
-          date={(this.isDatetimePicker && this.state.defaultValue)?this.state.defaultValue:new Date()}
-          isVisible={this.state.isDateTimePickerVisible}
-          onConfirm={this.handleDatePicked}
-          onCancel={this.hideDateTimePicker}
-          mode={this.pickerType}
-        />
+            </TouchableOpacity>
+            :
+            <TextInput
+              style={(this.isMultiline)?{textAlignVertical: "top" }:{}}
+              placeholder={placeholder}
+              value={this.state.defaultValue}
+              multiline={this.isMultiline}
+              numberOfLines={(this.isMultiline)?3:1}
+              keyboardType={this.keyboardType}
+              onChangeText={this.handleDefaultValueChange}/>
+          }
+          
+          {this.caption !== null?(
+            <Caption>{this.caption}</Caption>
+          ):null}
+          <View style={{ paddingVertical: 8 }}/>
+          <Button
+            text="Simpan"
+            isLoading={this.state.isLoading}
+            onPress={this.handleSavePress}/>
+            <DateTimePicker
+            date={(this.isDatetimePicker && this.state.defaultValue)?this.state.defaultValue:new Date()}
+            isVisible={this.state.isDateTimePickerVisible}
+            onConfirm={this.handleDatePicked}
+            onCancel={this.hideDateTimePicker}
+            mode={this.pickerType}
+          />
+        </View>
       </View>
       
     )

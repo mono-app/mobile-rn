@@ -10,6 +10,7 @@ import StudentListScreen from "modules/Classroom/screens/Student/StudentListScre
 import StudentProfileScreen from "modules/Classroom/screens/Student/StudentProfileScreen";
 import ClassFilesScreen from "modules/Classroom/screens/Student/ClassFilesScreen"
 import TaskListScreen from "modules/Classroom/screens/Student/TaskListScreen"
+import ExpiredTaskListScreen from "modules/Classroom/screens/Student/ExpiredTaskListScreen"
 import TaskDetailsScreen from "modules/Classroom/screens/Student/TaskDetailsScreen"
 import TaskSubmissionListScreen from "modules/Classroom/screens/Student/TaskSubmissionListScreen"
 import TaskSubmissionScreen from "modules/Classroom/screens/Student/TaskSubmissionScreen"
@@ -29,6 +30,7 @@ const MyNavigator = createStackNavigator(
     StudentProfile: { screen: StudentProfileScreen, navigationOptions: { header: null} },
     ClassFiles: {screen: ClassFilesScreen, navigationOptions: { header: null}},
     TaskList: {screen: TaskListScreen, navigationOptions: { header: null}},
+    ExpiredTaskList: {screen: ExpiredTaskListScreen, navigationOptions: { header: null}},
     TaskDetails: {screen: TaskDetailsScreen, navigationOptions: { header: null}},
     TaskSubmissionList: {screen: TaskSubmissionListScreen, navigationOptions: { header: null}},
     TaskSubmission: {screen: TaskSubmissionScreen, navigationOptions: { header: null}},

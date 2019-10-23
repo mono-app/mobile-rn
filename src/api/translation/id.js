@@ -138,5 +138,8 @@ const translate = {
   turnOn: "Aktifkan",
   searchDiscussion: "Cari Diskusi",
   createdBy: "Dibuat Oleh",
+  expiredTaskList: "Daftar Tugas yang Berakhir",
+  askVerificationCode: "Minta Kode Verifikasi",
+  verify: "Verifikasi",
 }
 export default translate
