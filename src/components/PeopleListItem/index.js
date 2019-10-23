@@ -1,89 +1,31 @@
 import React from "react";
 import PropTypes from "prop-types";
+import OfflineDatabase from "src/api/database/offline";
 import Logger from "src/api/logger";
-import StatusAPI from "src/api/status";
-import PeopleAPI from "src/api/people"
-import CircleAvatar from "src/components/Avatar/Circle";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Paragraph, Caption } from "react-native-paper";
-import ContentLoader from 'rn-content-loader'
-import {Rect} from 'react-native-svg'
+import { Q } from "@nozbe/watermelondb";
+import { StyleSheet } from "react-native";
+
+import Loading from "src/components/PeopleListItem/loading";
+import EnhancedPeopleListItem from "src/components/PeopleListItem/enhanced";
 
 function PeopleListItem(props){
   const { email } = props;
-  const [ status, setStatus ] = React.useState("");
-  const [ people, setPeople ] = React.useState("");
-  const [ isFetching, setFetching ] = React.useState(true);
-  const _isMounted = React.useRef(true);
+  const [ people, setPeople ] = React.useState(null); 
 
-  const styles = StyleSheet.create({
-    userContainer: {
-      height: 75, padding:16, borderBottomWidth:1,
-      borderBottomColor: "#E8EEE8", flexDirection: "row", alignItems: "center",
-    }
-  })
-  
-  const handlePress = () => props.onPress(people);
+  const fetchUser = async () => {
+    const usersCollection = OfflineDatabase.database.collections.get("users");
+    const users = await usersCollection.query(Q.where("email", email)).fetch();
+    Logger.log("PeopleListItem.fetchUser#users", users);
+    setPeople(users[0]);
+  }
 
   React.useEffect(() => {
-    setFetching(true)
-    const fetchStatus = async () => {
-      const status = await StatusAPI.getLatestStatus(email);
-      if(status && _isMounted.current) {
-        setStatus(status.content)
-      }        
-      if(_isMounted.current) setFetching(false)
-    }
-    const fetchData = async () => {
-      PeopleAPI.getDetailWithRealTimeUpdate(email, (data)=>{
-        if(_isMounted.current) {
-          setPeople(data)
-          setFetching(false)
-        }
-      });
-    }
-
-    if(props.distance===undefined){
-      fetchStatus();
-    }else{
-      if(_isMounted.current) setStatus("jarak < "+props.distance+" meters");
-    }
-    
-    fetchData();
-    return () => {
-      if(_isMounted.current) _isMounted.current = false
-    }
+    OfflineDatabase.synchronize();
+    fetchUser();
   }, [])
 
-  Logger.log("PeopleListItem", people);
-  let profilePicture = "https://picsum.photos/200/200/?random"
-  let nickName = ""
-  if(people){
-    if(people.profilePicture) profilePicture = people.profilePicture
-    if(people.applicationInformation&& people.applicationInformation.nickName) nickName = people.applicationInformation.nickName
-
-  }
-
-  if(isFetching){
-    return (
-      <ContentLoader height={50}>
-        <Rect x={86} y={16} rx="4" ry="4" width={150} height={12}/>
-      </ContentLoader>
-    )
-  }else{
-    return(
-      <TouchableOpacity  onPress={handlePress}>
-        <View style={styles.userContainer}>
-          <CircleAvatar size={48} uri={profilePicture} style={{ marginRight: 16 }}/>
-          <View style={{flex:1}}>
-            <Text style={{ fontWeight: "700" }} numberOfLines={1}>{nickName}</Text>
-            <Paragraph style={{ color: "#5E8864" }} numberOfLines={1}>{status}</Paragraph>
-          </View>
-        </View>
-
-      </TouchableOpacity>
-    )
-  }
+  if(!people) return null;
+  return <EnhancedPeopleListItem people={people}/>
 
 
 }
