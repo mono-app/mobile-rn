@@ -36,11 +36,12 @@ OfflineDatabase.initialize = () => {
     adapter: OfflineDatabase.adapter, actionsEnabled: true,
     modelClasses: [ User, PersonalInformation, ApplicationInformation, ProfilePicture, PhoneNumber ]
   })
+  OfflineDatabase.synchronize();
 }
 
 OfflineDatabase.pullChanges = async ({ lastPulledAt }) => {
   const response = await fetch(`${DB_SYNCHRONIZER}/sync?lastPulledAt=${lastPulledAt}`);
-  if(!response.ok) throw new Error(await response.text());
+  if(!response.ok) return Promise.reject(await response.text());
 
   const { changes, timestamp } = await response.json();
   return { changes, timestamp };
@@ -49,22 +50,26 @@ OfflineDatabase.pullChanges = async ({ lastPulledAt }) => {
 OfflineDatabase.pushChanges = async ({ changes, lastPulledAt }) => {
   const response = await fetch(`${DB_SYNCHRONIZER}/sync?lastPulledAt=${lastPulledAt}`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(changes)
+    body: JSON.stringify({ changes })
   });
 
-  if(!response.ok) throw new Error(await response.text())
-  else Promise.resolve();
+  if(!response.ok) return Promise.reject(await response.text())
+  else return Promise.resolve();
 }
 
 OfflineDatabase.synchronize = async () => {
-  Logger.log("OfflineDatabase.synchronize#isSynchronizing", OfflineDatabase.isSynchronizing);
-  if(OfflineDatabase.isSynchronizing) return;
-  else OfflineDatabase.isSynchronizing = true;
-  synchronize({
-    database: OfflineDatabase.database,
-    pullChanges: OfflineDatabase.pullChanges,
-    pushChanges: OfflineDatabase.pushChanges
-  })
+  try{
+    Logger.log("OfflineDatabase.synchronize#isSynchronizing", OfflineDatabase.isSynchronizing);
+    if(OfflineDatabase.isSynchronizing) return;
+    else OfflineDatabase.isSynchronizing = true;
+    await synchronize({
+      database: OfflineDatabase.database,
+      pullChanges: OfflineDatabase.pullChanges,
+      pushChanges: OfflineDatabase.pushChanges
+    });
+  }finally{
+    OfflineDatabase.isSynchronizing = false;
+  }
 }
 
 export default OfflineDatabase;
