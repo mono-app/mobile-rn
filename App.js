@@ -10,17 +10,19 @@ import { createAppContainer } from 'react-navigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 import { TutorialProvider } from "src/api/Tutorial";
-import PeopleAPI from "src/api/people"
-import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { Platform, NativeModules } from 'react-native'
+// import { Platform, NativeModules } from 'react-native'
+
+import i18next from 'i18next';
 import translationId from "src/api/translation/id"
 import translationEn from "src/api/translation/en"
+
 
 console.disableYellowBox = true;
 
 const AppContainer = createAppContainer(AppNavigator);
-const deviceLanguage = Platform.OS === 'ios' ? NativeModules.SettingsManager.settings.AppleLocale: NativeModules.I18nManager.localeIdentifier;
+// const deviceLanguage = Platform.OS === 'ios' ? NativeModules.SettingsManager.settings.AppleLocale: NativeModules.I18nManager.localeIdentifier;
+const deviceLanguage = "id-ID";
 const languageDetector = {
   type: 'languageDetector',
   async: true,
