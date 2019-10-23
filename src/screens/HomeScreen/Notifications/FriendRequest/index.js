@@ -2,7 +2,7 @@ import React from "react"
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Badge } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
-
+import { withTranslation } from 'react-i18next';
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import FriendsAPI from "src/api/friends";
 
@@ -34,7 +34,7 @@ class FriendRequest extends React.PureComponent{
     return (
       <TouchableOpacity style={styles.notificationcontainer} onPress={this.handleFriendRequestPress}>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <Text>Permintaan Pertemanan</Text>
+          <Text>{this.props.t("friendRequest")}</Text>
           <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <Badge>{this.state.count}</Badge>
             <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -55,4 +55,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default withCurrentUser(FriendRequest)
+export default withTranslation()(withCurrentUser(FriendRequest))

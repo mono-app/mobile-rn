@@ -9,12 +9,34 @@ Discussion.triggerNewDiscussion = functions.region("asia-east2").firestore.docum
   const discussionDocument = documentSnapshot.data();
   const { schoolId, classId, taskId, discussionId  } = context.params;
 
-  // this trigger for auto add room audiences rooms collection  
   const db = admin.firestore();
   const userMappingRef = db.collection("userMapping").doc(discussionDocument.posterEmail);
   const schoolRef = userMappingRef.collection("schools").doc(schoolId)
   const discussionRef = schoolRef.collection("discussions").doc(discussionId)
   const data = Object.assign({classId: classId, taskId: taskId}, documentSnapshot.data())
+  discussionRef.set(data)
+  
+ 
+  return Promise.resolve(true);
+})
+
+Discussion.triggerNewDiscussionComment = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/tasks/{taskId}/discussions/{discussionId}/comments/{commentId}").onCreate(async (documentSnapshot, context) => {
+  const discussionDocument = documentSnapshot.data();
+  const { schoolId, classId, taskId, discussionId  } = context.params;
+
+  // add to My Discussion when commenting someone discussions
+  const db = admin.firestore();
+  const userMappingRef = db.collection("userMapping").doc(discussionDocument.posterEmail);
+  const schoolRef = userMappingRef.collection("schools").doc(schoolId)
+  const discussionRef = schoolRef.collection("discussions").doc(discussionId)
+
+  const school2Ref = db.collection("schools").doc(schoolId)
+  const class2Ref = school2Ref.collection("classes").doc(classId)
+  const task2Ref = class2Ref.collection("tasks").doc(taskId)
+  const discussion2Ref = task2Ref.collection("discussions").doc(discussionId)
+  const discussion2Snapshot = await discussion2Ref.get()
+
+  const data = Object.assign({classId: classId, taskId: taskId}, discussion2Snapshot.data())
   discussionRef.set(data)
   
  

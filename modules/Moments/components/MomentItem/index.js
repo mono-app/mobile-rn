@@ -5,10 +5,9 @@ import MomentAPI from "modules/Moments/api/moment";
 import Logger from "src/api/logger";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-import { withNavigation } from "react-navigation";
 import { default as momentDate } from "moment"
-
-import SquareAvatar from "src/components/Avatar/Square";
+import { withTranslation } from 'react-i18next';
+import CircleAvatar from "src/components/Avatar/Circle";
 import LikeButton from "modules/Moments/components/MomentItem/LikeButton";
 import VerticalMenu from "modules/Moments/components/MomentItem/VerticalMenu";
 import ImageList from "modules/Moments/components/MomentItem/ImageList";
@@ -80,7 +79,7 @@ function MomentItem(props){
       <View style={{ justifyContent: "space-between", flexDirection:"row" }}>
         <TouchableOpacity onPress={handleProfilePress}>
           <View style={styles.profile}>
-            <SquareAvatar size={50} uri={people.profilePicture}/>
+            <CircleAvatar size={50} uri={people.profilePicture}/>
             <View style={{ marginLeft: 8 }}>
               <Text style={{ margin: 0, fontWeight: "bold" }}>{people.applicationInformation.nickName}</Text>
               <Caption style={{ margin: 0 }}>{createdDate}</Caption>
@@ -98,13 +97,13 @@ function MomentItem(props){
         {canComment?(
           <TouchableOpacity style={styles.actionItem} onPress={handleCommentPress}>
             <MaterialCommunityIcons name="comment-outline" size={16} style={{ marginRight: 4, color:(moment.isCommented)? "#0ead69" : "#000000" }}/>
-            <Text style={{ color:(moment.isCommented)? "#0ead69" : "#000000" }}>{totalComments?`(${totalComments})`: ""} Komentar</Text>
+            <Text style={{ color:(moment.isCommented)? "#0ead69" : "#000000" }}>{totalComments?`(${totalComments})`: ""} {props.t("comments")}</Text>
           </TouchableOpacity>
         ): null}
         {canShare?(
           <TouchableOpacity style={styles.actionItem} onPress={handleSharePress}>
             <MaterialCommunityIcons name="share-variant" size={16} style={{ marginRight: 4 }}/>
-            <Text>Bagikan</Text>
+            <Text>{props.t("share")}</Text>
           </TouchableOpacity>
         ):null}
       </View>
@@ -126,4 +125,4 @@ MomentItem.defaultProps = {
   onCommentPress: () => {},
   onSharePress: () => {}
 };
-export default withCurrentUser(MomentItem);
+export default withTranslation()(withCurrentUser(MomentItem))

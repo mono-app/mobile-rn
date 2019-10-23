@@ -5,6 +5,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph, Card } from "react-native-paper";
 import moment from "moment"
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
 
@@ -12,7 +13,7 @@ const INITIAL_STATE = { title: "", details: "",dueDate: {}, isFetching: false }
  * @param {string} title 
  * @param {string} classId
  */
-export default class TaskListItem extends React.Component{
+class TaskListItem extends React.Component{
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
@@ -52,10 +53,10 @@ export default class TaskListItem extends React.Component{
             <TouchableOpacity onPress={this.props.onPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <View>
-                   <Text style={{ fontWeight: "700" }}>{title}</Text>
-                   <Paragraph style={{ color: "#5E8864", fontWeight: "bold", fontStyle:"italic" }}>Batas akhir pengumpulan</Paragraph>
-                   <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>Tanggal {creationDate} | Pukul {creationTime}</Paragraph>
+                  <View style={{flex:1}}>
+                   <Text style={{ fontWeight: "700", lineHeight:20 }}>{title}</Text>
+                   <Paragraph style={{ color: "#5E8864", fontWeight: "bold", fontStyle:"italic" }}>{this.props.t("dueDate")}:</Paragraph>
+                   <Paragraph style={{ color: "#5E8864", fontStyle:"italic"  }}>{this.props.t("date")} {creationDate} | {this.props.t("time")} {creationTime}</Paragraph>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -91,3 +92,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
+
+export default withTranslation()(TaskListItem)

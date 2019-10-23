@@ -8,6 +8,7 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import { TouchableOpacity } from "react-native";
 import { Text, Surface, IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-navigation";
+import { withTranslation } from 'react-i18next';
 
 function Header(props){
   const { currentUser } = props;
@@ -29,14 +30,13 @@ function Header(props){
       }
     });
   }
-  
 
   return (
     <Surface style={{ elevation: 4 }}>
       <SafeAreaView style={{ padding: 16, flexDirection: "row", justifyContent: "space-between" }}>
         <CircleAvatar size={50} uri={currentUser.profilePicture}/>
         <TouchableOpacity style={styles.addToMomentContainer} onPress={handleAddMomentPress}>
-          <Text style={{color: "white",fontWeight: 'bold'}}>Tambahkan moment</Text>
+          <Text style={{color: "white",fontWeight: 'bold'}}>{props.t("addMoment")}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleQuickCameraPress}>
           <IconButton icon="add-a-photo"  size={24}/>
@@ -45,4 +45,4 @@ function Header(props){
     </Surface>
   )
 }
-export default withTheme(withNavigation(withCurrentUser(Header)));
+export default withTranslation()(withTheme(withNavigation(withCurrentUser(Header))))

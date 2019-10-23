@@ -16,6 +16,8 @@ import ImageListItem from "src/components/ImageListItem"
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import ImagePicker from 'react-native-image-picker';
 import ImageCompress from "src/api/ImageCompress"
+import { withTranslation } from 'react-i18next';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -43,21 +45,24 @@ class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleSavePress = async () => {
-    this.setState({ isLoading: true });
     const currentUserEmail = this.props.currentUser.email
     const data = {
       posterEmail: currentUserEmail,
-      title: this.state.title,
-      description: this.state.description,
+      title: this.state.title.trim(),
+      description: this.state.description.trim(),
       location: {...this.state.locationCoordinate},
       images: this.state.imagesPicked
     }
- 
-    await DiscussionAPI.addDiscussion(this.schoolId, this.classId, this.taskId, data);
-    this.setState({ isLoading: false });
-    const { navigation } = this.props;
-    navigation.state.params.onRefresh(this.state.defaultValue);
-    navigation.goBack();
+
+    if(data.title.length>0 && data.description.length>0){
+      this.setState({ isLoading: true });
+
+      await DiscussionAPI.addDiscussion(this.schoolId, this.classId, this.taskId, data);
+      this.setState({ isLoading: false });
+      const { navigation } = this.props;
+      navigation.state.params.onRefresh(this.state.defaultValue);
+      navigation.goBack();
+    }
   };
 
   handleLocationPress = () => {
@@ -217,10 +222,10 @@ class AddDiscussionScreen extends React.PureComponent {
       <View style={{flex: 1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Buat Diskusi Baru"
+            title={this.props.t("createNewDiscussion")}
             style={{ backgroundColor: "white" }}
           />
-        <ScrollView>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
           <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>
                   {this.subject}
@@ -232,7 +237,7 @@ class AddDiscussionScreen extends React.PureComponent {
 
           <View style={{ backgroundColor: "#fff" }}>
             <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
-              <Text style={styles.label}>Topik Diskusi</Text>
+              <Text style={styles.label}>{this.props.t("topicDiscussion")}</Text>
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8" }}
                 value={this.state.title}
@@ -241,7 +246,7 @@ class AddDiscussionScreen extends React.PureComponent {
             </View>
             
             <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
-              <Text style={styles.label}>Deskripsi</Text>
+              <Text style={styles.label}>{this.props.t("description")}</Text>
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
                 value={this.state.description}
@@ -279,17 +284,17 @@ class AddDiscussionScreen extends React.PureComponent {
           
             <View style={{ paddingVertical: 8 }} />
             <Button
-              text="Buat Diskusi"
+              text={this.props.t("createDiscussion")}
               disabled={this.state.isLoading}
               isLoading={this.state.isLoading}
               onPress={this.handleSavePress}
               style={{marginHorizontal: 16}}
             />
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
         <DeleteDialog 
           ref ={i => this.deleteDialog = i}
-          title= {"Apakah anda ingin menghapus gambar ini?"}
+          title= {this.props.t("deletePicAsk")}
           onDeletePress={this.onDeletePress}/>
       </View>
     );
@@ -332,4 +337,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 });
-export default withCurrentUser(AddDiscussionScreen)
+export default withTranslation()(withCurrentUser(AddDiscussionScreen))

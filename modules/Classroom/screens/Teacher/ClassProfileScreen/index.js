@@ -15,11 +15,12 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import RoomsAPI from "src/api/rooms"
+import TaskAPI from "modules/Classroom/api/task"
+import StudentAPI from "modules/Classroom/api/student"
+import FileAPI from "modules/Classroom/api/file"
 import { IconButton } from "react-native-paper";
 
-const INITIAL_STATE = { isLoadingProfile: true, class: null };
-
-
+const INITIAL_STATE = { isLoadingProfile: true, class: null, totalTask:0, totalStudent:0, totalFiles: 0 };
 class ClassProfileScreen extends React.PureComponent {
   static navigationOptions = () => {
     return {
@@ -32,6 +33,18 @@ class ClassProfileScreen extends React.PureComponent {
       this.setState({ isLoadingProfile: true });
 
     const class_ = await ClassAPI.getDetail(this.props.currentSchool.id, this.classId);
+
+    TaskAPI.getTotalActiveTasks(this.props.currentSchool.id, this.classId).then(totalTask => {
+      this.setState({totalTask})
+    })
+
+    StudentAPI.getTotalClassStudent(this.props.currentSchool.id, this.classId).then(totalStudent => {
+      this.setState({totalStudent})
+    })
+
+    FileAPI.getTotalClassFiles(this.props.currentSchool.id, this.classId).then(totalFiles => {
+      this.setState({totalFiles})
+    })
 
     if(this._isMounted)
         this.setState({ isLoadingProfile: false, class: class_ });
@@ -174,6 +187,7 @@ class ClassProfileScreen extends React.PureComponent {
                     <Text style={styles.label}>Daftar Murid</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalStudent}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>
@@ -187,6 +201,7 @@ class ClassProfileScreen extends React.PureComponent {
                     <Text style={styles.label}>Berkas</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalFiles}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>
@@ -200,6 +215,7 @@ class ClassProfileScreen extends React.PureComponent {
                     <Text style={styles.label}>Daftar Tugas</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
+                    <Text>{this.state.totalTask}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
                 </View>

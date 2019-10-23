@@ -49,7 +49,7 @@ export default class SchoolListItem extends React.Component{
       <TouchableOpacity style={styles.userContainer} onPress={this.props.onPress}>
         <View style={{flexDirection:"row"}}>
           <SquareAvatar size={40} uri={schoolProfilePic}/>
-          <View style={{marginLeft:16}}>
+          <View style={{marginLeft:16, flex:1}}>
             <Text style={{ fontWeight: "700" }}>{this.state.school.name}</Text>
             <Paragraph style={{ color: "#5E8864" }}>{this.state.userName}</Paragraph>
           </View>

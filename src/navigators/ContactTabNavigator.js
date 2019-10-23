@@ -8,9 +8,9 @@ import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/D
 import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
 
 export default ContactTabNavigator =  createStackNavigator({
-  ContactHome: { screen: ContactScreen },
+  ContactHome: { screen: ContactScreen, navigationOptions: { header: null } },
   Chat: { screen: ChatScreen },
-  PeopleInformation: { screen: PeopleInformationScreen },
+  PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   ...DiscussionClassroomNotifNavigatorObj,
   ...MomentNavigatorObj
 }, {

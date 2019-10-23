@@ -3,7 +3,7 @@ import moment from "moment";
 import { Dimensions, View, FlatList } from "react-native";
 import { Text, Caption, Paragraph } from "react-native-paper";
 import ImageListItem from "src/components/ImageListItem"
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import SchoolAPI from "modules/Classroom/api/school";
 
 const INITIAL_STATE = { posterName: "", comment: {}, isLoading: true }
@@ -52,7 +52,7 @@ export default class CommentListItem extends React.Component{
     return(
       <View style={{ marginTop: 8, borderBottomWidth:1, borderBottomColor: "#E8EEE8"}}>
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-            <SquareAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
+            <CircleAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
             <View style={{ marginLeft: 16 }}>
               <Text style={{ fontWeight: "700" }}>{this.state.posterName}</Text>
               <Caption style={{ marginTop: 0 }}>{timeFromNow}</Caption>

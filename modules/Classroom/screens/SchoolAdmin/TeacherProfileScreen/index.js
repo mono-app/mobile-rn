@@ -4,7 +4,7 @@ import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
 import ClassAPI from "modules/Classroom/api/class";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
@@ -195,7 +195,7 @@ class TeacherProfileScreen extends React.PureComponent {
 
             <View style={styles.profileContainer}>
               <Text style={{  fontSize: 16 }}></Text>
-              <SquareAvatar size={100} uri="https://picsum.photos/200/200/?random"/>
+              <CircleAvatar size={100} uri="https://picsum.photos/200/200/?random"/>
             </View>
             <View>
               <TouchableOpacity onPress={this.handleNamePress}>

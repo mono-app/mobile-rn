@@ -20,7 +20,6 @@ function ChatBottomTextInput(props){
   const [ sessionId, setSessionId ] = React.useState(room.liveVoice === undefined? null: room.liveVoice.session);
   const [ token, setToken ] = React.useState(null);
   const [ isConnected, setIsConnected ] = React.useState(false);
-  const _isMounted = React.useRef(true);
 
   const roomListener = React.useRef(null);
 
@@ -32,13 +31,14 @@ function ChatBottomTextInput(props){
     },
     textInput: {
       backgroundColor: "#E8EEE8", borderColor: "#E8EEE8", borderWidth: 1, flexGrow: 1,
-      borderRadius: 32, paddingLeft: 16, paddingRight: 16, paddingVertical: 4, flexShrink: 1
+      borderRadius: 32, paddingLeft: 16, paddingRight: 16, paddingVertical: 4, flexShrink: 1,
+      maxHeight: 100
     }
   });
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
   const handleSessionConnected = () => setIsConnected(true);
-  const handleMessageChange = (newMessage) => {if(_isMounted.current) setMessage(newMessage);}
+  const handleMessageChange = (newMessage) => setMessage(newMessage);
   const handleSendPress = () => {
     const copiedMessage = JSON.parse(JSON.stringify(message));
     if(copiedMessage.trim() && props.editable ){
@@ -99,7 +99,7 @@ function ChatBottomTextInput(props){
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
         </React.Fragment>
       )}
-      <TextInput style={styles.textInput} autoFocus multiline value={message} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
+      <TextInput style={styles.textInput} autoFocus multiline value={message} maxLength={4000} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
     </SafeAreaView>
   )

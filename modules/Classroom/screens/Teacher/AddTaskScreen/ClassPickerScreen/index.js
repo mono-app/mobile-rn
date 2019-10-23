@@ -19,7 +19,7 @@ class ClassPickerScreen extends React.PureComponent {
 
   loadClasses = async () => {
     if(this._isMounted) this.setState({classList: [], isRefreshing: true})
-    const classList = await ClassAPI.getActiveClasses(this.props.currentSchool.id);
+    const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.email);
     if(this._isMounted) this.setState({ classList, filteredClassList: classList, isRefreshing: false });
   }
 

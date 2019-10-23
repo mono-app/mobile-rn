@@ -4,12 +4,12 @@ import { ActivityIndicator, Title, Dialog, Text, Caption } from "react-native-pa
 import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import ClassAPI from "modules/Classroom/api/class";
-import SquareAvatar from "src/components/Avatar/Square";
+import CircleAvatar from "src/components/Avatar/Circle";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0  }
+const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0, profilePicture: "https://picsum.photos/200/200/?random"}
 
 class StudentProfileScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -194,8 +194,8 @@ class StudentProfileScreen extends React.PureComponent {
           <View style={{padding: 16}}>
             <Title style={{ marginLeft: 16}}>{(this.state.student.noInduk)? this.state.student.noInduk  : "-"} / {this.state.student.name}</Title>
             <View style={styles.profileContainer}>
-              <Text style={{  fontSize: 16 }}></Text>
-              <SquareAvatar size={100} uri="https://picsum.photos/200/200/?random"/>
+              <Text style={{  fontSize: 16 }}></Text>            
+              <CircleAvatar size={100} uri={(this.state.student.profilePicture)? this.state.student.profilePicture.downloadUrl : this.state.profilePicture }/>
             </View>
             <View>
               <TouchableOpacity onPress={this.handleNamePress}>

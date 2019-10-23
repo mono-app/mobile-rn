@@ -146,6 +146,21 @@ export default class StudentAPI{
     return Promise.resolve(studentDocuments);
   }
 
+  
+  static async getTotalClassStudent(schoolId, classId){
+    const db = firebase.firestore();
+    const schoolsCollection = new SchoolsCollection();
+    const classesCollection = new ClassesCollection();
+    const studentsCollection = new StudentsCollection();
+    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+    const classesDocumentRef = schoolsDocumentRef.collection(classesCollection.getName()).doc(classId);
+    const studentsCollectionRef = classesDocumentRef.collection(studentsCollection.getName());
+
+    const studentSnapshot = await studentsCollectionRef.get();
+   
+    return Promise.resolve(studentSnapshot.size);
+  }
+
   static async getDetail(schoolId, email) {
     const db = firebase.firestore();
     const studentsCollection = new StudentsCollection();

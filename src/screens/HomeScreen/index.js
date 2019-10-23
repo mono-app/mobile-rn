@@ -28,9 +28,7 @@ function HomeScreen(props){
       await requestPermission();
       return;
     }
-
     Contacts.getAll( async (err, contacts) => {
-
       if (err !== 'denied'){
         let phoneNumbers = []
         const accessToken = await UserMappingAPI.getAccessToken()
@@ -48,30 +46,19 @@ function HomeScreen(props){
             userId: props.currentUser.email,
             phonenumbers: phoneNumbers,
           })
-          console.log(body)
 
           fetch("https://us-central1-chat-app-fdf76.cloudfunctions.net/contactService/synccontact", {
             method: 'POST', headers: headers, body: body
-          }).then(res => {
-            console.log("sync contact:")
-            console.log(res)
-
-          })
-          
+          }).then()
         }
-
       }
     })
   }
   
   const checkPermission = async () => {
     let permissionResponse;
-    if(Platform.OS === "android"){
-      permissionResponse = await Permissions.check("contacts");
-    }else if(Platform.OS === "ios"){
-      permissionResponse = await Permissions.check("contacts");
-    }
-
+    if(Platform.OS === "android") permissionResponse = await Permissions.check("contacts")
+    else if(Platform.OS === "ios") permissionResponse = await Permissions.check("contacts")
     if(permissionResponse === "authorized") return true;
     else return false;
   }
@@ -79,21 +66,10 @@ function HomeScreen(props){
   const requestPermission = async () => {
     try{
       let permissionResponse;
-      if(Platform.OS === "android"){
-        permissionResponse = await Permissions.request("contacts");
-      }else if(Platform.OS === "ios"){
-        permissionResponse = await Permissions.request("contacts");
-      }
-
-      if(permissionResponse === "authorized"){
-        // do something if authorized
-        autoAddContact()
-      }else{
-        // do something if unauthorized
-      }
-    }catch(err){
-
-    }
+      if(Platform.OS === "android") permissionResponse = await Permissions.request("contacts");
+      else if(Platform.OS === "ios") permissionResponse = await Permissions.request("contacts");
+      if(permissionResponse === "authorized") autoAddContact()
+    }catch(err){}
   }
 
   React.useEffect(() => {

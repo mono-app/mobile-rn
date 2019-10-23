@@ -3,10 +3,11 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph } from "react-native-paper";
 import moment from "moment"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { announcement: {}, isFetching: false, showDateLabel: null, date: "-" }
 
-export default class AnnouncementListItem extends React.Component{
+class AnnouncementListItem extends React.Component{
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
@@ -52,9 +53,9 @@ export default class AnnouncementListItem extends React.Component{
           <View style={styles.listItemContainer}>
             <View style={styles.listDescriptionContainer}>
               <View style={styles.listDescriptionContainer}>
-                <Paragraph style={{ color: "#EF6F6C", marginRight: 4 }}>Pengumpulan Tugas</Paragraph>
+                <Paragraph style={{ color: "#EF6F6C", marginRight: 4 }}>{this.props.t("taskSubmissions")}</Paragraph>
                 <Paragraph style={{  fontWeight:"700", marginRight: 4 }}>{ (this.state.announcement.task)? this.state.announcement.task.title : ""}</Paragraph>
-                <Paragraph style={{ marginRight: 4 }}>pada kelas</Paragraph>
+                <Paragraph style={{ marginRight: 4 }}>{this.props.t("atClass")}</Paragraph>
                 <Paragraph style={{ fontWeight:"700" }}>{ (this.state.announcement.class)? this.state.announcement.class.subject : ""}</Paragraph>
               </View>
               <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864", alignSelf:"center" }}/>
@@ -84,3 +85,5 @@ const styles = StyleSheet.create({
     flex: 1,    
   },
 })
+
+export default withTranslation()(AnnouncementListItem)

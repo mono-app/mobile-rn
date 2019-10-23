@@ -9,6 +9,7 @@ import FileAPI from "modules/Classroom/api/file";
 import DeleteDialog from "src/components/DeleteDialog";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import RNFetchBlob from 'react-native-fetch-blob'
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { 
   isRefreshing: true, 
@@ -167,7 +168,7 @@ class ClassFilesScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Berkas"
+            title={this.props.t("files")}
             style={{ backgroundColor: "white" }}
           />
         <View style={styles.subjectContainer}>
@@ -181,7 +182,7 @@ class ClassFilesScreen extends React.PureComponent {
         <View style={{marginTop: 16, marginHorizontal: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Berkas" />
+            placeholder={this.props.t("searchFiles")} />
         </View>
       
         <FlatList
@@ -205,7 +206,7 @@ class ClassFilesScreen extends React.PureComponent {
               style={{ flexDirection: "row", justifyContent: "space-evenly" }}
             >
               <View>
-                <Text>Mendownload Berkas</Text>
+                <Text>{this.props.t("downloadingFiles")}</Text>
                   <ProgressBar progress={this.state.progressPercentage} color="#EF6F6C" />
               </View>
             </Dialog.Content>
@@ -213,7 +214,7 @@ class ClassFilesScreen extends React.PureComponent {
         </Portal>
         <DeleteDialog 
         ref ={i => this.deleteDialog = i}
-        title= {"Apakah anda ingin menghapus berkas ini?"}
+        title={this.props.t("deleteFileAsk")}
         onDeletePress={this.onDeletePress}/>
       </View>
     );
@@ -235,4 +236,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
-export default withCurrentStudent(ClassFilesScreen)
+export default withTranslation()(withCurrentStudent(ClassFilesScreen))

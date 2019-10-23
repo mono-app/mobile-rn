@@ -1,5 +1,5 @@
 import React from "react";
-
+import { withTranslation } from 'react-i18next';
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import HeadlineTitle from "src/components/HeadlineTitle";
 import AppHeader from "src/components/AppHeader";
@@ -9,7 +9,6 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 
 function PrivacyScreen(props){
-  const { currentUser } = props;
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#E8EEE8", color: "black" },
     groupContainer: { marginBottom: 16 },
@@ -26,18 +25,11 @@ function PrivacyScreen(props){
   const handleHiddenUserPress = () => {
     props.navigation.navigate('HiddenUsers');
   }
-
-  React.useEffect(() => {
-   
-    return function cleanup(){
-
-    }
-  }, [])
   
   return(
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <AppHeader style={{ backgroundColor: "transparent" }} navigation={props.navigation}/>
-      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Privasi Saya</HeadlineTitle>
+      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>{props.t("myPrivacy")}</HeadlineTitle>
       <View style={styles.groupContainer}>
           <TouchableOpacity onPress={handleBlockedUserPress}>
             <View style={styles.menu}>
@@ -60,4 +52,4 @@ function PrivacyScreen(props){
   )
 }
 PrivacyScreen.navigationOptions = { header: null }
-export default withCurrentUser(PrivacyScreen);
+export default withTranslation()(withCurrentUser(PrivacyScreen))

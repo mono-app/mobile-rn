@@ -42,11 +42,19 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
 
   const senderSnapshot = await db.collection("users").doc(senderEmail).get()
   const senderNickname = senderSnapshot.data().applicationInformation.nickName
-
-  const blockedQuerySnapshot = db.collection("friendList").doc(senderEmail).collection("blocked").get()
-  const blockedUserList = blockedQuerySnapshot.map(docSnap=>{
-    return docSnap.id
+  const blockedUserList = []
+  const blockedByUserList = []
+  const blockedQuerySnapshot = await db.collection("friendList").doc(senderEmail).collection("blocked").get()
+  if(!blockedQuerySnapshot.empty)
+  blockedQuerySnapshot.docs.forEach(docSnap=>{
+    blockedUserList.push(docSnap.id)
   })
+  const blockedByQuerySnapshot = await db.collection("friendList").doc(senderEmail).collection("blockedBy").get()
+  if(!blockedByQuerySnapshot.empty){
+    blockedByQuerySnapshot.docs.forEach(docSnap=>{
+      blockedByUserList.push(docSnap.id)
+    })
+  }
   // get all audiences messagingToken  
   const promises = audiences.map(audience => {
     const userRef = db.collection("users").doc(audience);
@@ -65,7 +73,8 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   // send notification to all audiences except sender
   const messagePromises = audiencesData.map(audienceData => {
     if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken && 
-      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken) && !blockedUserList.includes(audienceData.email)){
+      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken) && !blockedUserList.includes(audienceData.email) && 
+      !blockedByUserList.includes(audienceData.email)){
       let message = {}
       let type= "-"
       let title = ""

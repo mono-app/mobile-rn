@@ -9,6 +9,7 @@ import QRCode from "react-native-qrcode-svg"
 import AppHeader from "src/components/AppHeader";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { withTranslation } from 'react-i18next';
 
 function MyQRScreen(props){
   const [ status, setStatus ] = React.useState("");
@@ -47,7 +48,7 @@ function MyQRScreen(props){
             <View style={{ flexDirection: "row", marginBottom: 32, marginTop: 32, justifyContent: "center" }}>
               <QRCode size={200} value={currentUser.email}/>
             </View>
-            <Text style={styles.smallDescription}>Scan QR Code diatas ini untuk menambahkan aku dalam daftar pertemanan-mu</Text>
+            <Text style={styles.smallDescription}>{props.t("scanQrDesc")}</Text>
           </Card.Content>
         </Card>
 
@@ -57,7 +58,7 @@ function MyQRScreen(props){
             <View style={{ display: "flex", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
               <View style={{ display: "flex", flexDirection: "column" }}>
                 <Text style={{ fontWeight: "500", fontSize: 16 }}>Scan</Text>
-                <Text>Menambahkan teman dengan QR code</Text>
+                <Text>{props.t("addFriendQrLabel")}</Text>
               </View>
               <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
             </View>
@@ -69,9 +70,4 @@ function MyQRScreen(props){
 }
 
 MyQRScreen.navigationOptions = { header: null }
-export default 
-withNavigation(
-  withCurrentUser(
-    withTheme(MyQRScreen)
-  )
-);
+export default withTranslation()(withNavigation(withCurrentUser(withTheme(MyQRScreen))))
