@@ -7,7 +7,7 @@ import moment from "moment";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
-import Utils from "src/api/utils"
+import Key from "src/helper/key"
 import ChatBubble from "src/components/ChatBubble";
 import ChatBubbleWithPhoto from "src/components/ChatBubbleWithPhoto";
 import { FlatList, View, AsyncStorage } from "react-native";
@@ -87,7 +87,7 @@ function ChatList(props){
   
   React.useEffect(() => {
     const init = async () => {
-      const color = await AsyncStorage.getItem(Utils.KEY_STORAGE_CHAT_BACKGROUND)
+      const color = await AsyncStorage.getItem(Key.KEY_CHAT_BACKGROUND)
       if(color){
         setBgColor(color)
       }

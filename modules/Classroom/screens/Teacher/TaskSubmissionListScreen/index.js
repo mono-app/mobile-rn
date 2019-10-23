@@ -5,6 +5,7 @@ import StudentListItem from "modules/Classroom/components/StudentListItem";
 import AppHeader from "src/components/AppHeader";
 import SubmissionAPI from "modules/Classroom/api/submission";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true };
 
@@ -64,7 +65,7 @@ class TaskSubmissionListScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Lihat Pengumpulan"
+            title={this.props.t("seeSubmissions")}
             style={{ backgroundColor: "white" }}
           />
         <View style={styles.subjectContainer}>
@@ -107,4 +108,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
-export default withCurrentTeacher(TaskSubmissionListScreen)
+export default withTranslation()(withCurrentTeacher(TaskSubmissionListScreen))

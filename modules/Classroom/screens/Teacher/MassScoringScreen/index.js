@@ -7,6 +7,7 @@ import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import TextInput from "src/components/TextInput";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -109,13 +110,13 @@ class MassScoringScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
        <AppHeader
           navigation={this.props.navigation}
-          title="Penilaian Massal"
+          title={this.props.t("massScoring")}
           style={{ backgroundColor: "white" }}
         />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Murid" />
+            placeholder={this.props.t("searchStudent")} />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
@@ -134,7 +135,7 @@ class MassScoringScreen extends React.PureComponent {
             onDismiss={this.hideDialog}
             visible={this.state.dialogVisible}>
             <Dialog.Content>
-            <Headline>Masukan Nilai Untuk</Headline>
+            <Headline>{this.props.t("inputScoreFor")}</Headline>
             <Subheading>{this.state.selectedStudentInfo}</Subheading>
               <TextInput
                 placeholder=""
@@ -146,7 +147,7 @@ class MassScoringScreen extends React.PureComponent {
             <Dialog.Actions>  
               <ButtonDialog onPress={() => {
                 this.setState({dialogVisible: false})
-              }}>Batal</ButtonDialog>
+              }}>{this.props.t("cancel")}</ButtonDialog>
 
               <ButtonDialog onPress={this.saveDialog}>OK</ButtonDialog>
             </Dialog.Actions>
@@ -157,4 +158,4 @@ class MassScoringScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentTeacher(MassScoringScreen)
+export default withTranslation()(withCurrentTeacher(MassScoringScreen))

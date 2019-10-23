@@ -39,7 +39,6 @@ Discussion.triggerNewDiscussionComment = functions.region("asia-east2").firestor
   const data = Object.assign({classId: classId, taskId: taskId}, discussion2Snapshot.data())
   discussionRef.set(data)
   
- 
   return Promise.resolve(true);
 })
 

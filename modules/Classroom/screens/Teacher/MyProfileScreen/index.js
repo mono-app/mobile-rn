@@ -17,12 +17,16 @@ import StorageAPI from "src/api/storage";
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import ImageCompress from "src/api/ImageCompress"
+import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
+import Key from "src/helper/key"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
   status:"", 
   totalClass: 0,
-  profilePicture: "https://picsum.photos/200/200/?random" 
+  profilePicture: "https://picsum.photos/200/200/?random",
+  isUploadingImage: false
 }
 
 class MyProfileScreen extends React.PureComponent {
@@ -45,7 +49,7 @@ class MyProfileScreen extends React.PureComponent {
   
   loadStatus = async () => {
     let status = await StatusAPI.getLatestStatus(this.props.currentUser.email);
-    if(!status) status = { content: "Tulis statusmu disini..." };
+    if(!status) status = { content: this.props.t("writeStatusHere") };
     if(this._isMounted)
       this.setState({ status: status.content });
   }
@@ -67,7 +71,7 @@ class MyProfileScreen extends React.PureComponent {
   }
 
   
-  changeProfilePicture = async () => {
+  handleProfilePicturePress = async () => {
     const isPermissionGranted = await this.checkPermission();
     if(!isPermissionGranted){
       await this.requestStoragePermission();
@@ -77,6 +81,8 @@ class MyProfileScreen extends React.PureComponent {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
       });
+      this.setState({isUploadingImage: true})
+
       const storagePath = "/modules/classroom/teachers/"+uuid()
       const compressedRes = await ImageCompress.compress(res.uri, res.size)
 
@@ -90,6 +96,7 @@ class MyProfileScreen extends React.PureComponent {
         throw err;
       }
     }
+    this.setState({isUploadingImage: false})
   }
 
  
@@ -134,13 +141,15 @@ class MyProfileScreen extends React.PureComponent {
     this.handleClassListPress = this.handleClassListPress.bind(this);
     this.checkPermission = this.checkPermission.bind(this)
     this.loadStatus = this.loadStatus.bind(this);
-
+    this.handleProfilePicturePress = this.handleProfilePicturePress.bind(this);
+    
   }
 
   componentDidMount(){ 
     this._isMounted = true
     this.loadTotalClass();
     this.loadStatus();
+    this.props.classroomTutorial.show(Key.KEY_TUTORIAL_CLASSROOM_CHANGE_PROFILE_PIC)
   }
   
   componentWillUnmount() {
@@ -154,8 +163,8 @@ class MyProfileScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -164,23 +173,23 @@ class MyProfileScreen extends React.PureComponent {
       <View style={{ backgroundColor: "#E8EEE8" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Profil Guru"
+            title={this.props.t("teacherProfile")}
             style={{ backgroundColor: "white" }}
           />
         <ScrollView style={{ marginBottom: 56 }}>
-          <TouchableOpacity onPress={this.changeProfilePicture}>
-
             <PeopleProfileHeader
+              onProfilePicturePress={this.handleProfilePicturePress}
               style={{padding:16}}
+              isLoading={this.state.isUploadingImage}
+              showTutorialChangeProfilePic = {this.props.showTutorialChangeProfilePic}
+              tutorial = {this.props.classroomTutorial}
               profilePicture={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : this.state.profilePicture }
               title={this.props.currentTeacher.name}
               subtitle= {"NIK: " + this.props.currentTeacher.nik}/>
-          </TouchableOpacity>
-
           <TouchableOpacity onPress={this.handleStatusPress}>
             <View style={ styles.statusContainer }>
               <View>
-                  <Text style={styles.label}>Status saya</Text>
+                  <Text style={styles.label}>{this.props.t("myStatus")}</Text>
                   <Text numberOfLines={2}>{this.state.status}</Text>
               </View>
               <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -189,23 +198,23 @@ class MyProfileScreen extends React.PureComponent {
 
           <View style={{  marginBottom: 16 }}>  
            <PeopleInformationContainer
-              fieldName="Bergabung Sejak"
+              fieldName={this.props.t("joinDate")}
               fieldValue={moment(this.props.currentTeacher.creationTime.seconds * 1000).format("DD MMMM YYYY")}/>
           </View>
           
           <View style={{  marginBottom: 16 }}>
             
             <PeopleInformationContainer
-              fieldName="Alamat"
+              fieldName={this.props.t("address")}
               fieldValue={this.props.currentTeacher.address}/>
             <PeopleInformationContainer
-              fieldName="Nomor Telepon"
+              fieldName={this.props.t("phoneNo")}
               fieldValue={this.props.currentTeacher.phone}/>
             <PeopleInformationContainer
               fieldName="Email"
               fieldValue={this.props.currentTeacher.email}/>
             <PeopleInformationContainer
-              fieldName="Jenis Kelamin"
+              fieldName={this.props.t("gender")}
               fieldValue={this.props.currentTeacher.gender}/>
           
           </View>
@@ -213,7 +222,7 @@ class MyProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleClassListPress}>
             <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Jumlah Kelas</Text>
+                  <Text style={styles.label}>{this.props.t("totalClass")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalClass}</Text>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -224,7 +233,7 @@ class MyProfileScreen extends React.PureComponent {
             <TouchableOpacity onPress={this.handleArchivePress}>
               <View style={[styles.listItemContainer, {paddingVertical: 16}]}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Arsip Tugas</Text>
+                  <Text style={styles.label}>{this.props.t("taskArchive")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                   </View>
@@ -282,4 +291,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   }
 })
-export default withCurrentUser(withCurrentTeacher(MyProfileScreen))
+export default withTranslation()(withCurrentUser(withTutorialClassroom(withCurrentTeacher(MyProfileScreen))))

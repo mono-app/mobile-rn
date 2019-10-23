@@ -7,6 +7,7 @@ import Tooltip from 'react-native-walkthrough-tooltip';
 import CircleAvatar from "src/components/Avatar/Circle";
 import { View, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
+import { withTranslation } from 'react-i18next';
 
 function PeopleProfileHeader(props){
   const { showTutorialSettingChangeProfilePic, isLoading, applicationInformation, profilePicture } = props;

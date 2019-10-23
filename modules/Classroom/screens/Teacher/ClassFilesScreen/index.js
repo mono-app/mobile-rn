@@ -11,6 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import DeleteDialog from "src/components/DeleteDialog";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import RNFetchBlob from 'react-native-fetch-blob'
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { 
   isRefreshing: true, 
@@ -178,14 +179,14 @@ class ClassFilesScreen extends React.PureComponent {
         <View style={{margin: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Berkas" />
+            placeholder={this.props.t("searchFiles")} />
         </View>
         <View style={{backgroundColor: "#0ead69",
                       padding: 16}}>
           <TouchableOpacity onPress={this.handleAddFiles} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
           <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
             <Text style={{fontWeight:"bold", color:"#fff"}}>
-               TAMBAH ARSIP KELAS
+               {this.props.t("addClassArchive")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -210,7 +211,7 @@ class ClassFilesScreen extends React.PureComponent {
               style={{ flexDirection: "row", justifyContent: "space-evenly" }}
             >
               <View>
-                <Text>Mendownload Berkas</Text>
+                <Text>{this.props.t("downloadingFiles")}</Text>
                   <ProgressBar progress={this.state.progressPercentage} color="#EF6F6C" />
               </View>
             </Dialog.Content>
@@ -218,10 +219,10 @@ class ClassFilesScreen extends React.PureComponent {
         </Portal>
         <DeleteDialog 
         ref ={i => this.deleteDialog = i}
-        title= {"Apakah anda ingin menghapus berkas ini?"}
+        title= {this.props.t("deleteFileAsk")}
         onDeletePress={this.onDeletePress}/>
       </View>
     );
   }
 }
-export default withCurrentTeacher(ClassFilesScreen)
+export default withTranslation()(withCurrentTeacher(ClassFilesScreen))

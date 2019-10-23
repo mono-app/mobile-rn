@@ -67,6 +67,7 @@ function SettingsScreen(props){
   }
 
   React.useEffect(() => {
+    props.settingScreenTutorial.start()
     OfflineDatabase.synchronize();
     fetchUser();
   }, [])
@@ -82,9 +83,9 @@ function SettingsScreen(props){
               style={{ flex:1 }} people={currentUser} isLoading={isUploadingImage}
               onStatusPress={handleStatusPress} 
               onProfilePicturePress={handleProfilePicturePress}
+              tutorial = {props.settingScreenTutorial}
               profilePicture={currentUser.profilePicture.downloadUrl}
               showTutorialSettingChangeProfilePic={props.z}
-              settingScreenTutorial={props.settingScreenTutorial}/>
           <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
         </View>
 

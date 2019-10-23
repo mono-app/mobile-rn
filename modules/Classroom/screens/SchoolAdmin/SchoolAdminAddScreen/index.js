@@ -6,6 +6,7 @@ import AddTeacherScreen from "modules/Classroom/screens/SchoolAdmin/AddTeacherSc
 import AddStudentScreen from "modules/Classroom/screens/SchoolAdmin/AddStudentScreen";
 import { View } from "react-native";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false
@@ -63,4 +64,4 @@ class SchoolAdminAddScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentSchoolAdmin(SchoolAdminAddScreen)
+export default withTranslation()(withCurrentSchoolAdmin(SchoolAdminAddScreen))

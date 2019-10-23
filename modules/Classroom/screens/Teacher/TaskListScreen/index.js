@@ -6,6 +6,7 @@ import TaskListItem from "modules/Classroom/components/TaskListItem";
 import AppHeader from "src/components/AppHeader";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false };
 
@@ -83,7 +84,7 @@ class TaskListScreen extends React.PureComponent {
                       padding: 16}}>
           <TouchableOpacity onPress={this.handleAddTaskPress}>
             <Text style={{fontWeight:"bold"}}>
-              + Tambah Tugas
+              + {this.props.t("addTask")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -107,10 +108,10 @@ class TaskListScreen extends React.PureComponent {
           onDismiss={() => this.setState({ showSnackbarSuccessDeleting: false })}
           style={{backgroundColor:"#0ead69"}}
           duration={Snackbar.DURATION_SHORT}>
-          Tugas Berhasil Dihapus
+          {this.props.t("deleteTaskSuccess")}
         </Snackbar>
       </View>
     );
   }
 }
-export default withCurrentTeacher(TaskListScreen)
+export default withTranslation()(withCurrentTeacher(TaskListScreen))

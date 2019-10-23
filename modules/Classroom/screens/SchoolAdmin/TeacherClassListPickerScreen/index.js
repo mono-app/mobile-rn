@@ -6,6 +6,7 @@ import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[]  };
 
@@ -75,7 +76,7 @@ class TeacherClassListPickerScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Tambahkan Kelas"
+            title={this.props.t("addClass")}
             style={{ backgroundColor: "white" }}
           />
         <View style={{ padding: 16 }}>
@@ -102,4 +103,4 @@ class TeacherClassListPickerScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentSchoolAdmin(TeacherClassListPickerScreen)
+export default withTranslation()(withCurrentSchoolAdmin(TeacherClassListPickerScreen))

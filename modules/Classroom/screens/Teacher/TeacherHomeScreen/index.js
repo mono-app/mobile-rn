@@ -7,6 +7,10 @@ import Header from "modules/Classroom/components/Header";
 import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import { withCurrentUser } from "src/api/people/CurrentUser"
+import Key from "src/helper/key"
+import Tooltip from 'react-native-walkthrough-tooltip';
+import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -60,17 +64,15 @@ class TeacherHomeScreen extends React.PureComponent {
 
   async componentDidMount(){
     this._isMounted = true
-    if(this._isMounted)
-      this.setState({isLoading: true})
+    if(this._isMounted) this.setState({isLoading: true})
     await this.props.setCurrentTeacherEmail(this.state.schoolId, this.props.currentUser.email)
-    if(this._isMounted)
-      this.setState({isLoading: false})
+    if(this._isMounted) this.setState({isLoading: false})
+    this.props.classroomTutorial.show(Key.KEY_TUTORIAL_CLASSROOM_PROFILE)
   }
   
   componentWillUnmount() {
     this._isMounted = false;
   }
-
 
   render() {
     if(this.state.isLoading){
@@ -79,8 +81,8 @@ class TeacherHomeScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -91,11 +93,18 @@ class TeacherHomeScreen extends React.PureComponent {
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
           <CircleAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random" }/>
-          <TouchableOpacity onPress={this.handleTeacherProfilePress} style={{marginTop:16}}>
-            <Text style={{ color: this.props.theme.colors.primary }}>Lihat Profile</Text>
-          </TouchableOpacity>
+          <Tooltip
+          isVisible={this.props.showTutorialProfile}
+          placement="bottom"
+          showChildInTooltip={true}
+          content={<Text>{this.props.t("tutorialSeeProfile")}</Text>}
+          onClose={() => this.props.classroomTutorial.close()}>
+            <TouchableOpacity onPress={this.handleTeacherProfilePress} style={{marginTop:16}}>
+              <Text style={{ color: this.props.theme.colors.primary }}>Lihat Profile</Text>
+            </TouchableOpacity>
+          </Tooltip>
           <Title style={{marginTop: 22}}>
-            Selamat Datang,
+            {this.props.t("welcomeComa")}
           </Title>
           <Subheading>{this.props.currentTeacher.name}</Subheading>
         </View>
@@ -109,7 +118,7 @@ class TeacherHomeScreen extends React.PureComponent {
                     <FontAwesome name="list" style={{color: "#fff"}} size={24} />
                   </View>
                 </View>
-                <Text>Lihat  kelas</Text>
+                <Text>{this.props.t("myClass")}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.handleAddPress} >
                 <View style={styles.button} >
@@ -117,7 +126,7 @@ class TeacherHomeScreen extends React.PureComponent {
                     <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
                   </View>
                 </View>
-                <Text>Tambah Tugas</Text>
+                <Text>{this.props.t("addTask")}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonContainer}>
@@ -127,7 +136,7 @@ class TeacherHomeScreen extends React.PureComponent {
                       <FontAwesome name="list" style={{color: "#fff"}} size={24} />
                     </View>
                   </View>
-                  <Text>Diskusi Saya</Text>
+                  <Text>{this.props.t("myDiscussion")}</Text>
               </TouchableOpacity>
           </View>
         </View>
@@ -173,4 +182,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withCurrentUser(withCurrentTeacher(withTheme(TeacherHomeScreen)))
+export default withTranslation()(withCurrentUser(withTutorialClassroom(withCurrentTeacher(withTheme(TeacherHomeScreen)))))
