@@ -7,7 +7,7 @@ import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withTranslation } from 'react-i18next';
 
-const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false };
+const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false, taskList: [] };
 
 class ExpiredTaskListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -82,7 +82,7 @@ class ExpiredTaskListScreen extends React.PureComponent {
               </Text>
           </View>
         </View>
-       
+        {(this.state.taskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <View style={{marginTop: 16}}/>
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}

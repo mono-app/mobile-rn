@@ -7,7 +7,7 @@ import SubmissionAPI from "modules/Classroom/api/submission";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withTranslation } from 'react-i18next';
 
-const INITIAL_STATE = { isRefreshing: true };
+const INITIAL_STATE = { isRefreshing: true, submissionList:[] };
 
 class TaskSubmissionListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -72,7 +72,7 @@ class TaskSubmissionListScreen extends React.PureComponent {
             {this.title}
           </Text>
         </View>
-        
+        {(this.state.submissionList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.submissionList}

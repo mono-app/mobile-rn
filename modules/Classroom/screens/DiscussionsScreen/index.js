@@ -131,6 +131,7 @@ class DiscussionsScreen extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
+        {(this.state.filteredDiscussionList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("noDiscussions")}</Text>:null}
         <FlatList
           style={{marginVertical: 4}}
           data={this.state.filteredDiscussionList}

@@ -105,7 +105,7 @@ class ArchiveClassListScreen extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
-        
+        {(this.state.filteredClassList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}

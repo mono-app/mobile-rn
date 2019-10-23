@@ -221,6 +221,8 @@ const translate = {
   editTeacherName: "Edit Teacher Name",
   editNik: "Ubah NIK",
   nik: "NIK",
+  listEmpty: "List is Empty",
+  noDiscussions: "No Discussions",
 
 }
 export default translate

@@ -6,6 +6,7 @@ import AppHeader from "src/components/AppHeader";
 import StudentAPI from "modules/Classroom/api/student";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
+import { Text } from "react-native-paper";
 
 const INITIAL_STATE = { isRefreshing: true, peopleList: [], filteredPeopleList: [] };
 
@@ -80,6 +81,7 @@ class StudentListScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchStudent")} />
         </View>
+        {(this.state.filteredPeopleList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredPeopleList}
