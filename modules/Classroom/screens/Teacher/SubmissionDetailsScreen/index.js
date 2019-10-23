@@ -11,6 +11,7 @@ import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isLoading: true, showSnackbarScoringSuccess: false, submission:{}, class_:{}, task: {}, score: null };
 
@@ -109,8 +110,8 @@ class SubmissionDetailsScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -121,7 +122,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
       <View>
         <AppHeader
             navigation={this.props.navigation}
-            title="Nilai Tugas"
+            title={this.props.t("taskScore")}
             style={{ backgroundColor: "white" }}
           />
         <ScrollView style={{marginBottom:64, backgroundColor: "#E8EEE8"}}>
@@ -142,7 +143,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
             <View style={{marginTop: 16}}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Mata Pelajaran</Text>
+                  <Text style={styles.label}>{this.props.t("subject")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.class_.subject}</Text>
                   </View>
@@ -150,7 +151,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Kelas</Text>
+                  <Text style={styles.label}>{this.props.t("class")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.class_.room}</Text>
                   </View>
@@ -158,7 +159,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Tahun Pelajaran</Text>
+                  <Text style={styles.label}>{this.props.t("academicYear")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.class_.academicYear}</Text>
                   </View>
@@ -166,7 +167,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
               </View>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Semester</Text>
+                  <Text style={styles.label}>{this.props.t("semester")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.class_.semester}</Text>
                   </View>
@@ -180,7 +181,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <FontAwesome name="calendar" size={24} style={{marginRight:4, width: 30}}/>
-                  <Text style={styles.label}>Tanggal Pengumpulan</Text>
+                  <Text style={styles.label}>{this.props.t("dueDate")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("DD MMMM YYYY"):""}</Text>
                   </View>
@@ -189,7 +190,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
                   <FontAwesome name="clock-o" size={24} style={{marginRight:4, width: 30}}/>
-                  <Text style={styles.label}>Jam Pengumpulan</Text>
+                  <Text style={styles.label}>{this.props.t("dueTime")}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("HH:mm"):""}</Text>
                   </View>
@@ -202,12 +203,12 @@ class SubmissionDetailsScreen extends React.PureComponent {
                     {(this.state.score)? 
                     <View style={{flex:1, flexDirection:"row"}}>
                       <FontAwesome name="eye" size={24} style={{marginRight:4, width: 30}}/>
-                      <Text style={styles.label}>Lihat Nilai</Text>
+                      <Text style={styles.label}>{this.props.t("seeScore")}</Text>
                     </View>
                     :
                     <View style={{flex:1, flexDirection:"row"}}>
                       <FontAwesome name="pencil" size={24} style={{marginRight:4, width: 30}}/>
-                      <Text style={styles.label}>Beri Penilaian</Text>
+                      <Text style={styles.label}>{this.props.t("scoreIt")}</Text>
                     </View>
                     }
                     <View style={{flexDirection:"row", textAlign: "right"}}>
@@ -222,7 +223,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
                   <View style={styles.listDescriptionContainer}>
                    <FontAwesome name="download" size={24} style={{marginRight:4, width: 30}}/>
 
-                    <Text style={styles.label}>Unduh Tugas</Text>
+                    <Text style={styles.label}>{this.props.t("downloadTask")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
                       <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
                     </View>
@@ -238,7 +239,7 @@ class SubmissionDetailsScreen extends React.PureComponent {
             onDismiss={() => this.setState({ showSnackbarScoringSuccess: false })}
             style={{backgroundColor:"#0ead69"}}
             duration={Snackbar.DURATION_SHORT}>
-            Berhasil memberikan nilai
+            {this.props.t("scoringSuccess")}
           </Snackbar>
     </View>
     );
@@ -271,4 +272,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
-export default withCurrentTeacher(SubmissionDetailsScreen)
+export default withTranslation()(withCurrentTeacher(SubmissionDetailsScreen))

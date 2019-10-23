@@ -1,6 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation";
 import { CurrentStudentProvider } from "modules/Classroom/api/student/CurrentStudent"
+import { TutorialClassroomProvider } from "modules/Classroom/api/TutorialClassroom"
 import StudentHomeScreen from "modules/Classroom/screens/Student/StudentHomeScreen";
 import MyProfileScreen from "modules/Classroom/screens/Student/MyProfileScreen";
 import MyClassScreen from "modules/Classroom/screens/Student/MyClassScreen";
@@ -48,9 +49,11 @@ export default class StudentNavigator extends React.PureComponent{
   static router = MyNavigator.router;
   render(){
     return (
-      <CurrentStudentProvider>
-        <MyNavigator navigation={this.props.navigation}/>
-      </CurrentStudentProvider>
+      <TutorialClassroomProvider>
+        <CurrentStudentProvider>
+          <MyNavigator navigation={this.props.navigation}/>
+        </CurrentStudentProvider>
+      </TutorialClassroomProvider>
     )
   }
 }

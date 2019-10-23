@@ -4,6 +4,7 @@ import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import { withTranslation } from 'react-i18next';
 
 class SchoolAdminDataMasterScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -38,7 +39,7 @@ class SchoolAdminDataMasterScreen extends React.PureComponent {
           />
         <TouchableOpacity onPress={this.handleClassPress}>
           <View style={styles.menu}>
-            <Text style={{ fontWeight: "400" }}>Master Kelas</Text>
+            <Text style={{ fontWeight: "400" }}>{this.props.t("masterClass")}</Text>
             <View
               style={{
                 display: "flex",
@@ -56,7 +57,7 @@ class SchoolAdminDataMasterScreen extends React.PureComponent {
         </TouchableOpacity>
         <TouchableOpacity onPress={this.handleTeacherPress}>
           <View style={styles.menu}>
-            <Text style={{ fontWeight: "400" }}>Master Guru</Text>
+            <Text style={{ fontWeight: "400" }}>{this.props.t("masterTeacher")}</Text>
             <View
               style={{
                 display: "flex",
@@ -74,7 +75,7 @@ class SchoolAdminDataMasterScreen extends React.PureComponent {
         </TouchableOpacity>
         <TouchableOpacity onPress={this.handleStudentPress}>
           <View style={styles.menu}>
-            <Text style={{ fontWeight: "400" }}>Master Murid</Text>
+            <Text style={{ fontWeight: "400" }}>{this.props.t("masterStudent")}</Text>
             <View
               style={{
                 display: "flex",
@@ -109,4 +110,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E8EEE8"
   }
 });
-export default withCurrentSchoolAdmin(SchoolAdminDataMasterScreen)
+export default withTranslation()(withCurrentSchoolAdmin(SchoolAdminDataMasterScreen))

@@ -82,4 +82,16 @@ export default class SchoolAPI{
     }
     return Promise.resolve(name)
   }
+  static async getUserDetails(schoolId, email){
+    const userRole = await SchoolAPI.getUserRole(schoolId, email);
+    let name = "-"
+    if(userRole==="teacher"){
+      const teacher = await TeacherAPI.getDetail(schoolId, email)
+      name = teacher
+    }else if(userRole==="student"){
+      const student = await StudentAPI.getDetail(schoolId, email)
+      name = student
+    }
+    return Promise.resolve(name)
+  }
 }

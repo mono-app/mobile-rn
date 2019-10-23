@@ -10,8 +10,9 @@ import { UpdateDocument } from "src/api/database/query";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import moment from "moment"
 import DateTimePicker from "react-native-modal-datetime-picker";
+import { withTranslation } from 'react-i18next';
 
-export default class EditTaskSingleFieldScreen extends React.PureComponent{
+class EditTaskSingleFieldScreen extends React.PureComponent{
   static navigationOptions = () => {
     return { header: null };
   };
@@ -109,12 +110,12 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
             <Card style={{paddingTop: 8}}>
               <Drawer.Section>
                 <Drawer.Item
-                  label="Pria"
+                  label={this.props.t("male")}
                   active={this.state.defaultValue === 'pria'}
                   onPress={() => { this.setState({ defaultValue: 'pria' }); }}
                 />
                 <Drawer.Item
-                  label="Wanita"
+                  label={this.props.t("female")}
                   active={this.state.defaultValue === 'wanita'}
                   onPress={() => { this.setState({ defaultValue: 'wanita' }); }}
                 />
@@ -153,7 +154,7 @@ export default class EditTaskSingleFieldScreen extends React.PureComponent{
           ):null}
           <View style={{ paddingVertical: 8 }}/>
           <Button
-            text="Simpan"
+            text={this.props.t("save")}
             isLoading={this.state.isLoading}
             onPress={this.handleSavePress}/>
             <DateTimePicker
@@ -188,3 +189,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
 })
+
+export default withTranslation()(EditTaskSingleFieldScreen)

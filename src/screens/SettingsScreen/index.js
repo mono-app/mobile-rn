@@ -50,6 +50,7 @@ function SettingsScreen(props){
       if(data && data.content) setStatus(data.content);
     }
     fetchData();
+    console.log("JAJAJAJA")
     props.settingScreenTutorial.start()
   }, [(currentUser.statistic && currentUser.statistic.totalStatus)?currentUser.statistic.totalStatus:0])
 
@@ -68,8 +69,8 @@ function SettingsScreen(props){
               title={currentUser.applicationInformation.nickName}
               isLoading={isUploadingImage}
               subtitle={status}
-              showTutorialSettingChangeProfilePic = {props.showTutorialSettingChangeProfilePic}
-              settingScreenTutorial = {props.settingScreenTutorial}
+              showTutorialChangeProfilePic = {props.showTutorialChangeProfilePic}
+              tutorial = {props.settingScreenTutorial}
               />
           <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
         </View>

@@ -5,6 +5,7 @@ import TeacherAPI from "modules/Classroom/api/teacher";
 import TeacherListItem from "modules/Classroom/components/TeacherListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, peopleList: [], filteredPeopleList: [] };
 
@@ -69,13 +70,13 @@ class TeacherListScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Data Master Guru"
+            title={this.props.t("teacherMasterData")}
             style={{ backgroundColor: "white" }}
           />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Guru" />
+            placeholder={this.props.t("searchTeacher")} />
         </View>
         <FlatList
           style={{ backgroundColor: "white" }}
@@ -96,4 +97,4 @@ class TeacherListScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentSchoolAdmin(TeacherListScreen)
+export default withTranslation()(withCurrentSchoolAdmin(TeacherListScreen))

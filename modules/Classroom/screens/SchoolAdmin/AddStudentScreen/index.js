@@ -7,6 +7,7 @@ import AppHeader from "src/components/AppHeader";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import StudentAPI from "modules/Classroom/api/student";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -31,12 +32,13 @@ class AddStudentScreen extends React.PureComponent {
   handleStudentEmailChange = studentEmail => this.setState({ studentEmail });
   handleStudentNameChange = studentName => this.setState({ studentName });
   handleSavePress = () => {
-    this.setState({ isLoading: true });
-    
-    new StudentAPI().addStudent(this.props.currentSchool.id, this.state.studentEmail,{name: this.state.studentName}).then(() => {
-      this.setState({ isLoading: false, studentEmail: "", studentName:"" });
-      this.showSnackbar();
-    }).catch(err => console.log(err));
+    if(this.state.studentEmail.trim().length>0&&this.state.studentName.trim().length>0){
+      this.setState({ isLoading: true });
+      new StudentAPI().addStudent(this.props.currentSchool.id, this.state.studentEmail,{name: this.state.studentName}).then(() => {
+        this.setState({ isLoading: false, studentEmail: "", studentName:"" });
+        this.showSnackbar();
+      }).catch(err => console.log(err));
+    }
   };
 
   constructor(props) {
@@ -54,31 +56,31 @@ class AddStudentScreen extends React.PureComponent {
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
             <Card style={styles.container}>
               <Card.Content>
-                <Title style={{ marginBottom: 8 }}>Tambah Murid</Title>
+                <Title style={{ marginBottom: 8 }}>{this.props.t("addStudent")}</Title>
                 <Text style={styles.smallDescription}>
-                  Harap isi ID murid yang akan ditambah.
+                  {this.props.t("addStudentLabel")}
                 </Text>
                 <View style={{ marginTop: 16 }}>
-                  <Text style={styles.label}>Email Murid</Text>
+                  <Text style={styles.label}>{this.props.t("studentEmail")}</Text>
                   <TextInput
                     style={{ marginBottom: 0 }}
-                    placeholder="cth: johndoe@gmail.com"
+                    placeholder={this.props.t("example")+": johndoe@gmail.com"}
                     value={this.state.studentEmail}
                     onChangeText={this.handleStudentEmailChange}
                   />
                 </View>
                 <View style={{ marginTop: 16 }}>
-                  <Text style={styles.label}>Nama Murid</Text>
+                  <Text style={styles.label}>{this.props.t("studentName")}</Text>
                   <TextInput
                     style={{ marginBottom: 0 }}
-                    placeholder="cth: John Doe"
+                    placeholder={this.props.t("example")+": John Doe"}
                     value={this.state.studentName}
                     onChangeText={this.handleStudentNameChange}
                   />
                 </View>
                 <View style={{ paddingVertical: 8 }} />
                 <Button
-                  text="Simpan"
+                  text={this.props.t("save")}
                   isLoading={this.state.isLoading}
                   disabled={this.state.isLoading}
                   onPress={this.handleSavePress}
@@ -91,7 +93,7 @@ class AddStudentScreen extends React.PureComponent {
           onDismiss={() => this.setState({ showSnackbar: false })}
           style={{backgroundColor:"#0ead69"}}
           duration={Snackbar.DURATION_SHORT}>
-          Berhasil menambahkan murid
+          {this.props.t("addStudentSuccess")}
         </Snackbar>
       </View>
     );
@@ -103,4 +105,4 @@ const styles = StyleSheet.create({
   smallDescription: { fontSize: 12, textAlign: "left", color: "#5E8864" },
   label: { fontSize: 14, textAlign: "left", color: "#000000" }
 });
-export default withCurrentSchoolAdmin(AddStudentScreen)
+export default withTranslation()(withCurrentSchoolAdmin(AddStudentScreen))

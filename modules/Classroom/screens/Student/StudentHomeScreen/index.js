@@ -8,6 +8,9 @@ import SchoolAPI from "modules/Classroom/api/school"
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import { withTranslation } from 'react-i18next';
+import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
+import Key from "src/helper/key"
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -69,6 +72,7 @@ class StudentHomeScreen extends React.PureComponent {
     await this.props.setCurrentStudentEmail(this.state.schoolId, this.props.currentUser.email)
     if(this._isMounted)
       this.setState({isLoading: false})
+    this.props.classroomTutorial.show(Key.KEY_TUTORIAL_CLASSROOM_PROFILE)
   }
   
   componentWillUnmount() {
@@ -94,9 +98,16 @@ class StudentHomeScreen extends React.PureComponent {
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <View style={styles.logo}>
           <CircleAvatar size={100} uri={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }/>
-          <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
-            <Text style={{ color: this.props.theme.colors.primary }}>{this.props.t("seeProfile")}</Text>
-          </TouchableOpacity>
+          <Tooltip
+          isVisible={this.props.showTutorialProfile}
+          placement="bottom"
+          showChildInTooltip={true}
+          content={<Text>{this.props.t("tutorialSeeProfile")}</Text>}
+          onClose={() => this.props.classroomTutorial.close()}>
+            <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
+              <Text style={{ color: this.props.theme.colors.primary }}>{this.props.t("seeProfile")}</Text>
+            </TouchableOpacity>
+          </Tooltip>
           <Title style={{marginTop: 22}}>
             {this.props.t("welcomeComa")}
           </Title>
@@ -177,4 +188,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation()(withCurrentUser(withCurrentStudent(withTheme(StudentHomeScreen))))
+export default withTranslation()(withTutorialClassroom(withCurrentUser(withCurrentStudent(withTheme(StudentHomeScreen)))))

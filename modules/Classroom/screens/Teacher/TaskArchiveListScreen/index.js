@@ -5,6 +5,7 @@ import TaskAPI from "modules/Classroom/api/task";
 import ArchiveListItem from "modules/Classroom/components/ArchiveListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false, taskList: [], filteredTaskList: [] };
 
@@ -93,7 +94,7 @@ class TaskArchiveListScreen extends React.PureComponent {
         <View style={{ margin: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Tugas" />
+            placeholder={this.props.t("searchTask")} />
         </View>
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
@@ -115,4 +116,4 @@ class TaskArchiveListScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentTeacher(TaskArchiveListScreen)
+export default withTranslation()(withCurrentTeacher(TaskArchiveListScreen))

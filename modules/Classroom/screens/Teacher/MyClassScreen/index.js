@@ -5,6 +5,7 @@ import ClassAPI from "modules/Classroom/api/class";
 import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[] };
 
@@ -70,13 +71,13 @@ class MyClassScreen extends React.PureComponent {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <AppHeader
             navigation={this.props.navigation}
-            title="Kelas Saya"
+            title={this.props.t("myClass")}
             style={{ backgroundColor: "white" }}
           />
         <View style={{ padding: 16 }}>
           <MySearchbar 
             onSubmitEditing={this.handleSearchPress}
-            placeholder="Cari Kelas" />
+            placeholder={this.props.t("searchClass")} />
         </View>
         <FlatList
           style={{ flex:1, backgroundColor: "white" }}
@@ -97,4 +98,4 @@ class MyClassScreen extends React.PureComponent {
   }
 }
 
-export default withCurrentTeacher(MyClassScreen)
+export default withTranslation()(withCurrentTeacher(MyClassScreen))

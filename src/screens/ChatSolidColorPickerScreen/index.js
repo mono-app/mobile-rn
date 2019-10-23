@@ -4,7 +4,7 @@ import HeadlineTitle from "src/components/HeadlineTitle";
 import AppHeader from "src/components/AppHeader";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import Toast from 'react-native-easy-toast'
-import Utils from 'src/api/utils'
+import Key from 'src/helper/key'
 import {AsyncStorage} from 'react-native';
 
 function ChatSolidColorPickerScreen(props){
@@ -17,7 +17,7 @@ function ChatSolidColorPickerScreen(props){
   });
 
   const handleSetColor = (colorCode) => {
-    AsyncStorage.setItem(Utils.KEY_STORAGE_CHAT_BACKGROUND, colorCode);
+    AsyncStorage.setItem(Key.KEY_CHAT_BACKGROUND, colorCode);
     toastRef.current.show('Chat background changed..', 1000);
   }
 

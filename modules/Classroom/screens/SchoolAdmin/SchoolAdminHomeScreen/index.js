@@ -12,6 +12,7 @@ import DocumentPicker from 'react-native-document-picker';
 import { withCurrentUser } from "src/api/people/CurrentUser"
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import ImageCompress from "src/api/ImageCompress"
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -37,7 +38,6 @@ class SchoolAdminHomeScreen extends React.PureComponent {
   handleArchiveClass = e => {
     this.props.navigation.navigate("ArchiveClassList");
   };
-
   
   checkPermission = async () => {
     let permissionResponse;
@@ -82,13 +82,10 @@ class SchoolAdminHomeScreen extends React.PureComponent {
       });
       const storagePath = "/modules/classroom/schools/"+uuid()
       const compressedRes = await ImageCompress.compress(res.uri, res.size)
-
       const downloadUrl = await StorageAPI.uploadFile(storagePath, compressedRes.uri)
-
       await SchoolAPI.updateSchoolProfilePicture(this.state.schoolId, storagePath, downloadUrl)
 
       this.setState({profilePicture: downloadUrl})
-      
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -134,8 +131,8 @@ class SchoolAdminHomeScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -148,10 +145,10 @@ class SchoolAdminHomeScreen extends React.PureComponent {
         <View style={styles.logo}>
           <SquareAvatar size={100} uri={ this.props.schoolProfilePicture }/>
           <TouchableOpacity onPress={this.changeSchoolProfilePicture}>
-            <Text style={{ fontWeight: "400", fontSize: 16, marginTop: 8, color:"#0ead69" }}>Ubah Logo Sekolah</Text>
+            <Text style={{ fontWeight: "400", fontSize: 16, marginTop: 8, color:"#0ead69" }}>{this.props.t("changeSchoolPic")}</Text>
           </TouchableOpacity>
           <Text style={{ fontWeight: "700", marginTop: 16, fontSize: 20 }}>
-            Selamat Datang,
+            {this.props.t("welcomeComa")}
           </Text>
           <Text style={{ fontWeight: "400", fontSize: 16 }}>{this.props.currentSchoolAdmin.name}</Text>
         </View>
@@ -165,7 +162,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
                 <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
               </View>
             </View>
-            <Text>Tambah</Text>
+            <Text style={{textAlign:"center"}}>{this.props.t("add")}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.handleDataMasterPress}>
             <View style={styles.button} >
@@ -173,7 +170,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
                 <FontAwesome name="cog" style={{color: "#fff"}} size={24} />
               </View>
             </View>
-            <Text>Data Master</Text>
+            <Text style={{textAlign:"center"}}>{this.props.t("dataMaster")}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.handleArchiveClass}>
             <View style={styles.button} >
@@ -181,7 +178,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
                 <FontAwesome name="folder" style={{color: "#fff"}} size={24} />
               </View>
             </View>
-            <Text>Arsip Kelas</Text>
+            <Text style={{textAlign:"center"}}>{this.props.t("classArchive")}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -225,4 +222,4 @@ const styles = StyleSheet.create({
     borderRadius: 12
   }
 });
-export default withCurrentUser(withCurrentSchoolAdmin(SchoolAdminHomeScreen))
+export default withTranslation()(withCurrentUser(withCurrentSchoolAdmin(SchoolAdminHomeScreen)))

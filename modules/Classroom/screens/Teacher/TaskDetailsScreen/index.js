@@ -12,6 +12,7 @@ import DeleteDialog from "src/components/DeleteDialog";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import Button from "src/components/Button";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
+import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = { isFetching: true, isDeleting: false ,task:{}, showSnackbarFailDeleting: false, totalSubmission: 0, totalDiscussion: 0 };
 
@@ -40,7 +41,7 @@ class TaskDetailsScreen extends React.PureComponent {
       taskId: this.taskId,
       databaseFieldName: "title", 
       fieldValue: this.state.task.title,
-      fieldTitle: "Ubah Nama Tugas",
+      fieldTitle: this.props.t("editTaskName"),
       onRefresh: (data) => {
         const newTask = JSON.parse(JSON.stringify(this.state.task));
         newTask.title = data;
@@ -59,7 +60,7 @@ class TaskDetailsScreen extends React.PureComponent {
       taskId: this.taskId,
       databaseFieldName: "dueDate", 
       fieldValue: this.state.task.dueDate.toDate(),
-      fieldTitle: "Ubah Tanggal Pengumpulan",
+      fieldTitle: this.props.t("editSubmissionDate"),
       onRefresh: this.loadTask  
     }
     this.props.navigation.navigate(`EditTaskSingleField`, payload);
@@ -74,7 +75,7 @@ class TaskDetailsScreen extends React.PureComponent {
       taskId: this.taskId,
       databaseFieldName: "dueDate", 
       fieldValue: this.state.task.dueDate.toDate(),
-      fieldTitle: "Ubah Jam Pengumpulan",
+      fieldTitle: this.props.t("editSubmissionTime"),
       onRefresh: this.loadTask  
     }
     this.props.navigation.navigate(`EditTaskSingleField`, payload);
@@ -88,7 +89,7 @@ class TaskDetailsScreen extends React.PureComponent {
       taskId: this.taskId,
       databaseFieldName: "details", 
       fieldValue: this.state.task.details,
-      fieldTitle: "Ubah Detail Tugas",
+      fieldTitle: this.props.t("editTaskInformation"),
       onRefresh: (data) => {
         const newTask = JSON.parse(JSON.stringify(this.state.task));
         newTask.details = data;
@@ -169,8 +170,8 @@ class TaskDetailsScreen extends React.PureComponent {
           <Dialog.Content style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
             <ActivityIndicator/>
             <View>
-              <Text>Sedang memuat data</Text>
-              <Caption>Harap tunggu...</Caption>
+              <Text>{this.props.t("loadData")}</Text>
+              <Caption>{this.props.t("pleaseWait")}</Caption>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -181,7 +182,7 @@ class TaskDetailsScreen extends React.PureComponent {
       <View style={{flex: 1}}>
         <AppHeader
           navigation={this.props.navigation}
-          title="Detail Tugas"
+          title={this.props.t("taskDetails")}
           style={{ backgroundColor: "white" }}
         />
         <ScrollView >
@@ -197,7 +198,7 @@ class TaskDetailsScreen extends React.PureComponent {
             <TouchableOpacity  onPress={this.handleNamePress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Nama Tugas</Text>
+                  <Text style={styles.label}>{this.props.t("taskName")}</Text>
                   <Text style={styles.value}>{this.state.task.title}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -208,7 +209,7 @@ class TaskDetailsScreen extends React.PureComponent {
             <TouchableOpacity  onPress={this.handleDueDatePress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Tanggal Pengumpulan</Text>   
+                  <Text style={styles.label}>{this.props.t("dueDate")}</Text>   
                   <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("DD MMMM YYYY"):""}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -219,7 +220,7 @@ class TaskDetailsScreen extends React.PureComponent {
             <TouchableOpacity  onPress={this.handleDueTimePress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Jam Pengumpulan</Text>
+                  <Text style={styles.label}>{this.props.t("dueTime")}</Text>
                   <Text style={styles.value}>{(this.state.task.dueDate)?moment(this.state.task.dueDate.seconds * 1000).format("HH:mm"):""}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -230,7 +231,7 @@ class TaskDetailsScreen extends React.PureComponent {
             <TouchableOpacity  onPress={this.handleDetailPress}>
               <View style={styles.listItemContainer}>
                 <View style={styles.listDescriptionContainer}>
-                  <Text style={styles.label}>Detail Tugas</Text>
+                  <Text style={styles.label}>{this.props.t("taskDetails")}</Text>
                   <Text style={styles.value}>{this.state.task.details}</Text>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
@@ -244,7 +245,7 @@ class TaskDetailsScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="file-o" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text>Lihat pengumpulan</Text>
+                    <Text>{this.props.t("seeSubmissions")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalSubmission}</Text>
@@ -260,7 +261,7 @@ class TaskDetailsScreen extends React.PureComponent {
                 <View style={styles.listDescriptionContainer}>
                   <View style={{flexDirection:"row"}}>
                     <FontAwesome name="comments-o" size={24} style={{marginRight:16, width: 30}}/>
-                    <Text>Diskusi</Text>
+                    <Text>{this.props.t("discussion")}</Text>
                   </View>
                   <View style={{flexDirection:"row",textAlign: "right"}}>
                     <Text>{this.state.totalDiscussion}</Text>
@@ -270,7 +271,7 @@ class TaskDetailsScreen extends React.PureComponent {
               </View>
             </TouchableOpacity>
             <Button
-                text="Hapus Tugas"
+                text={this.props.t("deleteTask")}
                 isLoading={this.state.isDeleting}
                 disabled={this.state.isDeleting}
                 style={{backgroundColor:"#EF6F6C", padding: 12, margin:16, borderRadius:8 }}
@@ -282,14 +283,14 @@ class TaskDetailsScreen extends React.PureComponent {
         </ScrollView>
         <DeleteDialog 
         ref ={i => this.deleteDialog = i}
-        title= {"Apakah anda ingin menghapus tugas ini?"}
+        title= {this.props.t("askDeleteTask")}
         onDeletePress={this.handleDelete}/>
         <Snackbar
           visible= {this.state.showSnackbarFailDeleting}
           onDismiss={() => this.setState({ showSnackbarFailDeleting: false })}
           style={{backgroundColor:"#EF6F6C"}}
           duration={Snackbar.DURATION_SHORT}>
-          Tidak bisa menghapus karena sudah ada murid yang mengumpulkan tugas
+          {this.props.t("failDeleteTask")}
         </Snackbar>
       </View>
     );
@@ -324,4 +325,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
-export default withCurrentTeacher(TaskDetailsScreen)
+export default withTranslation()(withCurrentTeacher(TaskDetailsScreen))
