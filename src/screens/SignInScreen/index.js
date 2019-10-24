@@ -12,6 +12,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { View, Image } from 'react-native';
 import {Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
 import { withTranslation } from 'react-i18next';
+import { withCurrentMessages } from "src/api/messages/CurrentMessages";
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -133,4 +134,4 @@ function SignInScreen(props){
     </KeyboardAwareScrollView>
   );
 }
-export default withTranslation()(withCurrentUser(SignInScreen));
+export default withTranslation()(withCurrentUser(withCurrentMessages(SignInScreen)))

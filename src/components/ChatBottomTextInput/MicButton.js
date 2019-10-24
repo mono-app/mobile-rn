@@ -36,8 +36,9 @@ function MicButton(props){
   }
 
   const handlePress = () => {
-    setIsConnecting(true);
+    setIsConnecting(!isConnecting);
     setShowPublisher(!showPublisher);
+    setIsActive(!isActive);
   }
 
   const publisherEventHandlers = {
