@@ -193,9 +193,9 @@ class TaskSubmissionScreen extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
-        {(this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        <View style={{ flex:1,marginTop:8, backgroundColor: "white" }}>
+        {(!this.state.isRefreshing && this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
-          style={{ backgroundColor: "white" }}
           data={this.state.filteredFileList}
           refreshing={this.state.isRefreshing} 
           onRefresh={this.handleRefresh} 
@@ -209,6 +209,8 @@ class TaskSubmissionScreen extends React.PureComponent {
             )
           }}
         />
+        </View>
+       
         <Portal>
           <Dialog visible={this.state.showProgressbar}>
             <Dialog.Content

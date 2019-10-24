@@ -97,10 +97,8 @@ class MyDiscussionsScreen extends React.PureComponent {
               placeholder={this.props.t("searchDiscussion")} />
         </View>
         <FlatList
-          data={this.state.filteredDiscussionList}
-          refreshing={this.state.isRefreshing} 
-          onRefresh={this.handleRefresh} 
-          keyExtractor={(item) => item.id}
+          data={this.state.filteredDiscussionList} refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
               <DiscussionListItem 

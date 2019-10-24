@@ -11,6 +11,7 @@ import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import moment from "moment"
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { withTranslation } from 'react-i18next';
+import AppHeader from "src/components/AppHeader";
 
 class EditTaskSingleFieldScreen extends React.PureComponent{
   static navigationOptions = () => {

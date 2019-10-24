@@ -184,7 +184,7 @@ class ClassFilesScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchFiles")} />
         </View>
-        {(this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white", marginTop:16 }}
           data={this.state.filteredFileList}

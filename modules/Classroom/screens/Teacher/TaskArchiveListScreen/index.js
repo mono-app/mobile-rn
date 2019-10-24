@@ -97,7 +97,7 @@ class TaskArchiveListScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchTask")} />
         </View>
-        {(this.state.filteredTaskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.filteredTaskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}
           data={this.state.filteredTaskList}

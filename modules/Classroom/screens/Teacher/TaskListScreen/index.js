@@ -88,7 +88,7 @@ class TaskListScreen extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
-        {(this.state.taskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.taskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <View style={{marginTop: 16}}/>
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}

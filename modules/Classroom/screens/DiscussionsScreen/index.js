@@ -132,11 +132,9 @@ class DiscussionsScreen extends React.PureComponent {
         </View>
         {(this.state.filteredDiscussionList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("noDiscussions")}</Text>:null}
         <FlatList
-          style={{marginVertical: 4}}
-          data={this.state.filteredDiscussionList}
-          refreshing={this.state.isRefreshing} 
-          onRefresh={this.handleRefresh} 
-          keyExtractor={(item) => item.id}
+          style={{marginVertical: 4}} data={this.state.filteredDiscussionList}
+          refreshing={this.state.isRefreshing} onRefresh={this.handleRefresh} 
+          keyExtractor={(item) => item.id} 
           renderItem={({ item }) => {
             return (
               <DiscussionListItem 

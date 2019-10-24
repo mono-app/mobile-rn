@@ -6,7 +6,7 @@ import StudentAPI from "modules/Classroom/api/student";
 import ClassAPI from "modules/Classroom/api/class";
 import { ScrollView } from "react-native-gesture-handler";
 import moment from "moment"
-import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import ProfileHeader from "modules/Classroom/components/ProfileHeader";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import StatusAPI from "src/api/status";
 import Button from "src/components/Button";
@@ -99,7 +99,7 @@ class StudentProfileScreen extends React.PureComponent {
         />
         <ScrollView style={{marginBottom: 56}}>
           <View style={{marginTop: 16}}/>
-          <PeopleProfileHeader
+          <ProfileHeader
             style={{padding:16}}
             profilePicture={(this.state.student.profilePicture)? this.state.student.profilePicture.downloadUrl : this.state.profilePicture }
             title={this.state.student.name}
