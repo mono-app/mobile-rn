@@ -9,7 +9,7 @@ import {
 } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import ClassAPI from "modules/Classroom/api/class";
-import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import ProfileHeader from "modules/Classroom/components/ProfileHeader";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
@@ -149,7 +149,7 @@ class ClassProfileScreen extends React.PureComponent {
         <ScrollView>
           <View style={{  marginTop: 16 }}/>  
           <View style={{flexDirection:"row", backgroundColor: "white"}}>
-            <PeopleProfileHeader
+            <ProfileHeader
               style={{padding:16, flex:2}}
               profilePicture="https://picsum.photos/200/200/?random"
               title={this.state.class.subject}

@@ -11,7 +11,7 @@ import { Text } from "react-native-paper";
 
 function PeopleProfileHeader(props){
   Logger.log("PeopleProfileHeader#props", props);
-  const { showTutorialSettingChangeProfilePic, isLoading, people, applicationInformation, profilePicture } = props;
+  const { showTutorialChangeProfilePic, isLoading, people, applicationInformation, profilePicture } = props;
   const profilePictureUrl = (!profilePicture)?"https://picsum.photos/200": profilePicture.downloadUrl;
 
   const [ status, setStatus ] = React.useState("");
@@ -30,7 +30,7 @@ function PeopleProfileHeader(props){
   }
 
   const handleTutorialClose = () => {
-    if(props.settingScreenTutorial) props.settingScreenTutorial.end()
+    if(props.tutorial) props.tutorial.close()
   }
 
   const fetchStatus = async () => {
@@ -46,7 +46,7 @@ function PeopleProfileHeader(props){
   return(
     <View style={[ styles.profileContainer, props.style ]}>
       <Tooltip
-        isVisible={showTutorialSettingChangeProfilePic} placement="bottom"
+        isVisible={showTutorialChangeProfilePic} placement="bottom"
         showChildInTooltip={true} onClose={handleTutorialClose}
         content={<Text>Klik foto profile untuk mengganti foto</Text>}>
         <TouchableOpacity onPress={handleProfilePicturePress}>
@@ -64,13 +64,13 @@ function PeopleProfileHeader(props){
 }
 
 PeopleProfileHeader.propTypes = { 
-  settingScreenTutorial: PropTypes.any,
+  tutorial: PropTypes.any,
   onProfilePicturePress: PropTypes.func,
   onStatusPress: PropTypes.func,
   style: PropTypes.object,
   people: PropTypes.any.isRequired
 }
-PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "", style: {} }
+PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "", style: {}, tutorial: {} }
 
 const enhance = withObservables([ "people" ], ({ people }) => ({
   applicationInformation: people.applicationInformation.observe(),

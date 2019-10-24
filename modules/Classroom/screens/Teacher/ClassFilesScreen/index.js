@@ -190,7 +190,7 @@ class ClassFilesScreen extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
-        {(this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white", marginVertical:16 }}
           data={this.state.filteredFileList}

@@ -6,7 +6,7 @@ import StudentAPI from "modules/Classroom/api/student";
 import Permissions from "react-native-permissions";
 import ClassAPI from "modules/Classroom/api/class";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import ProfileHeader from "modules/Classroom/components/ProfileHeader";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import StatusAPI from "src/api/status";
 import moment from "moment"
@@ -177,8 +177,8 @@ class MyProfileScreen extends React.PureComponent {
             style={{ backgroundColor: "white" }}
           />
         <ScrollView>
-
-          <PeopleProfileHeader
+        
+          <ProfileHeader
             onProfilePicturePress={this.handleProfilePicturePress}
             style={{padding:16}}
             isLoading={this.state.isUploadingImage}

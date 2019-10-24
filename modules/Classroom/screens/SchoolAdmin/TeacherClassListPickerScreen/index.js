@@ -85,7 +85,7 @@ class TeacherClassListPickerScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder="Cari Kelas" />
         </View>
-        {(this.state.filteredClassList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.filteredClassList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}
