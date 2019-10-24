@@ -7,7 +7,7 @@ import { default as MaterialCommunityIcons } from "react-native-vector-icons/Mat
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import QRCode from "react-native-qrcode-svg"
 import AppHeader from "src/components/AppHeader";
-import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import UserProfileHeader from "src/components/UserProfileHeader";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { withTranslation } from 'react-i18next';
 
@@ -39,7 +39,7 @@ function MyQRScreen(props){
         <Card>
           <Card.Content>
             <View style={{ paddingBottom: 16, borderBottomColor: "#E8EEE8", borderBottomWidth: 1 }}>
-              <PeopleProfileHeader 
+              <UserProfileHeader 
                 style={{ paddingHorizontal: 16 }}
                 profilePicture={currentUser.profilePicture} 
                 title={currentUser.applicationInformation.nickName}
