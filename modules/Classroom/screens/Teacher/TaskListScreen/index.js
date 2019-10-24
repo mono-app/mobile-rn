@@ -79,16 +79,14 @@ class TaskListScreen extends React.PureComponent {
             subtitle={this.props.navigation.getParam("subjectDesc", "")}
             style={{ backgroundColor: "white" }}
           />
-        <View style={{marginTop: 16,
-                      backgroundColor: "#DCDCDC",
-                      padding: 16}}>
+        <View style={{marginTop: 16,backgroundColor: "#0ead69",padding: 16}}>
           <TouchableOpacity onPress={this.handleAddTaskPress}>
-            <Text style={{fontWeight:"bold"}}>
+            <Text style={{fontWeight:"bold", color:"#fff"}}>
               + {this.props.t("addTask")}
             </Text>
           </TouchableOpacity>
         </View>
-        {(this.state.taskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.taskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <View style={{marginTop: 16}}/>
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}

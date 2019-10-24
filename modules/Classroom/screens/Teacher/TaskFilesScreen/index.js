@@ -231,13 +231,10 @@ class TaskFilesScreen extends React.PureComponent {
             placeholder={this.props.t("searchTask")} />
         </View>
         <View style={{ flex: 1, backgroundColor: "white" }}>
-          {(this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
-
+          {(!this.state.isRefreshing && this.state.filteredFileList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
           <FlatList
-            data={this.state.filteredFileList}
-            refreshing={this.state.isRefreshing} 
-            onRefresh={this.handleRefresh} 
-            keyExtractor={(item) => item.id}
+            data={this.state.filteredFileList} refreshing={this.state.isRefreshing} 
+            onRefresh={this.handleRefresh} keyExtractor={(item) => item.id}
             renderItem={({ item }) => {
               return (
                 <FileListItem

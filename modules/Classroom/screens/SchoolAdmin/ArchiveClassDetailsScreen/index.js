@@ -9,7 +9,7 @@ import {
 } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import ClassAPI from "modules/Classroom/api/class";
-import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import ClassProfileHeader from "modules/Classroom/components/ClassProfileHeader";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import Button from "src/components/Button";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
@@ -86,9 +86,8 @@ class ArchiveClassDetailsScreen extends React.PureComponent {
             style={{ backgroundColor: "white" }}
           />
         <ScrollView style={{marginBottom:56}}>
-          <PeopleProfileHeader
+          <ClassProfileHeader
             style={{padding: 16, marginTop: 16}}
-            profilePicture="https://picsum.photos/200/200/?random"
             title={this.state.class.subject}
             />
 

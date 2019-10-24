@@ -11,7 +11,7 @@ import { withTranslation } from 'react-i18next';
 import { Text } from "react-native-paper"
 
 const INITIAL_STATE = { 
-  isLoading: true, 
+  isRefreshing: true, 
   dialogVisible: false,
   dialogScore: "", 
   selectedStudent: {}, 
@@ -30,10 +30,10 @@ class MassScoringScreen extends React.PureComponent {
 
   loadStudents = async () => {
     if(this._isMounted)
-      this.setState({ peopleList: [], filteredPeopleList: [] });
+      this.setState({ peopleList: [], filteredPeopleList: [], isRefreshing: true });
     const peopleList = await StudentAPI.getClassStudent(this.props.currentSchool.id, this.classId);
     if(this._isMounted)
-      this.setState({ peopleList, filteredPeopleList: peopleList });
+      this.setState({ peopleList, filteredPeopleList: peopleList, isRefreshing: false });
   }
 
   handleStudentPress = async student => {
@@ -45,13 +45,13 @@ class MassScoringScreen extends React.PureComponent {
     }
   }
 
-  handleScoreChange = dialogScore => {
-    this.setState({dialogScore})
-  }
+  handleScoreChange = dialogScore => this.setState({dialogScore})
+  
 
-  showDialog = async () => {
-    this.setState({dialogScore: "", dialogVisible: true})
-  }
+  handleRefresh = () => this.loadStudents()
+
+  showDialog = async () => this.setState({dialogScore: "", dialogVisible: true})
+  
 
   saveDialog = async () => {
     await StudentAPI.saveFinalScoreStudent(this.props.currentSchool.id, this.classId, this.state.selectedStudent.id, {finalScore: this.state.dialogScore})
@@ -67,9 +67,8 @@ class MassScoringScreen extends React.PureComponent {
     this.setState({filteredPeopleList:clonedFilteredPeopleList, dialogVisible: false})
   }
 
-  hideDialog = () => {
-    this.setState({ dialogVisible: false })
-  }
+  hideDialog = () => this.setState({ dialogVisible: false })
+  
 
   handleSearchPress = (searchText) => {
     this.setState({filteredPeopleList: []})
@@ -119,10 +118,12 @@ class MassScoringScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchStudent")} />
         </View>
-        {(this.state.filteredPeopleList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.filteredPeopleList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredPeopleList}
+          refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} 
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (

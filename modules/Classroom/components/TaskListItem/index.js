@@ -72,7 +72,7 @@ class TaskListItem extends React.Component{
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom:16,
+    marginBottom:8,
   },
   subContainer: {
     margin:16,

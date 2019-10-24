@@ -72,21 +72,19 @@ class TaskSubmissionListScreen extends React.PureComponent {
             {this.title}
           </Text>
         </View>
-        {(this.state.submissionList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        <View style={{ flex:1,marginTop:8, backgroundColor: "white" }}>
+        {(!this.state.isRefreshing && this.state.submissionList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
-          style={{ backgroundColor: "white" }}
-          data={this.state.submissionList}
-          refreshing={this.state.isRefreshing} 
-          onRefresh={this.handleRefresh} 
-          keyExtractor={(item) => item.id}
+          data={this.state.submissionList} refreshing={this.state.isRefreshing} 
+          onRefresh={this.handleRefresh} keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
               <StudentListItem 
                 onPress={() => this.handleSubmissionPress(item)}
                 schoolId={this.props.currentSchool.id} student={item}/>
             )
-          }}
-        />
+          }}/>
+        </View>
       </View>
     );
   }

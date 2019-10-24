@@ -1,5 +1,5 @@
 import React from "react";
-import { View,StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import {
   ActivityIndicator,
@@ -11,7 +11,6 @@ import {
 } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import ClassAPI from "modules/Classroom/api/class";
-import SquareAvatar from "src/components/Avatar/Square";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
@@ -172,10 +171,7 @@ class ClassProfileScreen extends React.PureComponent {
             <Subheading style={{ marginLeft: 16 }}>{this.state.class.room} | {this.state.class.academicYear} | {this.props.t("semester")} {this.state.class.semester}</Subheading>
             <View style={styles.profileContainer}>
               <Text style={{  fontSize: 16 }}></Text>
-                <SquareAvatar
-                  size={100}
-                  uri="https://picsum.photos/200/200/?random"
-                />            
+              <Image source={require('assets/logoclassroom.png')} style={{width: 150, height: 150}} />
             </View>
             <View>
               <TouchableOpacity onPress={this.handleSubjectPress}>
@@ -244,8 +240,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 8,
-    paddingBottom: 32,
     borderBottomWidth: 1,
     borderBottomColor: "#E8EEE8"
   },

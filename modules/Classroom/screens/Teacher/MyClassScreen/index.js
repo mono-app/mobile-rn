@@ -80,7 +80,7 @@ class MyClassScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchClass")} />
         </View>
-        {(this.state.filteredClassList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
+        {(!this.state.isRefreshing && this.state.filteredClassList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ flex:1, backgroundColor: "white" }}
           data={this.state.filteredClassList}
