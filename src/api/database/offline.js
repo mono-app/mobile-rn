@@ -9,12 +9,14 @@ import PersonalInformationsSchema from "src/schemas/personalInformations";
 import ApplicationInformationsSchema from "src/schemas/applicationInformations";
 import ProfilePicturesSchema from "src/schemas/profilePictures";
 import PhoneNumbersSchema from "src/schemas/phoneNumbers";
+import StatusesSchema from "src/schemas/statuses";
 
 import User from "src/models/user";
 import PersonalInformation from "src/models/personalInformation";
 import ApplicationInformation from "src/models/applicationInformation";
 import ProfilePicture from "src/models/profilePicture";
 import PhoneNumber from "src/models/phoneNumber";
+import Status from "src/models/status";
 
 function OfflineDatabase(){}
 
@@ -27,14 +29,17 @@ OfflineDatabase.initialize = () => {
     version: 1,
     tables: [
       UsersSchema, PersonalInformationsSchema, ApplicationInformationsSchema,
-      ProfilePicturesSchema, PhoneNumbersSchema
+      ProfilePicturesSchema, PhoneNumbersSchema, StatusesSchema
     ]
   })
 
   OfflineDatabase.adapter = new SQLiteAdapter({ schema: OfflineDatabase.schema });
   OfflineDatabase.database = new Database({
     adapter: OfflineDatabase.adapter, actionsEnabled: true,
-    modelClasses: [ User, PersonalInformation, ApplicationInformation, ProfilePicture, PhoneNumber ]
+    modelClasses: [ 
+      User, PersonalInformation, ApplicationInformation, ProfilePicture, PhoneNumber,
+      Status
+    ]
   })
   OfflineDatabase.synchronize();
 }
