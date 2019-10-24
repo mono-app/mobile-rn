@@ -13,7 +13,7 @@ import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import AppHeader from "src/components/AppHeader";
 import HeadlineTitle from "src/components/HeadlineTitle";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
-import { ScrollView, ForceTouchGestureHandler } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { View, FlatList, StyleSheet } from "react-native";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
@@ -47,23 +47,12 @@ function SettingsScreen(props){
     }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
   }
 
-  // React.useEffect(() => {
-  //   const fetchData = async () => {
-  //     Logger.log("SettingsScreen", "get latest status");
-  //     const data  = await StatusAPI.getLatestStatus(currentUser.email);
-  //     if(data && data.content) setStatus(data.content);
-  //   }
-  //   fetchData();
-  //   props.settingScreenTutorial.start()
-  // }, [(currentUser.statistic && currentUser.statistic.totalStatus)?currentUser.statistic.totalStatus:0])
-
   const fetchUser = async () => {
     const email = firebase.auth().currentUser.email;
     const usersCollection = OfflineDatabase.database.collections.get("users");
     const [ user ] = await usersCollection.query(Q.where("email", email)).fetch();
-    const normalizedUser = await PeopleAPI.normalize(user);
-    Logger.log("SettingsScreen.fetchUser#normalizedUser", normalizedUser);
-    setCurrentUser(normalizedUser);
+    Logger.log("SettingsScreen.fetchUser#user", user);
+    setCurrentUser(user);
   }
 
   React.useEffect(() => {
