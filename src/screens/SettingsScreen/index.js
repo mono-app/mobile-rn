@@ -13,7 +13,7 @@ import MenuListItemWithIcon from "src/components/MenuListItemWithIcon";
 import AppHeader from "src/components/AppHeader";
 import HeadlineTitle from "src/components/HeadlineTitle";
 import PeopleProfileHeader from "src/components/PeopleProfile/Header";
-import { ScrollView, ForceTouchGestureHandler } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { View, FlatList, StyleSheet } from "react-native";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
