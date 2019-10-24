@@ -12,9 +12,9 @@ function PeopleListItem(props){
 
   const fetchUser = async () => {
     const usersCollection = OfflineDatabase.database.collections.get("users");
-    const users = await usersCollection.query(Q.where("email", email)).fetch();
-    Logger.log("PeopleListItem.fetchUser#users", users);
-    setPeople(users[0]);
+    const [ user ] = await usersCollection.query(Q.where("email", email)).fetch();
+    Logger.log("PeopleListItem.fetchUser#user", user);
+    setPeople(user);
   }
 
   React.useEffect(() => {
