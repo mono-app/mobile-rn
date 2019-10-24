@@ -12,40 +12,34 @@ import { withTranslation } from 'react-i18next';
  * @param {string} status
  */
 function ProfileHeader(props){
+  const { showTutorialChangeProfilePic, isLoading, profilePicture, onStatusPress } = props;
+
   const styles = StyleSheet.create({
     profileDescriptionContainer: { flex:1},
-    profileContainer: { backgroundColor: "white", display: "flex", flexDirection: "row",}
+    profileContainer: { backgroundColor: "white", display: "flex", flexDirection: "row", alignItems:"center"}
   })
 
   return(
     <View style={[ styles.profileContainer,props.style ]}>
       <Tooltip
-          isVisible={props.showTutorialChangeProfilePic}
+          isVisible={showTutorialChangeProfilePic}
           placement="bottom"
           showChildInTooltip={true}
           content={<Text>{props.t("tutorialChangeProfile")}</Text>}
           onClose={() => props.tutorial.close()}>
         {props.onProfilePicturePress?(
           <TouchableOpacity onPress={props.onProfilePicturePress}>
-            <CircleAvatar uri={props.profilePicture} size={50} style={{ marginRight: 16 }} isLoading={props.isLoading}/>
+            <CircleAvatar uri={profilePicture} size={70} style={{ marginRight: 16 }} isLoading={isLoading}/>
           </TouchableOpacity>
-        ):<CircleAvatar uri={props.profilePicture} size={50} style={{ marginRight: 16 }} isLoading={props.isLoading}/>}
+        ):<CircleAvatar uri={profilePicture} size={70} style={{ marginRight: 16 }} isLoading={isLoading}/>}
       </Tooltip>
-      {props.onStatusPress?(
-        <View style={styles.profileDescriptionContainer}>
-          <TouchableOpacity onPress={props.onStatusPress}>
-            <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
-            <Text style={{ fontSize: 12, lineHeight: 20}}>{props.subtitle}</Text>
-          </TouchableOpacity>
-        </View>
-
-      ):(
-        <View style={styles.profileDescriptionContainer}>
-          <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
-          <Text style={{ fontSize: 12, lineHeight: 20}}>{props.subtitle}</Text>
-        </View>
-      )}
-
+      <View style={styles.profileDescriptionContainer}>
+        <TouchableOpacity onPress={onStatusPress} disabled={!onStatusPress}>
+          <Text style={{ fontSize: 18, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
+          {(props.subtitle)?<Text style={{ fontSize: 14, lineHeight: 20}}>{props.subtitle}</Text>:null}
+        </TouchableOpacity>
+      </View>
+    
     </View>
   )
 }
