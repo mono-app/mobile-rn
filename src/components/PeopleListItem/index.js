@@ -3,9 +3,7 @@ import PropTypes from "prop-types";
 import OfflineDatabase from "src/api/database/offline";
 import Logger from "src/api/logger";
 import { Q } from "@nozbe/watermelondb";
-import { StyleSheet } from "react-native";
 
-import Loading from "src/components/PeopleListItem/loading";
 import EnhancedPeopleListItem from "src/components/PeopleListItem/enhanced";
 
 function PeopleListItem(props){
@@ -14,9 +12,9 @@ function PeopleListItem(props){
 
   const fetchUser = async () => {
     const usersCollection = OfflineDatabase.database.collections.get("users");
-    const users = await usersCollection.query(Q.where("email", email)).fetch();
-    Logger.log("PeopleListItem.fetchUser#users", users);
-    setPeople(users[0]);
+    const [ user ] = await usersCollection.query(Q.where("email", email)).fetch();
+    Logger.log("PeopleListItem.fetchUser#user", user);
+    setPeople(user);
   }
 
   React.useEffect(() => {

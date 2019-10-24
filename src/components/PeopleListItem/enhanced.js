@@ -2,6 +2,7 @@ import React from "react";
 import withObservables from "@nozbe/with-observables";
 import Logger from "src/api/logger";
 import { StyleSheet } from "react-native";
+import { of as of$ } from "rxjs";
 
 import CircleAvatar from "src/components/Avatar/Circle";
 import { TouchableOpacity, View } from "react-native";
@@ -35,7 +36,7 @@ function EnhancedPeopleListItem(props){
 
 const enhance = withObservables([ "people" ], ({ people }) => ({
   applicationInformation: people.applicationInformation.observe(),
-  profilePicture: people.profilePicture.observe()
+  profilePicture: people.profilePicture.id? people.profilePicture.observe(): of$(null)
 }))
 
 export default enhance(EnhancedPeopleListItem);

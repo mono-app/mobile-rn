@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Logger from "src/api/logger";
 import withObservables from "@nozbe/with-observables";
 import { StyleSheet } from "react-native";
 
@@ -7,11 +8,13 @@ import Tooltip from 'react-native-walkthrough-tooltip';
 import CircleAvatar from "src/components/Avatar/Circle";
 import { View, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
-import { withTranslation } from 'react-i18next';
 
 function PeopleProfileHeader(props){
-  const { showTutorialSettingChangeProfilePic, isLoading, applicationInformation, profilePicture } = props;
+  Logger.log("PeopleProfileHeader#props", props);
+  const { showTutorialSettingChangeProfilePic, isLoading, people, applicationInformation, profilePicture } = props;
   const profilePictureUrl = (!profilePicture)?"https://picsum.photos/200": profilePicture.downloadUrl;
+
+  const [ status, setStatus ] = React.useState("");
   
   const styles = StyleSheet.create({
     profileDescriptionContainer: { flex:1 },
@@ -30,6 +33,16 @@ function PeopleProfileHeader(props){
     if(props.settingScreenTutorial) props.settingScreenTutorial.end()
   }
 
+  const fetchStatus = async () => {
+    const status = await people.getLatestStatus();
+    Logger.log("PeopleProfileHeader.fetchStatus#status", status);
+    if(status) setStatus(status);
+  }
+
+  React.useEffect(() => {
+    fetchStatus();
+  })
+
   return(
     <View style={[ styles.profileContainer, props.style ]}>
       <Tooltip
@@ -43,7 +56,7 @@ function PeopleProfileHeader(props){
       <View style={styles.profileDescriptionContainer}>
         <TouchableOpacity onPress={handleStatusPress}>
           <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{applicationInformation.nickName}</Text>
-          <Text style={{ fontSize: 12, lineHeight: 20}}></Text>
+          <Text style={{ fontSize: 12, lineHeight: 20}}>{status}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -61,7 +74,8 @@ PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: ""
 
 const enhance = withObservables([ "people" ], ({ people }) => ({
   applicationInformation: people.applicationInformation.observe(),
-  profilePicture: people.profilePicture.observe()
+  profilePicture: people.profilePicture.observe(),
+  statuses: people.statuses.observeWithColumns([ "created_at" ])
 }))
 
 export default enhance(PeopleProfileHeader);
