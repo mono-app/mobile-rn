@@ -9,6 +9,7 @@ import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 function DatePickerWithTextInput(props){
+  const { value } = props;
   const [ isDatePickerVisible, setDatePickerVisible ] = React.useState(false);
 
   const styles = StyleSheet.create({
@@ -25,7 +26,7 @@ function DatePickerWithTextInput(props){
 
   const showDateTimePicker = () => setDatePickerVisible(true)
   const hideDatePicker = () => setDatePickerVisible(false)
-  const handleDatePicked = () => {
+  const handleDatePicked = (date) => {
     hideDatePicker();
     const pickedDate = new moment(date).format("DD/MM/YYYY");
     if(props.onDatePicked) props.onDatePicked(pickedDate);
@@ -37,7 +38,7 @@ function DatePickerWithTextInput(props){
         <View style={styles.listItemContainer}>
           <View style={styles.listDescriptionContainer}>
             <Text style={styles.label}>
-              {defaultValue}
+              {value}
             </Text>
             <View style={{ flexDirection: "row", textAlign: "right" }}>
               <EvilIcons name="calendar" size={24} style={{ color: "#5E8864" }}/>
@@ -47,7 +48,7 @@ function DatePickerWithTextInput(props){
       </TouchableOpacity>
 
       <DateTimePicker
-        date={(defaultValue)?moment(defaultValue, "DD-MM-YYYY").toDate():new Date()}
+        date={(value)?moment(value, "DD-MM-YYYY").toDate():new Date()}
         isVisible={isDatePickerVisible}
         onConfirm={handleDatePicked}
         onCancel={hideDatePicker}
@@ -56,5 +57,8 @@ function DatePickerWithTextInput(props){
   )
 }
 
-DatePickerWithTextInput.propTypes = { onDatePicked: PropTypes.func.isRequired }
+DatePickerWithTextInput.propTypes = { 
+  onDatePicked: PropTypes.func.isRequired,
+  value: PropTypes.any.isRequired
+}
 export default DatePickerWithTextInput;

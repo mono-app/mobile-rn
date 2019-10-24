@@ -77,7 +77,7 @@ function EditSingleFieldScreen(props){
         {(isGenderPicker)? (
           <GenderPicker value={defaultValue} onValueChange={handleGenderChange}/>
         ):(isDatePicker)?(
-          <DatePicker onDatePicked={handleDatePicked}/>
+          <DatePicker value={defaultValue} onDatePicked={handleDatePicked}/>
         ):(
           <TextInput
             style={{ marginBottom: 0 }} placeholder={placeholder} maxLength={maxLength}

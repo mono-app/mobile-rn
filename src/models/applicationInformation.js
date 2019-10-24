@@ -11,8 +11,6 @@ export default class ApplicationInformation extends Model{
   @readonly @date("updated_at") updatedAt
 
   @action async updateNickName(newNickName){
-    await this.update((applicationInformation) => {
-      applicationInformation.nickName = newNickName;
-    })
+    await this.update((applicationInformation) => applicationInformation.nickName = newNickName)
   }
 }

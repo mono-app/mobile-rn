@@ -8,6 +8,8 @@ import { Q } from "@nozbe/watermelondb"
 
 import MonoIdField from "src/screens/AccountScreen/fields/monoId";
 import NickNameField from "src/screens/AccountScreen/fields/nickName";
+import GenderField from "src/screens/AccountScreen/fields/gender";
+import BirthdayField from "src/screens/AccountScreen/fields/birthday";
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
@@ -33,14 +35,6 @@ function AccountScreen(props){
 
   const handleSignOutPress = () => setIsSignOutDialogShown(true);
   const handleSignOutDialogCancel = () => setIsSignOutDialogShown(false);
-  const handleNickNamePress = () => {
-    const payload = {
-      fieldValue: applicationInformation.nickName,
-      fieldTitle: props.t("nickName"),
-    }
-    navigation.navigate("EditSingleField", payload);
-  }
-
   const handleBirthdayPress = () => {
     const payload = {
       databaseCollection: "users",
@@ -52,18 +46,6 @@ function AccountScreen(props){
       fieldTitle: props.t("birthDate"),
       datePicker: true,
       beforeSave: (value) => moment(value, "DD/MM/YYYY").isValid()
-    }
-    navigation.navigate("EditSingleField", payload);
-  }
-
-  const handleGenderPress = () => {
-    const payload = {
-      databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
-      databaseFieldName: "personalInformation.gender", 
-      fieldValue: (personalInformation.gender)? personalInformation.gender: "male",
-      fieldTitle: props.t("gender"),
-      genderPicker: true
     }
     navigation.navigate("EditSingleField", payload);
   }
@@ -99,28 +81,8 @@ function AccountScreen(props){
         </View>
 
         <View style={styles.groupContainer}>
-          <TouchableOpacity onPress={handleGenderPress}>
-            <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>{props.t("gender")}</Text>
-              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                {personalInformation.gender?(
-                  <Text>{personalInformation.gender === "male"? "Pria": "Wanita"}</Text>
-                ):null}
-                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleBirthdayPress}>
-            <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>{props.t("birthDate")}</Text>
-              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                {personalInformation.birthday?(
-                  <Text>{moment(personalInformation.birthday, "DD/MM/YYYY").format("DD MMM YYYY")}</Text>
-                ):<Text>-</Text>}
-                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-              </View>
-            </View>
-          </TouchableOpacity>
+          <GenderField style={styles.menu} people={people}/>
+          <BirthdayField style={styles.menu} people={people}/>
         </View>
 
         <View style={styles.groupContainer}>
