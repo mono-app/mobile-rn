@@ -5,6 +5,7 @@ import { StackActions, NavigationActions} from "react-navigation";
 import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people"
+import { withCurrentMessages } from "src/api/messages/CurrentMessages";
 
 function SplashScreen(props){
   React.useEffect(() => {
@@ -98,4 +99,4 @@ function SplashScreen(props){
   )
 }
 
-export default withCurrentUser(SplashScreen);
+export default withCurrentUser(withCurrentMessages(SplashScreen))

@@ -2,14 +2,14 @@ import React from "react";
 import RoomsAPI from 'src/api/rooms';
 import Logger from 'src/api/logger';
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
 import { withNavigation } from "react-navigation";
 
 import PrivateRoom from "src/screens/HomeScreen/Rooms/PrivateRoom";
 import { FlatList } from "react-native";
 
 function ChatSection(props){
-  const { currentUser } = props;
-  const [ rooms, setRooms ] = React.useState([]);
+  const { currentUser, currentRooms, setCurrentRooms } = props;
   const [ isRefreshing, setRefreshing ] = React.useState(true);
   const roomsListener = React.useRef(null);
 
@@ -17,17 +17,13 @@ function ChatSection(props){
   const fetchData = () => {
     setRefreshing(true)
     roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => {
-      setRooms(rooms)
+      setCurrentRooms(rooms)
       setRefreshing(false)
-      const newRooms = rooms.map(obj=>{
-        return {id: obj.id}
-      })
     });
   }
 
   React.useEffect(() => {
     fetchData()
-    
     return function cleanup(){
       if(roomsListener.current) roomsListener.current();
     }
@@ -45,16 +41,16 @@ function ChatSection(props){
   return (
     <FlatList
       onRefresh={()=>{}} 
-      data={rooms} 
+      data={currentRooms} 
       refreshing={isRefreshing} 
       keyExtractor={(item) => item.id}
       renderItem={({ item, index }) => {
       const marginTop = (index === 0)? 8: 4;
-      const marginBottom = (index === rooms.length)? 8: 4;
+      const marginBottom = (index === currentRooms.length)? 8: 4;
       
       return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
         
       }}/>
   )
 }
-export default withNavigation(withCurrentUser(ChatSection));
+export default withNavigation(withCurrentUser(withCurrentRooms(ChatSection)))

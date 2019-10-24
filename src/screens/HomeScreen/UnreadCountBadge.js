@@ -4,6 +4,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import { RoomsCollection, MessagesCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { Badge } from "react-native-paper";
+import { withCurrentMessages } from "src/api/messages/CurrentMessages";
 
 function UnreadCountBadge(props){
   const { roomId, currentUser } = props;
@@ -53,4 +54,4 @@ function UnreadCountBadge(props){
 }
 
 UnreadCountBadge.defaultProps = { style: {}, roomId: null }
-export default withCurrentUser(UnreadCountBadge);
+export default withCurrentUser(withCurrentMessages(UnreadCountBadge))

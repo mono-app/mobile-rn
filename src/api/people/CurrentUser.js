@@ -18,11 +18,6 @@ export function withCurrentUser(Component){
             blockedUserList={context.blockedUserList}
             blockedByUserList={context.blockedByUserList}
             hiddenUserList={context.hiddenUserList}
-            setUnreadChat={context.handleUnreadChat}
-            setUnreadBot={context.handleUnreadBot}
-            unreadChatRoomList={context.unreadChatRoomList}
-            unreadBotRoomList={context.unreadBotRoomList}
-            clearUnreadNotification={context.clearUnreadNotification}
           />}
 
       </CurrentUserContext.Consumer>
@@ -48,21 +43,11 @@ export class CurrentUserProvider extends React.PureComponent{
       user: {}, 
       isLoggedIn: false,
       handleCurrentUserEmail: this.handleCurrentUserEmail,
-      handleUnreadChat: this.handleUnreadChat,
-      handleUnreadBot: this.handleUnreadBot,
-      clearUnreadNotification: this.handleClearUnreadNotification,
       blockedUserList: [],
       blockedByUserList: [],
       hiddenUserList: [],
-      unreadChatRoomList: [],
-      unreadBotRoomList: [],
     }
-
     this.handleCurrentUserEmail = this.handleCurrentUserEmail.bind(this);
-    this.handleUnreadBot = this.handleUnreadBot.bind(this);
-    this.handleUnreadChat = this.handleUnreadChat.bind(this);
-    this.clearUnreadNotification = this.handleClearUnreadNotification.bind(this);
-    
   }
 
   handleCurrentUserEmail = async (email) => {
@@ -92,6 +77,7 @@ export class CurrentUserProvider extends React.PureComponent{
         const blockedUserList = queryDocumentSnapshotList.map(documentSnapshot => {
           return documentSnapshot.id
         })
+        Logger.log("CurrentUserProvider#blockedUserList", "");
         this.setState({blockedUserList: blockedUserList})
       })
 
@@ -101,6 +87,8 @@ export class CurrentUserProvider extends React.PureComponent{
         const blockedByUserList = queryDocumentSnapshotList.map(documentSnapshot => {
           return documentSnapshot.id
         })
+        Logger.log("CurrentUserProvider#blockedByUserList", "");
+
         this.setState({blockedByUserList: blockedByUserList})
       })
     
@@ -110,45 +98,10 @@ export class CurrentUserProvider extends React.PureComponent{
         const hiddenUserList = queryDocumentSnapshotList.map(documentSnapshot => {
           return documentSnapshot.id
         })
+        Logger.log("CurrentUserProvider#hiddenUserList", "");
         this.setState({hiddenUserList: hiddenUserList})
       })
   };
-
-  handleUnreadChat = (roomId, number) => {
-
-    let clonedChatRoomList = JSON.parse(JSON.stringify(this.state.unreadChatRoomList))
-
-    if(number>0){
-      clonedChatRoomList.push(roomId)
-    }else{
-      const index = clonedChatRoomList.indexOf(roomId)
-      if(index!==-1){
-        clonedChatRoomList.splice(index,1)
-      }
-
-    }
-
-    this.setState({unreadChatRoomList: clonedChatRoomList})
-  }
-
-  handleUnreadBot = (roomId, number) => {
-    let clonedBotRoomList = JSON.parse(JSON.stringify(this.state.unreadBotRoomList))
-
-    if(number>0){
-      clonedBotRoomList.push(roomId)
-    }else{
-      const index = clonedBotRoomList.indexOf(roomId)
-      if(index!==-1){
-        clonedBotRoomList.splice(index,1)
-      }
-    }
-
-    this.setState({unreadBotRoomList: clonedBotRoomList})
-  }
-
-  handleClearUnreadNotification = () => {
-    this.setState({unreadChatRoomList:[], unreadBotRoomList: []})
-  }
 
   componentDidMount(){
     this.authListener = firebase.auth().onAuthStateChanged((user) => {
