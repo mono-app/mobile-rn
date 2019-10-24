@@ -7,7 +7,7 @@ import { StyleSheet } from "react-native";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withTranslation } from 'react-i18next';
 import AppHeader from "src/components/AppHeader";
-import ProfileHeader from "modules/Classroom/components/ProfileHeader";
+import ClassProfileHeader from "modules/Classroom/components/ClassProfileHeader";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import { ActivityIndicator, View, ScrollView, TouchableOpacity } from "react-native";
 import { IconButton, Dialog, Text, Caption } from "react-native-paper";
@@ -156,9 +156,8 @@ class ClassDetailsScreen extends React.PureComponent {
           <ScrollView >
             <View style={{  marginTop: 16 }}/>  
             <View style={{flexDirection:"row", backgroundColor: "white"}}>
-              <ProfileHeader
+              <ClassProfileHeader
                 style={{padding:16, flex:2}}
-                profilePicture="https://picsum.photos/200/200/?random"
                 title={this.state.class.subject}
                 />
               <View style={{ flex:1, justifyContent: "center", alignItems: "flex-end", paddingRight: 16 }}>

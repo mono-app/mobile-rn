@@ -5,7 +5,7 @@ import FriendsAPI from "src/api/friends";
 import PeopleAPI from "src/api/people";
 import StatusAPI from "src/api/status";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-import PeopleProfileHeader from "src/components/PeopleProfile/Header";
+import UserProfileHeader from "src/components/UserProfileHeader";
 import PeopleInformationContainer from "src/components/PeopleProfile/InformationContainer";
 import ActionButton from "src/screens/PeopleInformationScreen/ActionButton";
 import AppHeader from "src/components/AppHeader";
@@ -70,7 +70,7 @@ function PeopleInformationScreen(props){
   }else return (
     <ScrollView style={{ flex: 1 }}>
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
-      <PeopleProfileHeader
+      <UserProfileHeader
         style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}
         profilePicture={people.profilePicture}
         title={people.applicationInformation.nickName}
