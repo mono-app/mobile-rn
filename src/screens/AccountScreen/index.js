@@ -1,7 +1,13 @@
 import React from "react";
 import moment from "moment";
+import firebase from "react-native-firebase";
+import OfflineDatabase from "src/api/database/offline";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
+import { Q } from "@nozbe/watermelondb"
+
+import MonoIdField from "src/screens/AccountScreen/fields/monoId";
+import NickNameField from "src/screens/AccountScreen/fields/nickName";
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
@@ -10,9 +16,12 @@ import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 function AccountScreen(props){
-  const [ isSignOutDialogShown, setIsSignOutDialogShown ] = React.useState(false);
   const { navigation, currentUser } = props;
   const { applicationInformation, personalInformation } = currentUser;
+
+  const [ isSignOutDialogShown, setIsSignOutDialogShown ] = React.useState(false);
+  const [ people, setPeople ] =  React.useState(null);
+
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#E8EEE8", color: "black" },
     groupContainer: { marginBottom: 16 },
@@ -26,9 +35,6 @@ function AccountScreen(props){
   const handleSignOutDialogCancel = () => setIsSignOutDialogShown(false);
   const handleNickNamePress = () => {
     const payload = {
-      databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
-      databaseFieldName: "applicationInformation.nickName", 
       fieldValue: applicationInformation.nickName,
       fieldTitle: props.t("nickName"),
     }
@@ -62,7 +68,18 @@ function AccountScreen(props){
     navigation.navigate("EditSingleField", payload);
   }
 
-  if(currentUser === {}) return;
+  const fetchPeople = async () => {
+    const email = firebase.auth().currentUser.email;
+    const usersCollection = OfflineDatabase.database.collections.get("users");
+    const [ user ] = await usersCollection.query(Q.where("email", email)).fetch();
+    setPeople(user);
+  }
+
+  React.useEffect(() => {
+    fetchPeople();
+  }, [])
+
+  if(!people) return null;
   return (
     <Container>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
@@ -70,22 +87,9 @@ function AccountScreen(props){
         <SignOutDialog show={isSignOutDialogShown} onCancel={handleSignOutDialogCancel}/>
 
         <View style={styles.groupContainer}>
-          <TouchableOpacity onPress={handleNickNamePress}>
-            <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>{props.t("nickName")}</Text>
-              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                <Text>{applicationInformation.nickName}</Text>
-                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
-              </View>
-            </View>
-          </TouchableOpacity>
           
-          <View style={styles.menu}>
-            <Text style={{ fontWeight: "500" }}>Mono ID</Text>
-            <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-              <Text>{applicationInformation.id}</Text>
-            </View>
-          </View>
+          <NickNameField style={styles.menu} people={people}/>
+          <MonoIdField style={styles.menu} people={people}/>
           <View style={styles.menu}>
             <Text style={{ fontWeight: "500" }}>Email</Text>
             <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -133,5 +137,6 @@ function AccountScreen(props){
     </Container> 
   )
 }
+
 AccountScreen.navigationOptions = { header: null } 
 export default withTranslation()(withCurrentUser(AccountScreen))
