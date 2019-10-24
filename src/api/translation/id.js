@@ -221,6 +221,8 @@ const translate = {
   editTeacherName: "Ubah Nama Guru",
   editNik: "Ubah NIK",
   nik: "NIK",
+  listEmpty: "Tidak Ada Data",
+  noDiscussions: "Tidak Ada Diskusi",
   
   
 }

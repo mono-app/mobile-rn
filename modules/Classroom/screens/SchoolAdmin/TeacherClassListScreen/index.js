@@ -91,8 +91,7 @@ class TeacherClassListScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("addClass")} />
         </View>
-        <View style={{backgroundColor: "#0ead69",
-                      padding: 16}}>
+        <View style={{backgroundColor: "#0ead69", padding: 16}}>
           <TouchableOpacity onPress={this.handleAddClassPress} style={{ display:"flex", flexDirection:"row",alignItems:"center"}}>
           <Icon name="plus" size={16} color="#fff" style={{marginTop: 2, marginRight: 4}}/> 
             <Text style={{fontWeight:"bold", color:"#fff"}}>
@@ -100,6 +99,7 @@ class TeacherClassListScreen extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
+        {(this.state.filteredClassList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredClassList}

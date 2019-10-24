@@ -1,5 +1,5 @@
 import React from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList } from "react-native";
 import { Text, Snackbar } from "react-native-paper";
 import TaskAPI from "modules/Classroom/api/task";
 import TaskListItem from "modules/Classroom/components/TaskListItem";
@@ -8,7 +8,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import { withTranslation } from 'react-i18next';
 
-const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false };
+const INITIAL_STATE = { isRefreshing: true, showSnackbarSuccessDeleting: false, taskList: [] };
 
 class TaskListScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -88,6 +88,7 @@ class TaskListScreen extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
+        {(this.state.taskList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <View style={{marginTop: 16}}/>
         <FlatList
           style={{ backgroundColor: "#E8EEE8" }}

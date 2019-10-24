@@ -8,6 +8,7 @@ import StudentAPI from "modules/Classroom/api/student";
 import TextInput from "src/components/TextInput";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import { withTranslation } from 'react-i18next';
+import { Text } from "react-native-paper"
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -118,6 +119,7 @@ class MassScoringScreen extends React.PureComponent {
             onSubmitEditing={this.handleSearchPress}
             placeholder={this.props.t("searchStudent")} />
         </View>
+        {(this.state.filteredPeopleList.length===0)?<Text style={{marginTop:16, textAlign:"center"}}>{this.props.t("listEmpty")}</Text>:null}
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredPeopleList}
