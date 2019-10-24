@@ -17,7 +17,8 @@ export default class PeopleAPI{
   static async normalize(user){
     const applicationInformation = await user.applicationInformation.fetch();
     const profilePicture = await user.profilePicture.fetch();
-    return { me: user, applicationInformation, profilePicture }
+    const statuses = await user.statuses.fetch();
+    return { me: user, applicationInformation, profilePicture, statuses }
   }
 
   /**

@@ -47,23 +47,12 @@ function SettingsScreen(props){
     }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
   }
 
-  // React.useEffect(() => {
-  //   const fetchData = async () => {
-  //     Logger.log("SettingsScreen", "get latest status");
-  //     const data  = await StatusAPI.getLatestStatus(currentUser.email);
-  //     if(data && data.content) setStatus(data.content);
-  //   }
-  //   fetchData();
-  //   props.settingScreenTutorial.start()
-  // }, [(currentUser.statistic && currentUser.statistic.totalStatus)?currentUser.statistic.totalStatus:0])
-
   const fetchUser = async () => {
     const email = firebase.auth().currentUser.email;
     const usersCollection = OfflineDatabase.database.collections.get("users");
     const [ user ] = await usersCollection.query(Q.where("email", email)).fetch();
-    const normalizedUser = await PeopleAPI.normalize(user);
-    Logger.log("SettingsScreen.fetchUser#normalizedUser", normalizedUser);
-    setCurrentUser(normalizedUser);
+    Logger.log("SettingsScreen.fetchUser#user", user);
+    setCurrentUser(user);
   }
 
   React.useEffect(() => {

@@ -20,7 +20,8 @@ export default class User extends Model{
 
   @action async getLatestStatus(){
     const statuses = await this.statuses.fetch();
-    const sortedStatus = statuses.rows.sort((first, second) => {
+    if(statuses.length === 0) return null;
+    const sortedStatus = statuses.sort((first, second) => {
       if(first.createdAt > second.createdAt) return 1
       else if(first.createdAt < second.createdAt) return -1
       else return 0;
