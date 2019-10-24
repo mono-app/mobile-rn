@@ -20,8 +20,10 @@ function ChatBottomTextInput(props){
   const [ sessionId, setSessionId ] = React.useState(room.liveVoice === undefined? null: room.liveVoice.session);
   const [ token, setToken ] = React.useState(null);
   const [ isConnected, setIsConnected ] = React.useState(false);
+  const [ canSend, setCanSend ] = React.useState(true);
 
   const roomListener = React.useRef(null);
+  const txtInput = React.useRef(null);
 
   const { colors } = props.theme;
   const styles = StyleSheet.create({
@@ -40,11 +42,12 @@ function ChatBottomTextInput(props){
   const handleSessionConnected = () => setIsConnected(true);
   const handleMessageChange = (newMessage) => setMessage(newMessage);
   const handleSendPress = () => {
-    const copiedMessage = JSON.parse(JSON.stringify(message));
-    if(copiedMessage.trim() && props.editable ){
-      props.onSendPress(copiedMessage);
+    setCanSend(false);
+    txtInput.current.clear();
+    if(message.trim() && props.editable ){
+      props.onSendPress(message);
     }
-    setMessage("");
+    setTimeout(() => setCanSend(true), 50);
   };
 
   const handleRoomUpdate = (room) => {
@@ -80,6 +83,7 @@ function ChatBottomTextInput(props){
     }
   }, [sessionId, token]);
 
+
   const sessionEventHandler = {
     sessionConnected: handleSessionConnected,
     error: handleError,
@@ -99,8 +103,8 @@ function ChatBottomTextInput(props){
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
         </React.Fragment>
       )}
-      <TextInput style={styles.textInput} autoFocus multiline value={message} maxLength={4000} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
-      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
+      <TextInput ref={txtInput} style={styles.textInput} autoFocus multiline value={message} maxLength={4000} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
+      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable || !canSend} onPress={handleSendPress}/>
     </SafeAreaView>
   )
 }
