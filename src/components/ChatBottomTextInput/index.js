@@ -20,6 +20,7 @@ function ChatBottomTextInput(props){
   const [ sessionId, setSessionId ] = React.useState(room.liveVoice === undefined? null: room.liveVoice.session);
   const [ token, setToken ] = React.useState(null);
   const [ isConnected, setIsConnected ] = React.useState(false);
+  const [ canSend, setCanSend ] = React.useState(true);
 
   const roomListener = React.useRef(null);
   const txtInput = React.useRef(null);
@@ -41,10 +42,12 @@ function ChatBottomTextInput(props){
   const handleSessionConnected = () => setIsConnected(true);
   const handleMessageChange = (newMessage) => setMessage(newMessage);
   const handleSendPress = () => {
+    setCanSend(false);
     txtInput.current.clear();
     if(message.trim() && props.editable ){
       props.onSendPress(message);
     }
+    setTimeout(() => setCanSend(true), 50);
   };
 
   const handleRoomUpdate = (room) => {
@@ -101,7 +104,7 @@ function ChatBottomTextInput(props){
         </React.Fragment>
       )}
       <TextInput ref={txtInput} style={styles.textInput} autoFocus multiline value={message} maxLength={4000} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
-      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable} onPress={handleSendPress}/>
+      <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable || !canSend} onPress={handleSendPress}/>
     </SafeAreaView>
   )
 }

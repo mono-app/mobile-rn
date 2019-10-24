@@ -110,7 +110,6 @@ function ChatList(props){
   const fetchMessages = async () => {
     if(!messagesListener.current){
       messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, ({ addedMessages, modifiedMessages }, snapshot) => {
-        console.log(addedMessages, modifiedMessages);
         lastMessageSnapshot.current = snapshot;
         if(addedMessages.length > 0){
           MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then((result) => {
