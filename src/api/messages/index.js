@@ -40,13 +40,31 @@ export default class MessagesAPI{
    * @param {string} roomId 
    * @param {function} callback - a callback for this real-time function. It requires one parameter `messages`
    */
-  static getMessagesWithRealTimeUpdate(roomId, callback, limit=25){
+  static getMessagesWithRealTimeUpdate(roomId, callback, limit=1){
     const messagesRef = MessagesAPI.getMessageReference(roomId);
     const filteredMessagesRef = messagesRef.orderBy("sentTime", "desc").limit(limit);
-    return filteredMessagesRef.onSnapshot({ includeMetadataChanges: true }, (querySnapshot) => {
-      const { messages, lastDocumentSnapshot } = MessagesAPI.normalizeMessage(querySnapshot);
-      callback(messages, lastDocumentSnapshot);
+    return filteredMessagesRef.onSnapshot((querySnapshot) => {
+      let lastDocumentSnapshot = null;
+
+      const addedMessages = [];
+      const modifiedMessages = [];
+      querySnapshot.docChanges.forEach((changes) => {
+        if(changes.type === "added") {
+          lastDocumentSnapshot = changes.doc;
+          addedMessages.push(MessagesAPI.normalizeMessage(changes.doc))
+        }else if(changes.type === "modified"){
+          modifiedMessages.push(MessagesAPI.normalizeMessage(changes.doc))
+        }else return null;
+      });
+      callback({ addedMessages, modifiedMessages }, lastDocumentSnapshot);
     })
+  }
+
+  static async getMessages(roomId){
+    const messagesRef = MessagesAPI.getMessageReference(roomId);
+    const messagesSnapshot = await messagesRef.orderBy("sentTime", "desc").get();
+    const { messages, _ } = MessagesAPI.normalizeMessages(messagesSnapshot);
+    return messages;
   }
 
   static appendDateSeparator(messages){
@@ -54,7 +72,8 @@ export default class MessagesAPI{
     let currentDate = null;
     messages.forEach((message) => {
       if(message.type === "date-separator") return;
-      const messageSentTime = (message.sentTime === null)? new moment().format("DD MMMM YYYY"): new moment.unix(message.sentTime.seconds).format("DD MMMM YYYY");
+      if(!message.sentTime) console.log(message.sentTime, message.content, message.type, message.id, message);
+      const messageSentTime = (!message.sentTime)? new moment().format("DD MMMM YYYY"): new moment.unix(message.sentTime.seconds).format("DD MMMM YYYY");
       
       if(currentDate === null) currentDate = messageSentTime;
       if(currentDate !== messageSentTime) {
@@ -86,36 +105,27 @@ export default class MessagesAPI{
     const messagesRef = MessagesAPI.getMessageReference(roomId);
     const queryRef = messagesRef.orderBy("sentTime", "desc").startAfter(lastMessageSnapshot);
     const querySnapshot = await queryRef.limit(limit).get();
-    const { messages, lastDocumentSnapshot } = MessagesAPI.normalizeMessage(querySnapshot);
+    const { messages, lastDocumentSnapshot } = MessagesAPI.normalizeMessages(querySnapshot);
     return Promise.resolve({ messages, lastDocumentSnapshot });
   }
 
-  static normalizeMessage(querySnapshot){
+  static normalizeMessage(documentSnapshot){
+    const messageData = documentSnapshot.data();
+    const isSent = messageData.sentTime !== null;
+    const sentTime = isSent? messageData.sentTime: firebase.firestore.Timestamp.fromMillis(new moment().valueOf());
+    return { id: documentSnapshot.id, isSent: true, ...messageData, sentTime }
+  }
+
+  static normalizeMessages(querySnapshot){
     let lastDocumentSnapshot = null;
     const messages = [];
     querySnapshot.forEach((documentSnapshot) => {
       lastDocumentSnapshot = documentSnapshot;
-      const messageData = documentSnapshot.data();
-      const payload = { 
-        id: documentSnapshot.id, isSent: messageData.sentTime !== null, 
-        ...messageData
-      }
-      messages.push(payload);
+      const message = MessagesAPI.normalizeMessage(documentSnapshot)
+      messages.push(message);
     })
     return { messages, lastDocumentSnapshot }
   }
-
-  parseQuerySnapshotToMessages(querySnapshot){
-    let lastDocumentSnapshot = null;
-    const messages = [];
-    querySnapshot.forEach((documentSnapshot) => {
-      lastDocumentSnapshot = documentSnapshot;
-      const payload = { isSent: documentSnapshot.sentTime !== null, id: documentSnapshot.id, ...documentSnapshot.data() }
-      messages.push(payload);
-    })
-    return { messages, lastDocumentSnapshot }
-  }
-
   /**
    * 
    * @param {string} roomId 
@@ -176,6 +186,6 @@ export default class MessagesAPI{
     const messagesCollection = new MessagesCollection();
     const roomRef = db.collection(roomsCollection.getName()).doc(roomId);
     const messageRef = roomRef.collection(messagesCollection.getName()).doc(messageId);
-    messageRef.update({isClicked: true})
+    messageRef.update({ isClicked: true })
   }
 }

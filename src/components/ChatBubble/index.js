@@ -50,36 +50,20 @@ function ChatBubble(props){
 
   const styles = props.bubbleStyle === "myBubble"? myBubble: peopleBubble;
 
+  const shortnerContent = () => content.substring(0,maxContentLength)
+  const handleContentMore = () => setEnableMore(false)
   const handlePress = () => {
     MessageAPI.setMessageStatusClicked(roomId, message.id)
     setClicked(true)
     props.onPress(message);
   }
-
-  const shortnerContent = () => {
-    return content.substring(0,maxContentLength)
-  }
-
-  const handleContentMore = () => {
-    setEnableMore(false)
-  }
-
-  const handleOnLongPress = (ref) => {
-   
-  }
+  
 
   React.useEffect(() => {
     setClicked(message.isClicked===true)
-
-    Logger.log("ChatBubble", `isSent: ${isSent}, ${sentTime}`);
     if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
-
-    if(content.length>maxContentLength){
-      setEnableMore(true)
-    }else{
-      setEnableMore(false)
-    }
-
+    if(content.length>maxContentLength) setEnableMore(true)
+    else setEnableMore(false)
   }, [isSent, sentTime])
  
   
@@ -89,7 +73,7 @@ function ChatBubble(props){
         <TouchableOpacity style={[styles.section, (!isClicked)?{backgroundColor:"#0EAD69"}:{}]} onPress={handlePress}>
           <Text style={styles.contentColor} >
             {(enabledMore)? shortnerContent(): content}
-            <Text style={[styles.empty, (!isClicked)?{color:"#0EAD69"}:{} ]}>±±±±±±±±±±±±±</Text>     
+            <Text style={[styles.empty, (!isClicked)?{color:"#0EAD69"}:{} ]}>±±±±±±±±±±±</Text>     
           </Text>
           <View style={styles.metadata}>
             <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
@@ -97,12 +81,11 @@ function ChatBubble(props){
           </View>
         </TouchableOpacity>
         : 
-        <TouchableWithoutFeedback onPress={handleOnLongPress()}>
-
+        <TouchableWithoutFeedback>
           <View style={[styles.section]}>
             <Text style={[styles.contentColor]} >
               {(enabledMore)? shortnerContent(): content}
-              <Text style={styles.empty}>±±±±±±±±±±±±±</Text>     
+              <Text style={styles.empty}>±±±±±±±±±±±</Text>     
             </Text>
             <View style={[styles.metadata]}>
               <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>

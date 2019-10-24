@@ -4,38 +4,63 @@ import Logger from "src/api/logger";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import PeopleAPI from "src/api/people";
 import moment from "moment";
+import Key from "src/helper/key"
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
-import Key from "src/helper/key"
+
+
 import ChatBubble from "src/components/ChatBubble";
 import ChatBubbleWithPhoto from "src/components/ChatBubbleWithPhoto";
 import { FlatList, View, AsyncStorage } from "react-native";
 import { Chip } from "react-native-paper";
+import MessagesAPI from "src/api/messages";
 
 function ChatList(props){
-  const { messages, currentUser, navigation, room } = props;
+  const { currentUser, navigation, room } = props;
   const SelectedBubble = room.audiences.length > 2? ChatBubbleWithPhoto: ChatBubble;
-  const [ listHeight, setListHeight ] = React.useState(0);
+  
   const [ bgColor, setBgColor ] = React.useState("#fff");
+  const [ messages, setMessages ] = React.useState([]);
+
+  const messagesListener = React.useRef(null);
+  const lastMessageSnapshot = React.useRef(null);
+  // const listHeight = React.useRef(0);
+  // const isLoadingNewMessage = React.useRef(false);
+
 
   const styles = StyleSheet.create({
     container: { flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }
   })
 
-  const beforeBirthdaySave = (value) => moment(value, "DD/MM/YYYY").isValid();
+  // const handleListContentSizeChange = (_, contentHeight) => listHeight.current = contentHeight
+  // const handleReachTop = async () => {
+  //   Logger.log("ChatScreen.handleChatListReactTop", `Getting new messages ${isLoadingNewMessage}`)
+  //   if(!isLoadingNewMessage){
+  //     try{
+  //       isLoadingNewMessage.current = true;
+  //       const newData = await MessagesAPI.getNext(lastMessageSnapshot, room.id);
+  //       const combinedMessages = messages.concat(newData.messages);
+  //       Logger.log("ChatScreen.handleChatListReachTop#combineMessages", combinedMessages);
+  //       Logger.log("ChatScreen.handleChatListReachTop#newData", newData);
+  //       if(_isMounted.current){
+  //         lastMessageSnapshot.current = newData.lastDocumentSnapshot;
+  //         setMessages(MessagesAPI.appendDateSeparator(combinedMessages));
+  //       }
+  //     }catch(err){
+  //       Logger.log("ChatScreen.handleChatListReachTop#err", err);
+  //     }finally{ 
+  //       isLoadingNewMessage.current = false;
+  //     }
+  //   }
+  // }
 
-  const handleListContentSizeChange = (contentWidth, contentHeight) => {
-    Logger.log("ChatList.handleListContentSizeChange#contentHeight", contentHeight);
-    setListHeight(contentHeight);
-  }
-
-  const handleListScroll = (e) => {
-    const currentPosition = e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
-    const threshold = 100;
-    Logger.log("ChatList.handleListScroll#currentPosition", currentPosition);
-    if(currentPosition >= (listHeight - threshold)) props.onReachTop();
-  }
+  // const handleListScroll = (e) => {
+  //   const currentPosition = e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
+  //   const threshold = 100;
+  //   Logger.log("ChatList.handleListScroll#currentPosition", currentPosition);
+  //   if(currentPosition >= (listHeight.current - threshold)) handleReachTop();
+  // }
 
   const handleDiscussionPress = async (item) => {
     const schoolId = item.details.discussion.schoolId
@@ -59,23 +84,9 @@ function ChatList(props){
     props.navigation.navigate("MomentComments", payload)
   }
 
-
   const handleSetupBirthdayPress = async (message) => {
     Logger.log("ChatList.handleSetupBirthdayPress#message", message);
-
-    // if birthday has been setup, go to account screen
-    const targetUser = await PeopleAPI.getDetail(message.details.targetEmail);
-    if(targetUser.personalInformation.birthday === undefined){
-      const payload = {
-        databaseCollection: "users", databaseDocumentId: targetUser.email,
-        databaseFieldName: "personalInformation.birthday", beforeSave: beforeBirthdaySave,
-        caption: "Format tanggal lahir: 22/12/2007",
-        placeholder: "DD/MM/YYYY", fieldValue: "", fieldTitle: "Tanggal Lahir",
-      }
-      navigation.navigate("EditSingleField", payload);
-    }else{
-      navigation.navigate({ routeName: "Account", key: "SettingsTab" })
-    }
+    navigation.navigate({ routeName: "Account", key: "SettingsTab" })
   }
 
   const handleFriendRequestPress = async (message) => {
@@ -84,60 +95,84 @@ function ChatList(props){
       peopleEmail: message.details.targetEmail, source: message.details.source
     });
   }
+
+  const initializeBackground = async () => {
+    const color = await AsyncStorage.getItem(Key.KEY_CHAT_BACKGROUND)
+    if(color) setBgColor(color)
+  }
+
+  const fetchArchived = async () => {
+    const messages = await MessagesAPI.getMessages(room.id);
+    messages.shift();
+    setMessages((oldMessages) => [...oldMessages, ...messages]);
+  }
+
+  const fetchMessages = async () => {
+    if(!messagesListener.current){
+      messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, ({ addedMessages, modifiedMessages }, snapshot) => {
+        console.log(addedMessages, modifiedMessages);
+        lastMessageSnapshot.current = snapshot;
+        if(addedMessages.length > 0){
+          MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then((result) => {
+            if(result) props.setUnreadChat(room.id, 0);
+          })
+          setMessages((oldMessages) => [...addedMessages, ...oldMessages]);
+        }
+      })
+    }
+  }
+
+  const keyExtractor = (item) => item.id
+  const renderItem = ({ item }) => {
+    const bubbleStyle = (currentUser.email !== item.senderEmail)? "peopleBubble": "myBubble";
+    if(item.type === "text") {
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
+    }else if(item.type === "discussion-share"){
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
+    }else if(item.type === "new-discussion"){
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
+    }else if(item.type === "new-discussion-comment"){
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
+    }else if(item.type === "moment-share"){
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleMomentPress} message={item} roomId={room.id}/>
+    }else if(item.type === "moment-comment"){
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleMomentCommentPress} message={item} roomId={room.id}/>
+    }else if(item.type === "setup-birthday"){
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item} roomId={room.id}/>
+    }else if(item.type === "friend-request"){
+      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item} roomId={room.id}/>
+    }else if(item.type === "date-separator" || item.type === "lets-start-chat"){
+      return (
+        <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
+          <Chip>{item.details.value}</Chip>
+        </View>
+      )
+    }
+  }
   
   React.useEffect(() => {
-    const init = async () => {
-      const color = await AsyncStorage.getItem(Key.KEY_CHAT_BACKGROUND)
-      if(color){
-        setBgColor(color)
-      }
+    initializeBackground();
+    fetchArchived();
+    fetchMessages();
+    return function cleanup(){ 
+      if(messagesListener.current) messagesListener.current();
     }
+  }, [ room.id ]);
 
-    init()
-
-    return function cleanup(){
-    }
-  }, [])
-
+  // onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
   return (
     <FlatList 
-      style={[ styles.container, props.style,{backgroundColor: bgColor} ]} keyExtractor={(item) => item.id}
-      onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
-      data={messages} inverted
-      renderItem={({ item }) => {
-        Logger.log("ChatList.renderItem#item", item);
-        const bubbleStyle = (currentUser.email !== item.senderEmail)? "peopleBubble": "myBubble";
-        if(item.type === "text") {
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
-        }else if(item.type === "discussion-share"){
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
-        }else if(item.type === "new-discussion"){
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
-        }else if(item.type === "new-discussion-comment"){
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
-        }else if(item.type === "moment-share"){
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleMomentPress} message={item} roomId={room.id}/>
-        }else if(item.type === "moment-comment"){
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleMomentCommentPress} message={item} roomId={room.id}/>
-        }else if(item.type === "setup-birthday"){
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item} roomId={room.id}/>
-        }else if(item.type === "friend-request"){
-          return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item} roomId={room.id}/>
-        }else if(item.type === "date-separator" || item.type === "lets-start-chat"){
-          return (
-            <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
-              <Chip>{item.details.value}</Chip>
-            </View>
-          )
-        }
-      }}/>
+      style={[ styles.container, props.style,{backgroundColor: bgColor} ]} keyExtractor={keyExtractor}
+      data={messages} extraData={messages} removeClippedSubviews={true} inverted
+      maxToRenderPerBatch={1} updateCellsBatchingPeriod={5000}
+      initialNumToRender={10} windowSize={2}
+      renderItem={renderItem}/>
   )
 }
 
 ChatList.propTypes = { 
-  onReachTop: PropTypes.func, 
-  style: PropTypes.shape(), room: PropTypes.shape().isRequired,
-  messages: PropTypes.arrayOf(PropTypes.shape()).isRequired
+  style: PropTypes.shape(), 
+  room: PropTypes.shape().isRequired,
 };
 ChatList.defaultProps = { onReachTop: () => {}, style: {} }
 export default withNavigation(withCurrentUser(ChatList));
