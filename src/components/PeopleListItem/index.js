@@ -3,9 +3,7 @@ import PropTypes from "prop-types";
 import OfflineDatabase from "src/api/database/offline";
 import Logger from "src/api/logger";
 import { Q } from "@nozbe/watermelondb";
-import { StyleSheet } from "react-native";
 
-import Loading from "src/components/PeopleListItem/loading";
 import EnhancedPeopleListItem from "src/components/PeopleListItem/enhanced";
 
 function PeopleListItem(props){
