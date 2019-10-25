@@ -5,7 +5,6 @@ import { StackActions, NavigationActions} from "react-navigation";
 import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people"
-import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
 
 function SplashScreen(props){
   React.useEffect(() => {
@@ -26,7 +25,6 @@ function SplashScreen(props){
 
       const firebaseUser = firebase.auth().currentUser;
       if(firebaseUser !== null) {
-        props.clearNotifBadge()
         props.setCurrentUserEmail(firebaseUser.email, props.navigation);
         const fcmToken = await firebase.messaging().getToken();
         if (fcmToken) {
@@ -68,15 +66,10 @@ function SplashScreen(props){
       }
     }
     if(props.isLoggedIn) {
-
       if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
-
         let routeNameForReset = "MainTabNavigator";
-
         if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified){
-
           if(props.currentUser.isCompleteSetup){
-
             routeNameForReset = "MainTabNavigator"
           } else {
             routeNameForReset = "AccountSetup"
@@ -99,4 +92,4 @@ function SplashScreen(props){
   )
 }
 
-export default withCurrentUser(withCurrentRooms(SplashScreen))
+export default withCurrentUser(SplashScreen)
