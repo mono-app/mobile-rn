@@ -5,6 +5,7 @@ import { View } from "react-native";
 import { Badge, Button, Text } from "react-native-paper";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
+import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
 
 function ChatMenuSwitch(props){
   const [ selectedMenu, setSelectedMenu ] = React.useState("");
@@ -67,4 +68,4 @@ function ChatMenuSwitch(props){
 
 ChatMenuSwitch.propTypes = { onPress: PropTypes.func }
 ChatMenuSwitch.defaultProps = { onPress: () => {} }
-export default withTranslation()(withCurrentUser(ChatMenuSwitch))
+export default withTranslation()(withCurrentUser(withCurrentRooms(ChatMenuSwitch)))

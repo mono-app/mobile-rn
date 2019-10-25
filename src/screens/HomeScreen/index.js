@@ -100,4 +100,4 @@ function HomeScreen(props){
 }
 
 HomeScreen.navigationOptions = { header: null };
-export default withTutorial(withCurrentUser(HomeScreen));
+export default withTutorial(withCurrentUser(HomeScreen))

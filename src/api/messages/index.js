@@ -156,28 +156,22 @@ export default class MessagesAPI{
    * @param {String} messageId 
    * @param {String} peopleEmail 
    */
-  static async bulkMarkAsRead(roomId, peopleEmail){
+  static async markAsRead(roomId, peopleEmail){
     const db = firebase.firestore();
-    const batch = db.batch();
     const roomsCollection = new RoomsCollection();
     const roomDocument = new Document(roomId);
-    const messagesCollection = new MessagesCollection();
     const roomRef = db.collection(roomsCollection.getName()).doc(roomDocument.getId());
-
-    const userPath = new firebase.firestore.FieldPath("readBy", peopleEmail);
-
-    const messageQuerySnapshot = await roomRef.collection(messagesCollection.getName()).where(userPath,"==",false).get()
-    messageQuerySnapshot.docs.forEach(documentSnapshot=> {
-      const readBy = documentSnapshot.data().readBy
+    
+    const documentSnapshot = await roomRef.get()
+    const readBy = (documentSnapshot.data().readBy)?documentSnapshot.data().readBy:{}
+    // if field read by is null or readBy not null but readBy[peopleEmail] is false (haven't read)
+    if((readBy && readBy[peopleEmail]===false) || !readBy || !readBy[peopleEmail]){
       readBy[peopleEmail]=true
-      batch.update(documentSnapshot.ref, {readBy: readBy});
-    })
-
-    batch.update(roomRef, { "lastMessage.readTime": firebase.firestore.FieldValue.serverTimestamp() })
-
-    await batch.commit();
+      roomRef.update({readBy: readBy,"lastMessage.readTime": firebase.firestore.FieldValue.serverTimestamp()})
+      return Promise.resolve(true);
+    }
    
-    return Promise.resolve(true);
+    return Promise.resolve(false);
   }
 
   static async setMessageStatusClicked(roomId, messageId){

@@ -12,6 +12,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { View, Image } from 'react-native';
 import {Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
 import { withTranslation } from 'react-i18next';
+import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
 
 function SignInScreen(props){
   const [ email, setEmail ] = React.useState("");
@@ -39,7 +40,7 @@ function SignInScreen(props){
       try{
         const isExists = await PeopleAPI.isExists(email)
         if(isExists){
-          props.clearUnreadNotification()
+          props.clearNotifBadge()
           const { user } = await firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password);
           props.setCurrentUserEmail(user.email);
         }else{
@@ -133,4 +134,4 @@ function SignInScreen(props){
     </KeyboardAwareScrollView>
   );
 }
-export default withTranslation()(withCurrentUser(SignInScreen));
+export default withTranslation()(withCurrentUser(withCurrentRooms(SignInScreen)))

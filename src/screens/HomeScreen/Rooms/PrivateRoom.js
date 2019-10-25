@@ -79,7 +79,7 @@ function PrivateRoom(props){
               <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={1}>
                 {room.lastMessage.message}
               </Caption>
-              <UnreadCountBadge roomId={room.id}/>
+              <UnreadCountBadge roomId={room.id} isActive={(room.readBy && room.readBy[currentUser.email]===false)}/>
             </View>
           </View>
         </TouchableOpacity>

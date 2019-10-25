@@ -12,9 +12,10 @@ import { TextInput, ActivityIndicator} from "react-native";
 import { IconButton, withTheme } from "react-native-paper";
 import { SafeAreaView } from "react-navigation";
 import { OTSession } from "opentok-react-native";
+import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
 
 function ChatBottomTextInput(props){
-  const { room, currentUser } = props;
+  const { room, currentUser, currentRooms, getRoomDetails } = props;
 
   const [ message, setMessage ] = React.useState("");
   const [ sessionId, setSessionId ] = React.useState(room.liveVoice === undefined? null: room.liveVoice.session);
@@ -22,7 +23,6 @@ function ChatBottomTextInput(props){
   const [ isConnected, setIsConnected ] = React.useState(false);
   const [ canSend, setCanSend ] = React.useState(true);
 
-  const roomListener = React.useRef(null);
   const txtInput = React.useRef(null);
 
   const { colors } = props.theme;
@@ -40,20 +40,30 @@ function ChatBottomTextInput(props){
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
   const handleSessionConnected = () => setIsConnected(true);
-  const handleMessageChange = (newMessage) => setMessage(newMessage);
+  const handleMessageChange = (newMessage) => setMessage(newMessage)
   const handleSendPress = () => {
     setCanSend(false);
+    setMessage("")
     txtInput.current.clear();
     if(message.trim() && props.editable ){
       props.onSendPress(message);
     }
-    setTimeout(() => setCanSend(true), 50);
+    // setTimeout(() => {
+    //   setCanSend(true)
+    // }, 5)
+    setCanSend(true)
+
   };
 
-  const handleRoomUpdate = (room) => {
-    if(room.liveVoice === undefined) return;
-    if(room.liveVoice.session === undefined) return;
-    setSessionId(room.liveVoice.session);
+  const handleRoomUpdate = async () => {
+    // prevent to use realTimeDatabase because it will reRender screen
+    const currentRoom = await RoomsAPI.getDetail(room.id)
+    if(currentRoom.liveVoice && currentRoom.liveVoice.session) setSessionId(currentRoom.liveVoice.session);
+    else {
+      setTimeout(async()=>{
+        handleRoomUpdate()
+      }, 1000);
+    }
   };
 
   const initLiveVoice = async () => {
@@ -70,16 +80,14 @@ function ChatBottomTextInput(props){
     if(!jsonResult.error) setToken(jsonResult.result);
   }
 
-
   React.useEffect(() => {
     if(room.id === undefined) return;
     Logger.log("ChatBottomTextInput#sessionId", sessionId);
     Logger.log("ChatBottomTextInput#token", token);
 
-    if(sessionId === null) roomListener.current = RoomsAPI.getDetailWithRealTimeUpdate(room.id, handleRoomUpdate);
+    if(sessionId === null) handleRoomUpdate()
     if(token === null) initLiveVoice();
     return function cleanup(){
-      if(roomListener.current) roomListener.current();
     }
   }, [sessionId, token]);
 
