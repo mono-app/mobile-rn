@@ -5,7 +5,7 @@ import { StackActions, NavigationActions} from "react-navigation";
 import NavigatorAPI from "src/api/navigator";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import PeopleAPI from "src/api/people"
-import { withCurrentMessages } from "src/api/messages/CurrentMessages";
+import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
 
 function SplashScreen(props){
   React.useEffect(() => {
@@ -26,7 +26,7 @@ function SplashScreen(props){
 
       const firebaseUser = firebase.auth().currentUser;
       if(firebaseUser !== null) {
-        props.clearUnreadNotification()
+        props.clearNotifBadge()
         props.setCurrentUserEmail(firebaseUser.email, props.navigation);
         const fcmToken = await firebase.messaging().getToken();
         if (fcmToken) {
@@ -99,4 +99,4 @@ function SplashScreen(props){
   )
 }
 
-export default withCurrentUser(withCurrentMessages(SplashScreen))
+export default withCurrentUser(withCurrentRooms(SplashScreen))

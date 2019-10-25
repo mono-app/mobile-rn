@@ -89,11 +89,7 @@ class SplashScreen extends React.PureComponent {
   }
 
   async componentDidMount(){
-    console.log("LOAD SCHOOL")
-
     const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.email);
-    console.log("schoolListschoolList")
-    console.log(schoolList)
     if(schoolList.length>0){
       this.loadSchools();
     }else{

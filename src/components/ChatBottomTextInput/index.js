@@ -113,7 +113,6 @@ function ChatBottomTextInput(props){
       )}
       <TextInput ref={txtInput} style={styles.textInput} autoFocus multiline value={message} maxLength={4000} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable || !canSend} onPress={handleSendPress}/>
-      {console.log("CHAT BOTTOM TEXT INPUT")}
     </SafeAreaView>
   )
 }

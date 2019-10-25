@@ -63,8 +63,6 @@ function CommentsScreen(props){
   const loadData = async () =>{
     const moment = await MomentAPI.getDetail(momentId)
     const people = await PeopleAPI.getDetail(moment.posterEmail)
-    console.log("momentmomentmoment")
-    console.log(moment)
     if(_isMounted.current && moment){
       if(!moment.postTime) setMomentDeleted(true)
       setMoment(moment);

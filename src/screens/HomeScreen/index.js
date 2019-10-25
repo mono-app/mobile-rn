@@ -4,7 +4,6 @@ import Permissions from "react-native-permissions";
 import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
 import { withCurrentUser } from "src/api/people/CurrentUser";
-import { withCurrentMessages } from "src/api/messages/CurrentMessages";
 import { withTutorial } from "src/api/Tutorial";
 
 import FriendRequestNotification from "src/screens/HomeScreen/Notifications/FriendRequest"
@@ -101,4 +100,4 @@ function HomeScreen(props){
 }
 
 HomeScreen.navigationOptions = { header: null };
-export default withTutorial(withCurrentUser(withCurrentMessages(HomeScreen)))
+export default withTutorial(withCurrentUser(HomeScreen))

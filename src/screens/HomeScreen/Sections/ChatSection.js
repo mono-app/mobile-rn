@@ -17,7 +17,9 @@ function ChatSection(props){
   const fetchData = () => {
     setRefreshing(true)
     roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => {
-      setCurrentRooms(rooms)
+      console.log("triggered")
+      console.log(rooms)
+      setCurrentRooms(rooms, currentUser.email)
       setRefreshing(false)
     });
   }
