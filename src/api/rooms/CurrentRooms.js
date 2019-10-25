@@ -110,9 +110,9 @@ export class CurrentRoomsProvider extends React.PureComponent{
   }
 
   componentDidMount(){
-    const email = firebase.auth().currentUser.email;
-    this.currentRoomsListener = RoomsAPI.getRoomsWithRealtimeUpdate(email, (rooms) => {
-      this.setState({currentRooms: rooms})
+    const currentUserEmail = firebase.auth().currentUser.email;
+    this.currentRoomsListener = RoomsAPI.getRoomsWithRealtimeUpdate(currentUserEmail, (rooms) => {
+      this.handleSetCurrentRooms(rooms, currentUserEmail)
     });
   }
 
