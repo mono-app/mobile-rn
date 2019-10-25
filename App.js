@@ -9,7 +9,6 @@ import { createAppContainer } from 'react-navigation';
 
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
-import { CurrentRoomsProvider } from "src/api/rooms/CurrentRooms";
 import { TutorialProvider } from "src/api/Tutorial";
 import { initReactI18next } from 'react-i18next';
 // import { Platform, NativeModules } from 'react-native'
@@ -86,9 +85,7 @@ function App(){
     <PaperProvider theme={theme}>
       <CurrentUserProvider>
           <TutorialProvider>
-            <CurrentRoomsProvider>
               <AppContainer/>
-            </CurrentRoomsProvider>
           </TutorialProvider>
       </CurrentUserProvider>
     </PaperProvider>

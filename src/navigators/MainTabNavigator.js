@@ -10,7 +10,7 @@ import ContactTabNavigator from "./ContactTabNavigator";
 import SettingTabNavigator from "./SettingTabNavigator.js";
 import AppTabNavigator from "./AppTabNavigator";
 import { default as MomentTabNavigator } from "modules/Moments/navigators/MainNavigator";
-
+import { CurrentRoomsProvider } from "src/api/rooms/CurrentRooms";
 import NotificationListener from "src/components/NotificationListener"
 import InAppNotifications from "src/components/InAppNotifications";
 
@@ -59,11 +59,11 @@ export default class MainNavigator extends React.PureComponent {
 
   render(){
     return(
-    <React.Fragment>
-      <MainTabNavigator navigation={this.props.navigation}/>
-      <NotificationListener/>
-      <InAppNotifications type="friend-request"/>
-    </React.Fragment>
+    <CurrentRoomsProvider>
+        <MainTabNavigator navigation={this.props.navigation}/>
+        <NotificationListener/>
+        <InAppNotifications type="friend-request"/>
+    </CurrentRoomsProvider>
     )
   }
 }

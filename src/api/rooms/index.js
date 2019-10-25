@@ -1,8 +1,6 @@
 import firebase from "react-native-firebase";
 
-import CurrentUserAPI from "src/api/people/CurrentUser";
-import { RoomsCollection, RoomUserMappingCollection, MessagesCollection, Collection } from "src/api/database/collection";
-import { Document } from "src/api/database/document";
+import { RoomsCollection, InRoomCollection } from "src/api/database/collection";
 import { GetDocument } from "src/api/database/query";
 import StudentAPI from "modules/Classroom/api/student";
 import TeacherAPI from "modules/Classroom/api/teacher";
@@ -130,15 +128,31 @@ export default class RoomsAPI{
     }
   }
 
+  static getInRoomWithRealTimeUpdate(roomId, callback){
+    const db = firebase.firestore();
+    const roomsCollection = new RoomsCollection();
+    const inRoomCollection = new InRoomCollection();
+    const roomsDocumentRef = db.collection(roomsCollection.getName()).doc(roomId);
+    const inRoomDocumentRef = roomsDocumentRef.collection(inRoomCollection.getName());
+    return inRoomDocumentRef.onSnapshot((querySnapshot)=> {
+      const peopleList = querySnapshot.docs.map(docSnapshot => {
+        return docSnapshot.id
+      })
+      callback(peopleList);
+    });
+  }
+
   static async setInRoomStatus(roomId, email, status){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
+    const inRoomCollection = new InRoomCollection();
     const roomsRef = db.collection(roomsCollection.getName()).doc(roomId);
+    const inRoomRef = roomsRef.collection(inRoomCollection.getName()).doc(email);
 
     if(status){
-      roomsRef.update({inRoom: firebase.firestore.FieldValue.arrayUnion(email)})
+      inRoomRef.set()
     }else{
-      roomsRef.update({inRoom: firebase.firestore.FieldValue.arrayRemove(email)})
+      inRoomRef.delete()
     }
     return Promise.resolve(true)
   }
