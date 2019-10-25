@@ -9,27 +9,7 @@ import PrivateRoom from "src/screens/HomeScreen/Rooms/PrivateRoom";
 import { FlatList } from "react-native";
 
 function ChatSection(props){
-  const { currentUser, currentRooms, setCurrentRooms } = props;
-  const [ isRefreshing, setRefreshing ] = React.useState(true);
-  const roomsListener = React.useRef(null);
-
-
-  const fetchData = () => {
-    setRefreshing(true)
-    roomsListener.current = RoomsAPI.getRoomsWithRealtimeUpdate(currentUser.email, (rooms) => {
-      console.log("triggered")
-      console.log(rooms)
-      setCurrentRooms(rooms, currentUser.email)
-      setRefreshing(false)
-    });
-  }
-
-  React.useEffect(() => {
-    fetchData()
-    return function cleanup(){
-      if(roomsListener.current) roomsListener.current();
-    }
-  }, []);
+  const { currentRooms } = props;
 
   const handleRoomPress = (room) => {
     Logger.log("HomeScreen.handleRoomPress", room);
@@ -42,9 +22,7 @@ function ChatSection(props){
   
   return (
     <FlatList
-      onRefresh={()=>{}} 
       data={currentRooms} 
-      refreshing={isRefreshing} 
       keyExtractor={(item) => item.id}
       renderItem={({ item, index }) => {
       const marginTop = (index === 0)? 8: 4;

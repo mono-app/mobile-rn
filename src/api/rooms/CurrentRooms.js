@@ -1,7 +1,8 @@
 import React from "react";
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import RoomAPI from 'src/api/rooms'
+import RoomsAPI from 'src/api/rooms'
 import Logger from "src/api/logger";
+import firebase from "react-native-firebase";
 
 const CurrentRoomsContext = React.createContext();
 export function withCurrentRooms(Component){
@@ -42,6 +43,7 @@ export class CurrentRoomsProvider extends React.PureComponent{
       setRoomNotif: this.handleSetRoomNotif,
       clearNotifBadge: this.handleClearNotifBadge,
     }
+    this.currentRoomsListener = null
     this.handleSetCurrentRooms = this.handleSetCurrentRooms.bind(this)
     this.handleGetRoomDetails = this.handleGetRoomDetails.bind(this)
     this.handleSetRoomNotif = this.handleSetRoomNotif.bind(this)
@@ -85,7 +87,7 @@ export class CurrentRoomsProvider extends React.PureComponent{
         break;
       }
     }
-    if(room===null) room = await RoomAPI.getDetail(roomId)
+    if(room===null) room = await RoomsAPI.getDetail(roomId)
     
     return room
   }
@@ -105,6 +107,17 @@ export class CurrentRoomsProvider extends React.PureComponent{
   handleClearNotifBadge = () => {
     Logger.log("CurrentRoomsProvider#handleClearNotifBadge", "");
     this.setState({unreadChatRoomList:[], unreadBotRoomList: []})
+  }
+
+  componentDidMount(){
+    const email = firebase.auth().currentUser.email;
+    this.currentRoomsListener = RoomsAPI.getRoomsWithRealtimeUpdate(email, (rooms) => {
+      this.setState({currentRooms: rooms})
+    });
+  }
+
+  componentWillUnmount(){
+    if(this.currentRoomsListener) this.currentRoomsListener()
   }
 
   render(){
