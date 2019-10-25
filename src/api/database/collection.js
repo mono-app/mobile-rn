@@ -122,3 +122,7 @@ export class BlockedByCollection extends Collection{
   constructor(){ super("blockedBy"); }
 }
 
+export class InRoomCollection extends Collection{
+  constructor(){ super("inRoom"); }
+}
+

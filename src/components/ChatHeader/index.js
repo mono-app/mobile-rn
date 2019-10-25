@@ -5,28 +5,28 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import { View } from "react-native";
 import { Appbar, Subheading, Caption } from "react-native-paper";
 import PeopleAPI from "src/api/people";
-import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
+import RoomsAPI from "src/api/rooms"
 
 function ChatHeader(props){
-  const { title, profilePicture, room, currentUser, getRoomDetails } = props;
+  const { title, profilePicture, room, currentUser } = props;
   const [ audienceStatus, setAudienceStatus ] = React.useState("");
   const [ isInRoom, setInRoom ] = React.useState(false);
   const _isMounted = React.useRef(true);
   const audienceListener = React.useRef(null);
+  const inRoomListener = React.useRef(null);
 
   const styles = StyleSheet.create({ default: { elevation: 4 }})
 
   const handleBackPress = () => props.navigation.goBack();
 
-  const initRoom = () => {
-    const audiences = room.audiences.filter((audience) => audience !== currentUser.email);
+  const initUserInRoom = () => {
+    inRoomListener.current = RoomsAPI.getInRoomWithRealTimeUpdate(room.id, userInRoomList => {
+      const audiences = room.audiences.filter((audience) => audience !== currentUser.email);
    
-    const userInRoomList = getRoomDetails(room.id).inRoom
-    if(userInRoomList && userInRoomList.length>0 && userInRoomList.includes(audiences[0])){
-      if( _isMounted.current) setInRoom(true)
-    }else{
-      if( _isMounted.current) setInRoom(false)
-    }
+      if(userInRoomList && userInRoomList.length>0 && userInRoomList.includes(audiences[0])){
+        if( _isMounted.current) setInRoom(true)
+      }else if( _isMounted.current) setInRoom(false)
+    })
   };
 
   const initAudience = () => {
@@ -38,14 +38,15 @@ function ChatHeader(props){
   };  
   
   React.useEffect(() => {
-    initRoom();
     initAudience();
+    initUserInRoom()
 
     return function cleanup(){
       _isMounted.current = false
       if(audienceListener.current) audienceListener.current();
+      if(inRoomListener.current) inRoomListener.current();
     }
-  }, [room, currentUser]);
+  }, []);
 
   return(
     <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
@@ -73,4 +74,4 @@ ChatHeader.propTypes = {
   style: PropTypes.object,
 }
 ChatHeader.defaultProps = { navigation: null, title: null, style: null }
-export default withCurrentRooms(ChatHeader)
+export default ChatHeader
