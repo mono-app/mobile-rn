@@ -7,8 +7,10 @@ import UnreadCountBadge from "src/screens/HomeScreen/UnreadCountBadge";
 import CircleAvatar from "src/components/Avatar/Circle";
 import { Text, Caption } from "react-native-paper";
 import { View, TouchableOpacity } from 'react-native';
+import { withCurrentUser } from "src/api/people/CurrentUser";
 
 function BotRoom(props){
+  const { currentUser, room } = props; 
   const [ bot, setBot ] = React.useState(null);
   const styles = StyleSheet.create({
     chatContainer: {
@@ -17,11 +19,11 @@ function BotRoom(props){
     }
   })
 
-  const handleRoomPress = () => props.onPress(props.room);
+  const handleRoomPress = () => props.onPress(room);
 
   const fetchData = async () => {
     const db = firebase.firestore();
-    const botSnapshot = await db.collection("bots").doc(props.room.bot).get();
+    const botSnapshot = await db.collection("bots").doc(room.bot).get();
     setBot({ id: botSnapshot.id, ...botSnapshot.data(), profilePicture: botSnapshot.data().profilePicture.downloadUrl });
   }
 
@@ -30,7 +32,7 @@ function BotRoom(props){
   }, [])
 
   if(bot !== null){
-    const sentTime = props.room.lastMessage.sentTime? new moment.unix(props.room.lastMessage.sentTime.seconds): null;
+    const sentTime = room.lastMessage.sentTime? new moment.unix(room.lastMessage.sentTime.seconds): null;
     let dateTimeString = null;
     if(sentTime){
       const isToday = new moment().diff(sentTime, "days") === 0;
@@ -49,9 +51,9 @@ function BotRoom(props){
           </View>
           <View style={{ display: "flex", flexDirection: "row",justifyContent: "space-between" }}>
             <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={2}>
-              {props.room.lastMessage.message}
+              {room.lastMessage.message}
             </Caption>
-            <UnreadCountBadge roomId={props.room.id}/>
+            <UnreadCountBadge roomId={room.id} isActive={(room.readBy && room.readBy[currentUser.email]===false)}/>
           </View>
         </View>
       </TouchableOpacity>
@@ -69,4 +71,4 @@ BotRoom.propTypes = {
   style: PropTypes.shape()
 }
 BotRoom.defaultProps = { onPress: () => {}, style: {} }
-export default BotRoom
+export default withCurrentUser(BotRoom)

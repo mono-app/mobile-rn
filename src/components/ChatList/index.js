@@ -2,12 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import Logger from "src/api/logger";
 import DiscussionAPI from "modules/Classroom/api/discussion";
-import PeopleAPI from "src/api/people";
-import moment from "moment";
 import Key from "src/helper/key"
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
-import { useCurrentMessagesFunc } from "src/api/messages/CurrentMessages";
 import { withNavigation } from "react-navigation";
 import ChatBubble from "src/components/ChatBubble";
 import ChatBubbleWithPhoto from "src/components/ChatBubbleWithPhoto";
@@ -21,7 +18,6 @@ function ChatList(props){
   
   const [ bgColor, setBgColor ] = React.useState("#fff");
   const [ messages, setMessages ] = React.useState([]);
-  const { setUnreadChat } = useCurrentMessagesFunc();
 
   const messagesListener = React.useRef(null);
   const lastMessageSnapshot = React.useRef(null);
@@ -112,10 +108,7 @@ function ChatList(props){
       messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, ({ addedMessages, modifiedMessages }, snapshot) => {
         lastMessageSnapshot.current = snapshot;
         if(addedMessages.length > 0){
-          MessagesAPI.bulkMarkAsRead(room.id, currentUser.email).then((result) => {
-            if(result && !isBot) setUnreadChat(room.id, 0);
-            else props.setUnreadBot(room.id, 0)
-          })
+          MessagesAPI.markAsRead(room.id, currentUser.email)
           setMessages((oldMessages) => [...addedMessages, ...oldMessages]);
         }
       })
