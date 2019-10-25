@@ -10,7 +10,7 @@ function SignOutDialog(props){
   const handleSignOutPress = async () => {
     const result = await PeopleAPI.updateUserForLogout(props.currentUser.email)
     if(result){
-      firebase.auth().signOut();
+      await firebase.auth().signOut();
       props.navigation.dispatch(StackActions.reset({
         index: 0, actions: [ NavigationActions.navigate({ routeName: "Splash" }) ],
         key: null
