@@ -105,7 +105,7 @@ export class CurrentUserProvider extends React.PureComponent{
 
   componentDidMount(){
     this.authListener = firebase.auth().onAuthStateChanged((user) => {
-      Logger.log("CurrentUserProvider", `isLoggedIn: ${(user)?true:false}`);
+      Logger.log("CurrentUserProvider#isLoggedIn", `${(user)?true:false}`);
       const isLoggedIn = (user)? true: false;
       if(isLoggedIn) this.setState({ isLoggedIn });
       else this.setState({ isLoggedIn, user: {} });
