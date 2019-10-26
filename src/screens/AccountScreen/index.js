@@ -1,15 +1,7 @@
 import React from "react";
 import moment from "moment";
-import firebase from "react-native-firebase";
-import OfflineDatabase from "src/api/database/offline";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
-import { Q } from "@nozbe/watermelondb"
-
-import MonoIdField from "src/screens/AccountScreen/fields/monoId";
-import NickNameField from "src/screens/AccountScreen/fields/nickName";
-import GenderField from "src/screens/AccountScreen/fields/gender";
-import BirthdayField from "src/screens/AccountScreen/fields/birthday";
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
@@ -18,12 +10,9 @@ import { Text } from "react-native-paper";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 
 function AccountScreen(props){
+  const [ isSignOutDialogShown, setIsSignOutDialogShown ] = React.useState(false);
   const { navigation, currentUser } = props;
   const { applicationInformation, personalInformation } = currentUser;
-
-  const [ isSignOutDialogShown, setIsSignOutDialogShown ] = React.useState(false);
-  const [ people, setPeople ] =  React.useState(null);
-
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#E8EEE8", color: "black" },
     groupContainer: { marginBottom: 16 },
@@ -35,6 +24,17 @@ function AccountScreen(props){
 
   const handleSignOutPress = () => setIsSignOutDialogShown(true);
   const handleSignOutDialogCancel = () => setIsSignOutDialogShown(false);
+  const handleNickNamePress = () => {
+    const payload = {
+      databaseCollection: "users",
+      databaseDocumentId: currentUser.email,
+      databaseFieldName: "applicationInformation.nickName", 
+      fieldValue: applicationInformation.nickName,
+      fieldTitle: props.t("nickName"),
+    }
+    navigation.navigate("EditSingleField", payload);
+  }
+
   const handleBirthdayPress = () => {
     const payload = {
       databaseCollection: "users",
@@ -50,18 +50,19 @@ function AccountScreen(props){
     navigation.navigate("EditSingleField", payload);
   }
 
-  const fetchPeople = async () => {
-    const email = firebase.auth().currentUser.email;
-    const usersCollection = OfflineDatabase.database.collections.get("users");
-    const [ user ] = await usersCollection.query(Q.where("email", email)).fetch();
-    setPeople(user);
+  const handleGenderPress = () => {
+    const payload = {
+      databaseCollection: "users",
+      databaseDocumentId: currentUser.email,
+      databaseFieldName: "personalInformation.gender", 
+      fieldValue: (personalInformation.gender)? personalInformation.gender: "male",
+      fieldTitle: props.t("gender"),
+      genderPicker: true
+    }
+    navigation.navigate("EditSingleField", payload);
   }
 
-  React.useEffect(() => {
-    fetchPeople();
-  }, [])
-
-  if(!people) return null;
+  if(currentUser === {}) return;
   return (
     <Container>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
@@ -69,9 +70,22 @@ function AccountScreen(props){
         <SignOutDialog show={isSignOutDialogShown} onCancel={handleSignOutDialogCancel}/>
 
         <View style={styles.groupContainer}>
+          <TouchableOpacity onPress={handleNickNamePress}>
+            <View style={styles.menu}>
+              <Text style={{ fontWeight: "500" }}>{props.t("nickName")}</Text>
+              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                <Text>{applicationInformation.nickName}</Text>
+                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+              </View>
+            </View>
+          </TouchableOpacity>
           
-          <NickNameField style={styles.menu} people={people}/>
-          <MonoIdField style={styles.menu} people={people}/>
+          <View style={styles.menu}>
+            <Text style={{ fontWeight: "500" }}>Mono ID</Text>
+            <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+              <Text>{applicationInformation.id}</Text>
+            </View>
+          </View>
           <View style={styles.menu}>
             <Text style={{ fontWeight: "500" }}>Email</Text>
             <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -81,8 +95,28 @@ function AccountScreen(props){
         </View>
 
         <View style={styles.groupContainer}>
-          <GenderField style={styles.menu} people={people}/>
-          <BirthdayField style={styles.menu} people={people}/>
+          <TouchableOpacity onPress={handleGenderPress}>
+            <View style={styles.menu}>
+              <Text style={{ fontWeight: "500" }}>{props.t("gender")}</Text>
+              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                {personalInformation.gender?(
+                  <Text>{personalInformation.gender === "male"? "Pria": "Wanita"}</Text>
+                ):null}
+                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleBirthdayPress}>
+            <View style={styles.menu}>
+              <Text style={{ fontWeight: "500" }}>{props.t("birthDate")}</Text>
+              <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                {personalInformation.birthday?(
+                  <Text>{moment(personalInformation.birthday, "DD/MM/YYYY").format("DD MMM YYYY")}</Text>
+                ):<Text>-</Text>}
+                <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.groupContainer}>
@@ -99,6 +133,5 @@ function AccountScreen(props){
     </Container> 
   )
 }
-
 AccountScreen.navigationOptions = { header: null } 
 export default withTranslation()(withCurrentUser(AccountScreen))

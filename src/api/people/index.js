@@ -2,12 +2,9 @@ import firebase from "react-native-firebase";
 import uuid from "uuid/v4";
 import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
-import OfflineDatabase from "src/api/database/offline";
-import Logger from "src/api/logger";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { getDistance } from 'geolib';
-import { Q } from "@nozbe/watermelondb";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -102,16 +99,20 @@ export default class PeopleAPI{
    * @param {String} storagePath - Firebase Storage Path
    */
   static async changeProfilePicture(peopleEmail, imagePath){
-    Logger.log("PeopleAPI.changeProfilePicture#peopleEmail", peopleEmail);
+    let profilePictureUrl = null;
     const storagePath = `/main/profilePicture/${uuid()}.png`;
-    const downloadUrl = await StorageAPI.uploadFile(storagePath, imagePath);
-    Logger.log("PeopleAPI.changeProfilePicture#downloadUrl", downloadUrl);
+    return StorageAPI.uploadFile(storagePath, imagePath).then((downloadUrl) => {
+      profilePictureUrl = `${downloadUrl}`;
+      const db = firebase.firestore();
+      const batch = db.batch();
 
-    const usersCollection = OfflineDatabase.database.collections.get("users");
-    const [ user ] = await usersCollection.query(Q.where("email", peopleEmail)).fetch();
-    const profilePicture = await user.profilePicture.fetch();
-    await profilePicture.changeProfilePicture(downloadUrl, storagePath);
-    OfflineDatabase.synchronize();
+      const userCollection = new UserCollection();
+      const userDocument = new Document(peopleEmail);
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      batch.update(userRef, { "applicationInformation.profilePicture": {storagePath, downloadUrl} })
+      batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
+      return batch.commit();
+    }).then(() => profilePictureUrl);
   }
 
   /**

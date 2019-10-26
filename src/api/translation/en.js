@@ -223,6 +223,8 @@ const translate = {
   nik: "NIK",
   listEmpty: "List is Empty",
   noDiscussions: "No Discussions",
+  language: "Language",
+  restartTakeAffect: "Restart app to take affect",
 
 }
 export default translate
