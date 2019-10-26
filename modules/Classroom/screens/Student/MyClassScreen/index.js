@@ -6,7 +6,6 @@ import ClassListItem from "modules/Classroom/components/ClassListItem";
 import AppHeader from "src/components/AppHeader";
 import { withCurrentStudent } from "modules/Classroom/api/student/CurrentStudent";
 import { withTranslation } from 'react-i18next';
-import { Text } from "react-native-paper"
 
 const INITIAL_STATE = { isRefreshing: true, classList:[], filteredClassList:[] };
 class MyClassScreen extends React.PureComponent {

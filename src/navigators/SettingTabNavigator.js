@@ -13,6 +13,7 @@ import BlockedUsersScreen from "src/screens/BlockedUsersScreen";
 import HiddenUsersScreen from "src/screens/HiddenUsersScreen";
 import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
 import ChatSettingsScreen from "src/screens/ChatSettingsScreen"
+import GeneralSettingsScreen from "src/screens/GeneralSettingsScreen"
 import ChatSolidColorPickerScreen from "src/screens/ChatSolidColorPickerScreen"
 
 export default SettingTabNavigator = createStackNavigator({
@@ -20,6 +21,7 @@ export default SettingTabNavigator = createStackNavigator({
   Account: { screen: AccountScreen, navigationOptions: { header: null }},
   Privacy: {screen: PrivacyScreen, navigationOptions: { header: null }},
   ChatSettings: {screen: ChatSettingsScreen, navigationOptions: { header: null }},
+  GeneralSettings: {screen: GeneralSettingsScreen, navigationOptions: { header: null }},
   BlockedUsers: {screen: BlockedUsersScreen, navigationOptions: { header: null }},
   HiddenUsers: {screen: HiddenUsersScreen, navigationOptions: { header: null }},
   MyQR: { screen: MyQRScreen, navigationOptions: { header: null }},
