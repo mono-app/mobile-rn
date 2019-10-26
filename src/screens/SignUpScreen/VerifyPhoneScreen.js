@@ -1,9 +1,9 @@
 import React from "react";
 import VerifyPhoneAPI from "src/api/verifyphone";
-import User from "src/entities/user";
+import PeopleAPI from "src/api/people";
 import PhoneNumber from "src/entities/phoneNumber";
 import Otp from "src/entities/otp";
-import { StackActions, NavigationEvents, NavigationActions } from "react-navigation";
+import { StackActions, NavigationActions } from "react-navigation";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
 import { StyleSheet } from "react-native";
@@ -47,9 +47,7 @@ class VerifyPhoneScreen extends React.PureComponent{
     try{
       const otp = new Otp(this.state.otp);
       await VerifyPhoneAPI.checkCode(this.state.otprequestId, otp, true);
-
-      const user = User.create(this.email, this.password);
-      user.phoneNumber = new PhoneNumber(this.state.phoneNumber, false);
+      this.user.phoneNumber = new PhoneNumber(this.state.phoneNumber, false);
       await PeopleAPI.createUser(user);
     }catch(err){
       this.handleError(err);
@@ -70,8 +68,7 @@ class VerifyPhoneScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.email = this.props.navigation.getParam("email", null);
-    this.password = this.props.navigation.getParam("password", null);
+    this.user = this.props.navigation.getParam("user", null);
     this.handleBackToSignIn = this.handleBackToSignIn.bind(this);
     this.handlePhoneNumberChange = this.handlePhoneNumberChange.bind(this);
     this.handleOTPChange = this.handleOTPChange.bind(this);

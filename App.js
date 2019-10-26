@@ -2,6 +2,7 @@ import React from 'react';
 import firebase from 'react-native-firebase';
 import VerifyPhoneAPI from "src/api/verifyphone";
 import PeopleAPI from "src/api/people"
+import TranslationAPI from "src/api/translation";
 import OfflineDatabase from "src/api/database/offline";
 import AppNavigator from "src/navigators/AppNavigator";
 import { AppState } from "react-native";
@@ -13,14 +14,9 @@ import { TutorialProvider } from "src/api/Tutorial";
 
 // import { Platform, NativeModules } from 'react-native'
 
-import i18next from 'i18next';
-import translationId from "src/api/translation/id"
-import translationEn from "src/api/translation/en"
-
 console.disableYellowBox = true;
 
 const AppContainer = createAppContainer(AppNavigator);
-// const deviceLanguage = Platform.OS === 'ios' ? NativeModules.SettingsManager.settings.AppleLocale: NativeModules.I18nManager.localeIdentifier;
 
 function App(){
   const theme = {
@@ -46,6 +42,7 @@ function App(){
   }
 
   React.useEffect(() => {
+    TranslationAPI.initialize();
     OfflineDatabase.initialize();
     
     const firebaseUser = firebase.auth().currentUser;

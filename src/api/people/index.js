@@ -5,6 +5,7 @@ import StorageAPI from "src/api/storage";
 import OfflineDatabase from "src/api/database/offline";
 import Logger from "src/api/logger";
 import User from "src/entities/user";
+import Email from "src/entities/email";
 import CustomError from "src/entities/error";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
@@ -29,13 +30,12 @@ export default class PeopleAPI{
    * @param {User} user 
    */
   static async createUser(user){
-    if(!user.phoneNumber) throw new CustomError("people/no-phone-number", "You must provide phone number when creating");
+    if(!user.phoneNumber) throw new CustomError("user/no-phone-number", "You must provide phone number when creating");
 
     const userCredential = await firebase.auth().createUserWithEmailAndPassword(user.email, user.password);
     user.id = userCredential.user.uid;
-    
-    const newUser = new UserModel();
-    newUser.createUser(user);
+
+    // seluruh proses create user langsung ke firebase tanpa offline.
   }
 
   /**
@@ -90,12 +90,31 @@ export default class PeopleAPI{
     return Promise.resolve(filteredPeople);
   }
 
+  /**
+   * 
+   * @param {Email} email 
+   */
   static async isExists(email){
+    if(typeof(email) === "string") email = new Email(email);
+    else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Please tell your programmer about this.");
+
+    console.log(email);
     const db = firebase.firestore();
     const userCollection = new UserCollection();
-    const userRef = db.collection(userCollection.getName()).doc(email);
+    const userRef = db.collection(userCollection.getName()).doc(email.address);
     const documentSnapshot = await userRef.get();
-    return Promise.resolve(documentSnapshot.exists);
+    if(documentSnapshot.exists) return Promise.resolve(true);
+    else return Promise.resolve(false);
+  }
+
+  /**
+   * 
+   * @param {Email} email 
+   */
+  static async ensureUnique(email){
+    const isExists = await PeopleAPI.isExists(email);
+    if(isExists) throw new CustomError("user/duplicate", "Please choose another email address");
+    else return Promise.resolve(true);
   }
 
   static async isMonoIdAvailable(monoId){
