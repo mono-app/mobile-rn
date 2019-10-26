@@ -52,6 +52,7 @@ function App(){
     }
   }, [])
 
+  
   return(
     <PaperProvider theme={theme}>
       <CurrentUserProvider>
