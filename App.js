@@ -5,14 +5,11 @@ import PeopleAPI from "src/api/people"
 import TranslationAPI from "src/api/translation";
 import OfflineDatabase from "src/api/database/offline";
 import AppNavigator from "src/navigators/AppNavigator";
-import { AppState } from "react-native";
+import { AppState, AsyncStorage } from "react-native";
 import { createAppContainer } from 'react-navigation';
-
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { CurrentUserProvider } from "src/api/people/CurrentUser";
 import { TutorialProvider } from "src/api/Tutorial";
-
-// import { Platform, NativeModules } from 'react-native'
 
 console.disableYellowBox = true;
 

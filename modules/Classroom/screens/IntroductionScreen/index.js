@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, Dimensions } from "react-native";
+import { View, Image } from "react-native";
 import Header from "modules/Classroom/components/Header";
 
 export default class IntroductionScreen extends React.PureComponent {
@@ -14,18 +14,19 @@ export default class IntroductionScreen extends React.PureComponent {
   }
 
   render() {
-    const {width, height} = Dimensions.get("window")
     return (
-        <View style={{ backgroundColor: "#fff" }}>
+        <View style={{flex:1, backgroundColor: "#fff" }}>
             <Header navigation={this.props.navigation} title=""  />
-              <View>
-                <Image source={require('./images/intromono3.jpg')} 
-                  resizeMode='contain'
-                  style={{
-                    maxHeight: height-40,
-                    maxWidth: width,
-                    }} />
-              </View>
+            <View style={{flex: 1}}>
+              <Image source={require('./images/intromono3.jpg')} 
+                    resizeMode='contain'
+                    style={{
+                      flex:1,
+                      alignSelf:"center",
+                      height: "100%",
+                      width: "100%",
+                      }} />
+            </View>
         </View>
 
     );

@@ -1,81 +1,63 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Logger from "src/api/logger";
-import withObservables from "@nozbe/with-observables";
-import { StyleSheet } from "react-native";
 
-import Tooltip from 'react-native-walkthrough-tooltip';
 import CircleAvatar from "src/components/Avatar/Circle";
-import { View, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
+import Tooltip from 'react-native-walkthrough-tooltip';
+import { withTranslation } from 'react-i18next';
 
+/**
+ * @param {string} nickName
+ * @param {string} status
+ */
 function PeopleProfileHeader(props){
-  Logger.log("PeopleProfileHeader#props", props);
-  const { showTutorialChangeProfilePic, isLoading, people, applicationInformation, profilePicture } = props;
-  const profilePictureUrl = (!profilePicture)?"https://picsum.photos/200": profilePicture.downloadUrl;
-
-  const [ status, setStatus ] = React.useState("");
-  
   const styles = StyleSheet.create({
-    profileDescriptionContainer: { flex:1 },
+    profileDescriptionContainer: { flex:1},
     profileContainer: { backgroundColor: "white", display: "flex", flexDirection: "row",}
-  });
-
-  const handleProfilePicturePress = () => {
-    if(props.onProfilePicturePress) props.onProfilePicturePress();
-  }
-
-  const handleStatusPress = () => { 
-    if(props.onStatusPress) props.onStatusPress();
-  }
-
-  const handleTutorialClose = () => {
-    if(props.tutorial) props.tutorial.close()
-  }
-
-  const fetchStatus = async () => {
-    const status = await people.getLatestStatus();
-    Logger.log("PeopleProfileHeader.fetchStatus#status", status);
-    if(status) setStatus(status);
-  }
-
-  React.useEffect(() => {
-    fetchStatus();
   })
 
   return(
-    <View style={[ styles.profileContainer, props.style ]}>
+    <View style={[ styles.profileContainer,props.style ]}>
       <Tooltip
-        isVisible={showTutorialChangeProfilePic} placement="bottom"
-        showChildInTooltip={true} onClose={handleTutorialClose}
-        content={<Text>Klik foto profile untuk mengganti foto</Text>}>
-        <TouchableOpacity onPress={handleProfilePicturePress}>
-          <CircleAvatar size={70} uri={profilePictureUrl} style={{ marginRight: 16 }} isLoading={isLoading}/>
-        </TouchableOpacity>
+          isVisible={props.showTutorialChangeProfilePic}
+          placement="bottom"
+          showChildInTooltip={true}
+          content={<Text>{props.t("tutorialChangeProfile")}</Text>}
+          onClose={() => props.tutorial.close()}>
+        {props.onProfilePicturePress?(
+          <TouchableOpacity onPress={props.onProfilePicturePress}>
+            <CircleAvatar uri={props.profilePicture} size={50} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>
+          </TouchableOpacity>
+        ):<CircleAvatar uri={props.profilePicture} size={50} style={{ marginRight: 16 }} isLoading={(props.isLoading)?true:false}/>}
       </Tooltip>
-      <View style={styles.profileDescriptionContainer}>
-        <TouchableOpacity onPress={handleStatusPress}>
-          <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{applicationInformation.nickName}</Text>
-          <Text style={{ fontSize: 12, lineHeight: 20}}>{status}</Text>
-        </TouchableOpacity>
-      </View>
+      {props.onStatusPress?(
+        <View style={styles.profileDescriptionContainer}>
+          <TouchableOpacity onPress={props.onStatusPress}>
+            <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
+            <Text style={{ fontSize: 12, lineHeight: 20}}>{props.subtitle}</Text>
+          </TouchableOpacity>
+        </View>
+
+      ):(
+        <View style={styles.profileDescriptionContainer}>
+          <Text style={{ fontSize: 16, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
+          <Text style={{ fontSize: 12, lineHeight: 20}}>{props.subtitle}</Text>
+        </View>
+      )}
+
     </View>
   )
 }
 
 PeopleProfileHeader.propTypes = { 
-  tutorial: PropTypes.any,
   onProfilePicturePress: PropTypes.func,
   onStatusPress: PropTypes.func,
-  style: PropTypes.object,
-  people: PropTypes.any.isRequired
+  profilePicture: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string,
+  style: PropTypes.object
 }
-PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "", style: {}, tutorial: {} }
+PeopleProfileHeader.defaultProps = { profilePicture: "", title: "", subtitle: "", style: {}, showTutorialChangeProfilePic:false, tutorial: {}, isLoading:false }
 
-const enhance = withObservables([ "people" ], ({ people }) => ({
-  applicationInformation: people.applicationInformation.observe(),
-  profilePicture: people.profilePicture.observe(),
-  statuses: people.statuses.observeWithColumns([ "created_at" ])
-}))
-
-export default enhance(PeopleProfileHeader);
+export default withTranslation()(PeopleProfileHeader)

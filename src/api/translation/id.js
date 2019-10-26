@@ -223,7 +223,9 @@ const translate = {
   nik: "NIK",
   listEmpty: "Tidak Ada Data",
   noDiscussions: "Tidak Ada Diskusi",
-  
+  language: "Bahasa",
+  restartTakeAffect: "Restart aplikasi untuk merasakan perubahan",
+
   
 }
 export default translate
