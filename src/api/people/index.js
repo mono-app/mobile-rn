@@ -4,10 +4,13 @@ import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
 import OfflineDatabase from "src/api/database/offline";
 import Logger from "src/api/logger";
+import User from "src/entities/user";
+import CustomError from "src/entities/error";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { getDistance } from 'geolib';
 import { Q } from "@nozbe/watermelondb";
+import { default as UserModel } from "src/models/user";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -19,6 +22,20 @@ export default class PeopleAPI{
     const profilePicture = await user.profilePicture.fetch();
     const statuses = await user.statuses.fetch();
     return { me: user, applicationInformation, profilePicture, statuses }
+  }
+
+  /**
+   * 
+   * @param {User} user 
+   */
+  static async createUser(user){
+    if(!user.phoneNumber) throw new CustomError("people/no-phone-number", "You must provide phone number when creating");
+
+    const userCredential = await firebase.auth().createUserWithEmailAndPassword(user.email, user.password);
+    user.id = userCredential.user.uid;
+    
+    const newUser = new UserModel();
+    newUser.createUser(user);
   }
 
   /**

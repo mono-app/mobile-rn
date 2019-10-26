@@ -1,70 +1,62 @@
-import { NEXMO_API_KEY, NEXMO_API_SECRET } from "react-native-dotenv";
 import firebase from "react-native-firebase";
+import PhoneNumber from "src/entities/phoneNumber";
+import QueryParameter from "src/entities/queryParameter";
+import CustomError from "src/entities/error";
+import Otp from "src/entities/otp";
 import { UserCollection } from "src/api/database/collection";
+import { NEXMO_API_KEY, NEXMO_API_SECRET } from "react-native-dotenv";
 
 export default class VerifyPhoneAPI{
   static currentNexmoRequestId = null
 
-  static async sendCode(phoneNumber){
-    try {
-      const response = await fetch(
-        "https://api.nexmo.com/verify/json"+
-        "?api_key="+NEXMO_API_KEY+
-        "&api_secret="+NEXMO_API_SECRET+
-        "&number="+phoneNumber+
-        "&brand=Mono"+
-        "&workflow_id=4"+
-        "&code_length=4",
-      );
-      const responseJson = await response.json();
+  /**
+   * @param {PhoneNumber} phoneNumber 
+   * @param {boolean} skip
+   */
+  static async sendCode(phoneNumber, skip=false){
+    if(skip) return Promise.resolve({ requestId: "MONO" });
 
-      if(responseJson && responseJson.status==="0"){
-        const otpRequestId = responseJson.request_id
-        return Promise.resolve(otpRequestId);
-      }
-        
-      return Promise.resolve(false);
-    } catch (error) {
-      console.error(error);
-      return Promise.resolve(false);
-    }
+    const params = new QueryParameter({
+      api_key: NEXMO_API_KEY, api_secret: NEXMO_API_SECRET,
+      number: phoneNumber.number, brand: "Mono", workflow_id: 4,
+      code_length: 4
+    });
+    const response = await fetch(`https://api.nexmo.com/verify/json?${params.encoded}`);
+    const responseJson = await response.json();
+
+    if(responseJson && responseJson.status === "0"){
+      return Promise.resolve({ requestId: responseJson.request_id });
+    }else throw new CustomError("verify/unknown", "An unknown error has occured");
   }
 
-  static async checkCode(otpRequestId, code){
-    try {
-      const response = await fetch("https://api.nexmo.com/verify/check/json"+
-      "?api_key="+NEXMO_API_KEY+
-      "&api_secret="+NEXMO_API_SECRET+
-      "&request_id="+otpRequestId+
-      "&code="+code
-      );
-      const responseJson = await response.json();
+  /**
+   * 
+   * @param {string} requestId 
+   * @param {Otp} otp 
+   * @param {boolean} skip 
+   */
+  static async checkCode(requestId, otp, skip=false){
+    if(skip) return Promise.resolve(true);
 
-      if(responseJson && responseJson.status==="0"){
-        return Promise.resolve(true);
-      }
-        
-      return Promise.resolve(false);
-    } catch (error) {
-      console.error(error);
-      return Promise.resolve(false);
-    }
+    const params = new QueryParameter({ 
+      api_key: NEXMO_API_SECRET, api_secret: NEXMO_API_SECRET, request_id: requestId, code: otp.code 
+    });
+    const response = await fetch(`https://api.nexmo.com/verify/check/json?${params.encoded}`);
+    const responseJson = await response.json();
+
+    if(responseJson && responseJson.status==="0") return Promise.resolve(true);
+    else throw new CustomError("verify/incorrect-otp", "Provided otp is not correct");
   }
 
-  static cancelRequest(){
-    try {
-      if(this.currentNexmoRequestId){
-        fetch("https://api.nexmo.com/verify/control/json"+
-        "?api_key="+NEXMO_API_KEY+
-        "&api_secret="+NEXMO_API_SECRET+
-        "&request_id="+this.currentNexmoRequestId+
-        "&cmd=cancel"
-        );
-      }
-      
-    } catch (error) {
-      console.error(error);
-    }
+  /**
+   * 
+   * @param {string} requestId 
+   */
+  static async cancelRequest(requestId){
+    const params = new QueryParameter({ 
+      api_key: NEXMO_API_SECRET, api_secret: NEXMO_API_SECRET, request_id: requestId, cmd: "cancel" 
+    });
+    await fetch(`https://api.nexmo.com/verify/control/json?${params.encoded}`);
   }
 
   static async isAvailable(currentUserEmail, phone){
