@@ -9,7 +9,7 @@ import { Card } from 'react-native-paper';
 import { withTranslation } from 'react-i18next';
 import Toast from 'react-native-easy-toast'
 import Key from 'src/helper/key'
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 function ChatSettingsScreen(props){
   const { currentUser } = props;

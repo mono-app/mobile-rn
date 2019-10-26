@@ -1,5 +1,5 @@
 import React from "react";
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import Key from "src/helper/key"
 

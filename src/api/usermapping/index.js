@@ -1,7 +1,7 @@
 import firebase from "react-native-firebase";
 import { UserMappingCollection } from "src/api/database/collection";
 import uuid from "uuid/v4"
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class UserMappingAPI{
   static async setAccessToken (email){
