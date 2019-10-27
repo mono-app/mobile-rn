@@ -8,9 +8,10 @@ import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
 import ChatBubble from "src/components/ChatBubble";
 import ChatBubbleWithPhoto from "src/components/ChatBubbleWithPhoto";
-import { FlatList, View, AsyncStorage } from "react-native";
+import { FlatList, View } from "react-native";
 import { Chip } from "react-native-paper";
 import MessagesAPI from "src/api/messages";
+import AsyncStorage from '@react-native-community/async-storage';
 
 function ChatList(props){
   const { currentUser, navigation, room, isBot } = props;

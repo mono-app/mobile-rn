@@ -7,13 +7,12 @@ import { Provider, Modal, Text, Portal } from 'react-native-paper';
 import { Card } from 'react-native-paper';
 import { withTranslation } from 'react-i18next';
 import Toast from 'react-native-easy-toast'
-import Key from 'src/helper/key'
-import {AsyncStorage} from 'react-native';
+import TranslationAPI from "../../api/translation";
 
 function GeneralSettingsScreen(props){
   const toastRef = React.useRef(null);
 
-  const [ isWallpaperModalVisible, setWallpaperModalVisible ] = React.useState(false);
+  const [ isLanguageModalVisible, setLanguageModalVisible ] = React.useState(false);
 
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#E8EEE8", color: "black" },
@@ -25,23 +24,23 @@ function GeneralSettingsScreen(props){
   });
 
   const handleLanguageIDPress = () => {
-    AsyncStorage.setItem(Key.KEY_APP_LANGUAGE, "in_ID");
-    toastRef.current.show(props.t("restartTakeAffect"), 1000);
+    TranslationAPI.changeLanguage("in_ID")
+    toastRef.current.show(props.t("success"), 1000);
     closeLanguageModal()
   }
 
   const handleLanguageEnPress = () => {
-    AsyncStorage.setItem(Key.KEY_APP_LANGUAGE, "en_US");
-    toastRef.current.show(props.t("restartTakeAffect"), 1000);
+    TranslationAPI.changeLanguage("en_US")
+    toastRef.current.show(props.t("success"), 1000);
     closeLanguageModal()
   }
 
   const openLanguageModal = () => {
-    setWallpaperModalVisible(true)
+    setLanguageModalVisible(true)
   }
 
   const closeLanguageModal = ()=> {
-    setWallpaperModalVisible(false)
+    setLanguageModalVisible(false)
   }
 
   React.useEffect(() => {
@@ -53,7 +52,7 @@ function GeneralSettingsScreen(props){
     <Provider style={{ flex: 1, backgroundColor: "white" }}>
       <Portal>
         <AppHeader style={{ backgroundColor: "transparent" }} navigation={props.navigation}/>
-        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>General Settings</HeadlineTitle>
+        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>General</HeadlineTitle>
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={openLanguageModal}>
             <View style={styles.menu}>
@@ -64,7 +63,7 @@ function GeneralSettingsScreen(props){
             </View>
           </TouchableOpacity>
         </View>
-        <Modal visible={isWallpaperModalVisible} onDismiss={closeLanguageModal}>
+        <Modal visible={isLanguageModalVisible} onDismiss={closeLanguageModal}>
           <Card style={{margin:16}}>
             <Card.Content style={{flexDirection:"row",justifyContent:"space-evenly", alignItems:"center", paddingVertical:30}}>
                 <TouchableOpacity style={{alignItems:"center"}} onPress={handleLanguageIDPress}>
