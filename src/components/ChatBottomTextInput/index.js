@@ -73,7 +73,7 @@ function ChatBottomTextInput(props){
     Logger.log("ChatBottomTextInput.initLiveVoice#room", room);
     const jsonResult = await (await fetch("https://asia-east2-chat-app-fdf76.cloudfunctions.net/requestRoomToken", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
-        roomId: room.id, sessionId: sessionId, userEmail: currentUser.email
+        roomId: room.id, sessionId: sessionId, userId: currentUser.id
       })
     })).json();
     Logger.log("ChatBottomTextInput.initLiveVoice#jsonResult", jsonResult);

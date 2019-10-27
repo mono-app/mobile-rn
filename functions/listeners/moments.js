@@ -6,18 +6,18 @@ function Moments(){}
 
 Moments.triggerNewMoment = functions.region("asia-east2").firestore.document("/moments/{momentId}").onCreate(async (documentSnapshot, context) => {
   const momentDoc = documentSnapshot.data();
-  const posterEmail = momentDoc.posterEmail
+  const posterId = momentDoc.posterId
 
   // this trigger for auto add room audiences rooms collection  
   const db = admin.firestore();
-  const friendListRef = db.collection("friendList").doc(posterEmail);
+  const friendListRef = db.collection("friendList").doc(posterId);
   const querySnapshot = await friendListRef.collection("people").get()
 
   const friendIdList = querySnapshot.docs.map(documentSnapshot => {
     return documentSnapshot.id
   })
   
-  friendIdList.push(posterEmail)
+  friendIdList.push(posterId)
 
   documentSnapshot.ref.update({showsTo: friendIdList})
   
@@ -32,12 +32,12 @@ Moments.sendNotificationForNewMomentComment = functions.region("asia-east2").fir
 
   const momentDocRef = db.collection("moments").doc(momentId)
   const momentSnapshot = await momentDocRef.get()
-  const receiverEmail = momentSnapshot.data().posterEmail
+  const receiverId = momentSnapshot.data().posterId
 
-  const peopleCommentEmail = commentDoc.peopleEmail
+  const peopleCommentId = commentDoc.peopleId
   // check if the person commented is not the creator of the moment
-  if(peopleCommentEmail!==receiverEmail){
-    const receiverDocRef = db.collection("users").doc(receiverEmail)
+  if(peopleCommentId!==receiverId){
+    const receiverDocRef = db.collection("users").doc(receiverId)
     const receiverSnapshot = await receiverDocRef.get()
     const receiverData = receiverSnapshot.data()
 
@@ -56,7 +56,7 @@ Moments.sendNotificationForNewMomentComment = functions.region("asia-east2").fir
       admin.messaging().send(message);
     }
 
-    const userDocRef = db.collection("users").doc(peopleCommentEmail)
+    const userDocRef = db.collection("users").doc(peopleCommentId)
     const peopleCommentSnapshot = await userDocRef.get()
     const peopleCommentData = peopleCommentSnapshot.data()
 
@@ -65,7 +65,7 @@ Moments.sendNotificationForNewMomentComment = functions.region("asia-east2").fir
     const details = Object.assign({ momentId: momentId }, commentDoc);
     const messageBot= `${peopleCommentData.applicationInformation.nickName} Mengomentari Moment Kamu. Lihat sekarang!`
 
-    Bot.sendBotMessage("Moment",receiverEmail,details,messageBot,"moment-comment")
+    Bot.sendBotMessage("Moment",receiverId,details,messageBot,"moment-comment")
     // END Send Bot Message
 
   }

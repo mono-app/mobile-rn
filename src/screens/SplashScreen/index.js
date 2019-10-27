@@ -1,9 +1,10 @@
 import React from "react";
-// import firebase from "react-native-firebase"
+import firebase from "react-native-firebase";
 import AuthenticationAPI from "src/api/authentication";
 import NotificationAPI from "src/api/notification";
 import NavigatorAPI from "src/api/navigator";
 import { View, ActivityIndicator } from "react-native";
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 function SplashScreen(props){
   const { navigation } = props;
@@ -17,6 +18,7 @@ function SplashScreen(props){
     try{
       // await firebase.auth().signOut();
       await AuthenticationAPI.initializeSession();
+      props.setCurrentUserId(firebase.auth().currentUser.uid)
       goto("MainTabNavigator");
     }catch(err){
       if(err.code === "auth/need-setup") goto("AccountSetup");
@@ -37,4 +39,4 @@ function SplashScreen(props){
   )
 }
 
-export default SplashScreen;
+export default withCurrentUser(SplashScreen);

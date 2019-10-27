@@ -4,11 +4,11 @@ import { Document } from "src/api/database/document";
 import { DocumentListener } from "src/api/database/listener";
 
 export default class StatusAPI{
-  static async getLatestStatus(peopleEmail=null){
-    if(peopleEmail){
+  static async getLatestStatus(peopleId=null){
+    if(peopleId){
       const db = firebase.firestore();
       const userCollection = new UserCollection();
-      const userDocument = new Document(peopleEmail);
+      const userDocument = new Document(peopleId);
       const statusCollection = new StatusCollection();
 
       const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
@@ -21,16 +21,16 @@ export default class StatusAPI{
 
   /**
    * 
-   * @param {String} peopleEmail 
+   * @param {String} peopleId 
    * @param {String} status 
    */
-  static postStatus(peopleEmail, status){
+  static postStatus(peopleId, status){
     const db = firebase.firestore();
     const batch = db.batch();
 
     const statusCollection = new StatusCollection();
     const userCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(peopleId);
     const payload = { content: status, timestamp: firebase.firestore.FieldValue.serverTimestamp() }
 
     const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
@@ -41,10 +41,10 @@ export default class StatusAPI{
     return batch.commit();
   }
 
-  static getStatusWithRealTimeUpdate(peopleEmail, callback){
+  static getStatusWithRealTimeUpdate(peopleId, callback){
     const listener = new DocumentListener();
     const userCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(peopleId);
     const statusCollection = new StatusCollection();
 
     const db = firebase.firestore();

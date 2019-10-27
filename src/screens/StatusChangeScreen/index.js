@@ -22,7 +22,7 @@ function StatusChangeScreen(props){
   })
 
   React.useEffect(() => {
-    statusListener.current = StatusAPI.getStatusWithRealTimeUpdate(currentUser.email, (status) => {
+    statusListener.current = StatusAPI.getStatusWithRealTimeUpdate(currentUser.id, (status) => {
       const newStatus = JSON.parse(JSON.stringify(status));
       const statusItems = [];
       let currentDateSection = moment("01/01/1990", "DD/MM/YYYY");

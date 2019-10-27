@@ -23,14 +23,14 @@ function PeopleInformationScreen(props){
   const [ status, setStatus ] = React.useState("");
   const [ joinedFrom, setJoinedFrom ] = React.useState("");
   
-  const peopleEmail = props.navigation.getParam("peopleEmail", null);
+  const peopleId = props.navigation.getParam("peopleId", null);
   const source = props.navigation.getParam("source", { value: "" });
 
   const handleActionButtonComplete = () => fetchPeopleFriendStatus();
   const fetchPeopleInformation = async () => {
     if(_isMounted.current) setIsLoadingProfile(true);
-    const peopleData = await PeopleAPI.getDetail(peopleEmail);
-    const status = await StatusAPI.getLatestStatus(peopleEmail);
+    const peopleData = await PeopleAPI.getDetail(peopleId);
+    const status = await StatusAPI.getLatestStatus(peopleId);
     Logger.log("PeopleInformationScreen.fetchPeopleInformation", peopleData)
     if(status && _isMounted.current) setStatus(status.content);
     if(_isMounted.current) setPeople(peopleData);
@@ -39,8 +39,8 @@ function PeopleInformationScreen(props){
   }
 
   const fetchPeopleFriendStatus = async () => {
-    const peopleFriendStatus = await new FriendsAPI().getFriendStatus(currentUser.email, peopleEmail);
-    if(currentUser.email!==peopleEmail){
+    const peopleFriendStatus = await new FriendsAPI().getFriendStatus(currentUser.id, peopleId);
+    if(currentUser.id!==peopleId){
       if(_isMounted.current) setPeopleFriendStatus(peopleFriendStatus);
     }else{
       if(_isMounted.current) setPeopleFriendStatus("myself");
@@ -81,7 +81,7 @@ function PeopleInformationScreen(props){
         <PeopleInformationContainer fieldName={props.t("joinDate")} fieldValue={joinedFrom}/>
       </View>
       <ActionButton 
-        peopleEmail={peopleEmail} source={source}
+        peopleId={peopleId} source={source}
         peopleFriendStatus={peopleFriendStatus} 
         onComplete={handleActionButtonComplete}/>
     </ScrollView>

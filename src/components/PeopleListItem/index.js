@@ -10,7 +10,7 @@ import ContentLoader from 'rn-content-loader'
 import {Rect} from 'react-native-svg'
 
 function PeopleListItem(props){
-  const { email } = props;
+  const { id } = props;
   const [ status, setStatus ] = React.useState("");
   const [ people, setPeople ] = React.useState("");
   const [ isFetching, setFetching ] = React.useState(true);
@@ -26,7 +26,7 @@ function PeopleListItem(props){
   const handlePress = () => props.onPress(people);
 
   const fetchStatus = async () => {
-    const status = await StatusAPI.getLatestStatus(email);
+    const status = await StatusAPI.getLatestStatus(id);
     if(status && _isMounted.current) {
       setStatus(status.content)
     }        
@@ -34,7 +34,7 @@ function PeopleListItem(props){
   }
 
   const fetchData = async () => {
-    PeopleAPI.getDetailWithRealTimeUpdate(email, (data)=>{
+    PeopleAPI.getDetailWithRealTimeUpdate(id, (data)=>{
       if(_isMounted.current) {
         setPeople(data)
         setFetching(false)

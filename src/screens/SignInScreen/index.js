@@ -12,6 +12,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { View, Image } from 'react-native';
 import { Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
 import { withTranslation } from 'react-i18next';
+import { withCurrentUser } from "src/api/people/CurrentUser"
 
 function SignInScreen(props){
   const { navigation, t } = props;
@@ -48,6 +49,7 @@ function SignInScreen(props){
       user.password = password;
 
       const authenticatedUser = await AuthenticationAPI.signIn(user);
+      props.setCurrentUserId(authenticatedUser.id)
       const messagingToken = new MessagingToken();
       messagingToken.owner = authenticatedUser;
       messagingToken.token = await firebase.messaging().getToken();
@@ -94,4 +96,4 @@ function SignInScreen(props){
     </KeyboardAwareScrollView>
   );
 }
-export default withTranslation()(SignInScreen);
+export default withTranslation()(withCurrentUser(SignInScreen));

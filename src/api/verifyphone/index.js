@@ -59,7 +59,7 @@ export default class VerifyPhoneAPI{
     await fetch(`https://api.nexmo.com/verify/control/json?${params.encoded}`);
   }
 
-  static async isAvailable(currentUserEmail, phone){
+  static async isAvailable(currentUserId, phone){
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
     const userRef = db.collection(usersCollection.getName()).where('phoneNumber.value','==',phone)
@@ -67,7 +67,7 @@ export default class VerifyPhoneAPI{
     let isAvailable = true
 
     userQuerySnapshot.forEach((obj)=>{
-        if(obj.id!==currentUserEmail){
+        if(obj.id!==currentUserId){
           isAvailable = false
         }
     })

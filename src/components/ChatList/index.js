@@ -65,7 +65,7 @@ function ChatList(props){
     const taskId = item.details.discussion.taskId
     const discussionId = item.details.discussion.id
    
-    const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, currentUser.email)
+    const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, currentUser.id)
     
     payload = { isFromNotification: false, schoolId, classId, taskId, discussion }
     props.navigation.navigate("DiscussionComment", payload)
@@ -89,7 +89,7 @@ function ChatList(props){
   const handleFriendRequestPress = async (message) => {
     Logger.log("ChatList.handleFriendRequestPress#message", message);
     navigation.navigate("PeopleInformation", { 
-      peopleEmail: message.details.targetEmail, source: message.details.source
+      peopleId: message.details.targetId, source: message.details.source
     });
   }
 
@@ -109,7 +109,7 @@ function ChatList(props){
       messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, ({ addedMessages, modifiedMessages }, snapshot) => {
         lastMessageSnapshot.current = snapshot;
         if(addedMessages.length > 0){
-          MessagesAPI.markAsRead(room.id, currentUser.email)
+          MessagesAPI.markAsRead(room.id, currentUser.id)
           setMessages((oldMessages) => [...addedMessages, ...oldMessages]);
         }
       })
@@ -118,7 +118,7 @@ function ChatList(props){
 
   const keyExtractor = (item) => item.id
   const renderItem = ({ item }) => {
-    const bubbleStyle = (currentUser.email !== item.senderEmail)? "peopleBubble": "myBubble";
+    const bubbleStyle = (currentUser.id !== item.senderId)? "peopleBubble": "myBubble";
     if(item.type === "text") {
       return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
     }else if(item.type === "discussion-share"){

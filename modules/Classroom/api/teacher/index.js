@@ -7,28 +7,29 @@ import {
   UserMappingCollection
 } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
+import Database from "src/api/database";
 
 export default class TeacherAPI {
-  static async addTeacher(schoolId, teacherId, data) {
-    try {
-      const db = firebase.firestore();
+  static async addTeacher(schoolId, teacherEmail, data) {
+    const user = new User()
+    user.create(teacherEmail, "123123", "123123")
+    try{
+      await PeopleAPI.createUser(user)
+    }catch(err){ 
+      if(err.code === "auth/email-already-in-use"){
+        user.id = (await PeopleAPI.getDetailByEmail(user.email, true)).id
+      }else throw err
+    }
+
+    await Database.insert(async (db) => {
       const teachersCollection = new TeachersCollection();
       const schoolsCollection = new SchoolsCollection();
       const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-      const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(teacherId);
-      await teachersDocumentRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp(), isActive: false, ...data});
-
-       // insert to userMapping
-       const userMappingCollection = new UserMappingCollection();
-       const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(teacherId);
-       const schoolsDocumentRef2 = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
-       await schoolsDocumentRef2.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role:"teacher" });
- 
-      return Promise.resolve(true);
-    } catch (err) {
-      console.log(err);
-      return Promise.resolve(false);
-    }
+      const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(user.id);
+      await teachersDocumentRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp(), ...data});
+    }, true)
+   
+    return Promise.resolve(true);
   }
 
   static async addTeacherClass(teacherId, schoolId, classId){

@@ -26,7 +26,7 @@ function MyQRScreen(props){
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const { content } = await StatusAPI.getLatestStatus(currentUser.email);
+      const { content } = await StatusAPI.getLatestStatus(currentUser.id);
       setStatus(content);
     }
     fetchData();
@@ -46,7 +46,7 @@ function MyQRScreen(props){
                 subtitle={status}/>
             </View>
             <View style={{ flexDirection: "row", marginBottom: 32, marginTop: 32, justifyContent: "center" }}>
-              <QRCode size={200} value={currentUser.email}/>
+              <QRCode size={200} value={currentUser.id}/>
             </View>
             <Text style={styles.smallDescription}>{props.t("scanQrDesc")}</Text>
           </Card.Content>

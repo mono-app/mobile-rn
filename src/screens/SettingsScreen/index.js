@@ -38,7 +38,7 @@ function SettingsScreen(props){
       const result = await StorageAPI.openGallery(false);
       setUploadingImage(true)
       const compressedRes = await ImageCompress.compress(result.uri, result.size)
-      await PeopleAPI.changeProfilePicture(currentUser.email, compressedRes.uri);
+      await PeopleAPI.changeProfilePicture(currentUser.id, compressedRes.uri);
       setUploadingImage(false)
     }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
   }
@@ -46,7 +46,7 @@ function SettingsScreen(props){
   React.useEffect(() => {
     const fetchData = async () => {
       Logger.log("SettingsScreen", "get latest status");
-      const data  = await StatusAPI.getLatestStatus(currentUser.email);
+      const data  = await StatusAPI.getLatestStatus(currentUser.id);
       if(data && data.content) setStatus(data.content);
     }
     fetchData();

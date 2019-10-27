@@ -7,15 +7,15 @@ import { Document } from "src/api/database/document";
 export default class FriendsAPI{
 
   static normalizeFriend(documentSnapshot){
-    return { email: documentSnapshot.id, ...documentSnapshot.data() }
+    return { id: documentSnapshot.id, ...documentSnapshot.data() }
   }
 
-  async getFriendStatus(userEmail, friendEmail){
+  async getFriendStatus(userId, friendId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const peopleCollection = new PeopleCollection();
-    const userDocument = new Document(userEmail);
-    const peopleDocument = new Document(friendEmail);
+    const userDocument = new Document(userId);
+    const peopleDocument = new Document(friendId);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
     const peopleDocumentSnapshot = await peopleRef.get();
@@ -49,13 +49,13 @@ export default class FriendsAPI{
         if(peopleDocumentSnapshot.exists) return Promise.resolve("pendingAccept");
         else {
           const blockedCollection = new BlockedCollection()
-          const blockedDocRef = friendListRef.collection(blockedCollection.getName()).doc(friendEmail)
+          const blockedDocRef = friendListRef.collection(blockedCollection.getName()).doc(friendId)
           const blockedSnapshot = await blockedDocRef.get()
           if(blockedSnapshot.exists){
             return Promise.resolve("blocked");
           }else{
             const hideCollection = new HideCollection()
-            const hideDocRef = friendListRef.collection(hideCollection.getName()).doc(friendEmail)
+            const hideDocRef = friendListRef.collection(hideCollection.getName()).doc(friendId)
             const hideSnapshot = await hideDocRef.get()
             if(hideSnapshot.exists){
               return Promise.resolve("hide");
@@ -72,14 +72,14 @@ export default class FriendsAPI{
 
   /**
    * 
-   * @param {String} peopleEmail 
+   * @param {String} peopleId 
    */
-  static async getFriends(peopleEmail){
+  static async getFriends(peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const peopleCollection = new PeopleCollection();
     const userCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(peopleId);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(peopleCollection.getName());
     const querySnapshot = await peopleRef.get();
@@ -100,16 +100,16 @@ export default class FriendsAPI{
   /**
    * Get all the friends in the list with real time update
    * 
-   * @param {string} peopleEmail 
+   * @param {string} peopleId 
    * @param {function} callback - a callback function that accepts array of friends as its parameters
    * @returns {function} - unsubscribe function from the listener
    */
-  static getFriendsWithRealTimeUpdate(peopleEmail, callback){
+  static getFriendsWithRealTimeUpdate(peopleId, callback){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const friendListCollection = new FriendListCollection();
     const peopleCollection = new PeopleCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(peopleId);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(peopleCollection.getName());
     return peopleRef.onSnapshot(async (querySnapshot) => {
@@ -142,11 +142,11 @@ export default class FriendsAPI{
     })
   }
 
-  static async getBlockedUsers(peopleEmail){
+  static async getBlockedUsers(peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const blockedCollection = new BlockedCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(peopleId);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(blockedCollection.getName());
     const querySnapshot = await peopleRef.get();
@@ -164,11 +164,11 @@ export default class FriendsAPI{
     }
   }
 
-  static async getHiddenUsers(peopleEmail){
+  static async getHiddenUsers(peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const hideCollection = new HideCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(peopleId);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(hideCollection.getName());
     const querySnapshot = await peopleRef.get();
@@ -189,16 +189,16 @@ export default class FriendsAPI{
 
   /**
    * 
-   * @param {String} peopleEmail 
+   * @param {String} peopleId 
    * @param {function} callback - return QuerySnapshot
    * @returns {function} - use the return value to unsubscribe.
    */
-  static getFriendRequestWithRealTimeUpdate(peopleEmail, callback){
+  static getFriendRequestWithRealTimeUpdate(peopleId, callback){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const friendRequestCollection = new FriendRequestCollection();
     const peopleCollection = new PeopleCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(peopleId);
     const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendRequestRef.collection(peopleCollection.getName());
     return peopleRef.onSnapshot({ includeMetadataChanges: true }, async querySnapshot => {
@@ -219,28 +219,28 @@ export default class FriendsAPI{
 
   /**
    * 
-   * @param {string} peopleEmail - the one that rejecting
-   * @param {string} friendEmail - the one that being rejected
+   * @param {string} peopleId - the one that rejecting
+   * @param {string} friendId - the one that being rejected
    */
-  async rejectRequest(peopleEmail, friendEmail){
-    const result = await this.cancelRequest(friendEmail, peopleEmail)
+  async rejectRequest(peopleId, friendId){
+    const result = await this.cancelRequest(friendId, peopleId)
     return Promise.resolve(result);
   }
 
   /**
    * 
-   * @param {string} peopleEmail - the one that accepting
-   * @param {string} friendEmail - the one that being accepted
+   * @param {string} peopleId - the one that accepting
+   * @param {string} friendId - the one that being accepted
    * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
-  async acceptRequest(peopleEmail, friendEmail, source){
+  async acceptRequest(peopleId, friendId, source){
    
     try{
       const db = firebase.firestore();
       const friendListCollection = new FriendListCollection();
       const peopleCollection = new PeopleCollection();
-      const userDocument = new Document(peopleEmail);
-      const peopleDocument = new Document(friendEmail);
+      const userDocument = new Document(peopleId);
+      const peopleDocument = new Document(friendId);
       const userFriendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
       const peopleFriendListRef = db.collection(friendListCollection.getName()).doc(peopleDocument.getId());
       const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
@@ -252,7 +252,7 @@ export default class FriendsAPI{
         peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
       ];
 
-      promises.push(this.cancelRequest(friendEmail, peopleEmail))
+      promises.push(this.cancelRequest(friendId, peopleId))
 
       await Promise.all(promises);
       return Promise.resolve(true);
@@ -262,14 +262,14 @@ export default class FriendsAPI{
     }
   }
 
-  async setFriends(peopleEmail, friendEmail, source){
+  async setFriends(peopleId, friendId, source){
     // used for add new friend from barcode scan (auto become friend without friendRequest)
     try{
       const db = firebase.firestore();
       const friendListCollection = new FriendListCollection();
       const peopleCollection = new PeopleCollection();
-      const userDocument = new Document(peopleEmail);
-      const peopleDocument = new Document(friendEmail);
+      const userDocument = new Document(peopleId);
+      const peopleDocument = new Document(friendId);
 
 
       const userFriendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
@@ -297,16 +297,16 @@ export default class FriendsAPI{
 
   /**
    * 
-   * @param {string} peopleEmail - the one that cancelling
-   * @param {string} friendEmail - the one that being cancelled
+   * @param {string} peopleId - the one that cancelling
+   * @param {string} friendId - the one that being cancelled
    */
-  async cancelRequest(peopleEmail, friendEmail){
+  async cancelRequest(peopleId, friendId){
     try{
       const db = firebase.firestore();
       const friendRequestCollection = new FriendRequestCollection();
       const peopleCollection = new PeopleCollection();
-      const userDocument = new Document(peopleEmail);
-      const peopleDocument = new Document(friendEmail);
+      const userDocument = new Document(peopleId);
+      const peopleDocument = new Document(friendId);
       const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(peopleDocument.getId());
       const peopleRef = friendRequestRef.collection(peopleCollection.getName()).doc(userDocument.getId());
       await peopleRef.delete();
@@ -319,17 +319,17 @@ export default class FriendsAPI{
 
   /**
    * 
-   * @param {string} peopleEmail - the one that adding
-   * @param {string} friendEmail - the one that being added
+   * @param {string} peopleId - the one that adding
+   * @param {string} friendId - the one that being added
    * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
-  async sendRequest(peopleEmail, friendEmail, source){
+  async sendRequest(peopleId, friendId, source){
     try{
       const db = firebase.firestore();
       const friendRequestCollection = new FriendRequestCollection();
       const peopleCollection = new PeopleCollection();
-      const friendDocument = new Document(friendEmail);
-      const userDocument = new Document(peopleEmail);
+      const friendDocument = new Document(friendId);
+      const userDocument = new Document(peopleId);
       const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(friendDocument.getId());
       const peopleRef = friendRequestRef.collection(peopleCollection.getName()).doc(userDocument.getId());
       await peopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source });
@@ -340,12 +340,12 @@ export default class FriendsAPI{
     }
   }
 
-  static async blockUsers(currentUserEmail, peopleEmail){
+  static async blockUsers(currentUserId, peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const blockedCollection = new BlockedCollection();
-    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
-    const blockedDocRef = friendListDocRef.collection(blockedCollection.getName()).doc(peopleEmail)
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserId);
+    const blockedDocRef = friendListDocRef.collection(blockedCollection.getName()).doc(peopleId)
     const blockedSnapshot = await blockedDocRef.get()
     if(!blockedSnapshot.exists){
       await blockedDocRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp()})
@@ -353,7 +353,7 @@ export default class FriendsAPI{
     //update status friendList
     const peopleCollection = new PeopleCollection();
 
-    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleId)
 
     const peopleSnapshot = await peopleDocRef.get()
 
@@ -364,12 +364,12 @@ export default class FriendsAPI{
     return Promise.resolve(true)
   }
 
-  static async unblockUsers(currentUserEmail, peopleEmail){
+  static async unblockUsers(currentUserId, peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const blockedCollection = new BlockedCollection();
-    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
-    const blockedDocRef = friendListDocRef.collection(blockedCollection.getName()).doc(peopleEmail)
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserId);
+    const blockedDocRef = friendListDocRef.collection(blockedCollection.getName()).doc(peopleId)
     const blockedSnapshot = await blockedDocRef.get()
     if(blockedSnapshot.exists){
       await blockedDocRef.delete()
@@ -378,7 +378,7 @@ export default class FriendsAPI{
     //update status friendList
     const peopleCollection = new PeopleCollection();
 
-    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleId)
 
     const peopleSnapshot = await peopleDocRef.get()
   
@@ -389,12 +389,12 @@ export default class FriendsAPI{
     return Promise.resolve(true)
   }
 
-  static async hideUsers(currentUserEmail, peopleEmail){
+  static async hideUsers(currentUserId, peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const hideCollection = new HideCollection();
-    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
-    const hideDocRef = friendListDocRef.collection(hideCollection.getName()).doc(peopleEmail)
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserId);
+    const hideDocRef = friendListDocRef.collection(hideCollection.getName()).doc(peopleId)
     const hideSnapshot = await hideDocRef.get()
     if(!hideSnapshot.exists){
       await hideDocRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp()})
@@ -403,7 +403,7 @@ export default class FriendsAPI{
     //update status friendList
     const peopleCollection = new PeopleCollection();
 
-    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleId)
 
     const peopleSnapshot = await peopleDocRef.get()
 
@@ -414,12 +414,12 @@ export default class FriendsAPI{
     return Promise.resolve(true)
   }
 
-  static async unhideUsers(currentUserEmail, peopleEmail){
+  static async unhideUsers(currentUserId, peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const hideCollection = new HideCollection();
-    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
-    const hideDocRef = friendListDocRef.collection(hideCollection.getName()).doc(peopleEmail)
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserId);
+    const hideDocRef = friendListDocRef.collection(hideCollection.getName()).doc(peopleId)
     const hideSnapshot = await hideDocRef.get()
     if(hideSnapshot.exists){
       await hideDocRef.delete()
@@ -427,7 +427,7 @@ export default class FriendsAPI{
     //update status friendList
     const peopleCollection = new PeopleCollection();
 
-    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleEmail)
+    const peopleDocRef = friendListDocRef.collection(peopleCollection.getName()).doc(peopleId)
 
     const peopleSnapshot = await peopleDocRef.get()
   
@@ -438,12 +438,12 @@ export default class FriendsAPI{
     return Promise.resolve(true)
   }
 
-  static async isFriends(currentUserEmail, peopleEmail){
+  static async isFriends(currentUserId, peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const peopleCollection = new PeopleCollection();
-    const friendListRef = db.collection(friendListCollection.getName()).doc(currentUserEmail);
-    const peopleRef = friendListRef.collection(peopleCollection.getName()).doc(peopleEmail);
+    const friendListRef = db.collection(friendListCollection.getName()).doc(currentUserId);
+    const peopleRef = friendListRef.collection(peopleCollection.getName()).doc(peopleId);
     const docSnapshot = await peopleRef.get();
     
     if(docSnapshot.exists) 

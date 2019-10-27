@@ -10,7 +10,7 @@ Discussion.triggerNewDiscussion = functions.region("asia-east2").firestore.docum
   const { schoolId, classId, taskId, discussionId  } = context.params;
 
   const db = admin.firestore();
-  const userMappingRef = db.collection("userMapping").doc(discussionDocument.posterEmail);
+  const userMappingRef = db.collection("userMapping").doc(discussionDocument.posterId);
   const schoolRef = userMappingRef.collection("schools").doc(schoolId)
   const discussionRef = schoolRef.collection("discussions").doc(discussionId)
   const data = Object.assign({classId: classId, taskId: taskId}, documentSnapshot.data())
@@ -26,7 +26,7 @@ Discussion.triggerNewDiscussionComment = functions.region("asia-east2").firestor
 
   // add to My Discussion when commenting someone discussions
   const db = admin.firestore();
-  const userMappingRef = db.collection("userMapping").doc(discussionDocument.posterEmail);
+  const userMappingRef = db.collection("userMapping").doc(discussionDocument.posterId);
   const schoolRef = userMappingRef.collection("schools").doc(schoolId)
   const discussionRef = schoolRef.collection("discussions").doc(discussionId)
 
@@ -48,7 +48,7 @@ Discussion.sendNotificationForNewDiscussion = functions.region("asia-east2").fir
   const { schoolId, classId, taskId, discussionId  } = context.params;
 
   // get senderId
-  const senderId = discussionDocument.posterEmail
+  const senderId = discussionDocument.posterId
   const senderName = await School.getUserName(schoolId, senderId)
 
   // get all teacher audience
@@ -163,7 +163,7 @@ Discussion.sendNotificationForNewDiscussionComment = functions.region("asia-east
   const { schoolId, classId, taskId, discussionId, commentId  } = context.params;
 
   // get senderId
-  const senderId = commentDocument.posterEmail
+  const senderId = commentDocument.posterId
   const senderName = await School.getUserName(schoolId, senderId)
 
   const db = admin.firestore();
@@ -175,11 +175,11 @@ Discussion.sendNotificationForNewDiscussionComment = functions.region("asia-east
   const discussionsDocumentRef = tasksDocumentRef.collection("discussions").doc(discussionId)
   const participantsCollectionRef = discussionsDocumentRef.collection("participants")
 
-  // get creator Discussion Email
+  // get creator Discussion ID
   const discussionDocumentSnapshot = await discussionsDocumentRef.get();
   const discussionDocument = discussionDocumentSnapshot.data()
-  const creatorEmail = discussionDocumentSnapshot.data().posterEmail
-  const creatorDocumentRef = db.collection("users").doc(creatorEmail);
+  const creatorId = discussionDocumentSnapshot.data().posterId
+  const creatorDocumentRef = db.collection("users").doc(creatorId);
   const creatorDocumentSnapshot = await creatorDocumentRef.get();
   const creator = Object.assign({id: creatorDocumentSnapshot.id}, creatorDocumentSnapshot.data())
 

@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 
 function SignOutDialog(props){
   const handleSignOutPress = async () => {
-    const result = await PeopleAPI.updateUserForLogout(props.currentUser.email)
+    const result = await PeopleAPI.updateUserForLogout(props.currentUser.id)
     if(result){
       firebase.auth().signOut();
       props.navigation.dispatch(StackActions.reset({

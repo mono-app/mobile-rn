@@ -17,12 +17,12 @@ function ContactScreen(props){
   const [ isRefreshing, setRefreshing ] = React.useState(true);
 
   const handleContactPress = (people) => {
-    props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
+    props.navigation.navigate("PeopleInformation", { peopleId: people.id });
   }
 
   const fetchData = () => {
     setRefreshing(true)
-    friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.email, (friends) => {
+    friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.id, (friends) => {
       setPeopleList(friends);
       setFilteredPeopleList(friends)
       setRefreshing(false)
@@ -65,9 +65,9 @@ function ContactScreen(props){
         data={filteredPeopleList}
         onRefresh={()=>{}} 
         refreshing={isRefreshing} 
-        keyExtractor={(item) => item.email}
+        keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
-          return <PeopleListItem key={index} email={item.email} onPress={handleContactPress} />
+          return <PeopleListItem key={index} id={item.id} onPress={handleContactPress} />
         }}/>
     </View>
   )

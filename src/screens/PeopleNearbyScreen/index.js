@@ -15,7 +15,7 @@ function PeopleNearbyScreen(props){
   const _isMounted = React.useRef(true);
 
   const handleContactPress = (people) => {
-    props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
+    props.navigation.navigate("PeopleInformation", { peopleId: people.id });
   }
 
   const checkPermission = async () => {
@@ -53,7 +53,7 @@ function PeopleNearbyScreen(props){
   const storeCurrentLocation = () =>{
     Geolocation.getCurrentPosition(
         (position) => {
-            PeopleAPI.updateCurrentLocation(props.currentUser.email,position)
+            PeopleAPI.updateCurrentLocation(props.currentUser.id,position)
             const latitude = position.coords.latitude
             const longitude = position.coords.longitude
 
@@ -68,7 +68,7 @@ function PeopleNearbyScreen(props){
   }
 
   const getNearbyPeople = async (latitude, longitude) => {
-    const peoples = await PeopleAPI.getNearbyPeoples(props.currentUser.email, latitude,longitude,25000)
+    const peoples = await PeopleAPI.getNearbyPeoples(props.currentUser.id, latitude,longitude,25000)
     if(_isMounted.current) setPeopleList(peoples);
 
   }
@@ -98,10 +98,10 @@ function PeopleNearbyScreen(props){
       <FlatList
         style={{ backgroundColor: "white" }}
         data={peopleList}
-        keyExtractor={(item) => item.email}
+        keyExtractor={(item) => item.peopleId}
         renderItem={({ item, index }) => {
           const distance = (item.distance)? item.distance: 0
-          return <PeopleListItem key={index} email={item.email} distance={distance} onPress={handleContactPress}/>
+          return <PeopleListItem key={index} id={item.id} distance={distance} onPress={handleContactPress}/>
         }}/>
     </View>
   )

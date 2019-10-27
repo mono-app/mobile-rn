@@ -14,7 +14,7 @@ export function withCurrentUser(Component){
           <Component {...props} ref={ref}
             currentUser={context.user}
             isLoggedIn={context.isLoggedIn}
-            setCurrentUserEmail={context.handleCurrentUserEmail}
+            setCurrentUserId={context.handleCurrentUserId}
             blockedUserList={context.blockedUserList}
             blockedByUserList={context.blockedByUserList}
             hiddenUserList={context.hiddenUserList}
@@ -28,8 +28,8 @@ export function withCurrentUser(Component){
 }
 
 export function useCurrentUser(){
-  const { user, handleCurrentUserEmail, isLoggedIn, blockedUserList, hiddenUserList } = React.useContext(CurrentUserContext);
-  return { currentUser: user, isLoggedIn, setCurrentUserEmail: handleCurrentUserEmail, blockedUserList, hiddenUserList }
+  const { user, handleCurrentUserId, isLoggedIn, blockedUserList, hiddenUserList } = React.useContext(CurrentUserContext);
+  return { currentUser: user, isLoggedIn, setCurrentUserId: handleCurrentUserId, blockedUserList, hiddenUserList }
 }
 
 export class CurrentUserProvider extends React.PureComponent{
@@ -42,16 +42,16 @@ export class CurrentUserProvider extends React.PureComponent{
     this.state = { 
       user: {}, 
       isLoggedIn: false,
-      handleCurrentUserEmail: this.handleCurrentUserEmail,
+      handleCurrentUserId: this.handleCurrentUserId,
       blockedUserList: [],
       blockedByUserList: [],
       hiddenUserList: [],
     }
-    this.handleCurrentUserEmail = this.handleCurrentUserEmail.bind(this);
+    this.handleCurrentUserId = this.handleCurrentUserId.bind(this);
   }
 
-  handleCurrentUserEmail = async (email) => {
-    const newUser = { email };
+  handleCurrentUserId = async (id) => {
+    const newUser = { id };
     this.setState({ user: newUser }); 
 
     const db = firebase.firestore();
@@ -60,7 +60,7 @@ export class CurrentUserProvider extends React.PureComponent{
     const blockedCollection = new BlockedCollection();
     const blockedByCollection = new BlockedByCollection();
     const hideCollection = new HideCollection();
-    const userRef = db.collection(userCollection.getName()).doc(email); 
+    const userRef = db.collection(userCollection.getName()).doc(id); 
   
     this.userListener = userRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
@@ -70,7 +70,7 @@ export class CurrentUserProvider extends React.PureComponent{
       }
     });
     
-    const friendListDocRef = db.collection(friendListCollection.getName()).doc(email)
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(id)
     const blockedColRef = friendListDocRef.collection(blockedCollection.getName())
       this.blockedUserListener = blockedColRef.onSnapshot((querySnapshot)=> {
         const queryDocumentSnapshotList = querySnapshot.docs

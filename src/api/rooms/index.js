@@ -11,13 +11,13 @@ export default class RoomsAPI{
   }
 
   /**
-   * @param {string} email
+   * @param {string} userId
    * @param {Function} callback 
    */
-  static getRoomsWithRealtimeUpdate(email, callback){
+  static getRoomsWithRealtimeUpdate(userId, callback){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
-    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", email)
+    const roomsRef = db.collection(roomsCollection.getName()).where("audiences", "array-contains", userId)
     return roomsRef.onSnapshot((querySnapshot) => {
 
       const rooms = querySnapshot.docs.map((documentSnapshot) => {
@@ -26,7 +26,7 @@ export default class RoomsAPI{
       })
 
       const filteredRooms = rooms.filter((item)=>{
-        return (!item.blocked && !item.hidden && item.lastMessage.sentTime)
+        return (!item.blocked && !item.hidden && item.lastMessage && item.lastMessage.sentTime)
       })
 
       filteredRooms.sort((a, b) => ((a.lastMessage && b.lastMessage)&&a.lastMessage.sentTime < b.lastMessage.sentTime) ? 1 : -1)
@@ -142,12 +142,12 @@ export default class RoomsAPI{
     });
   }
 
-  static async setInRoomStatus(roomId, email, status){
+  static async setInRoomStatus(roomId, userId, status){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
     const inRoomCollection = new InRoomCollection();
     const roomsRef = db.collection(roomsCollection.getName()).doc(roomId);
-    const inRoomRef = roomsRef.collection(inRoomCollection.getName()).doc(email);
+    const inRoomRef = roomsRef.collection(inRoomCollection.getName()).doc(userId);
 
     if(status){
       inRoomRef.set()
@@ -167,21 +167,21 @@ export class PersonalRoomsAPI extends RoomsAPI{
    * 
    * @param {array} audiences
    */
-  static async createRoomIfNotExists(firstPeopleEmail, secondPeopleEmail, type="chat"){
+  static async createRoomIfNotExists(firstPeopleId, secondPeopleId, type="chat"){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
 
-    const userPath = new firebase.firestore.FieldPath("audiencesQuery", firstPeopleEmail);
-    const peoplePath = new firebase.firestore.FieldPath("audiencesQuery", secondPeopleEmail);
+    const userPath = new firebase.firestore.FieldPath("audiencesQuery", firstPeopleId);
+    const peoplePath = new firebase.firestore.FieldPath("audiencesQuery", secondPeopleId);
     const roomsRef = db.collection(roomsCollection.getName());
     const querySnapshot = await roomsRef.where(userPath, "==", true).where(peoplePath, "==", true).where('type','==',type).get();
     
     if(querySnapshot.empty){
       const audiencesPayload = {};
-      audiencesPayload[firstPeopleEmail] = true;
-      audiencesPayload[secondPeopleEmail] = true;
+      audiencesPayload[firstPeopleId] = true;
+      audiencesPayload[secondPeopleId] = true;
       const payload = { 
-        audiences: [firstPeopleEmail, secondPeopleEmail], type: "chat",
+        audiences: [firstPeopleId, secondPeopleId], type: "chat",
         audiencesQuery: audiencesPayload, lastMessage: {message: "", sentTime: null},
         creationTime: firebase.firestore.FieldValue.serverTimestamp() 
       }

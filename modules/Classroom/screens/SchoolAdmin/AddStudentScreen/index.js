@@ -3,7 +3,7 @@ import Button from "src/components/Button";
 import { View, StyleSheet } from "react-native";
 import { Text, Title, Card, Snackbar } from "react-native-paper";
 import TextInput from "src/components/TextInput";
-import AppHeader from "src/components/AppHeader";
+import CustomSnackbar from "src/components/CustomSnackbar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import StudentAPI from "modules/Classroom/api/student";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
@@ -13,8 +13,8 @@ const INITIAL_STATE = {
   isLoading: false,
   studentEmail: "",
   studentName: "",
-  showSnackbar: false
-
+  isError: false,
+  snackbarMessage: ""
 };
 
 class AddStudentScreen extends React.PureComponent {
@@ -22,22 +22,19 @@ class AddStudentScreen extends React.PureComponent {
     return {
       header: null
     };
-  };
-  
-  showSnackbar() {
-    this.setState({
-      showSnackbar: true
-    })
   }
+
   handleStudentEmailChange = studentEmail => this.setState({ studentEmail });
   handleStudentNameChange = studentName => this.setState({ studentName });
-  handleSavePress = () => {
+  handleSavePress = async () => {
     if(this.state.studentEmail.trim().length>0&&this.state.studentName.trim().length>0){
       this.setState({ isLoading: true });
-      new StudentAPI().addStudent(this.props.currentSchool.id, this.state.studentEmail,{name: this.state.studentName}).then(() => {
-        this.setState({ isLoading: false, studentEmail: "", studentName:"" });
-        this.showSnackbar();
-      }).catch(err => console.log(err));
+      try{
+        await StudentAPI.addStudent(this.props.currentSchool.id, this.state.studentEmail,{name: this.state.studentName})
+        this.setState({ isLoading: false, studentEmail: "", studentName:"", isError: false, snackbarMessage: this.props.t("addStudentSuccess") });
+      }catch(err){
+        this.setState({ isError: true, snackbarMessage: err.message });
+      }
     }
   };
 
@@ -46,13 +43,12 @@ class AddStudentScreen extends React.PureComponent {
     this.state = INITIAL_STATE;
     this.handleSavePress = this.handleSavePress.bind(this);
     this.showSnackbar = this.showSnackbar.bind(this)
-
+    this.handleDismissSnackBar = this.handleDismissSnackBar.bind(this)
   }
 
   render() {
     return (
       <View style={{flex:1,display:"flex",backgroundColor: "#E8EEE8"}}>
-    
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
             <Card style={styles.container}>
               <Card.Content>
@@ -88,13 +84,7 @@ class AddStudentScreen extends React.PureComponent {
               </Card.Content>
             </Card>
         </KeyboardAwareScrollView>
-        <Snackbar
-          visible= {this.state.showSnackbar}
-          onDismiss={() => this.setState({ showSnackbar: false })}
-          style={{backgroundColor:"#0ead69"}}
-          duration={Snackbar.DURATION_SHORT}>
-          {this.props.t("addStudentSuccess")}
-        </Snackbar>
+        <CustomSnackbar isError={this.state.isError} message={this.state.snackbarMessage} />
       </View>
     );
   }

@@ -4,11 +4,11 @@ import uuid from "uuid/v4"
 import AsyncStorage from '@react-native-community/async-storage';
 
 export default class UserMappingAPI{
-  static async setAccessToken (email){
+  static async setAccessToken (userId){
     const db = firebase.firestore();
 
     const userMappingCollection = new UserMappingCollection()
-    const userMappingRef = db.collection(userMappingCollection.getName()).doc(email)
+    const userMappingRef = db.collection(userMappingCollection.getName()).doc(userId)
     const accessToken = uuid()
     const userMappingSnapshot = await userMappingRef.get()
     if(userMappingSnapshot.exists){

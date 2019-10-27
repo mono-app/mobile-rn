@@ -3,6 +3,14 @@ const admin = require("firebase-admin");
 
 function Teacher(){}
 
+Teacher.addTeacherTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/teachers/{teacherId}").onCreate(async (documentSnapshot, context) => {
+  const { schoolId, teacherId } = context.params;
+  const db = admin.firestore();
+  const userMappingRef = db.collection("userMapping").doc(teacherId);
+  const userMappingSchoolRef = userMappingRef.collection("schools").doc(schoolId);
+  userMappingSchoolRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role: "teachers" });
+})
+
 Teacher.addTeacherClassTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/teachers/{teacherId}").onCreate(async (documentSnapshot, context) => {
   // this trigger for auto add room audiences rooms collection
   const { schoolId, classId, teacherId } = context.params;

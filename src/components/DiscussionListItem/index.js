@@ -13,7 +13,7 @@ class DiscussionListItem extends React.PureComponent{
   refreshDetail = async () => {
     const { schoolId, discussion } = this.props;
     this.setState({ isLoading: true });
-    SchoolAPI.getUserName(schoolId, discussion.posterEmail).then(name=> {
+    SchoolAPI.getUserName(schoolId, discussion.posterId).then(name=> {
       this.setState({posterName: name })
     })
     this.setState({ isLoading: false, discussion });
