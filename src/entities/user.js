@@ -36,6 +36,17 @@ export default class User{
     this.isCompleteSetup = false;
   }
 
+  /**
+   * 
+   * @param {DocumentSnapshot} documentSnapshot 
+   */
+  fromSnapshot(documentSnapshot){
+    const data = documentSnapshot.data();
+    this.id = documentSnapshot.id;
+    this.email = data.email;
+    this.isCompleteSetup = data.isCompleteSetup;
+  }
+
   get email(){ return this._email.address }
   set email(value){ console.log(value); this._email = new Email(value) }
 

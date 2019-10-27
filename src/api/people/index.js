@@ -2,15 +2,14 @@ import firebase from "react-native-firebase";
 import uuid from "uuid/v4";
 import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
-import OfflineDatabase from "src/api/database/offline";
 import Logger from "src/api/logger";
+import Database from "src/api/database";
 import User from "src/entities/user";
 import Email from "src/entities/email";
 import CustomError from "src/entities/error";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { getDistance } from 'geolib';
-import { Q } from "@nozbe/watermelondb";
 
 export default class PeopleAPI{
   constructor(currentUserEmail=null){
@@ -34,7 +33,16 @@ export default class PeopleAPI{
     const userCredential = await firebase.auth().createUserWithEmailAndPassword(user.email, user.password);
     user.id = userCredential.user.uid;
 
-    // seluruh proses create user langsung ke firebase tanpa offline.
+    await Database.insert(async (database) => {
+      const userRef = database.collection("users").doc(user.email);
+      await userRef.set({ 
+        isCompleteSetup: user.isCompleteSetup,
+        phoneNumber: {
+          value: user.phoneNumber.number, isVerified: user.phoneNumber.isVerified
+        }
+      })
+    });
+    return user;
   }
 
   /**
@@ -96,8 +104,7 @@ export default class PeopleAPI{
   static async isExists(email){
     if(typeof(email) === "string") email = new Email(email);
     else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Please tell your programmer about this.");
-
-    console.log(email);
+ 
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const userRef = db.collection(userCollection.getName()).doc(email.address);
@@ -155,22 +162,36 @@ export default class PeopleAPI{
 
   /**
    * 
-   * @param {String} email 
-   * @param {String} source - default value `default`, available value `cache`, `server`, `default`
-   * @returns {Promise} - object of user in firebase, or null if cannot find
+   * @param {User} user 
+   * @param {boolean} online 
    */
-  static async getDetail(email=null, source="default"){
-    if(email){
-      const userCollection = new UserCollection();
-      const userDocument = new Document(email);
-      const db = firebase.firestore();
-      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      const documentSnapshot = await userRef.get({ source });
-      if(documentSnapshot.exists){
-        const userData = PeopleAPI.normalizePeople(documentSnapshot);
-        return Promise.resolve(userData);
-      }else return Promise.resolve(null);
-    }else return Promise.resolve(null);
+  static async getDetailByEmail(user, online=false){
+    if(online) return PeopleAPI.getDetailOnlineByEmail(user);
+    else return PeopleAPI.getDetailOfflineByEmail(user);
+  }
+
+  /**
+   * 
+   * @param {User} user 
+   */
+  static async getDetailOnlineByEmail(user){
+    return await Database.get(async (database) => {
+      const usersCollection = new UserCollection();
+      const userSnapshot = database.collection(usersCollection.getName()).where("email", "==", user.email).get();
+      const [ documentSnapshot ] = userSnapshot.docs;
+      
+      const user = new User();
+      user.fromSnapshot(documentSnapshot);
+      return user;
+    }, true)
+  }
+
+  /**
+   * 
+   * @param {User} user 
+   */
+  static async getDetailOfflineByEmail(user){
+    return null;
   }
 
   static getDetailWithRealTimeUpdate(email, callback){
