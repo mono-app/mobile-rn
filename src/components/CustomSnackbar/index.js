@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Snackbar } from "react-native-paper";
+import { View } from "react-native";
 
 function CustomSnackbar(props){
   const { message, isError } = props

@@ -141,12 +141,12 @@ export default class PeopleAPI{
    * 
    * @param {Email} email 
    */
-  static async isEmailExists(email){
+  static async isEmailExists(email, online=true){
     if(typeof(email) === "string") email = new Email(email);
-    else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Please tell your programmer about this.");
+    else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Ops! Something went wrong");
  
     try{
-      await PeopleAPI.getDetailByEmail(email, true);
+      await PeopleAPI.getDetailByEmail(email, online);
       return Promise.resolve(true);
     }catch(err){
       if(err.code === "user/not-found") return Promise.resolve(false);
@@ -172,8 +172,11 @@ export default class PeopleAPI{
    * 
    * @param {Email} email 
    */
-  static async ensureUniqueEmail(email){
-    const isEmailExists = await PeopleAPI.isEmailExists(email);
+  static async ensureUniqueEmail(email, online=true){
+    if(typeof(email) === "string") email = new Email(email);
+    else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Ops! Something went wrong");
+
+    const isEmailExists = await PeopleAPI.isEmailExists(email, online);
     if(isEmailExists) throw new CustomError("user/duplicate", "Please choose another email address");
     else return Promise.resolve(true);
   }
@@ -288,6 +291,9 @@ export default class PeopleAPI{
    * @param {Email} email 
    */
   static async getDetailOnlineByEmail(email){
+    if(typeof(email) === "string") email = new Email(email);
+    if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    
     return await Database.get(async (database) => {
       const usersCollection = new UserCollection();
       const userSnapshot = await database.collection(usersCollection.getName()).where("email", "==", email.address).get();

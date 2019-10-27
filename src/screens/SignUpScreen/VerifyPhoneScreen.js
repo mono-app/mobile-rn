@@ -9,6 +9,8 @@ import { StyleSheet } from "react-native";
 
 import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
+import CustomSnackbar from "src/components/CustomSnackbar";
+import { SafeAreaView } from "react-navigation";
 import { View, TouchableOpacity } from "react-native";
 import { Text, Portal, Dialog, Paragraph, Button as MaterialButton, Snackbar, Title } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -103,29 +105,29 @@ class VerifyPhoneScreen extends React.PureComponent{
               <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("verify")}/>
             </React.Fragment>
           ):(<Button onPress={this.handleAskOTP} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("askVerificationCode")}/>)}
+
+          <Portal>
+            <Dialog visible={this.state.showDialog}>
+              <Dialog.Title>{this.props.t("success")}</Dialog.Title>
+              <Dialog.Content>
+                <Paragraph>{this.props.t("registrationSuccess")}</Paragraph>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <MaterialButton onPress={this.handleContinueClick}>{this.props.t("next")}</MaterialButton>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        </KeyboardAwareScrollView>
+
+        <SafeAreaView>
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
             <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
           </TouchableOpacity>
-        </KeyboardAwareScrollView>
+        </SafeAreaView>
 
-        <Portal>
-          <Dialog visible={this.state.showDialog}>
-            <Dialog.Title>{this.props.t("success")}</Dialog.Title>
-            <Dialog.Content>
-              <Paragraph>{this.props.t("registrationSuccess")}</Paragraph>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <MaterialButton onPress={this.handleContinueClick}>{this.props.t("next")}</MaterialButton>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
+        <CustomSnackbar isError={true} message={this.state.errorMessage} onDismiss={this.handleErrorDismiss}/>
 
-        <Snackbar
-          visible={this.state.errorMessage} onDismiss={this.handleErrorDismiss}
-          style={{ backgroundColor:"#EF6F6C" }} duration={Snackbar.DURATION_SHORT}>
-          {this.state.errorMessage}
-        </Snackbar>
-     </React.Fragment>
+      </React.Fragment>
     )
   }
 }

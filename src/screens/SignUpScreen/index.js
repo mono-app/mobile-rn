@@ -7,8 +7,10 @@ import { withTranslation } from 'react-i18next';
 
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
+import CustomSnackbar from "src/components/CustomSnackbar";
+import { SafeAreaView } from "react-navigation";
 import { View, TouchableOpacity } from "react-native";
-import { Text, Title, Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
+import { Text, Title, Paragraph } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const INITIAL_STATE = { 
@@ -18,6 +20,7 @@ const INITIAL_STATE = {
 class SignUpScreen extends React.PureComponent{
   static navigationOptions = { header: null }
 
+  handleDismiss = () => this.setState({ errorMessage: null });
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({ n: 1 }));
   handleErrorDialogDismiss = () => this.setState({ errorMessage: null });
   handleEmailChange = email => this.setState({email});
@@ -47,44 +50,38 @@ class SignUpScreen extends React.PureComponent{
 
   render(){
     return(
-      <KeyboardAwareScrollView style={{flex: 1}} keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
-        <View style={{marginTop:128}}>
-          <Title>{this.props.t("signUpLabel")}</Title>
-          <Paragraph style={{ marginBottom: 16 }}>{this.props.t("signUpLabelDesc")}</Paragraph>
-          <View style={{marginBottom: 128}}>
-            <TextInput
-              placeholder="Email" textContentType="emailAddress" style={{ marginBottom: 8, paddingVertical: 16 }}
-              value={this.state.email} onChangeText={this.handleEmailChange} autoCapitalize="none"/>
-            <TextInput
-              placeholder="Password" textContentType="password" style={{ marginBottom: 8, paddingVertical: 16 }}
-              secureTextEntry={true} value={this.state.password} onChangeText={this.handlePasswordChange}/>
-            <TextInput
-              placeholder={this.props.t("repeatPass")} textContentType="password" style={{ paddingVertical: 16 }}
-              secureTextEntry={true} value={this.state.verifyPassword} onChangeText={this.handleVerifyPasswordChange}/>
-            <Button text={this.props.t("next")} onPress={this.handleContinuePress} isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
-          </View>
+      <React.Fragment>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
+            <Title>{this.props.t("signUpLabel")}</Title>
+            <Paragraph style={{ marginBottom: 16 }}>{this.props.t("signUpLabelDesc")}</Paragraph>
+            <View style={{marginBottom: 128}}>
+              <TextInput
+                placeholder="Email" textContentType="emailAddress" style={{ marginBottom: 8, paddingVertical: 16 }}
+                value={this.state.email} onChangeText={this.handleEmailChange} autoCapitalize="none"/>
+              <TextInput
+                placeholder="Password" textContentType="password" style={{ marginBottom: 8, paddingVertical: 16 }}
+                secureTextEntry={true} value={this.state.password} onChangeText={this.handlePasswordChange}/>
+              <TextInput
+                placeholder={this.props.t("repeatPass")} textContentType="password" style={{ paddingVertical: 16 }}
+                secureTextEntry={true} value={this.state.verifyPassword} onChangeText={this.handleVerifyPasswordChange}/>
+              <Button text={this.props.t("next")} onPress={this.handleContinuePress} isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
+            </View>
+        </KeyboardAwareScrollView>
+
+        <SafeAreaView>
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
             <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
-          </TouchableOpacity>
-          <Portal>
-            <Dialog visible={!!this.state.errorMessage} onDismiss={this.handleErrorDialogDismiss}>
-              <Dialog.Title>Ops!</Dialog.Title>
-              <Dialog.Content>
-                <Paragraph>{this.state.errorMessage}</Paragraph>
-              </Dialog.Content>
-              <Dialog.Actions>
-                <MaterialButton onPress={this.handleErrorDialogDismiss}>{this.props.t('understand')}</MaterialButton>
-              </Dialog.Actions>
-            </Dialog>
-          </Portal>
-        </View>
-      </KeyboardAwareScrollView>
+          </TouchableOpacity>  
+        </SafeAreaView>
+
+        <CustomSnackbar isError={true} message={this.state.errorMessage} onDismiss={this.handleDismiss}/>
+      </React.Fragment>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 32, alignItems: "stretch", justifyContent: "center" },
+  container: { paddingHorizontal: 32, alignItems: "stretch", justifyContent: "center", flex: 1, paddingTop: 128 },
   backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })
 
