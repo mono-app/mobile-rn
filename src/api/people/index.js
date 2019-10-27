@@ -162,22 +162,23 @@ export default class PeopleAPI{
 
   /**
    * 
-   * @param {User} user 
+   * @param {Email} email 
    * @param {boolean} online 
    */
-  static async getDetailByEmail(user, online=false){
-    if(online) return PeopleAPI.getDetailOnlineByEmail(user);
-    else return PeopleAPI.getDetailOfflineByEmail(user);
+  static async getDetailByEmail(email, online=false){
+    if(typeof(email) === "string") email = new Email(email);
+    if(online) return PeopleAPI.getDetailOnlineByEmail(email);
+    else return PeopleAPI.getDetailOfflineByEmail(email);
   }
 
   /**
    * 
-   * @param {User} user 
+   * @param {Email} email 
    */
-  static async getDetailOnlineByEmail(user){
+  static async getDetailOnlineByEmail(email){
     return await Database.get(async (database) => {
       const usersCollection = new UserCollection();
-      const userSnapshot = database.collection(usersCollection.getName()).where("email", "==", user.email).get();
+      const userSnapshot = database.collection(usersCollection.getName()).where("email", "==", email.address).get();
       const [ documentSnapshot ] = userSnapshot.docs;
       
       const user = new User();
@@ -188,9 +189,9 @@ export default class PeopleAPI{
 
   /**
    * 
-   * @param {User} user 
+   * @param {Email} email 
    */
-  static async getDetailOfflineByEmail(user){
+  static async getDetailOfflineByEmail(email){
     return null;
   }
 
