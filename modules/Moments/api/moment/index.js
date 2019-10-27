@@ -1,12 +1,9 @@
 import firebase from "react-native-firebase";
 import uuid from "uuid/v4";
-
-import Logger from "src/api/logger";
 import StorageAPI from "src/api/storage";
-
 import { MomentsCollection, FansCollection, CommentsCollection } from "src/api/database/collection";
-import { AddDocument } from "src/api/database/query";
 import { Document } from "src/api/database/document";
+import Database from "src/api/database";
 
 export default class MomentAPI{
   /**
@@ -83,7 +80,8 @@ export default class MomentAPI{
    * @param {String} posterId - 
    * @param {Object} content 
    */
-  static publishMoment(posterId, content){
+  static async publishMoment(posterId, content){
+  
     const promises = [];
     content.images.forEach((image, index) => {
       const stringRef = `/modules/moments/${uuid()}.png`;
@@ -91,22 +89,23 @@ export default class MomentAPI{
       content.images[index] = { storagePath: stringRef, downloadUrl: null }
     })
 
-    return Promise.all(promises).then(results => {
-      results.forEach((result, index) => {
-        content.images[index].downloadUrl = result;
-      })
-
-      const collection = new MomentsCollection();
-      const query = new AddDocument();
-      const payload = {
-        posterId, content, privacy: "friends",
-        postTime: firebase.firestore.FieldValue.serverTimestamp(),
-      }
-      return query.executeQuery(collection, null, payload);
-    }).then(() => true).catch(err => {
-      console.log(err); 
-      return false;
+    const results = await Promise.all(promises)
+    results.forEach((result, index) => {
+      content.images[index].downloadUrl = result;
     })
+    
+
+    const momentCollection = new MomentsCollection();
+    const payload = {
+      posterId, content, privacy: "friends",
+      postTime: firebase.firestore.FieldValue.serverTimestamp()
+    }
+    await Database.insert(async(db)=>{
+      const momentRef = db.collection(momentCollection.getName()).doc()
+      await momentRef.set(payload)
+    })
+
+    return Promise.resolve(true)
   }
 
   /**

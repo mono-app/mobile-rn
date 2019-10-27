@@ -3,9 +3,8 @@ import OfflineDatabase from "src/api/database/offline";
 
 export default class Database{
 
-  constructor(){
-    this.database = firebase.firestore();
-  }
+  constructor(){ this.db = firebase.firestore(); }
+  getDatabase(){ return this.db; }
 
   static chooseDatabase(online){
     if(online) return firebase.firestore();

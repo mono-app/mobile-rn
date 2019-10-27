@@ -7,12 +7,11 @@ function Moments(){}
 Moments.triggerNewMoment = functions.region("asia-east2").firestore.document("/moments/{momentId}").onCreate(async (documentSnapshot, context) => {
   const momentDoc = documentSnapshot.data();
   const posterId = momentDoc.posterId
-
+  
   // this trigger for auto add room audiences rooms collection  
   const db = admin.firestore();
   const friendListRef = db.collection("friendList").doc(posterId);
   const querySnapshot = await friendListRef.collection("people").get()
-
   const friendIdList = querySnapshot.docs.map(documentSnapshot => {
     return documentSnapshot.id
   })
