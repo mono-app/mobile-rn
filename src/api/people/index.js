@@ -34,8 +34,9 @@ export default class PeopleAPI{
     user.id = userCredential.user.uid;
 
     await Database.insert(async (database) => {
-      const userRef = database.collection("users").doc(user.email);
+      const userRef = database.collection("users").doc(user.id);
       await userRef.set({ 
+        email: user.email,
         isCompleteSetup: user.isCompleteSetup,
         phoneNumber: {
           value: user.phoneNumber.number, isVerified: user.phoneNumber.isVerified
@@ -101,25 +102,25 @@ export default class PeopleAPI{
    * 
    * @param {Email} email 
    */
-  static async isExists(email){
+  static async isEmailExists(email){
     if(typeof(email) === "string") email = new Email(email);
     else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Please tell your programmer about this.");
  
-    const db = firebase.firestore();
-    const userCollection = new UserCollection();
-    const userRef = db.collection(userCollection.getName()).doc(email.address);
-    const documentSnapshot = await userRef.get();
-    if(documentSnapshot.exists) return Promise.resolve(true);
-    else return Promise.resolve(false);
+    try{
+      await PeopleAPI.getDetailByEmail(email, true);
+    }catch(err){
+      if(err.code === "user/not-found") return Promise.resolve(false);
+      else throw err;
+    }
   }
 
   /**
    * 
    * @param {Email} email 
    */
-  static async ensureUnique(email){
-    const isExists = await PeopleAPI.isExists(email);
-    if(isExists) throw new CustomError("user/duplicate", "Please choose another email address");
+  static async ensureUniqueEmail(email){
+    const isEmailExists = await PeopleAPI.isEmailExists(email);
+    if(isEmailExists) throw new CustomError("user/duplicate", "Please choose another email address");
     else return Promise.resolve(true);
   }
 
@@ -128,14 +129,6 @@ export default class PeopleAPI{
     const userCollection = new UserCollection();
     const userQuerySnapshot = await db.collection(userCollection.getName()).where("applicationInformation.id","==",monoId).get();
     return Promise.resolve(userQuerySnapshot.empty);
-  }
-
-  static async storeMessagingToken(peopleEmail, messagingToken){
-    const db = firebase.firestore();
-    const usersCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
-    const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
-    await userRef.update({ "tokenInformation.messagingToken": messagingToken, isLogin: true });
   }
 
   /**
@@ -162,13 +155,35 @@ export default class PeopleAPI{
 
   /**
    * 
+   * @param {string} id 
+   * @param {boolean} online 
+   */
+  static async getDetailById(id, online=false){
+    if(typeof(id) !== "string") throw new Error("Ops! Something went wrong");
+    if(online) return await PeopleAPI.getDetailOnlineById(id);
+    else return await PeopleAPI.getDetailOfflineById(id);
+  }
+
+  static async getDetailOnlineById(id){
+    return await Database.get(async (database) => {
+      const usersCollection = new UserCollection();
+      const userDocument = new Document(id);
+      const userSnapshot = await database.collection(usersCollection.getName()).doc(userDocument.getId()).get();
+      return new User().fromSnapshot(userSnapshot);
+    }, true);
+  }
+
+  static async getDetailOfflineById(id){}
+
+  /**
+   * 
    * @param {Email} email 
    * @param {boolean} online 
    */
   static async getDetailByEmail(email, online=false){
     if(typeof(email) === "string") email = new Email(email);
-    if(online) return PeopleAPI.getDetailOnlineByEmail(email);
-    else return PeopleAPI.getDetailOfflineByEmail(email);
+    if(online) return await PeopleAPI.getDetailOnlineByEmail(email);
+    else return await PeopleAPI.getDetailOfflineByEmail(email);
   }
 
   /**
@@ -178,12 +193,9 @@ export default class PeopleAPI{
   static async getDetailOnlineByEmail(email){
     return await Database.get(async (database) => {
       const usersCollection = new UserCollection();
-      const userSnapshot = database.collection(usersCollection.getName()).where("email", "==", email.address).get();
-      const [ documentSnapshot ] = userSnapshot.docs;
-      
-      const user = new User();
-      user.fromSnapshot(documentSnapshot);
-      return user;
+      const userSnapshot = await database.collection(usersCollection.getName()).where("email", "==", email.address).get();
+      if(userSnapshot.size === 0) throw new CustomError("user/not-found", "User not found");
+      else return new User().fromSnapshot(documentSnapshot);
     }, true)
   }
 

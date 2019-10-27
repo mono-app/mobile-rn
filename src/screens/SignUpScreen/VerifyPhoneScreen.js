@@ -4,7 +4,6 @@ import PeopleAPI from "src/api/people";
 import PhoneNumber from "src/entities/phoneNumber";
 import Otp from "src/entities/otp";
 import { StackActions, NavigationActions } from "react-navigation";
-import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
 import { StyleSheet } from "react-native";
 
@@ -23,6 +22,7 @@ const INITIAL_STATE = {
 class VerifyPhoneScreen extends React.PureComponent{
   static navigationOptions = { header: null }
   
+  handleContinueClick = () => this.gotoSplash();
   handleDismissDialog = () => this.setState({showDialog: false});
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({n: 2}));
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
@@ -48,7 +48,8 @@ class VerifyPhoneScreen extends React.PureComponent{
       const otp = new Otp(this.state.otp);
       await VerifyPhoneAPI.checkCode(this.state.otprequestId, otp, true);
       this.user.phoneNumber = new PhoneNumber(this.state.phoneNumber, false);
-      await PeopleAPI.createUser(user);
+      await PeopleAPI.createUser(this.user);
+      this.gotoSplash();
     }catch(err){
       this.handleError(err);
     }finally{
@@ -56,19 +57,18 @@ class VerifyPhoneScreen extends React.PureComponent{
     }
   }
 
-  handleContinueClick = () => {
-    this.props.navigation.dispatch(
-      StackActions.reset({
-        index: 0,
-        actions: [ NavigationActions.navigate({ routeName: 'Splash' }) ],
-      })
-    );
+  gotoSplash = () => {
+    this.props.navigation.dispatch(StackActions.reset({
+      index: 0, actions: [ NavigationActions.navigate({ routeName: "Splash" }) ]
+    }))
   }
+
 
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
     this.user = this.props.navigation.getParam("user", null);
+    this.gotoSplash = this.gotoSplash.bind(this);
     this.handleBackToSignIn = this.handleBackToSignIn.bind(this);
     this.handlePhoneNumberChange = this.handlePhoneNumberChange.bind(this);
     this.handleOTPChange = this.handleOTPChange.bind(this);
@@ -135,4 +135,4 @@ const styles = StyleSheet.create({
   backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })
 
-export default withTranslation()(withCurrentUser(VerifyPhoneScreen))
+export default withTranslation()(VerifyPhoneScreen)

@@ -25,11 +25,11 @@ class SignUpScreen extends React.PureComponent{
   handleVerifyPasswordChange = verifyPassword => this.setState({verifyPassword});
   handleError = (err) => this.setState({ errorMessage: err.message });
   handleContinuePress = async () => {
-    this.setState({isLoading:true})
+    this.setState({ isLoading:true })
     try{
       const user = new User();
       user.create(this.state.email, this.state.password, this.state.verifyPassword)
-      await PeopleAPI.ensureUnique(user.email);
+      await PeopleAPI.ensureUniqueEmail(user.email);
       this.props.navigation.navigate("VerifyPhone", { user: user });
     }catch(err){
       this.handleError(err);
