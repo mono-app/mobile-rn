@@ -168,6 +168,20 @@ export default class PeopleAPI{
     }
   }
 
+  static async getDetail(id){
+    if(id){
+      const userCollection = new UserCollection();
+      const userDocument = new Document(id);
+      const db = firebase.firestore();
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      const documentSnapshot = await userRef.get();
+      if(documentSnapshot.exists){
+        const userData = PeopleAPI.normalizePeople(documentSnapshot);
+        return Promise.resolve(userData);
+      }else return Promise.resolve(null);
+    }else return Promise.resolve(null);
+  }
+
   /**
    * 
    * @param {Email} email 

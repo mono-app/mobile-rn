@@ -27,7 +27,7 @@ class AddTeacherScreen extends React.PureComponent {
   handleTeacherEmailChange = teacherEmail => this.setState({ teacherEmail });
   handleTeacherNameChange = teacherName => this.setState({ teacherName });
 
-  handleSavePress = () => {
+  handleSavePress = async () => {
     if(this.state.teacherEmail.trim().length>0 && this.state.teacherName.trim().length>0){
       this.setState({ isLoading: true });
       try{

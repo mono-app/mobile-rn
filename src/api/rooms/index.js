@@ -26,7 +26,7 @@ export default class RoomsAPI{
       })
 
       const filteredRooms = rooms.filter((item)=>{
-        return (!item.blocked && !item.hidden && item.lastMessage.sentTime)
+        return (!item.blocked && !item.hidden && item.lastMessage && item.lastMessage.sentTime)
       })
 
       filteredRooms.sort((a, b) => ((a.lastMessage && b.lastMessage)&&a.lastMessage.sentTime < b.lastMessage.sentTime) ? 1 : -1)

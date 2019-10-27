@@ -26,7 +26,7 @@ class AddStudentScreen extends React.PureComponent {
 
   handleStudentEmailChange = studentEmail => this.setState({ studentEmail });
   handleStudentNameChange = studentName => this.setState({ studentName });
-  handleSavePress = () => {
+  handleSavePress = async () => {
     if(this.state.studentEmail.trim().length>0&&this.state.studentName.trim().length>0){
       this.setState({ isLoading: true });
       try{
