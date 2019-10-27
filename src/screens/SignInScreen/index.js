@@ -3,6 +3,7 @@ import firebase from 'react-native-firebase';
 import NavigatorAPI from "src/api/navigator";
 import AuthenticationAPI from "src/api/authentication";
 import NotificationAPI from "src/api/notification";
+import MessagingToken from "src/entities/messagingToken";
 import { StyleSheet } from "react-native";
 
 import Logo from "assets/logo-vertical.png";
