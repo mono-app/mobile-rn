@@ -45,6 +45,7 @@ export default class User{
     this.id = documentSnapshot.id;
     this.email = data.email;
     this.isCompleteSetup = data.isCompleteSetup;
+    return this;
   }
 
   get email(){ return this._email.address }

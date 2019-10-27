@@ -162,6 +162,28 @@ export default class PeopleAPI{
 
   /**
    * 
+   * @param {string} id 
+   * @param {boolean} online 
+   */
+  static async getDetailById(id, online=false){
+    if(typeof(id) !== "string") throw new Error("Ops! Something went wrong");
+    if(online) return PeopleAPI.getDetailOnlineById(id);
+    else return PeopleAPI.getDetailOfflineById(id);
+  }
+
+  static async getDetailOnlineById(id){
+    return await Database.get(async (database) => {
+      const usersCollection = new UserCollection();
+      const userDocument = new Document(id);
+      const userSnapshot = await database.collection(usersCollection.getName()).doc(userDocument.getId()).get();
+      return new User().fromSnapshot(userSnapshot);
+    }, true);
+  }
+
+  static async getDetailOfflineById(id){}
+
+  /**
+   * 
    * @param {Email} email 
    * @param {boolean} online 
    */
@@ -178,12 +200,9 @@ export default class PeopleAPI{
   static async getDetailOnlineByEmail(email){
     return await Database.get(async (database) => {
       const usersCollection = new UserCollection();
-      const userSnapshot = database.collection(usersCollection.getName()).where("email", "==", email.address).get();
+      const userSnapshot = await database.collection(usersCollection.getName()).where("email", "==", email.address).get();
       const [ documentSnapshot ] = userSnapshot.docs;
-      
-      const user = new User();
-      user.fromSnapshot(documentSnapshot);
-      return user;
+      return new User().fromSnapshot(documentSnapshot);
     }, true)
   }
 
