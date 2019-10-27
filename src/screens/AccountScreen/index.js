@@ -89,7 +89,7 @@ function AccountScreen(props){
           <View style={styles.menu}>
             <Text style={{ fontWeight: "500" }}>Email</Text>
             <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-              <Text>{currentUser.id}</Text>
+              <Text>{currentUser.email}</Text>
             </View>
           </View>
         </View>
