@@ -167,8 +167,8 @@ export default class PeopleAPI{
    */
   static async getDetailById(id, online=false){
     if(typeof(id) !== "string") throw new Error("Ops! Something went wrong");
-    if(online) return PeopleAPI.getDetailOnlineById(id);
-    else return PeopleAPI.getDetailOfflineById(id);
+    if(online) return await PeopleAPI.getDetailOnlineById(id);
+    else return await PeopleAPI.getDetailOfflineById(id);
   }
 
   static async getDetailOnlineById(id){
@@ -189,8 +189,8 @@ export default class PeopleAPI{
    */
   static async getDetailByEmail(email, online=false){
     if(typeof(email) === "string") email = new Email(email);
-    if(online) return PeopleAPI.getDetailOnlineByEmail(email);
-    else return PeopleAPI.getDetailOfflineByEmail(email);
+    if(online) return await PeopleAPI.getDetailOnlineByEmail(email);
+    else return await PeopleAPI.getDetailOfflineByEmail(email);
   }
 
   /**
