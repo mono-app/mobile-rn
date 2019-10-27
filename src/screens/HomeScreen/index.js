@@ -37,13 +37,13 @@ function HomeScreen(props){
             phoneNumbers.push(phoneNumber.number)
           })
         })
-        if(accessToken && props.currentUser.email && phoneNumbers.length>0){
+        if(accessToken && props.currentUser.id && phoneNumbers.length>0){
           const headers= {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           }
           const body= JSON.stringify({
-            userId: props.currentUser.email,
+            userId: props.currentUser.id,
             phonenumbers: phoneNumbers,
           })
 

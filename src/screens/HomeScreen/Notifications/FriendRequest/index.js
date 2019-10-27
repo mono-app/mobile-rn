@@ -10,7 +10,7 @@ const INITIAL_STATE = { count: 0, people: [] }
 
 class FriendRequest extends React.PureComponent{
   loadFriendRequestCount = async () => {
-    this.friendRequestListener = FriendsAPI.getFriendRequestWithRealTimeUpdate(this.props.currentUser.email, people => {
+    this.friendRequestListener = FriendsAPI.getFriendRequestWithRealTimeUpdate(this.props.currentUser.id, people => {
       this.setState({ count: people.length, people });
     })
   }

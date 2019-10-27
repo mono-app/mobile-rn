@@ -14,10 +14,10 @@ export default class BirthdaySetupBanner extends React.Component{
 
   handleBeforeSave = value => moment(value, "DD/MM/YYYY").isValid();
   handleProceedPress = () => {
-    new PeopleAPI().getCurrentUserEmail().then(currentUserEmail => {
+    new PeopleAPI().getCurrentUserId().then(currentUserId => {
       const payload = {
         databaseCollection: "users",
-        databaseDocumentId: currentUserEmail,
+        databaseDocumentId: currentUserId,
         databaseFieldName: "personalInformation.dateOfBirth",
         caption: "Format tanggal lahir: 22/12/2007",
         placeholder: "DD/MM/YYYY",
@@ -32,8 +32,8 @@ export default class BirthdaySetupBanner extends React.Component{
 
   handleComponentWillFocus = () => {
     const peopleAPI = new PeopleAPI();
-    peopleAPI.getCurrentUserEmail().then(currentUserEmail => {
-      return peopleAPI.getDetail(currentUserEmail);
+    peopleAPI.getCurrentUserId().then(currentUserId => {
+      return peopleAPI.getDetail(currentUserId);
     }).then(people => {
       if(people.personalInformation.dateOfBirth === undefined) this.setState({ isVisible: true });
       else this.setState({ isVisible: false });

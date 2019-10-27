@@ -13,7 +13,8 @@ const INITIAL_STATE = {
   isLoading: false,
   teacherEmail: "",
   teacherName: "",
-  showSnackbar: false
+  snackbarMessage: false,
+  isError: false
 };
 
 class AddTeacherScreen extends React.PureComponent {
@@ -23,21 +24,18 @@ class AddTeacherScreen extends React.PureComponent {
     };
   };
 
-  showSnackbar() {
-    this.setState({
-      showSnackbar: true
-    })
-  }
   handleTeacherEmailChange = teacherEmail => this.setState({ teacherEmail });
   handleTeacherNameChange = teacherName => this.setState({ teacherName });
 
   handleSavePress = () => {
     if(this.state.teacherEmail.trim().length>0 && this.state.teacherName.trim().length>0){
       this.setState({ isLoading: true });
-      TeacherAPI.addTeacher(this.props.currentSchool.id, this.state.teacherEmail,{name: this.state.teacherName}).then(() => {
-        this.setState({ isLoading: false, teacherEmail: "", teacherName:"" });
-        this.showSnackbar()
-      }).catch(err => console.log(err));
+      try{
+        await TeacherAPI.addTeacher(this.props.currentSchool.id, this.state.teacherEmail, {name: this.state.teacherName})
+        this.setState({ isLoading: false, teacherEmail: "", teacherName:"", isError: false, snackbarMessage: this.props.t("addTeacherSuccess")});
+      }catch(err){
+        this.setState({ isError: true, snackbarMessage: err.message });
+      }
     }
   };
 
@@ -52,10 +50,8 @@ class AddTeacherScreen extends React.PureComponent {
   }
 
   render() {
-
     return (
       <View style={{flex:1,display:"flex",backgroundColor: "#E8EEE8"}}>
-       
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
             <Card style={styles.container}>
               <Card.Content>
@@ -89,13 +85,7 @@ class AddTeacherScreen extends React.PureComponent {
               </Card.Content>
             </Card>
         </KeyboardAwareScrollView>
-        <Snackbar
-          visible= {this.state.showSnackbar}
-          onDismiss={() => this.setState({ showSnackbar: false })}
-          style={{backgroundColor:"#0ead69"}}
-          duration={Snackbar.DURATION_SHORT}>
-          {this.props.t("addTeacherSuccess")}
-        </Snackbar>
+        <CustomSnackbar isError={this.state.isError} message={this.state.snackbarMessage} />
       </View>
     );
   }

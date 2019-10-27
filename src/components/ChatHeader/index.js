@@ -21,7 +21,7 @@ function ChatHeader(props){
 
   const initUserInRoom = () => {
     inRoomListener.current = RoomsAPI.getInRoomWithRealTimeUpdate(room.id, userInRoomList => {
-      const audiences = room.audiences.filter((audience) => audience !== currentUser.email);
+      const audiences = room.audiences.filter((audience) => audience !== currentUser.id);
    
       if(userInRoomList && userInRoomList.length>0 && userInRoomList.includes(audiences[0])){
         if( _isMounted.current) setInRoom(true)
@@ -30,7 +30,7 @@ function ChatHeader(props){
   };
 
   const initAudience = () => {
-    const audiences = room.audiences.filter((audience) => audience !== currentUser.email);
+    const audiences = room.audiences.filter((audience) => audience !== currentUser.id);
     audienceListener.current = PeopleAPI.getDetailWithRealTimeUpdate(audiences[0], (audienceData)=>{
       const tempAudienceStatus = (audienceData && audienceData.lastOnline && audienceData.lastOnline.status)? audienceData.lastOnline.status: "offline";
       if(_isMounted.current) setAudienceStatus(tempAudienceStatus)

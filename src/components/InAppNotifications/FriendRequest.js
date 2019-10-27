@@ -16,20 +16,20 @@ function FriendRequest(props){
   const friendRequestListener = React.useRef(null);
   const stateListener = React.useRef((nextAppState) => setCurrentAppState(nextAppState));
 
-  const handleSingleRequestPress = (requestorEmail, source) => {
-    Logger.log("FriendRequest.handleSingleRequestPress#requestorEmail", requestorEmail);
-    const params = { peopleEmail: requestorEmail, source }
+  const handleSingleRequestPress = (requestorId, source) => {
+    Logger.log("FriendRequest.handleSingleRequestPress#requestorId", requestorId);
+    const params = { peopleId: requestorId, source }
     navigation.navigate({ routeName: "PeopleInformation", params, key: "HomeTabNavigator" });
   }
 
   const showNotification = () => {
     Logger.log("FriendRequest.showNotification#currentAppState", currentAppState);
     Logger.log("FriendRequest.showNotification#isFirstTime", isFirstTime.current);
-    Logger.log("FriendRequest.showNotification#currentUser", currentUser.email);
-    if(currentAppState === "active" && currentUser.email !== undefined){
-      Logger.log("FriendRequest.showNotification#currentUser", currentUser.email);
+    Logger.log("FriendRequest.showNotification#currentUser", currentUser.id);
+    if(currentAppState === "active" && currentUser.id !== undefined){
+      Logger.log("FriendRequest.showNotification#currentUser", currentUser.id);
       const db = firebase.firestore();
-      const friendRequestRef = db.collection("friendRequest").doc(currentUser.email).collection("people");
+      const friendRequestRef = db.collection("friendRequest").doc(currentUser.id).collection("people");
       friendRequestListener.current = friendRequestRef.onSnapshot((querySnapshot) => {
         const newFriendRequest = [];
         querySnapshot.docChanges.forEach((change) => {
@@ -74,7 +74,7 @@ function FriendRequest(props){
       AppState.removeEventListener("change", stateListener.current);
       hideNotification();
     }
-  }, [currentUser.email]);
+  }, [currentUser.id]);
 
   Logger.log("FriendRequest#isFirstTime", isFirstTime.current);
   return  <NotificationPopup ref={popup}/>

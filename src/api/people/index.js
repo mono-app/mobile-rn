@@ -14,8 +14,8 @@ import { Document } from "src/api/database/document";
 import { getDistance } from 'geolib';
 
 export default class PeopleAPI{
-  constructor(currentUserEmail=null){
-    this.currentUserEmail = currentUserEmail;
+  constructor(currentUserId=null){
+    this.currentUserId = currentUserId;
   }
 
   static async normalize(user){
@@ -55,7 +55,7 @@ export default class PeopleAPI{
   static normalizePeople(documentSnapshot){
     const newPeople = documentSnapshot.data();
     if(documentSnapshot.exists) {
-      newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
+      newPeople.id = JSON.parse(JSON.stringify(documentSnapshot.id));
 
       if(newPeople.isCompleteSetup) {
         if(newPeople.applicationInformation.profilePicture !== undefined){
@@ -72,11 +72,11 @@ export default class PeopleAPI{
    * 
    * @param {String} monoId 
    */
-  static async getByMonoId(currentUserEmail, monoId){
+  static async getByMonoId(currentUserId, monoId){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const collectionRef = db.collection(userCollection.getName());
-    const queryPath = new firebase.firestore.FieldPath("applicationInformation", "id");
+    const queryPath = new firebase.firestore.FieldPath("applicationInformation", "monoId");
     const userQuery = collectionRef.orderBy(queryPath,"asc").startAt(monoId).endAt(monoId+"~");
     const querySnapshot = await userQuery.get();
     
@@ -85,7 +85,7 @@ export default class PeopleAPI{
     });
     const friendListCollection = new FriendListCollection()
     const blockedByCollection = new BlockedByCollection()
-    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail)
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserId)
     const peopleQuerySnapshot = await friendListDocRef.collection(blockedByCollection.getName()).get()
 
     const blockedByDocList = peopleQuerySnapshot.docs
@@ -94,7 +94,7 @@ export default class PeopleAPI{
 
     // is user blocked?
     const filteredPeople = normalizedPeople.filter(data => {
-      return !blockedByIdList.includes(data.email)
+      return !blockedByIdList.includes(data.id)
     })
 
     return Promise.resolve(filteredPeople);
@@ -190,10 +190,10 @@ export default class PeopleAPI{
 
   /**
    * 
-   * @param {String} peopleEmail 
+   * @param {String} peopleId 
    * @param {String} storagePath - Firebase Storage Path
    */
-  static async changeProfilePicture(peopleEmail, imagePath){
+  static async changeProfilePicture(peopleId, imagePath){
     let profilePictureUrl = null;
     const storagePath = `/main/profilePicture/${uuid()}.png`;
     return StorageAPI.uploadFile(storagePath, imagePath).then((downloadUrl) => {
@@ -202,7 +202,7 @@ export default class PeopleAPI{
       const batch = db.batch();
 
       const userCollection = new UserCollection();
-      const userDocument = new Document(peopleEmail);
+      const userDocument = new Document(peopleId);
       const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
       batch.update(userRef, { "applicationInformation.profilePicture": {storagePath, downloadUrl} })
       batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
@@ -304,20 +304,25 @@ export default class PeopleAPI{
     return null;
   }
 
-  static getDetailWithRealTimeUpdate(email, callback){
+  /**
+   * 
+   * @param {string} userId 
+   * @param {callback} callback 
+   */
+  static getDetailWithRealTimeUpdate(userId, callback){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
-    const userRef = db.collection(userCollection.getName()).doc(email);
+    const userRef = db.collection(userCollection.getName()).doc(userId);
     return userRef.onSnapshot((documentSnapshot)=>{
       const data = PeopleAPI.normalizePeople(documentSnapshot)
       callback(data)
     })
   }
 
-  static async setOnlineStatus(peopleEmail, status){
+  static async setOnlineStatus(userId, status){
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(userId);
     const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
     const batch = db.batch();
     batch.update(userRef, { "lastOnline.status": status });
@@ -326,10 +331,10 @@ export default class PeopleAPI{
     return Promise.resolve(true);
   }
 
-  static async updateCurrentLocation(peopleEmail, data){
+  static async updateCurrentLocation(userId, data){
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(userId);
     const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
     const latitude = data.coords.latitude
     const longitude = data.coords.longitude
@@ -339,7 +344,7 @@ export default class PeopleAPI{
     return Promise.resolve(true);
   }
 
-  static async getNearbyPeoples(userEmail,latitude, longitude, distance){
+  static async getNearbyPeoples(userId,latitude, longitude, distance){
     // distance in meters
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
@@ -357,7 +362,7 @@ export default class PeopleAPI{
     });
 
     const filteredUsersByDistance = userDocuments.filter((user)=>{
-      return (user.distance <= distance&& user.email !== userEmail)
+      return (user.distance <= distance&& user.id !== userId)
     })
     // sort from nearest
     filteredUsersByDistance.sort((a, b) => (a.distance < b.distance) ? 1 : -1)
@@ -372,13 +377,13 @@ export default class PeopleAPI{
     return Promise.resolve(result);
   }
 
-  static async updateUserForLogout(email){
+  static async updateUserForLogout(userId){
     // set messaging token to null
     // set user status to logout
     try{
       const db = firebase.firestore();
       const usersCollection = new UserCollection();
-      const userRef = db.collection(usersCollection.getName()).doc(email)
+      const userRef = db.collection(usersCollection.getName()).doc(userId)
       await userRef.update({tokenInformation: null, isLogin: false})
     }catch{
       return Promise.resolve(false)

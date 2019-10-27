@@ -19,7 +19,7 @@ class NotificationListener extends React.PureComponent {
          const classId = data.classId
          const taskId = data.taskId
          const discussionId = data.discussionId
-         const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, this.props.currentUser.email)
+         const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, this.props.currentUser.id)
          payload = {
            isFromNotification: true,
            schoolId,
@@ -57,7 +57,7 @@ class NotificationListener extends React.PureComponent {
        else if(data.type=="friend-request"){
           const userId = data.friendRequestFromUserId
           const payload = {
-            peopleEmail: userId
+            peopleId: userId
           }
           this.props.navigation.navigate("PeopleInformation", payload);
        }else if(data.type=="birthday-reminder"){

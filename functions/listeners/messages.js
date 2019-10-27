@@ -11,11 +11,11 @@ Messages.triggerNewMessage = functions.region("asia-east2").firestore.document("
  
   const docSnapshot = await roomDocRef.get()
   const readByPayload = {}
-  docSnapshot.data().audiences.forEach(email=>{
-    if(email===message.senderEmail){
-      readByPayload[email] = true
+  docSnapshot.data().audiences.forEach(id=>{
+    if(id===message.senderId){
+      readByPayload[id] = true
     }else{
-      readByPayload[email] = false
+      readByPayload[id] = false
     }
   })
   await roomDocRef.update({
@@ -27,7 +27,7 @@ Messages.triggerNewMessage = functions.region("asia-east2").firestore.document("
 
 Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestore.document("/rooms/{roomId}/messages/{messageId}").onCreate(async (documentSnapshot, context) => {
   const messageDocument = documentSnapshot.data();
-  const { senderEmail } = messageDocument;
+  const { senderId } = messageDocument;
   const { roomId, messageId } = context.params;
   
   // get all audiences except sender
@@ -37,19 +37,19 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   const roomDocument = roomSnapshot.data();
   const roomType = roomDocument.type
   const audiences =  roomDocument.audiences.filter( (audience)=>{
-    return audience !== senderEmail
+    return audience !== senderId
   })
 
-  const senderSnapshot = await db.collection("users").doc(senderEmail).get()
+  const senderSnapshot = await db.collection("users").doc(senderId).get()
   const senderNickname = senderSnapshot.data().applicationInformation.nickName
   const blockedUserList = []
   const blockedByUserList = []
-  const blockedQuerySnapshot = await db.collection("friendList").doc(senderEmail).collection("blocked").get()
+  const blockedQuerySnapshot = await db.collection("friendList").doc(senderId).collection("blocked").get()
   if(!blockedQuerySnapshot.empty)
   blockedQuerySnapshot.docs.forEach(docSnap=>{
     blockedUserList.push(docSnap.id)
   })
-  const blockedByQuerySnapshot = await db.collection("friendList").doc(senderEmail).collection("blockedBy").get()
+  const blockedByQuerySnapshot = await db.collection("friendList").doc(senderId).collection("blockedBy").get()
   if(!blockedByQuerySnapshot.empty){
     blockedByQuerySnapshot.docs.forEach(docSnap=>{
       blockedByUserList.push(docSnap.id)
@@ -62,7 +62,7 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   })
   const audiencesSnapshot = await Promise.all(promises);
   const audiencesData = audiencesSnapshot.map(audienceSnapshot => {
-    const audienceData =  Object.assign({ email: audienceSnapshot.id }, audienceSnapshot.data())
+    const audienceData =  Object.assign({ id: audienceSnapshot.id }, audienceSnapshot.data())
     if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken){
       return audienceData;
     }
@@ -73,8 +73,8 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   // send notification to all audiences except sender
   const messagePromises = audiencesData.map(audienceData => {
     if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken && 
-      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken) && !blockedUserList.includes(audienceData.email) && 
-      !blockedByUserList.includes(audienceData.email)){
+      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken) && !blockedUserList.includes(audienceData.id) && 
+      !blockedByUserList.includes(audienceData.id)){
       let message = {}
       let type= "-"
       let title = ""

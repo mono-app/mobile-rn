@@ -129,15 +129,15 @@ export default class MessagesAPI{
   /**
    * 
    * @param {string} roomId 
-   * @param {string} senderEmail 
+   * @param {string} senderId 
    * @param {string} message
    * @returns {Promise} `true` if insert is successful, throw an error if result is not success
    */
-  static sendMessage(roomId, senderEmail, message, type="text", details={}){
+  static sendMessage(roomId, senderId, message, type="text", details={}){
     const localSentTime = firebase.firestore.Timestamp.fromMillis(new moment().valueOf())
     const sentTime = firebase.firestore.FieldValue.serverTimestamp();
     const payload = { 
-      senderEmail, content: message, sentTime, readBy: {}, localSentTime, type, details
+      senderId, content: message, sentTime, readBy: {}, localSentTime, type, details
     }
     const db = firebase.firestore();
     const batch = db.batch();
@@ -154,9 +154,9 @@ export default class MessagesAPI{
   /**
    * @param {String} roomId
    * @param {String} messageId 
-   * @param {String} peopleEmail 
+   * @param {String} peopleId 
    */
-  static async markAsRead(roomId, peopleEmail){
+  static async markAsRead(roomId, peopleId){
     const db = firebase.firestore();
     const roomsCollection = new RoomsCollection();
     const roomDocument = new Document(roomId);
@@ -164,9 +164,9 @@ export default class MessagesAPI{
     
     const documentSnapshot = await roomRef.get()
     const readBy = (documentSnapshot.data().readBy)?documentSnapshot.data().readBy:{}
-    // if field read by is null or readBy not null but readBy[peopleEmail] is false (haven't read)
-    if((readBy && readBy[peopleEmail]===false) || !readBy || !readBy[peopleEmail]){
-      readBy[peopleEmail]=true
+    // if field read by is null or readBy not null but readBy[peopleId] is false (haven't read)
+    if((readBy && readBy[peopleId]===false) || !readBy || !readBy[peopleId]){
+      readBy[peopleId]=true
       roomRef.update({readBy: readBy,"lastMessage.readTime": firebase.firestore.FieldValue.serverTimestamp()})
       return Promise.resolve(true);
     }

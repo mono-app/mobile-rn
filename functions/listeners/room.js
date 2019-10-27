@@ -27,7 +27,7 @@ RoomListener.triggerNewRoom = functions.region("asia-east2").firestore.document(
 });
 
 RoomListener.requestRoomToken = functions.region("asia-east2").https.onRequest((req, res) => {
-  const { roomId, userEmail, sessionId } = req.body;
+  const { roomId, userId, sessionId } = req.body;
 
   if(sessionId === undefined || sessionId === null) return;
 
@@ -38,7 +38,7 @@ RoomListener.requestRoomToken = functions.region("asia-east2").https.onRequest((
 
   const db = admin.firestore();
   const roomRef = db.collection("rooms").doc(roomId);
-  const userPath = new admin.firestore.FieldPath("liveVoice", "token", userEmail);
+  const userPath = new admin.firestore.FieldPath("liveVoice", "token", userId);
   return roomRef.update(userPath, token).then(() => {
     return res.status(200).json({ error: false, result: token }).end();
   })

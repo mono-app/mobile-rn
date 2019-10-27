@@ -6,8 +6,8 @@ import { Document } from "src/api/database/document";
 
 export default class PeopleDetailListener extends React.PureComponent{
   loadData = async () => {
-    const { peopleEmail } = this.props;
-    if(peopleEmail && this.listener === null){
+    const { peopleId } = this.props;
+    if(peopleId && this.listener === null){
       // Get data from cache
       const people = null;
       if(people && this.props.onChange) {
@@ -18,7 +18,7 @@ export default class PeopleDetailListener extends React.PureComponent{
       // get new data from server, and store it in cache
       const db = firebase.firestore();
       const usersCollection = new UserCollection();
-      const userDocument = new Document(peopleEmail);
+      const userDocument = new Document(peopleId);
       const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
       this.listener = userRef.onSnapshot({ includeMetadataChanges: false }, async (documentSnapshot) => {
         const payload = { id: documentSnapshot.id, ...documentSnapshot.data() };
@@ -44,4 +44,4 @@ export default class PeopleDetailListener extends React.PureComponent{
   render(){ return null; }
 }
 
-PeopleDetailListener.defaultProps = { peopleEmail: null, onChange: null }
+PeopleDetailListener.defaultProps = { peopleId: null, onChange: null }

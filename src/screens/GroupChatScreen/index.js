@@ -19,7 +19,7 @@ function GroupChatScreen(props){
   const [ isLoadingNewMessage, setIsLoadingNewMessage ] = React.useState(false);
   const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
 
-  const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.email, message);
+  const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.id, message);
   const handleChatListReachTop = async () => {
     Logger.log("GroupChatScreen.handleChatListReactTop", `Getting new messages ${isLoadingNewMessage}`)
     if(!isLoadingNewMessage){

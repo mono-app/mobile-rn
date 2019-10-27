@@ -25,13 +25,13 @@ function App(){
 
   const handleAppStateChange = (nextAppState) => {
     const firebaseUser = firebase.auth().currentUser;
-    if(firebaseUser !== null && firebaseUser.email) {
+    if(firebaseUser !== null && firebaseUser.uid) {
       if(nextAppState === "active"){
-        PeopleAPI.setOnlineStatus(firebaseUser.email, "Online");
+        PeopleAPI.setOnlineStatus(firebaseUser.uid, "Online");
       }else if(nextAppState === "background"){
-        PeopleAPI.setOnlineStatus(firebaseUser.email, "Offline");
+        PeopleAPI.setOnlineStatus(firebaseUser.uid, "Offline");
       }else if(nextAppState === "inactive"){
-        PeopleAPI.setOnlineStatus(firebaseUser.email, "Offline");
+        PeopleAPI.setOnlineStatus(firebaseUser.uid, "Offline");
         VerifyPhoneAPI.cancelRequest()
       }
     }
@@ -42,8 +42,8 @@ function App(){
     OfflineDatabase.initialize();
     
     const firebaseUser = firebase.auth().currentUser;
-    if(firebaseUser !== null && firebaseUser.email) {
-      PeopleAPI.setOnlineStatus(firebaseUser.email, "Online");
+    if(firebaseUser !== null && firebaseUser.uid) {
+      PeopleAPI.setOnlineStatus(firebaseUser.uid, "Online");
     }
     firebase.firestore().settings({ persistence: true });
     AppState.addEventListener("change", handleAppStateChange);

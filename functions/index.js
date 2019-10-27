@@ -43,9 +43,11 @@ exports.triggerNewDiscussionComment = Discussions.triggerNewDiscussionComment
 
 exports.addStudentClassTrigger = Student.addStudentClassTrigger;
 exports.deletedStudentClassTrigger = Student.deletedStudentClassTrigger;
+exports.addStudentTrigger = Student.addStudentTrigger;
 
 exports.addTeacherClassTrigger = Teacher.addTeacherClassTrigger;
 exports.deletedTeacherClassTrigger = Teacher.deletedTeacherClassTrigger;
+exports.addTeacherTrigger = Teacher.addTeacherTrigger;
 
 exports.triggerNewTask = Tasks.triggerNewTask
 exports.triggerUpdatedTask = Tasks.triggerUpdatedTask

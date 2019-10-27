@@ -17,33 +17,33 @@ function ChatScreen(props){
   const room = navigation.getParam("room", null);
 
   const [ headerTitle, setHeaderTitle ] = React.useState("");
-  const [ peopleEmail, setPeopleEmail ] = React.useState("");
+  const [ peopleId, setPeopleId ] = React.useState("");
   const [ isFriend, setFriend ] = React.useState(true);
   const [ isUserRegistered, setUserRegistered ] = React.useState(false);
   const [ headerProfilePicture, setHeaderProfilePicture ] = React.useState("");
   
   const _isMounted = React.useRef(true);
 
-  const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.email, message);
+  const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.id, message);
   const handleAppStateChange = (nextAppState) => {
     if(nextAppState === "active"){
-      RoomsAPI.setInRoomStatus(room.id, currentUser.email,true)
+      RoomsAPI.setInRoomStatus(room.id, currentUser.id,true)
     }else if(nextAppState === "background"){
-      RoomsAPI.setInRoomStatus(room.id, currentUser.email,false)
+      RoomsAPI.setInRoomStatus(room.id, currentUser.id,false)
     }else if(nextAppState === "inactive"){
-      RoomsAPI.setInRoomStatus(room.id, currentUser.email,false)
+      RoomsAPI.setInRoomStatus(room.id, currentUser.id,false)
     }
   }
 
   const handleUserHeaderPress = () => {
-    if(isUserRegistered) props.navigation.navigate("PeopleInformation", { peopleEmail: peopleEmail });
+    if(isUserRegistered) props.navigation.navigate("PeopleInformation", { peopleId: peopleId });
   }
 
   const fetchPeople = () => {
-    const audienceEmail = room.audiences.filter((audience) => audience !== currentUser.email)[0];
-    if( _isMounted.current) setPeopleEmail(audienceEmail)
+    const audienceId = room.audiences.filter((audience) => audience !== currentUser.id)[0];
+    if( _isMounted.current) setPeopleId(audienceId)
 
-    PeopleAPI.getDetail(audienceEmail).then( (audienceData)=>{
+    PeopleAPI.getDetail(audienceId).then( (audienceData)=>{
       let tempHeaderTitle = ""
       let tempHeaderProfilePicture = "https://picsum.photos/200/200/?random"
       if(audienceData){
@@ -60,19 +60,19 @@ function ChatScreen(props){
       if(_isMounted.current) setHeaderProfilePicture(tempHeaderProfilePicture);
     })
 
-    FriendsAPI.isFriends(currentUser.email, audienceEmail).then( isFriend => {
+    FriendsAPI.isFriends(currentUser.id, audienceId).then( isFriend => {
       if( _isMounted.current) setFriend(isFriend)
     })
   }
  
   React.useEffect(() => {
     AppState.addEventListener("change", handleAppStateChange);
-    RoomsAPI.setInRoomStatus(room.id, currentUser.email,true)
+    RoomsAPI.setInRoomStatus(room.id, currentUser.id,true)
     fetchPeople();
   
     return function cleanup(){
       _isMounted.current = false
-      RoomsAPI.setInRoomStatus(room.id, currentUser.email,false)
+      RoomsAPI.setInRoomStatus(room.id, currentUser.id,false)
       AppState.removeEventListener("change", handleAppStateChange) 
     }
   }, []);

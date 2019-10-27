@@ -27,7 +27,7 @@ function AccountScreen(props){
   const handleNickNamePress = () => {
     const payload = {
       databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
+      databaseDocumentId: currentUser.id,
       databaseFieldName: "applicationInformation.nickName", 
       fieldValue: applicationInformation.nickName,
       fieldTitle: props.t("nickName"),
@@ -38,7 +38,7 @@ function AccountScreen(props){
   const handleBirthdayPress = () => {
     const payload = {
       databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
+      databaseDocumentId: currentUser.id,
       databaseFieldName: "personalInformation.birthday",
       caption: "Format tanggal lahir: 22/12/2007",
       placeholder: "DD/MM/YYYY",
@@ -53,7 +53,7 @@ function AccountScreen(props){
   const handleGenderPress = () => {
     const payload = {
       databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
+      databaseDocumentId: currentUser.id,
       databaseFieldName: "personalInformation.gender", 
       fieldValue: (personalInformation.gender)? personalInformation.gender: "male",
       fieldTitle: props.t("gender"),
@@ -89,7 +89,7 @@ function AccountScreen(props){
           <View style={styles.menu}>
             <Text style={{ fontWeight: "500" }}>Email</Text>
             <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-              <Text>{currentUser.email}</Text>
+              <Text>{currentUser.id}</Text>
             </View>
           </View>
         </View>

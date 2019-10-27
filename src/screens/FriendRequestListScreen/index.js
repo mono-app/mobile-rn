@@ -8,7 +8,7 @@ export default class FriendRequestListScreen extends React.PureComponent{
 
   handlePeoplePress = people => {
     const payload = {
-      peopleEmail: people.email
+      peopleId: people.id
     }
     this.props.navigation.navigate("PeopleInformation", payload);
   }
@@ -24,11 +24,11 @@ export default class FriendRequestListScreen extends React.PureComponent{
     return(
       <FlatList
         data={this.peoples}
-        keyExtractor={(item) => item.email}
+        keyExtractor={(item) => item.id}
         renderItem={ ({ item }) => {
           return <PeopleListItem 
             onPress={() => this.handlePeoplePress(item)}
-            email={item.email} 
+            id={item.id} 
             autoFetch={true}/>
         }}/>
     )

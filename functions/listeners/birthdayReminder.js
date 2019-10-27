@@ -61,12 +61,12 @@ BirthdayReminder.reminderToSetup = async (users) => {
   }));
 }
 
-BirthdayReminder.sendBirthdaySetupReminder = async (roomRef, targetEmail) => {
+BirthdayReminder.sendBirthdaySetupReminder = async (roomRef, targetId) => {
   const messageRef = roomRef.collection("messages").doc();
   await messageRef.set({
     content: `Kamu belum menambahkan data ulang tahun. Tambahkan sekarang agar kamu juga bisa melihat ulang tahun teman kamu.`,
-    senderEmail: BirthdayReminder.BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()), 
-    readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "setup-birthday", details: {targetEmail}
+    senderId: BirthdayReminder.BOT_NAME, localSentTime: admin.firestore.Timestamp.fromMillis(new moment().valueOf()), 
+    readBy: [], sentTime: admin.firestore.FieldValue.serverTimestamp(), type: "setup-birthday", details: {targetId}
   });
 }
 

@@ -20,7 +20,7 @@ function BlockedUsersScreen(props){
   });
 
   const handleContactPress = (people) => {
-    props.navigation.navigate("PeopleInformation", { peopleEmail: people.email });
+    props.navigation.navigate("PeopleInformation", { peopleId: people.id });
   }
 
   React.useEffect(() => {
@@ -39,9 +39,9 @@ function BlockedUsersScreen(props){
         <FlatList
           style={{ backgroundColor: "white" }}
           data={blockedUserList}
-          keyExtractor={(item) => item.email}
+          keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => {
-            return <PeopleListItem key={index} email={item} onPress={handleContactPress}/>
+            return <PeopleListItem key={index} id={item} onPress={handleContactPress}/>
           }}/>
       </View>
     </Container> 

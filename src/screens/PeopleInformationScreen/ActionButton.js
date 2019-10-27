@@ -13,62 +13,62 @@ class ActionButton extends React.PureComponent{
 
   handleAddFriendPress = async () => {
     if(this._isMounted) this.setState({ isLoading: true });
-    await new FriendsAPI().sendRequest(this.props.currentUser.email, this.props.peopleEmail, this.props.source);
+    await new FriendsAPI().sendRequest(this.props.currentUser.id, this.props.peopleId, this.props.source);
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleCancelRequestPress = async () => {
     if(this._isMounted) this.setState({ isLoading: true });
-    await new FriendsAPI().cancelRequest(this.props.currentUser.email, this.props.peopleEmail);
+    await new FriendsAPI().cancelRequest(this.props.currentUser.id, this.props.peopleId);
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleRejectRequestPress = async () => {
     if(this._isMounted) this.setState({ isLoading: true });
-    await new FriendsAPI().rejectRequest(this.props.currentUser.email, this.props.peopleEmail);
+    await new FriendsAPI().rejectRequest(this.props.currentUser.id, this.props.peopleId);
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleAcceptRequestPress = async () => {
     if(this._isMounted) this.setState({ isLoading: true });
-    await new FriendsAPI().acceptRequest(this.props.currentUser.email, this.props.peopleEmail, this.props.source);
+    await new FriendsAPI().acceptRequest(this.props.currentUser.id, this.props.peopleId, this.props.source);
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleBlockPress = async ()=> {
     if(this._isMounted) this.setState({ isLoading: true });
-    await FriendsAPI.blockUsers(this.props.currentUser.email, this.props.peopleEmail)
+    await FriendsAPI.blockUsers(this.props.currentUser.id, this.props.peopleId)
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleUnblockPress = async ()=> {
     if(this._isMounted) this.setState({ isLoading: true });
-    await FriendsAPI.unblockUsers(this.props.currentUser.email, this.props.peopleEmail)
+    await FriendsAPI.unblockUsers(this.props.currentUser.id, this.props.peopleId)
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleHidePress = async ()=> {
     if(this._isMounted) this.setState({ isLoading: true });
-    await FriendsAPI.hideUsers(this.props.currentUser.email, this.props.peopleEmail)
+    await FriendsAPI.hideUsers(this.props.currentUser.id, this.props.peopleId)
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
 
   handleUnhidePress = async ()=> {
     if(this._isMounted) this.setState({ isLoading: true });
-    await FriendsAPI.unhideUsers(this.props.currentUser.email, this.props.peopleEmail)
+    await FriendsAPI.unhideUsers(this.props.currentUser.id, this.props.peopleId)
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
   
   handleStartChatPress = async () => {
-    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, this.props.peopleEmail,"chat");
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.id, this.props.peopleId,"chat");
     this.props.navigation.navigate({ routeName: "Chat", params: {room} })
   }
 
@@ -172,5 +172,5 @@ class ActionButton extends React.PureComponent{
   }
 }
 
-ActionButton.defaultProps = { peopleFriendStatus: null, peopleEmail: null }
+ActionButton.defaultProps = { peopleFriendStatus: null, peopleId: null }
 export default withTranslation()(withNavigation(withCurrentUser(ActionButton)))

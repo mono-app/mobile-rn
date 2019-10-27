@@ -50,7 +50,7 @@ export class CurrentRoomsProvider extends React.PureComponent{
     this.handleClearNotifBadge = this.handleClearNotifBadge.bind(this)
   }
 
-  handleSetCurrentRooms = (rooms, peopleEmail) => {
+  handleSetCurrentRooms = (rooms, peopleId) => {
     Logger.log("CurrentRoomsProvider#handleSetCurrentRooms", "");
     const cloneRoomWithNotifMap = JSON.parse(JSON.stringify(this.state.roomWithNotifMap))
     const cloneCurrentRooms = []
@@ -60,8 +60,8 @@ export class CurrentRoomsProvider extends React.PureComponent{
 
     rooms.forEach((room) => {  
       const readBy = (room.readBy)?room.readBy:{}
-      // if field read by is null or readBy not null but readBy[peopleEmail] is false (haven't read)
-      const thereIsNotif = (readBy && readBy[peopleEmail]===false)
+      // if field read by is null or readBy not null but readBy[peopleId] is false (haven't read)
+      const thereIsNotif = (readBy && readBy[peopleId]===false)
      
       cloneRoomWithNotifMap[room.id] = thereIsNotif
 
@@ -92,13 +92,13 @@ export class CurrentRoomsProvider extends React.PureComponent{
     return room
   }
 
-  handleSetRoomNotif = async (roomId, peopleEmail) => {
+  handleSetRoomNotif = async (roomId, peopleId) => {
     const cloneRoomWithNotifMap = JSON.parse(JSON.stringify(this.state.roomWithNotifMap))
     const room = await this.handleGetRoomDetails(roomId)
 
     const readBy = (room.readBy)?room.readBy:{}
-    // if field read by is null or readBy not null but readBy[peopleEmail] is false (haven't read)
-    if(readBy && readBy[peopleEmail]===false) cloneRoomWithNotifMap[roomId] =  true
+    // if field read by is null or readBy not null but readBy[peopleId] is false (haven't read)
+    if(readBy && readBy[peopleId]===false) cloneRoomWithNotifMap[roomId] =  true
     else cloneRoomWithNotifMap[roomId] = false
     
     this.setState({cloneRoomWithNotifMap})
@@ -110,9 +110,9 @@ export class CurrentRoomsProvider extends React.PureComponent{
   }
 
   componentDidMount(){
-    const currentUserEmail = firebase.auth().currentUser.email;
-    this.currentRoomsListener = RoomsAPI.getRoomsWithRealtimeUpdate(currentUserEmail, (rooms) => {
-      this.handleSetCurrentRooms(rooms, currentUserEmail)
+    const currentUserId = firebase.auth().currentUser.uid;
+    this.currentRoomsListener = RoomsAPI.getRoomsWithRealtimeUpdate(currentUserId, (rooms) => {
+      this.handleSetCurrentRooms(rooms, currentUserId)
     });
   }
 

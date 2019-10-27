@@ -4,12 +4,12 @@ const Bot = require("../lib/bot");
 
 function Friends(){}
 
-Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.document("/friendRequest/{receiverEmail}/people/{requestorEmail}").onCreate(async (documentSnapshot, context) => {
-  const { receiverEmail, requestorEmail } = context.params;
+Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.document("/friendRequest/{receiverId}/people/{requestorId}").onCreate(async (documentSnapshot, context) => {
+  const { receiverId, requestorId } = context.params;
 
   // this trigger for auto increment totalFriends in friends collection
   const db = admin.firestore();
-  const userFriendListRef = db.collection("friendList").doc(receiverEmail)
+  const userFriendListRef = db.collection("friendList").doc(receiverId)
   const userFriendListSnapshot = await userFriendListRef.get();
 
   if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
@@ -20,7 +20,7 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
 
 
   // get requestor details to be sent by the bot
-  const requestorRef = await db.collection("users").doc(requestorEmail).get();
+  const requestorRef = await db.collection("users").doc(requestorId).get();
   const requestor = requestorRef.data();
 
   // update the document to include requestor detail
@@ -28,10 +28,10 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
 
   // notify receiver that requestor is requesting to be a friend
   // Send BOT message
-  const details = Object.assign({ targetEmail: requestorRef.id }, documentSnapshot.data());
+  const details = Object.assign({ targetId: requestorRef.id }, documentSnapshot.data());
   const messageBot= `${requestor.applicationInformation.nickName} ingin berteman dengan kamu. Lihat sekarang!`
 
-  Bot.sendBotMessage("FriendRequest",receiverEmail,details,messageBot,"friend-request")
+  Bot.sendBotMessage("FriendRequest",receiverId,details,messageBot,"friend-request")
   // END Send Bot Message
 })
 
@@ -47,7 +47,7 @@ Friends.addFriendTrigger = functions.region("asia-east2").firestore.document("/f
   await userFriendListRef.update({ totalFriends: peopleQuerySnapshot.size })
 
   // add showsTo in moments collection
-  const momentQuerySnapshot = await db.collection("moments").where("posterEmail","==",friendListId).get()
+  const momentQuerySnapshot = await db.collection("moments").where("posterId","==",friendListId).get()
   momentQuerySnapshot.docs.map( async documentSnapshot => {
     await documentSnapshot.ref.update({showsTo: admin.firestore.FieldValue.arrayUnion(peopleId)})
   })
@@ -69,7 +69,7 @@ Friends.deleteFriendTrigger = functions.region("asia-east2").firestore.document(
   }
   
   // remove showsTo in moments collection
-  const momentQuerySnapshot = await db.collection("moments").where("posterEmail","==",friendListId).get()
+  const momentQuerySnapshot = await db.collection("moments").where("posterId","==",friendListId).get()
   momentQuerySnapshot.docs.map( async documentSnapshot => {
     
     await documentSnapshot.ref.update({showsTo: admin.firestore.FieldValue.arrayRemove(peopleId)})

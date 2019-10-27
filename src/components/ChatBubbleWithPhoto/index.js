@@ -9,7 +9,7 @@ import { View } from "react-native";
 
 function ChatBubbleWithPhoto(props){
   const { bubbleStyle } = props;
-  const { senderEmail } = props.message;
+  const { senderId } = props.message;
 
   const [ sender, setSender ] = React.useState({ profilePicture: "" });
 
@@ -19,8 +19,8 @@ function ChatBubbleWithPhoto(props){
   }
 
   const fetchSender = async () => {
-    Logger.log("ChatBubbleWithPhoto.fetchSender#senderEmail", senderEmail);
-    const sender = await PeopleAPI.getDetail(senderEmail);
+    Logger.log("ChatBubbleWithPhoto.fetchSender#senderId", senderId);
+    const sender = await PeopleAPI.getDetail(senderId);
     Logger.log("ChatBubbleWithPhoto.fetchSender#sender", sender);
     setSender(sender);
   }
@@ -30,7 +30,7 @@ function ChatBubbleWithPhoto(props){
     Logger.log("ChatBubbleWithPhoto#bubbleStyle", bubbleStyle);
     if(bubbleStyle === "myBubble") return;
     fetchSender();
-  }, [senderEmail, bubbleStyle])
+  }, [senderId, bubbleStyle])
 
   return (
     <View style={[ styles.container, props.containerStyle ]}>
@@ -45,7 +45,7 @@ function ChatBubbleWithPhoto(props){
 ChatBubbleWithPhoto.propTypes = { 
   bubbleStyle: PropTypes.string.isRequired,
   message: PropTypes.shape({
-    senderEmail: PropTypes.string.isRequired
+    senderId: PropTypes.string.isRequired
   }).isRequired
 }
 ChatBubbleWithPhoto.defaultProps = { containerStyle: {}, avatarStyle: {} }

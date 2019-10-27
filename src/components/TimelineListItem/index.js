@@ -7,7 +7,7 @@ import DiscussionAPI from "modules/Classroom/api/discussion";
 import FastImage from "react-native-fast-image";
 import CircleAvatar from "src/components/Avatar/Circle";
 
-const INITIAL_STATE = { posterEmail: null, discussion: {}, isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
+const INITIAL_STATE = { posterId: null, discussion: {}, isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
 
 export default class TimelineListItem extends React.Component{
 
@@ -58,7 +58,7 @@ export default class TimelineListItem extends React.Component{
           <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
             <CircleAvatar size={40} uri={newPoster.applicationInformation.profilePicture}/>
             <View style={{ marginLeft: 16 }}>
-              <Text style={{ fontWeight: "700" }}>{discussion.posterEmail}</Text>
+              <Text style={{ fontWeight: "700" }}>{discussion.posterId}</Text>
               <Caption style={{ marginTop: 0 }}>{timeFromNow}</Caption>
             </View>
           </View>

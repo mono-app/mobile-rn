@@ -4,34 +4,37 @@ import { StudentsCollection, SchoolsCollection, UserMappingCollection, ClassesCo
 import { Document } from "src/api/database/document";
 import PeopleAPI from "src/api/people";
 import User from "src/entities/user";
+import Database from "src/api/database";
 
 export default class StudentAPI{
 
-  async addStudent(schoolId, studentEmail, data){
+  /**
+   * 
+   * @param {String} schoolId 
+   * @param {String} studentEmail 
+   * @param {Object} data 
+   */
+  static async addStudent(schoolId, studentEmail, data){
     const user = new User()
     user.create(studentEmail, "123123", "123123")
     try{
       await PeopleAPI.createUser(user)
     }catch(err){ 
       if(err.code === "auth/email-already-in-use"){
-        
+        user.id = (await PeopleAPI.getDetailByEmail(user.email, true)).id
       }else throw err
     }
-    const db = firebase.firestore();
-    const studentsCollection = new StudentsCollection();
-    const schoolsCollection = new SchoolsCollection();
-    const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const schoolStudentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(user.id);
-    await schoolStudentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), ...data });
-    // insert to userMapping
-    const userMappingCollection = new UserMappingCollection();
-    const userMappingRef = db.collection(userMappingCollection.getName()).doc(user.id);
-    const userMappingSchoolRef = userMappingRef.collection(schoolsCollection.getName()).doc(schoolId);
-    await userMappingSchoolRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role:"student" });
+    
+    await Database.insert(async (db)=> {
+      const studentsCollection = new StudentsCollection();
+      const schoolsCollection = new SchoolsCollection();
+      const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+      const schoolStudentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(user.id);
+      await schoolStudentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), ...data });
+    })
 
     return Promise.resolve(true)
   }
-
   
   static async addStudentClass(studentId, schoolId, classId){
     try {
