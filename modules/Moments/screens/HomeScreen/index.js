@@ -39,7 +39,7 @@ function HomeScreen(props){
   }
   
   const handleProfilePress = (people) => {
-    const payload = { peopleEmail: people.email }
+    const payload = { peopleId: people.id }
     props.navigation.navigate("PeopleInformation", payload);
   }
 
@@ -59,13 +59,13 @@ function HomeScreen(props){
 
   const fetchMoments = async () => {
     if(_isMounted.current) setIsRefreshing(true);
-    const moments = await MomentsAPI.getMoments(currentUser.email)
+    const moments = await MomentsAPI.getMoments(currentUser.id)
     Logger.log("Moments.HomeScreen.fetchMoment#moments", moments);
     
     const filteredMoments = moments.filter(item => {
-      if(props.blockedByUserList.includes(item.posterEmail)) return false
-      else if(props.blockedUserList.includes(item.posterEmail)) return false
-      else if(props.hiddenUserList.includes(item.posterEmail)) return false
+      if(props.blockedByUserList.includes(item.posterId)) return false
+      else if(props.blockedUserList.includes(item.posterId)) return false
+      else if(props.hiddenUserList.includes(item.posterId)) return false
       else return true
     });
 

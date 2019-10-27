@@ -14,7 +14,7 @@ import { withTranslation } from 'react-i18next';
 
 const INITIAL_STATE = {
   isLoading: false,
-  teacherEmail: "",
+  teacherId: "",
   schoolId: "",
   userName: ""
 };
@@ -65,7 +65,7 @@ class TeacherHomeScreen extends React.PureComponent {
   async componentDidMount(){
     this._isMounted = true
     if(this._isMounted) this.setState({isLoading: true})
-    await this.props.setCurrentTeacherEmail(this.state.schoolId, this.props.currentUser.email)
+    await this.props.setCurrentTeacherId(this.state.schoolId, this.props.currentUser.id)
     if(this._isMounted) this.setState({isLoading: false})
     this.props.classroomTutorial.show(Key.KEY_TUTORIAL_CLASSROOM_PROFILE)
   }

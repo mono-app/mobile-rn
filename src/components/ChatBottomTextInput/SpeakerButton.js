@@ -12,7 +12,6 @@ function SpeakerButton(props){
   const { isLoading } = props;
   const { colors } = props.theme;
   const [ isActive, setIsActive ] = React.useState(false);
-  const [ showSubscriber, setShowSubscriber ] = React.useState(false);
   
   const iconName = (isActive)? "volume-up": "volume-off";
   const iconColor = (isActive)? colors.primary: colors.disabled;
@@ -23,7 +22,6 @@ function SpeakerButton(props){
 
   const handleError = (err) => Logger.log("SpeakerButton.handleError#err", err);
   const handlePress = () => {
-    setShowSubscriber(!showSubscriber);
     setIsActive(!isActive);
   }
 
@@ -32,9 +30,7 @@ function SpeakerButton(props){
   if(isLoading) return <ActivityIndicator size="small" color={colors.disabled} style={[ styles.default, props.style ]}/>
   return (
     <React.Fragment>
-      {showSubscriber?(
-        <OTSubscriber eventHandlers={subscriberEventHandlers} properties={{ subscribeToVideo: false, subscribeToAudio: true }}/>
-      ):null}
+      <OTSubscriber eventHandlers={subscriberEventHandlers} properties={{ subscribeToVideo: false, subscribeToAudio: isActive }}/>
       <IconButton 
         style={[ styles.default, props.style ]} icon={iconName} size={24} 
         color={iconColor} onPress={handlePress}/>

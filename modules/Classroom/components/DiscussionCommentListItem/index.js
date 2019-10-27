@@ -13,7 +13,7 @@ export default class DiscussionCommentListItem extends React.Component{
   refreshDetail = async () => {
     this.setState({ isLoading: true });
     const { comment, schoolId } = this.props;
-    SchoolAPI.getUserDetails(schoolId, comment.posterEmail).then(people=>{
+    SchoolAPI.getUserDetails(schoolId, comment.posterId).then(people=>{
       this.setState({posterName: people.name})
       if(people.profilePicture && people.profilePicture.downloadUrl) this.setState({profilePicture: people.profilePicture.downloadUrl})
     })

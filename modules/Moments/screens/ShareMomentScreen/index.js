@@ -22,9 +22,9 @@ class ShareMomentScreen extends React.PureComponent {
   loadFriends = async () => {
     if(this._isMounted)
       this.setState({ peopleList: [] });
-    const peopleList = await FriendsAPI.getFriends(this.props.currentUser.email);
+    const peopleList = await FriendsAPI.getFriends(this.props.currentUser.id);
     const peopleListWithoutMe = await peopleList.filter((people) => {
-        return people.email !== this.props.currentUser.email
+        return people.id !== this.props.currentUser.id
       })
     if(this._isMounted)
       this.setState({ peopleList: peopleListWithoutMe, filteredPeopleList: peopleListWithoutMe });
@@ -53,7 +53,7 @@ class ShareMomentScreen extends React.PureComponent {
     this.setState({filteredPeopleList: [], peopleList: []})
 
     const filteredPeopleList = clonedFilteredPeopleList.map((data) => {
-      if(data.email==people.email){
+      if(data.id==people.id){
         if(people.checked){
           return {...data, checked: false}
         }else{
@@ -63,7 +63,7 @@ class ShareMomentScreen extends React.PureComponent {
       return {...data}
     })
     const peopleList = clonedPeopleList.map((data) => {
-      if(data.email==people.email){
+      if(data.id==people.id){
         if(people.checked){
           return {...data, checked: false}
         }else{
@@ -80,11 +80,11 @@ class ShareMomentScreen extends React.PureComponent {
     const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
     for(let i=0;i<clonedPeopleList.length;i++){
       if(clonedPeopleList[i].checked){
-        const peopleEmail = clonedPeopleList[i].email
+        const peopleId = clonedPeopleList[i].id
         const message = "Share Moment, \nTitle: "+this.moment.content.message
-        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail,"chat");
+        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.id, peopleId,"chat");
     
-        MessagesAPI.sendMessage(room.id, this.props.currentUser.email, message, "moment-share", {moment: {...this.moment}});
+        MessagesAPI.sendMessage(room.id, this.props.currentUser.id, message, "moment-share", {moment: {...this.moment}});
       }
     }
 
@@ -133,7 +133,7 @@ class ShareMomentScreen extends React.PureComponent {
         <FlatList
           style={{ backgroundColor: "white" }}
           data={this.state.filteredPeopleList}
-          keyExtractor={(item) => item.email}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
               <ShareMomentListItem 

@@ -28,7 +28,7 @@ class TeacherClassListPickerScreen extends React.PureComponent {
 
   handleClassPress = class_ => {
     const classId = class_.id;
-    TeacherAPI.addTeacherClass(this.teacherEmail, this.props.currentSchool.id, classId).then(() => {
+    TeacherAPI.addTeacherClass(this.teacherId, this.props.currentSchool.id, classId).then(() => {
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
       navigation.goBack();
@@ -56,7 +56,7 @@ class TeacherClassListPickerScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.teacherId = this.props.navigation.getParam("teacherId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);

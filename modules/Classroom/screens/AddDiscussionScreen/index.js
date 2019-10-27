@@ -45,9 +45,9 @@ class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleSavePress = async () => {
-    const currentUserEmail = this.props.currentUser.email
+    const currentUserId = this.props.currentUser.id
     const data = {
-      posterEmail: currentUserEmail,
+      posterId: currentUserId,
       title: this.state.title.trim(),
       description: this.state.description.trim(),
       location: {...this.state.locationCoordinate},

@@ -45,9 +45,9 @@ class DiscussionCommentScreen extends React.PureComponent {
   loadDiscussion = async () => {
     if(this._isMounted)
       this.setState({ isLoading: true });
-    const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterEmail)
-    const currentUserEmail = this.props.currentUser.email
-    const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserEmail)
+    const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterId)
+    const currentUserId = this.props.currentUser.id
+    const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserId)
     const totalParticipant = await DiscussionAPI.getTotalParticipant(this.schoolId, this.classId, this.taskId, this.discussion.id);
     if(this._isMounted)
       this.setState({ isLoading: false, discussion: this.discussion,totalParticipant, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
@@ -101,11 +101,11 @@ class DiscussionCommentScreen extends React.PureComponent {
     const comment = JSON.parse(JSON.stringify(this.state.comment)).trim()
     if(comment.length>0){
       if(this._isMounted) this.setState({ isSendingComment:true })
-      const currentUserEmail = this.props.currentUser.email
+      const currentUserId = this.props.currentUser.id
 
       data = {
         comment: this.state.comment,
-        posterEmail: currentUserEmail,
+        posterId: currentUserId,
         location: {...this.state.locationCoordinate},
         images: this.state.imagesPicked
       }
@@ -223,9 +223,9 @@ class DiscussionCommentScreen extends React.PureComponent {
     const isAllowNotification = this.checkNotifAllowed()
 
     if(isAllowNotification){
-      await StudentAPI.updateDiscussionNotification(this.props.currentUser.email,this.discussion.id, false);
+      await StudentAPI.updateDiscussionNotification(this.props.currentUser.id,this.discussion.id, false);
     }else{
-      await StudentAPI.updateDiscussionNotification(this.props.currentUser.email,this.discussion.id, true);
+      await StudentAPI.updateDiscussionNotification(this.props.currentUser.id,this.discussion.id, true);
     }
 
   }

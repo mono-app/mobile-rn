@@ -22,7 +22,7 @@ class MyArchiveClassScreen extends React.PureComponent {
   loadClasses = async () => {
     if(this._isMounted)
       this.setState({classList: [], isRefreshing: true})
-    const classList = await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email);
+    const classList = await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.id);
     if(this._isMounted)
       this.setState({ classList, filteredClassList: classList, isRefreshing:false });
    }

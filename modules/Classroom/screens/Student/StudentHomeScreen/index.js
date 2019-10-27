@@ -25,7 +25,7 @@ class StudentHomeScreen extends React.PureComponent {
   handleStudentProfilePress = () => {
     payload = {
       schoolId: this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
+      studentId: this.props.currentStudent.id
     }
     this.props.navigation.navigate("MyProfile", payload);
   }
@@ -33,7 +33,7 @@ class StudentHomeScreen extends React.PureComponent {
   handleClassListPress = () => {
     payload = {
       schoolId: this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
+      studentId: this.props.currentStudent.id
     }
     this.props.navigation.navigate("MyClass", payload);
   }
@@ -41,7 +41,7 @@ class StudentHomeScreen extends React.PureComponent {
   handleAnnouncementPress = () => {
     payload = {
       schoolId : this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
+      studentId: this.props.currentStudent.id
     }
     this.props.navigation.navigate("Announcement", payload);
   }
@@ -69,7 +69,7 @@ class StudentHomeScreen extends React.PureComponent {
     this._isMounted = true
     if(this._isMounted)
      this.setState({isLoading: true})
-    await this.props.setCurrentStudentEmail(this.state.schoolId, this.props.currentUser.email)
+    await this.props.setCurrentStudentId(this.state.schoolId, this.props.currentUser.id)
     if(this._isMounted)
       this.setState({isLoading: false})
     this.props.classroomTutorial.show(Key.KEY_TUTORIAL_CLASSROOM_PROFILE)

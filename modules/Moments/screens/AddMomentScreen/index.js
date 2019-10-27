@@ -37,7 +37,7 @@ function AddMomentScreen(props){
   const handleSubmitMoment = async () => {
     if(content.trim().length>0){
       if(_isMounted.current) setIsSubmitting(true);
-      await MomentAPI.publishMoment(currentUser.email, { message: content, images });
+      await MomentAPI.publishMoment(currentUser.id, { message: content, images });
       if(_isMounted.current){
         setContent("");
         setIsSubmitting(false)

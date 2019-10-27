@@ -24,11 +24,11 @@ class StudentProfileScreen extends React.PureComponent {
       this.setState({ isLoadingProfile: true });
     }
 
-    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentId);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentEmail)).length;
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentId)).length;
 
     if(this._isMounted){
       this.setState({ isLoadingProfile: false, student, totalActiveClass });
@@ -39,7 +39,7 @@ class StudentProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
-      databaseDocumentId: this.studentEmail,
+      databaseDocumentId: this.studentId,
       databaseFieldName: "name", 
       fieldValue: this.state.student.name,
       fieldTitle: this.props.t("editStudentName"),
@@ -56,7 +56,7 @@ class StudentProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
-      databaseDocumentId: this.studentEmail,
+      databaseDocumentId: this.studentId,
       databaseFieldName: "address", 
       fieldValue: this.state.student.address,
       fieldTitle: this.props.t("editAddress"),
@@ -73,7 +73,7 @@ class StudentProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
-      databaseDocumentId: this.studentEmail,
+      databaseDocumentId: this.studentId,
       databaseFieldName: "phone", 
       fieldValue: this.state.student.phone,
       fieldTitle: this.props.t("editPhone"),
@@ -87,28 +87,28 @@ class StudentProfileScreen extends React.PureComponent {
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
 
-  handleEmailPress = e => {
-    const payload = {
-      schoolId: this.props.currentSchool.id,
-      databaseCollection: "students",
-      databaseDocumentId: this.studentEmail,
-      databaseFieldName: "id", 
-      fieldValue: this.state.student.id,
-      fieldTitle: this.props.t("editEmail"),
-      onRefresh: (data) => {
-        const newClass = JSON.parse(JSON.stringify(this.state.student));
-        newClass.email = data;
-        this.setState({student: newClass})
-      }
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
+  // handleEmailPress = e => {
+  //   const payload = {
+  //     schoolId: this.props.currentSchool.id,
+  //     databaseCollection: "students",
+  //     databaseDocumentId: this.studentId,
+  //     databaseFieldName: "id", 
+  //     fieldValue: this.state.student.id,
+  //     fieldTitle: this.props.t("editEmail"),
+  //     onRefresh: (data) => {
+  //       const newClass = JSON.parse(JSON.stringify(this.state.student));
+  //       newClass.email = data;
+  //       this.setState({student: newClass})
+  //     }
+  //   }
+  //   this.props.navigation.navigate(`EditSingleField`, payload);
+  // }
 
   handleNoIndukPress = e => {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
-      databaseDocumentId: this.studentEmail,
+      databaseDocumentId: this.studentId,
       databaseFieldName: "noInduk", 
       fieldValue: this.state.student.noInduk,
       fieldTitle: this.props.t("editStudentId"),
@@ -126,7 +126,7 @@ class StudentProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "students",
-      databaseDocumentId: this.studentEmail,
+      databaseDocumentId: this.studentId,
       databaseFieldName: "gender", 
       fieldValue: this.state.student.gender,
       fieldTitle: this.props.t("editGender"),
@@ -142,7 +142,7 @@ class StudentProfileScreen extends React.PureComponent {
 
   handleClassListPress = e => {
     const payload = {
-      studentEmail: this.studentEmail
+      studentId: this.studentId
     }
     this.props.navigation.navigate('StudentClassList', payload);
   }
@@ -152,7 +152,7 @@ class StudentProfileScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
-    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
+    this.studentId = this.props.navigation.getParam("studentId", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.handleNamePress = this.handleNamePress.bind(this);
     this.handleAddressPress = this.handleAddressPress.bind(this);
@@ -232,7 +232,7 @@ class StudentProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              {/* <TouchableOpacity>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text style={styles.label}>Email</Text>
@@ -242,7 +242,7 @@ class StudentProfileScreen extends React.PureComponent {
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity  onPress={this.handleNoIndukPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>

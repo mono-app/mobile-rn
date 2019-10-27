@@ -9,18 +9,18 @@ import {
 import { Document } from "src/api/database/document";
 
 export default class TeacherAPI {
-  static async addTeacher(schoolId, teacherEmail, data) {
+  static async addTeacher(schoolId, teacherId, data) {
     try {
       const db = firebase.firestore();
       const teachersCollection = new TeachersCollection();
       const schoolsCollection = new SchoolsCollection();
       const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-      const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(teacherEmail);
+      const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(teacherId);
       await teachersDocumentRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp(), isActive: false, ...data});
 
        // insert to userMapping
        const userMappingCollection = new UserMappingCollection();
-       const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(teacherEmail);
+       const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(teacherId);
        const schoolsDocumentRef2 = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
        await schoolsDocumentRef2.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role:"teacher" });
  
@@ -31,7 +31,7 @@ export default class TeacherAPI {
     }
   }
 
-  static async addTeacherClass(teacherEmail, schoolId, classId){
+  static async addTeacherClass(teacherId, schoolId, classId){
     try {
       const db = firebase.firestore();
       
@@ -40,7 +40,7 @@ export default class TeacherAPI {
       const schoolsCollection = new SchoolsCollection()
       const teachersCollection = new TeachersCollection()
       const schoolDocument = new Document(schoolId);
-      const teacherDocument = new Document(teacherEmail);
+      const teacherDocument = new Document(teacherId);
       const classDocument = new Document(classId);
 
       await db.collection(schoolsCollection.getName())
@@ -115,24 +115,24 @@ export default class TeacherAPI {
     return Promise.resolve(true)
   }
 
-  static async getDetail(schoolId, email, source = "default") {
+  static async getDetail(schoolId, userId, source = "default") {
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const teachersCollection = new TeachersCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(email);
+    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userId);
     const teachersSnapshot = await teachersDocumentRef.get({ source });
     const data = { id: teachersSnapshot.id, ...teachersSnapshot.data() };
 
     return Promise.resolve(data);
   }
 
-  static async isTeacher(schoolId, userEmail){
+  static async isTeacher(schoolId, userId){
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const teachersCollection = new TeachersCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userEmail);
+    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userId);
     const teachersSnapshot = await teachersDocumentRef.get();
 
     return Promise.resolve(teachersSnapshot.exists);

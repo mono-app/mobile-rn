@@ -34,18 +34,18 @@ class StudentProfileScreen extends React.PureComponent {
     if(this._isMounted)
      this.setState({ isLoadingProfile: true });
 
-    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentId);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
-    const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentEmail)).length;
+    const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentId)).length;
 
     if(this._isMounted)
       this.setState({ isLoadingProfile: false, student, totalClass });
   }
 
   loadStatus = async () => {
-    let status = await StatusAPI.getLatestStatus(this.studentEmail);
+    let status = await StatusAPI.getLatestStatus(this.studentId);
     if(!status) status = { content: "-" };
     if(this._isMounted)
       this.setState({ status: status.content });
@@ -53,7 +53,7 @@ class StudentProfileScreen extends React.PureComponent {
   
   handleStartChatPress = async () => {
     this.setState({ isLoadingButtonChat: true });
-    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentTeacher.email, this.studentEmail,"chat");
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentTeacher.id, this.studentId,"chat");
     this.setState({ isLoadingButtonChat: false });
     this.props.navigation.navigate("Chat", {room} );
   }
@@ -62,7 +62,7 @@ class StudentProfileScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
-    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
+    this.studentId = this.props.navigation.getParam("studentId", null);
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     
   }
@@ -139,7 +139,7 @@ class StudentProfileScreen extends React.PureComponent {
               fieldValue={this.state.totalClass}/>
           </View>
           <Button 
-            disabled={(this.props.currentTeacher.email===this.studentEmail)?true:false}
+            disabled={(this.props.currentTeacher.id===this.studentId)?true:false}
             text={this.props.t("startConversation")}
             isLoading={this.state.isLoadingButtonChat} 
             style={{margin: 16}} 

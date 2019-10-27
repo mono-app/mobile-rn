@@ -29,7 +29,7 @@ class TaskSubmissionListScreen extends React.PureComponent {
   handleSubmissionPress = submission => {
     const payload = {
       schoolId: this.props.currentSchool.id,
-      studentEmail: submission.id
+      studentId: submission.id
     }
     this.props.navigation.navigate("StudentProfile", payload);
   }

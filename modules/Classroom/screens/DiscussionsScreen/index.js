@@ -38,8 +38,8 @@ class DiscussionsScreen extends React.PureComponent {
   }
 
   handleLikePress = async (item) => {
-    const currentUserEmail= this.props.currentUser.email
-    await DiscussionAPI.like(this.schoolId, this.classId, this.taskId, item.id, currentUserEmail);
+    const currentUserId= this.props.currentUser.id
+    await DiscussionAPI.like(this.schoolId, this.classId, this.taskId, item.id, currentUserId);
     this.loadDiscussions();
   }
 

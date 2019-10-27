@@ -19,7 +19,7 @@ function CommentItem(props){
   })
 
   const fetchPeople = async () => {
-    const sender = await PeopleAPI.getDetail(comment.peopleEmail);
+    const sender = await PeopleAPI.getDetail(comment.peopleId);
     setSender(sender);
   }
 

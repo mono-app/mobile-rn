@@ -103,12 +103,12 @@ export default class ClassAPI{
   }
   
 
-  static async getUserClasses(schoolId, email) {
+  static async getUserClasses(schoolId, userId) {
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
-    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(email);
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userId);
     const schoolsDocumentRef = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
     const classesCollectionRef = schoolsDocumentRef.collection(classesCollection.getName());
 
@@ -124,12 +124,12 @@ export default class ClassAPI{
     return Promise.resolve(classDocuments);
   }
 
-  static async getUserActiveClasses(schoolId, email) {
+  static async getUserActiveClasses(schoolId, userId) {
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
-    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(email);
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userId);
     const schoolsDocumentRef = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
     const classesCollectionRef = schoolsDocumentRef.collection(classesCollection.getName())
     
@@ -151,12 +151,12 @@ export default class ClassAPI{
     return Promise.resolve(filteredClassDocuments);
   }
 
-  static async getUserArchiveClasses(schoolId, email) {
+  static async getUserArchiveClasses(schoolId, userId) {
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
-    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(email);
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userId);
     const schoolsDocumentRef = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
     const classesCollectionRef = schoolsDocumentRef.collection(classesCollection.getName());
     const classesSnapshot = await classesCollectionRef.get();

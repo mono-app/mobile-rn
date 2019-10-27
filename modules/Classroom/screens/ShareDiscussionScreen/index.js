@@ -22,7 +22,7 @@ class ShareDiscussionScreen extends React.PureComponent {
     this.setState({ peopleList: [] });
     const peopleList = await StudentAPI.getClassStudent(this.schoolId, this.classId);
     const peopleListWithoutMe = await peopleList.filter((people) => {
-        return people.id !== this.props.currentUser.email
+        return people.id !== this.props.currentUser.id
       })
     this.setState({ peopleList: peopleListWithoutMe, filteredPeopleList: peopleListWithoutMe });
   }
@@ -76,13 +76,13 @@ class ShareDiscussionScreen extends React.PureComponent {
     const clonedPeopleList = JSON.parse(JSON.stringify(this.state.peopleList))
     for(let i=0;i<clonedPeopleList.length;i++){
       if(clonedPeopleList[i].checked){
-        const peopleEmail = clonedPeopleList[i].id
+        const peopleId = clonedPeopleList[i].id
         const message = "Share Discussion, \nTitle: "+this.discussion.title
-        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.email, peopleEmail,"chat");
+        const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentUser.id, peopleId,"chat");
         const schoolId = this.schoolId
         const classId = this.classId
         const taskId = this.taskId
-        MessagesAPI.sendMessage(room.id, this.props.currentUser.email, message, "discussion-share", {discussion: {...this.discussion, schoolId, classId, taskId}});
+        MessagesAPI.sendMessage(room.id, this.props.currentUser.id, message, "discussion-share", {discussion: {...this.discussion, schoolId, classId, taskId}});
       }
     }
 

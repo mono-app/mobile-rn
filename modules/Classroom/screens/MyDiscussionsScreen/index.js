@@ -21,7 +21,7 @@ class MyDiscussionsScreen extends React.PureComponent {
 
   loadDiscussions = async () => {
     if(this._isMounted) this.setState({ discussionList: [], isRefreshing: true });
-    const discussionList = await DiscussionAPI.getMyDiscussions(this.props.currentUser.email, this.schoolId);
+    const discussionList = await DiscussionAPI.getMyDiscussions(this.props.currentUser.id, this.schoolId);
     if(this._isMounted) this.setState({ discussionList, filteredDiscussionList: discussionList, isRefreshing: false });
   }
 

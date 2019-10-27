@@ -32,8 +32,8 @@ export default class CommentsAPI{
    * @param {String} momentId 
    * @param {String} comment 
    */
-  static postComment(momentId, comment, peopleEmail){
-    const payload = { peopleEmail, comment, timestamp: firebase.firestore.FieldValue.serverTimestamp() }
+  static postComment(momentId, comment, peopleId){
+    const payload = { peopleId, comment, timestamp: firebase.firestore.FieldValue.serverTimestamp() }
     const db = firebase.firestore();
     const batch = db.batch();
 

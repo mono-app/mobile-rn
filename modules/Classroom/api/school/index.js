@@ -7,11 +7,11 @@ import { SchoolsCollection, UserMappingCollection } from "src/api/database/colle
 export default class SchoolAPI{
   static currentSchoolId = ""
 
-  static async getUserSchools(userEmail) {
+  static async getUserSchools(userId) {
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection();
     const schoolsCollection = new SchoolsCollection();
-    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userEmail);
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userId);
     const schoolsCollectionRef = userMappingDocumentRef.collection(schoolsCollection.getName());
 
     const schoolSnapshot = await schoolsCollectionRef.get();
@@ -26,11 +26,11 @@ export default class SchoolAPI{
     return Promise.resolve(schools)
   }
 
-  static async getUserRole(schoolId, userEmail){
+  static async getUserRole(schoolId, userId){
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection();
     const schoolsCollection = new SchoolsCollection();
-    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userEmail);
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userId);
     const schoolsDocumentRef = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
 
     const schoolSnapshot = await schoolsDocumentRef.get();
@@ -39,11 +39,11 @@ export default class SchoolAPI{
     return Promise.resolve(schoolSnapshot.data().role)
   }
 
-  static async getTotalUserSchools(userEmail){
+  static async getTotalUserSchools(userId){
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection();
     const schoolsCollection = new SchoolsCollection();
-    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userEmail);
+    const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(userId);
     const schoolsCollectionRef = userMappingDocumentRef.collection(schoolsCollection.getName());
 
     const schoolSnapshot = await schoolsCollectionRef.get();
@@ -70,26 +70,26 @@ export default class SchoolAPI{
     return Promise.resolve(data);
   }
 
-  static async getUserName(schoolId, email){
-    const userRole = await SchoolAPI.getUserRole(schoolId, email);
+  static async getUserName(schoolId, userId){
+    const userRole = await SchoolAPI.getUserRole(schoolId, userId);
     let name = "-"
     if(userRole==="teacher"){
-      const teacher = await TeacherAPI.getDetail(schoolId, email)
+      const teacher = await TeacherAPI.getDetail(schoolId, userId)
       name = teacher.name
     }else if(userRole==="student"){
-      const student = await StudentAPI.getDetail(schoolId, email)
+      const student = await StudentAPI.getDetail(schoolId, userId)
       name = student.name
     }
     return Promise.resolve(name)
   }
-  static async getUserDetails(schoolId, email){
-    const userRole = await SchoolAPI.getUserRole(schoolId, email);
+  static async getUserDetails(schoolId, userId){
+    const userRole = await SchoolAPI.getUserRole(schoolId, userId);
     let name = "-"
     if(userRole==="teacher"){
-      const teacher = await TeacherAPI.getDetail(schoolId, email)
+      const teacher = await TeacherAPI.getDetail(schoolId, userId)
       name = teacher
     }else if(userRole==="student"){
-      const student = await StudentAPI.getDetail(schoolId, email)
+      const student = await StudentAPI.getDetail(schoolId, userId)
       name = student
     }
     return Promise.resolve(name)

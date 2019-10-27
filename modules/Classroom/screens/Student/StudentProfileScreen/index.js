@@ -31,7 +31,7 @@ class StudentProfileScreen extends React.PureComponent {
   loadPeopleInformation = async () => {
     if(this._isMounted)
       this.setState({ isLoadingProfile: true });
-    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentEmail);
+    const student = await StudentAPI.getDetail(this.props.currentSchool.id, this.studentId);
     if(student.gender){
       student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
     }
@@ -43,21 +43,21 @@ class StudentProfileScreen extends React.PureComponent {
   }
 
   loadStatus = async () => {
-    let status = await StatusAPI.getLatestStatus(this.studentEmail);
+    let status = await StatusAPI.getLatestStatus(this.studentId);
     if(!status) status = { content: "-" };
     this.setState({ status: status.content });
   }
 
   handleStartChatPress = async () => {
     this.setState({ isLoadingButtonChat: true });
-    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentStudent.email, this.studentEmail,"chat");
+    const room = await PersonalRoomsAPI.createRoomIfNotExists(this.props.currentStudent.id, this.studentId,"chat");
     this.setState({ isLoadingButtonChat: false });
     this.props.navigation.navigate("Chat", {room} );
   }
 
   constructor(props){
     super(props);
-    this.studentEmail = this.props.navigation.getParam("studentEmail", null);
+    this.studentId = this.props.navigation.getParam("studentId", null);
     this.state = INITIAL_STATE;
     this._isMounted = null
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
@@ -136,7 +136,7 @@ class StudentProfileScreen extends React.PureComponent {
               fieldValue="-"/>
           </View>
           <Button 
-          disabled={(this.props.currentStudent.email===this.studentEmail)?true:false}
+          disabled={(this.props.currentStudent.id===this.studentId)?true:false}
           text={this.props.t("startConversation")}
           isLoading={this.state.isLoadingButtonChat} 
           style={{margin: 16}} 

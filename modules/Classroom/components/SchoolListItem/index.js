@@ -26,8 +26,8 @@ export default class SchoolListItem extends React.Component{
 
   async componentDidMount(){
     this.setState({ isFetching: true });
-    const { school, currentUserEmail } = this.props;
-    const schoolAdmin = await SchoolAdminAPI.getDetail(school.id, currentUserEmail )
+    const { school, currentUserId } = this.props;
+    const schoolAdmin = await SchoolAdminAPI.getDetail(school.id, currentUserId )
     this.setState({isFetching:false, school, userName: schoolAdmin.name})
   }
 

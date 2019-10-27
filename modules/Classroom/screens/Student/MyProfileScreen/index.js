@@ -41,15 +41,15 @@ class MyProfileScreen extends React.PureComponent {
     if(this._isMounted)
       this.setState({ isLoadingProfile: true });
 
-    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
-    const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.id)).length;
+    const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.id)).length;
     if(this._isMounted)
       this.setState({ isLoadingProfile: false, totalActiveClass, totalArchiveClass });
    
   }
   
   loadStatus = async () => {
-    let status = await StatusAPI.getLatestStatus(this.props.currentStudent.email);
+    let status = await StatusAPI.getLatestStatus(this.props.currentStudent.id);
     if(!status){
       status = { content: this.props.t("writeStatusHere") };
     } 
@@ -73,7 +73,7 @@ class MyProfileScreen extends React.PureComponent {
       const compressedRes = await ImageCompress.compress(res.uri, res.size)
 
       const downloadUrl = await StorageAPI.uploadFile(storagePath, compressedRes.uri)
-      await StudentAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentStudent.email ,storagePath, downloadUrl)
+      await StudentAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentStudent.id ,storagePath, downloadUrl)
       
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -214,7 +214,7 @@ class MyProfileScreen extends React.PureComponent {
               fieldValue={this.props.currentStudent.phone}/>
             <PeopleInformationContainer
               fieldName="Email"
-              fieldValue={this.props.currentStudent.email}/>
+              fieldValue={this.props.currentStudent.id}/>
             <PeopleInformationContainer
               fieldName={this.props.t("gender")}
               fieldValue={this.props.currentStudent.gender}/>

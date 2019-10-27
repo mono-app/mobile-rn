@@ -22,7 +22,7 @@ class AnnouncementScreen extends React.PureComponent {
 
   loadAnnouncements = async () => {
     if(this._isMounted) this.setState({ announcementList: [], isRefreshing:true })
-    const announcementList = await AnnouncementAPI.getStudentAnnouncements(this.props.currentSchool.id,this.props.currentStudent.email)
+    const announcementList = await AnnouncementAPI.getStudentAnnouncements(this.props.currentSchool.id,this.props.currentStudent.id)
    
     let clonedAnnouncementList = JSON.parse(JSON.stringify(announcementList));
     clonedAnnouncementList = clonedAnnouncementList.map((obj)=>{

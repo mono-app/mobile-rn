@@ -24,11 +24,11 @@ class TeacherProfileScreen extends React.PureComponent {
       this.setState({ isLoadingProfile: true });
     }
 
-    const teacher = await TeacherAPI.getDetail(this.props.currentSchool.id, this.teacherEmail);
+    const teacher = await TeacherAPI.getDetail(this.props.currentSchool.id, this.teacherId);
     if(teacher.gender){
       teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
     }
-    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.teacherEmail)).length;
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.teacherId)).length;
     if(this._isMounted){
       this.setState({ isLoadingProfile: false, teacher, totalActiveClass });
     }
@@ -38,7 +38,7 @@ class TeacherProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "name", 
       fieldValue: this.state.teacher.name,
       fieldTitle: this.props.t("editTeacherName"),
@@ -55,7 +55,7 @@ class TeacherProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "address", 
       fieldValue: this.state.teacher.address,
       fieldTitle: this.props.t("editAddress"),
@@ -72,7 +72,7 @@ class TeacherProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "phone", 
       fieldValue: this.state.teacher.phone,
       fieldTitle: this.props.t("editPhone"),
@@ -86,28 +86,28 @@ class TeacherProfileScreen extends React.PureComponent {
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
 
-  handleEmailPress = e => {
-    const payload = {
-      schoolId: this.props.currentSchool.id,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "email", 
-      fieldValue: this.state.teacher.id,
-      fieldTitle: this.props.t("editEmail"),
-      onRefresh: (data) => {
-        const newClass = JSON.parse(JSON.stringify(this.state.teacher));
-        newClass.email = data;
-        this.setState({teacher: newClass})
-      } 
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
+  // handleEmailPress = e => {
+  //   const payload = {
+  //     schoolId: this.props.currentSchool.id,
+  //     databaseCollection: "teachers",
+  //     databaseDocumentId: this.teacherId,
+  //     databaseFieldName: "email", 
+  //     fieldValue: this.state.teacher.id,
+  //     fieldTitle: this.props.t("editEmail"),
+  //     onRefresh: (data) => {
+  //       const newClass = JSON.parse(JSON.stringify(this.state.teacher));
+  //       newClass.email = data;
+  //       this.setState({teacher: newClass})
+  //     } 
+  //   }
+  //   this.props.navigation.navigate(`EditSingleField`, payload);
+  // }
 
   handleNIKPress = e => {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "nik", 
       fieldValue: this.state.teacher.nik,
       fieldTitle: this.props.t("editNik"),
@@ -125,7 +125,7 @@ class TeacherProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "gender", 
       fieldValue: this.state.teacher.gender,
       fieldTitle: this.props.t("editGender"),
@@ -141,7 +141,7 @@ class TeacherProfileScreen extends React.PureComponent {
 
   handleClassListPress = e => {
     const payload = {
-      teacherEmail: this.teacherEmail
+      teacherId: this.teacherId
     }
     this.props.navigation.navigate('TeacherClassList', payload);
   }
@@ -149,7 +149,7 @@ class TeacherProfileScreen extends React.PureComponent {
 
   constructor(props){
     super(props);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", null);
+    this.teacherId = this.props.navigation.getParam("teacherId", null);
     this.state = INITIAL_STATE;
     this._isMounted = null
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
@@ -232,7 +232,7 @@ class TeacherProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleEmailPress}>
+              {/* <TouchableOpacity onPress={this.handleEmailPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text style={styles.label}>Email</Text>
@@ -242,7 +242,7 @@ class TeacherProfileScreen extends React.PureComponent {
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity onPress={this.handleNIKPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>

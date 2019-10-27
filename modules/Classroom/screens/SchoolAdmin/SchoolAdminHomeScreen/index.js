@@ -114,7 +114,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     if(this._isMounted){
       this.setState({isLoading: true})
     }
-    await this.props.setCurrentSchoolAdminEmail(this.state.schoolId, this.props.currentUser.email)
+    await this.props.setCurrentSchoolAdminId(this.state.schoolId, this.props.currentUser.id)
     if(this._isMounted){
       this.setState({isLoading: false})
     }

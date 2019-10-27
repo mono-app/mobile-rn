@@ -55,13 +55,13 @@ export default class DiscussionAPI{
     return Promise.resolve(discussions)
   }
 
-  static async getMyDiscussions(email,schoolId){
+  static async getMyDiscussions(userId,schoolId){
     const db = firebase.firestore();
     const userMappingCollection = new UserMappingCollection()
     const schoolsCollection = new SchoolsCollection();
     const discussionsCollection = new DiscussionsCollection();
     
-    const userMappingRef = db.collection(userMappingCollection.getName()).doc(email);
+    const userMappingRef = db.collection(userMappingCollection.getName()).doc(userId);
     const schoolsDocumentRef = userMappingRef.collection(schoolsCollection.getName()).doc(schoolId);
     const discussionsCollectionRef = schoolsDocumentRef.collection(discussionsCollection.getName());
 
@@ -108,7 +108,7 @@ export default class DiscussionAPI{
     return Promise.resolve(participantQuerySnapshot.size);
   }
   
-  static async getDetail(schoolId, classId, taskId, discussionId, currentUserEmail) {
+  static async getDetail(schoolId, classId, taskId, discussionId, currentUserId) {
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
@@ -122,14 +122,14 @@ export default class DiscussionAPI{
    
     const discussionsDocumentSnapshot = await discussionsDocumentRef.get();
 
-    const likesDocumentRef = discussionsDocumentRef.collection(likesCollection.getName()).doc(currentUserEmail);
+    const likesDocumentRef = discussionsDocumentRef.collection(likesCollection.getName()).doc(currentUserId);
     const likesDocumentSnapshot = await likesDocumentRef.get();
     const data = { id: discussionsDocumentSnapshot.id, ...discussionsDocumentSnapshot.data(), isLiked: likesDocumentSnapshot.exists };
 
     return Promise.resolve(data);
   }
 
-  static async like(schoolId, classId, taskId, discussionId, email){
+  static async like(schoolId, classId, taskId, discussionId, userId){
     try{
       const db = new firebase.firestore();
       const schoolsCollection = new SchoolsCollection();
@@ -141,7 +141,7 @@ export default class DiscussionAPI{
       const classDocumentRef = schoolDocumentRef.collection(classesCollection.getName()).doc(classId);
       const tasksDocumentRef = classDocumentRef.collection(tasksCollection.getName()).doc(taskId);
       const discussionsDocumentRef = tasksDocumentRef.collection(discussionsCollection.getName()).doc(discussionId);
-      const likesDocumentRef = discussionsDocumentRef.collection(likesCollection.getName()).doc(email);
+      const likesDocumentRef = discussionsDocumentRef.collection(likesCollection.getName()).doc(userId);
       await likesDocumentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() });
 
       return Promise.resolve(true);
@@ -151,7 +151,7 @@ export default class DiscussionAPI{
     }
   }
 
-  static async isLikedRealTimeUpdate(schoolId, classId, taskId, discussionId, currentUserEmail, callback){
+  static async isLikedRealTimeUpdate(schoolId, classId, taskId, discussionId, currentUserId, callback){
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const classesCollection = new ClassesCollection();
@@ -162,7 +162,7 @@ export default class DiscussionAPI{
     const classDocumentRef = schoolDocumentRef.collection(classesCollection.getName()).doc(classId);
     const tasksDocumentRef = classDocumentRef.collection(tasksCollection.getName()).doc(taskId);
     const discussionsDocumentRef = tasksDocumentRef.collection(discussionsCollection.getName()).doc(discussionId);
-    const likesDocumentRef = discussionsDocumentRef.collection(likesCollection.getName()).doc(currentUserEmail);
+    const likesDocumentRef = discussionsDocumentRef.collection(likesCollection.getName()).doc(currentUserId);
     return Promise.resolve(likesDocumentRef.onSnapshot(function(doc){
       callback(doc.exists)
     }))
@@ -214,7 +214,7 @@ export default class DiscussionAPI{
       const tasksDocumentRef = classDocumentRef.collection(tasksCollection.getName()).doc(taskId);
       const discussionsDocumentRef = tasksDocumentRef.collection(discussionsCollection.getName()).doc(discussionId);
       const commentsDocumentRef = discussionsDocumentRef.collection(commentsCollection.getName()).doc();
-      const participantDocumentRef = discussionsDocumentRef.collection(participantsCollection.getName()).doc(data.posterEmail);
+      const participantDocumentRef = discussionsDocumentRef.collection(participantsCollection.getName()).doc(data.posterId);
 
       await commentsDocumentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), ...data });
       await participantDocumentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp() });

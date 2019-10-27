@@ -47,7 +47,7 @@ class StudentListScreen extends React.PureComponent {
   handleStudentPress = people => {
     const payload = {
       schoolId: this.props.currentSchool.id,
-      studentEmail: people.id
+      studentId: people.id
     }
     this.props.navigation.navigate("StudentProfile", payload);
   }

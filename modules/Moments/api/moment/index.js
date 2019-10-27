@@ -12,16 +12,16 @@ export default class MomentAPI{
   /**
    * 
    * @param {String} momentId 
-   * @param {String} fanEmail 
+   * @param {String} fanId 
    */
-  static async toggleLike(momentId, fanEmail){
-    const payload = { email: fanEmail, timestamp: firebase.firestore.FieldValue.serverTimestamp() }
+  static async toggleLike(momentId, fanId){
+    const payload = { timestamp: firebase.firestore.FieldValue.serverTimestamp() }
     const db = firebase.firestore();
     const batch = db.batch();
     
     const momentsCollection = new MomentsCollection();
     const momentDocument = new Document(momentId);
-    const fanDocument = new Document(fanEmail);
+    const fanDocument = new Document(fanId);
     const fansCollection = new FansCollection();
     const momentsRef = db.collection(momentsCollection.getName()).doc(momentDocument.getId());
     const fansRef = momentsRef.collection(fansCollection.getName()).doc(fanDocument.getId());
@@ -29,11 +29,11 @@ export default class MomentAPI{
     return fansRef.get().then(documentSnapshot => {
       if(!documentSnapshot.exists){
         batch.set(fansRef, payload);
-        batch.update(momentsRef, { fanEmails: firebase.firestore.FieldValue.arrayUnion(fanEmail) });
+        batch.update(momentsRef, { fanIds: firebase.firestore.FieldValue.arrayUnion(fanId) });
         batch.update(momentsRef, { totalFans: firebase.firestore.FieldValue.increment(1) });
       }else{
         batch.delete(fansRef);
-        batch.update(momentsRef, { fanEmails: firebase.firestore.FieldValue.arrayRemove(fanEmail) });
+        batch.update(momentsRef, { fanIds: firebase.firestore.FieldValue.arrayRemove(fanId) });
         batch.update(momentsRef, { totalFans: firebase.firestore.FieldValue.increment(-1) });
       }
       return batch.commit();
@@ -45,7 +45,7 @@ export default class MomentAPI{
    * @param {String} momentId 
    * @param {function} callback 
    */
-  static getDetailWithRealTimeUpdate(momentId, currentUserEmail ,callback){
+  static getDetailWithRealTimeUpdate(momentId, currentUserId ,callback){
     const db = firebase.firestore();
     const momentsCollection = new MomentsCollection();
     const fansCollection = new FansCollection();
@@ -55,8 +55,8 @@ export default class MomentAPI{
     
     return momentRef.onSnapshot({ includeMetadataChanges: true }, async (documentSnapshot) => {
       if(documentSnapshot.exists) {
-        const fansSnapshot = await momentRef.collection(fansCollection.getName()).doc(currentUserEmail).get()
-        const commentSnapshot = await momentRef.collection(commentsCollection.getName()).where("peopleEmail","==",currentUserEmail).get()
+        const fansSnapshot = await momentRef.collection(fansCollection.getName()).doc(currentUserId).get()
+        const commentSnapshot = await momentRef.collection(commentsCollection.getName()).where("peopleId","==",currentUserId).get()
        
         let normalized = MomentAPI.normalizeMoment(documentSnapshot)
         normalized.isLiked = fansSnapshot.exists
@@ -80,10 +80,10 @@ export default class MomentAPI{
 
   /**
    * 
-   * @param {String} posterEmail - 
+   * @param {String} posterId - 
    * @param {Object} content 
    */
-  static publishMoment(posterEmail, content){
+  static publishMoment(posterId, content){
     const promises = [];
     content.images.forEach((image, index) => {
       const stringRef = `/modules/moments/${uuid()}.png`;
@@ -99,7 +99,7 @@ export default class MomentAPI{
       const collection = new MomentsCollection();
       const query = new AddDocument();
       const payload = {
-        posterEmail, content, privacy: "friends",
+        posterId, content, privacy: "friends",
         postTime: firebase.firestore.FieldValue.serverTimestamp(),
       }
       return query.executeQuery(collection, null, payload);
@@ -111,14 +111,14 @@ export default class MomentAPI{
 
   /**
    * 
-   * @param {String} email 
+   * @param {String} userId 
    * @returns {Promise} an array of `moments` object
    */
-  static async getMoments(email){
+  static async getMoments(userId){
   
     const db = firebase.firestore();
     const momentsCollection = new MomentsCollection();
-    const momentsRef = db.collection(momentsCollection.getName()).where('showsTo','array-contains',email);
+    const momentsRef = db.collection(momentsCollection.getName()).where('showsTo','array-contains',userId);
     const querySnapshots = await momentsRef.get();
 
     const moments = querySnapshots.docs.map((documentSnapshot) => MomentAPI.normalizeMoment(documentSnapshot));

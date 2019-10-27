@@ -9,7 +9,7 @@ const INITIAL_STATE = { name: "",nik: "-", isFetching: false }
 
 /**
  * @param {string} name 
- * @param {string} email 
+ * @param {string} userId 
  */
 export default class TeacherListItem extends React.Component{
   constructor(props){

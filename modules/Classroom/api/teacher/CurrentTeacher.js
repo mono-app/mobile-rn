@@ -10,7 +10,7 @@ export function withCurrentTeacher(Component){
     return (
       <CurrentTeacherContext.Consumer>
         {(context) => <Component {...props} ref={ref}
-          setCurrentTeacherEmail={context.setCurrentTeacherEmail}
+          setCurrentTeacherId={context.setCurrentTeacherId}
           currentTeacher = {context.teacher}
           currentSchool = {context.school}
           />}
@@ -26,7 +26,7 @@ export class CurrentTeacherProvider extends React.PureComponent{
     return { header: null };
   };
 
-  handleCurrentTeacherEmail = async (schoolId, email) => {
+  handleCurrentTeacherId = async (schoolId, userId) => {
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const teachersCollection = new TeachersCollection();
@@ -34,12 +34,12 @@ export class CurrentTeacherProvider extends React.PureComponent{
     const documentSnapshot = await schoolsDocumentRef.get();
     const school = { id: documentSnapshot.id, ...documentSnapshot.data() };
     this.setState({ school });
-    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(email);
+    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userId);
 
     this.userListener = teachersDocumentRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
         const teacher = documentSnapshot.data();
-        teacher.email = JSON.parse(JSON.stringify(documentSnapshot.id));
+        teacher.id = JSON.parse(JSON.stringify(documentSnapshot.id));
         if(teacher.gender){
           teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
         }
@@ -59,9 +59,9 @@ export class CurrentTeacherProvider extends React.PureComponent{
     this.state = { 
       school: {}, 
       teacher: {}, 
-      setCurrentTeacherEmail: this.handleCurrentTeacherEmail 
+      setCurrentTeacherId: this.handleCurrentTeacherId 
     }
-    this.handleCurrentTeacherEmail = this.handleCurrentTeacherEmail.bind(this);
+    this.handleCurrentTeacherId = this.handleCurrentTeacherId.bind(this);
   }
 
  

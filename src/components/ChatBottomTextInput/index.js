@@ -88,6 +88,7 @@ function ChatBottomTextInput(props){
     if(sessionId === null) handleRoomUpdate()
     if(token === null) initLiveVoice();
     return function cleanup(){
+
     }
   }, [sessionId, token]);
 
