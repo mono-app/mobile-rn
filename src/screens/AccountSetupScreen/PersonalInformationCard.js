@@ -10,15 +10,9 @@ const INITIAL_STATE = {
 }
 
 class PersonalInformationCard extends React.PureComponent{
-  handleGivenNameChange = givenName => {
-    const fGinvenName = givenName.replace(/[^a-zA-Z\s]/gi,'')
-    this.setState({givenName: fGinvenName});
-  }
-  handleFamilyNameChange = familyName => {
-    const fFamilyName = familyName.replace(/[^a-zA-Z\s]/gi,'')
-    this.setState({familyName: fFamilyName});
-  }
-  handleGenderChange = (gender, index) => {this.setState({gender});}
+  handleGivenNameChange = givenName => this.setState({ givenName });
+  handleFamilyNameChange = familyName => this.setState({ familyName });
+  handleGenderChange = (gender) => this.setState({ gender });
 
   constructor(props){
     super(props);

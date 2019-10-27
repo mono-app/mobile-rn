@@ -1,16 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet } from "react-native";
 import { Snackbar } from "react-native-paper";
 
 function CustomSnackbar(props){
-  const { isError } = props
-  const [ message, setMessage ] = React.useState(props.message)
-
-  const handleDismissSnackbar = () => setMessage(null) 
+  const { message, isError } = props
 
   return (
-    <Snackbar visible={!!message} onDismiss={handleDismissSnackbar}
+    <Snackbar visible={!!message} onDismiss={props.onDismiss}
       style={{ backgroundColor: (isError)? "#EF6F6C":"#0ead69" }} duration={Snackbar.DURATION_SHORT}>
       {message}
     </Snackbar>
@@ -18,8 +14,9 @@ function CustomSnackbar(props){
 }
 
 CustomSnackbar.propTypes = { 
-  message: PropTypes.string.isRequired,
-  show: PropTypes.bool.isRequired,
+  message: PropTypes.string,
+  isError: PropTypes.bool,
+  onDismiss: PropTypes.func.isRequired
 }
-CustomSnackbar.defaultProps = { message: null, isError: false, show: false }
+CustomSnackbar.defaultProps = { message: null, isError: false }
 export default CustomSnackbar

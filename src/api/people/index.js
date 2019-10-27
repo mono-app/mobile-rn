@@ -6,6 +6,8 @@ import Logger from "src/api/logger";
 import Database from "src/api/database";
 import User from "src/entities/user";
 import Email from "src/entities/email";
+import ApplicationInformation from "src/entities/applicationInformation";
+import PersonalInformation from "src/entities/personalInformation";
 import CustomError from "src/entities/error";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
@@ -100,6 +102,43 @@ export default class PeopleAPI{
 
   /**
    * 
+   * @param {boolean} online 
+   */
+  static async getCurrentUser(online=true){
+    const user = firebase.auth().currentUser;
+    if(!user) throw new CustomError("user/not-logged-in", "Your are not logged in. Cannot perform any action");
+    else return await PeopleAPI.getDetailById(user.uid, online);
+  }
+
+  /**
+   * 
+   * @param {User} user 
+   * @param {ApplicationInformation} applicationInfo 
+   * @param {PersonalInformation} personalInformation
+   */
+  static async setupApplication(user, applicationInformation, personalInformation){
+    if(typeof(user) !== "object") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(typeof(applicationInformation) !== "object") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(typeof(personalInformation) !== "object") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!(user instanceof User)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!(applicationInformation instanceof ApplicationInformation)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!(personalInformation instanceof PersonalInformation)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!user.id) throw new CustomError("user/programmer", "Ops! Something went wrong");
+                 
+    await Database.update( async (db) => {
+      const usersCollection = new UserCollection();
+      const userDocument = new Document(user.id);
+      await db.collection(usersCollection.getName()).doc(userDocument.getId()).update({
+        personalInformation: personalInformation.data, 
+        applicationInformation: applicationInformation.data, 
+        isCompleteSetup: true
+      });
+    });
+    return Promise.resolve(true)
+  }
+
+  /**
+   * 
    * @param {Email} email 
    */
   static async isEmailExists(email){
@@ -108,6 +147,21 @@ export default class PeopleAPI{
  
     try{
       await PeopleAPI.getDetailByEmail(email, true);
+      return Promise.resolve(true);
+    }catch(err){
+      if(err.code === "user/not-found") return Promise.resolve(false);
+      else throw err;
+    }
+  }
+
+  /**
+   * 
+   * @param {string} monoId 
+   */
+  static async isMonoIdExists(monoId, online=true){
+    try{
+      await PeopleAPI.getDetailByMonoId(monoId, online);
+      return Promise.resolve(true);
     }catch(err){
       if(err.code === "user/not-found") return Promise.resolve(false);
       else throw err;
@@ -124,11 +178,14 @@ export default class PeopleAPI{
     else return Promise.resolve(true);
   }
 
-  static async isMonoIdAvailable(monoId){
-    const db = firebase.firestore();
-    const userCollection = new UserCollection();
-    const userQuerySnapshot = await db.collection(userCollection.getName()).where("applicationInformation.id","==",monoId).get();
-    return Promise.resolve(userQuerySnapshot.empty);
+  /**
+   * 
+   * @param {string} monoId}
+   */
+  static async ensureUniqueMonoId(monoId, online=true){
+    const isMonoIdExists = await PeopleAPI.isMonoIdExists(monoId, online);
+    if(isMonoIdExists) throw new CustomError("user/duplicate-mono-id", "Please choose another Mono ID");
+    else return Promise.resolve(true);
   }
 
   /**
@@ -155,15 +212,51 @@ export default class PeopleAPI{
 
   /**
    * 
+   * @param {string} monoId 
+   * @param {string} online 
+   */
+  static async getDetailByMonoId(monoId, online=false){
+    if(typeof(monoId) !== "string") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(online) return await PeopleAPI.getDetailOnlineByMonoId(monoId);
+    else return await PeopleAPI.getDetailOfflineByMonoId(monoId);
+  }
+
+  /**
+   * 
+   * @param {string} monoId 
+   */
+  static async getDetailOnlineByMonoId(monoId){
+    return await Database.get(async (database) => {
+      const usersCollection = new UserCollection();
+      const userSnapshot = await database.collection(usersCollection.getName()).where("applicationInformation.monoId", "==", monoId).get();
+      if(userSnapshot.size === 0) throw new CustomError("user/not-found", "User not found");
+      else return new User().fromSnapshot(userSnapshot.docs[0]);
+    }, true);
+  }
+
+  /**
+   * 
+   * @param {*} monoId 
+   */
+  static async getDetailOfflineByMonoId(monoId){
+
+  }
+
+  /**
+   * 
    * @param {string} id 
    * @param {boolean} online 
    */
   static async getDetailById(id, online=false){
-    if(typeof(id) !== "string") throw new Error("Ops! Something went wrong");
+    if(typeof(id) !== "string") throw new CustomError("user/programmer", "Ops! Something went wrong");
     if(online) return await PeopleAPI.getDetailOnlineById(id);
     else return await PeopleAPI.getDetailOfflineById(id);
   }
 
+  /**
+   * 
+   * @param {string} id 
+   */
   static async getDetailOnlineById(id){
     return await Database.get(async (database) => {
       const usersCollection = new UserCollection();
@@ -173,6 +266,10 @@ export default class PeopleAPI{
     }, true);
   }
 
+  /**
+   * 
+   * @param {string} id 
+   */
   static async getDetailOfflineById(id){}
 
   /**
@@ -195,7 +292,7 @@ export default class PeopleAPI{
       const usersCollection = new UserCollection();
       const userSnapshot = await database.collection(usersCollection.getName()).where("email", "==", email.address).get();
       if(userSnapshot.size === 0) throw new CustomError("user/not-found", "User not found");
-      else return new User().fromSnapshot(documentSnapshot);
+      else return new User().fromSnapshot(userSnapshot.docs[0]);
     }, true)
   }
 

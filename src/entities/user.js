@@ -49,7 +49,7 @@ export default class User{
   }
 
   get email(){ return this._email.address }
-  set email(value){ console.log(value); this._email = new Email(value) }
+  set email(value){ this._email = new Email(value) }
 
   get password(){ return this._password.value }
   set password(value){ this._password = new Password(value) }
