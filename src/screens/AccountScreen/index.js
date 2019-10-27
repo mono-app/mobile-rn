@@ -67,7 +67,7 @@ function AccountScreen(props){
     <Container>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <View style={styles.container}>
-        <SignOutDialog show={isSignOutDialogShown} onCancel={handleSignOutDialogCancel}/>
+        <SignOutDialog navigation={props.navigation} show={isSignOutDialogShown} onCancel={handleSignOutDialogCancel}/>
 
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={handleNickNamePress}>

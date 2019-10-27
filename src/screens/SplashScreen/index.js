@@ -25,7 +25,7 @@ function SplashScreen(props){
     try{
       // await firebase.auth().signOut();
       await AuthenticationAPI.initializeSession();
-      props.setCurrentUserId(firebase.auth().currentUser.uid);
+      if(firebase.auth().currentUser) props.setCurrentUserId(firebase.auth().currentUser.uid);
 
       // save messaging token
       const tokenOwner = await PeopleAPI.getCurrentUser();
@@ -37,6 +37,7 @@ function SplashScreen(props){
     }catch(err){
       if(err.code === "auth/need-setup") goto("AccountSetup");
       else if(err.code === "auth/not-found") goto("SignIn");
+      else if(err.code === "user/not-logged-in") goto("SignIn")
       else setErrorMessage(err.message);
     }
   }
