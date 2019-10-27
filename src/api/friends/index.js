@@ -10,12 +10,12 @@ export default class FriendsAPI{
     return { id: documentSnapshot.id, ...documentSnapshot.data() }
   }
 
-  async getFriendStatus(userId, peopleId){
+  async getFriendStatus(userId, friendId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
     const peopleCollection = new PeopleCollection();
     const userDocument = new Document(userId);
-    const peopleDocument = new Document(peopleId);
+    const peopleDocument = new Document(friendId);
     const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
     const peopleRef = friendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
     const peopleDocumentSnapshot = await peopleRef.get();
@@ -49,13 +49,13 @@ export default class FriendsAPI{
         if(peopleDocumentSnapshot.exists) return Promise.resolve("pendingAccept");
         else {
           const blockedCollection = new BlockedCollection()
-          const blockedDocRef = friendListRef.collection(blockedCollection.getName()).doc(peopleId)
+          const blockedDocRef = friendListRef.collection(blockedCollection.getName()).doc(friendId)
           const blockedSnapshot = await blockedDocRef.get()
           if(blockedSnapshot.exists){
             return Promise.resolve("blocked");
           }else{
             const hideCollection = new HideCollection()
-            const hideDocRef = friendListRef.collection(hideCollection.getName()).doc(peopleId)
+            const hideDocRef = friendListRef.collection(hideCollection.getName()).doc(friendId)
             const hideSnapshot = await hideDocRef.get()
             if(hideSnapshot.exists){
               return Promise.resolve("hide");
@@ -220,27 +220,27 @@ export default class FriendsAPI{
   /**
    * 
    * @param {string} peopleId - the one that rejecting
-   * @param {string} peopleId - the one that being rejected
+   * @param {string} friendId - the one that being rejected
    */
-  async rejectRequest(peopleId, peopleId){
-    const result = await this.cancelRequest(peopleId, peopleId)
+  async rejectRequest(peopleId, friendId){
+    const result = await this.cancelRequest(friendId, peopleId)
     return Promise.resolve(result);
   }
 
   /**
    * 
    * @param {string} peopleId - the one that accepting
-   * @param {string} peopleId - the one that being accepted
+   * @param {string} friendId - the one that being accepted
    * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
-  async acceptRequest(peopleId, peopleId, source){
+  async acceptRequest(peopleId, friendId, source){
    
     try{
       const db = firebase.firestore();
       const friendListCollection = new FriendListCollection();
       const peopleCollection = new PeopleCollection();
       const userDocument = new Document(peopleId);
-      const peopleDocument = new Document(peopleId);
+      const peopleDocument = new Document(friendId);
       const userFriendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
       const peopleFriendListRef = db.collection(friendListCollection.getName()).doc(peopleDocument.getId());
       const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
@@ -252,7 +252,7 @@ export default class FriendsAPI{
         peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
       ];
 
-      promises.push(this.cancelRequest(peopleId, peopleId))
+      promises.push(this.cancelRequest(friendId, peopleId))
 
       await Promise.all(promises);
       return Promise.resolve(true);
@@ -262,14 +262,14 @@ export default class FriendsAPI{
     }
   }
 
-  async setFriends(peopleId, peopleId, source){
+  async setFriends(peopleId, friendId, source){
     // used for add new friend from barcode scan (auto become friend without friendRequest)
     try{
       const db = firebase.firestore();
       const friendListCollection = new FriendListCollection();
       const peopleCollection = new PeopleCollection();
       const userDocument = new Document(peopleId);
-      const peopleDocument = new Document(peopleId);
+      const peopleDocument = new Document(friendId);
 
 
       const userFriendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
@@ -298,15 +298,15 @@ export default class FriendsAPI{
   /**
    * 
    * @param {string} peopleId - the one that cancelling
-   * @param {string} peopleId - the one that being cancelled
+   * @param {string} friendId - the one that being cancelled
    */
-  async cancelRequest(peopleId, peopleId){
+  async cancelRequest(peopleId, friendId){
     try{
       const db = firebase.firestore();
       const friendRequestCollection = new FriendRequestCollection();
       const peopleCollection = new PeopleCollection();
       const userDocument = new Document(peopleId);
-      const peopleDocument = new Document(peopleId);
+      const peopleDocument = new Document(friendId);
       const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(peopleDocument.getId());
       const peopleRef = friendRequestRef.collection(peopleCollection.getName()).doc(userDocument.getId());
       await peopleRef.delete();
@@ -320,15 +320,15 @@ export default class FriendsAPI{
   /**
    * 
    * @param {string} peopleId - the one that adding
-   * @param {string} peopleId - the one that being added
+   * @param {string} friendId - the one that being added
    * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
-  async sendRequest(peopleId, peopleId, source){
+  async sendRequest(peopleId, friendId, source){
     try{
       const db = firebase.firestore();
       const friendRequestCollection = new FriendRequestCollection();
       const peopleCollection = new PeopleCollection();
-      const friendDocument = new Document(peopleId);
+      const friendDocument = new Document(friendId);
       const userDocument = new Document(peopleId);
       const friendRequestRef = db.collection(friendRequestCollection.getName()).doc(friendDocument.getId());
       const peopleRef = friendRequestRef.collection(peopleCollection.getName()).doc(userDocument.getId());
