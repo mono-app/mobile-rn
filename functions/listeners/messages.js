@@ -41,6 +41,9 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
   })
 
   const senderSnapshot = await db.collection("users").doc(senderId).get()
+  if(!senderSnapshot.data().applicationInformation){
+    return Promise.resolve(false);
+  }
   const senderNickname = senderSnapshot.data().applicationInformation.nickName
   const blockedUserList = []
   const blockedByUserList = []
