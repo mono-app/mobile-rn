@@ -1,5 +1,9 @@
 import React from "react";
+<<<<<<< Updated upstream
 import firebase from "react-native-firebase";
+=======
+import firebase from "react-native-firebase"
+>>>>>>> Stashed changes
 import AuthenticationAPI from "src/api/authentication";
 import NotificationAPI from "src/api/notification";
 import NavigatorAPI from "src/api/navigator";
