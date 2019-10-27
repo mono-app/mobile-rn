@@ -1,25 +1,25 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
 import NavigatorAPI from "src/api/navigator";
-import PeopleAPI from "src/api/people"
-import UserMappingAPI from "src/api/usermapping"
+import AuthenticationAPI from "src/api/authentication";
+import NotificationAPI from "src/api/notification";
 import { StyleSheet } from "react-native";
-import { withCurrentUser } from "src/api/people/CurrentUser";
+
 import Logo from "assets/logo-vertical.png";
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { View, Image } from 'react-native';
-import {Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
+import { Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
 import { withTranslation } from 'react-i18next';
 
 function SignInScreen(props){
+  const { navigation, t } = props;
+
   const [ email, setEmail ] = React.useState("");
   const [ password, setPassword ] = React.useState("");
   const [ isLoading, setIsLoading ] = React.useState(false);
-  const [isError, setError] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState("");
-  const { t } = props;
+  const [ errorMessage, setErrorMessage ] = React.useState(null);
 
   const styles = StyleSheet.create({
     container: { flex:1, flexDirection: 'column', backgroundColor: '#fff', justifyContent: 'flex-start', alignItems: "stretch" },
@@ -30,72 +30,34 @@ function SignInScreen(props){
     logo: { width: 150, height: 150, alignSelf:"center" ,resizeMode: "contain", marginHorizontal: 32, marginVertical: 64 }
   });
 
+  const goto = (routeName) => {
+    const navigator = new NavigatorAPI(navigation);
+    navigator.resetTo(routeName);
+  }
+
+  const handleErrorDialogDismiss = () => setErrorMessage(null)
+  const handleError = (message) => setErrorMessage(message);
   const handleEmailChange = (email) => setEmail(email);
   const handlePasswordChange = (password) => setPassword(password);
   const handleCreateAccountPress = () => props.navigation.navigate('SignUp');
   const handleLoginpress = async () => {
-    if(email && password){
-      setIsLoading(true);
-      try{
-        const isExists = await PeopleAPI.isExists(email)
-        if(isExists){
-          const { user } = await firebase.auth().signInWithEmailAndPassword(email.toLowerCase(), password);
-          props.setCurrentUserEmail(user.email);
-        }else{
-          setErrorMessage(t('emailNotRegistered'))
-          setError(true)
-        }
+    setIsLoading(true);
+    try{
+      const user = new User();
+      user.email = email;
+      user.password = password;
 
-      }catch (err){
-        console.log(err)
-        setErrorMessage(t("wrongPassword"))
-        setError(true)
-      }finally{
-        setIsLoading(false);
-      }
-    }else{
-      setErrorMessage(t("pleaseFillEmPass"))
-      setError(true)
-    }
+      const authenticatedUser = await AuthenticationAPI.signIn(user);
+      const messagingToken = new MessagingToken();
+      messagingToken.owner = authenticatedUser;
+      messagingToken.token = await firebase.messaging().getToken();
+      await NotificationAPI.storeToken(messagingToken)
+      goto("Splash");
+    }catch(err){
+      handleError(err.message);
+    }finally{ setIsLoading(false) }
   }
   
-  const handleErrorDialogDismiss = () => {
-    setError(false)
-    setErrorMessage("")
-  }
-
-  React.useEffect(() => {
-    const storeToken = async () => {
-      await UserMappingAPI.setAccessToken(email)
-      const firebaseUser = firebase.auth().currentUser;
-      if(firebaseUser !== null) {
-        const fcmToken = await firebase.messaging().getToken();
-        if (fcmToken) {
-            await PeopleAPI.storeMessagingToken(firebaseUser.email,fcmToken)
-        }
-      }
-    }
-
-    if(props.isLoggedIn){
-      if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
-        let routeNameForReset = "MainTabNavigator";
-        if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===true){
-          if(props.currentUser.isCompleteSetup){
-            routeNameForReset = "MainTabNavigator"
-            storeToken()
-          } else {
-            routeNameForReset = "AccountSetup"
-          }
-          const navigator = new NavigatorAPI(props.navigation);
-          navigator.resetTo(routeNameForReset);  
-        }else if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified===false){
-          if(email && password){
-            props.navigation.navigate("VerifyPhone", {email, password});
-          }
-        }
-      }
-    }
-  }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
 
   return (
     <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
@@ -119,7 +81,7 @@ function SignInScreen(props){
         </View>
       </View>
       <Portal>
-        <Dialog visible={isError} onDismiss={handleErrorDialogDismiss}>
+        <Dialog visible={!!errorMessage} onDismiss={handleErrorDialogDismiss}>
           <Dialog.Title>Ops!</Dialog.Title>
           <Dialog.Content>
             <Paragraph>{errorMessage}</Paragraph>
@@ -132,4 +94,4 @@ function SignInScreen(props){
     </KeyboardAwareScrollView>
   );
 }
-export default withTranslation()(withCurrentUser(SignInScreen))
+export default withTranslation()(SignInScreen);

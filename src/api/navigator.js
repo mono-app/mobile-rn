@@ -1,6 +1,8 @@
 import { NavigationActions, StackActions } from "react-navigation";
 
 export default class Navigator{
+  
+
   /**
    * 
    * @param {ReactNavigation} navigation 
