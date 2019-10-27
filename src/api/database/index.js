@@ -2,6 +2,11 @@ import firebase from "react-native-firebase";
 import OfflineDatabase from "src/api/database/offline";
 
 export default class Database{
+
+  constructor(){
+    this.database = firebase.firestore();
+  }
+
   static chooseDatabase(online){
     if(online) return firebase.firestore();
     else return OfflineDatabase.database;

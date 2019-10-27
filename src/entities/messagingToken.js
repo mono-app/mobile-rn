@@ -19,8 +19,8 @@ export default class MessagingToken{
 
   get owner(){ return this._owner };
   set owner(value){
-    if(typeof("value") !== "object") throw new CustomError("messaging-token/programmer", "Please tell your programmer to fix");
-    if(typeof("value") === "object" && !(value instanceof User)) throw new CustomError("messaging-token/programmer", "Please tell your programmer to fix");
+    if(typeof(value) !== "object") throw new CustomError("messaging-token/programmer", "Ops! something went wrong");
+    if(typeof(value) === "object" && !(value instanceof User)) throw new CustomError("messaging-token/programmer", "Ops! something went wrong");
     this._owner = value;
   }
 }

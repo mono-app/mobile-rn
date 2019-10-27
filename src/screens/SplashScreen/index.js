@@ -1,17 +1,20 @@
 import React from "react";
-<<<<<<< Updated upstream
 import firebase from "react-native-firebase";
-=======
-import firebase from "react-native-firebase"
->>>>>>> Stashed changes
 import AuthenticationAPI from "src/api/authentication";
 import NotificationAPI from "src/api/notification";
 import NavigatorAPI from "src/api/navigator";
-import { View, ActivityIndicator } from "react-native";
+import PeopleAPI from "src/api/people";
+import MessagingToken from "src/entities/messagingToken";
 import { withCurrentUser } from "src/api/people/CurrentUser"
+
+import CustomSnackbar from "src/components/CustomSnackbar";
+import { View, ActivityIndicator } from "react-native";
 
 function SplashScreen(props){
   const { navigation } = props;
+  const [ errorMessage, setErrorMessage ] = React.useState(null);
+
+  const handleDismiss = () => setErrorMessage(null);
 
   const goto = (routeName) => {
     const navigator = new NavigatorAPI(navigation);
@@ -22,12 +25,19 @@ function SplashScreen(props){
     try{
       // await firebase.auth().signOut();
       await AuthenticationAPI.initializeSession();
-      props.setCurrentUserId(firebase.auth().currentUser.uid)
+      props.setCurrentUserId(firebase.auth().currentUser.uid);
+
+      // save messaging token
+      const tokenOwner = await PeopleAPI.getCurrentUser();
+      const token = await NotificationAPI.generateToken();
+      const messagingToken = new MessagingToken(token, tokenOwner);
+      await NotificationAPI.storeToken(messagingToken);
+
       goto("MainTabNavigator");
     }catch(err){
       if(err.code === "auth/need-setup") goto("AccountSetup");
       else if(err.code === "auth/not-found") goto("SignIn");
-      else throw err;
+      else setErrorMessage(err.message);
     }
   }
 
@@ -37,9 +47,13 @@ function SplashScreen(props){
   }, [])
 
   return(
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ActivityIndicator size="large" animating={true} color="#0EAD69"/>
-    </View>
+    <React.Fragment>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" animating={true} color="#0EAD69"/>
+      </View>
+
+      <CustomSnackbar isError={true} message={errorMessage} onDismiss={handleDismiss}/>
+    </React.Fragment>
   )
 }
 

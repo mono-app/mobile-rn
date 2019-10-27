@@ -1,5 +1,6 @@
 import firebase from "react-native-firebase";
 import MessagingToken from "src/entities/messagingToken";
+import Database from "src/api/database";
 import { UserCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
@@ -28,6 +29,12 @@ class NotificationAPI{
       Notification.createChannel("friendrequest-notification", "Friend Request Notification");
       Notification.createChannel("moment-notification", "Moment Notification");
     }catch(err){}
+  }
+
+  static async generateToken(){
+    const token = await firebase.messaging().getToken();
+    if(!token) throw new CustomError("notification/not-signed-in", "User is not signed, please sign in first to get the token");
+    return Promise.resolve(token);
   }
 
   /**

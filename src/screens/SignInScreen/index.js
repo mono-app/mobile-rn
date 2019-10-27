@@ -1,17 +1,16 @@
 import React from 'react';
-import firebase from 'react-native-firebase';
 import NavigatorAPI from "src/api/navigator";
 import AuthenticationAPI from "src/api/authentication";
-import NotificationAPI from "src/api/notification";
-import MessagingToken from "src/entities/messagingToken";
+import User from "src/entities/user";
 import { StyleSheet } from "react-native";
 
 import Logo from "assets/logo-vertical.png";
 import Button from "src/components/Button";
 import TextInput from "src/components/TextInput";
+import CustomSnackbar from "src/components/CustomSnackbar";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { View, Image } from 'react-native';
-import { Dialog, Paragraph, Portal, Button as MaterialButton } from "react-native-paper";
+import { Paragraph } from "react-native-paper";
 import { withTranslation } from 'react-i18next';
 import { withCurrentUser } from "src/api/people/CurrentUser"
 
@@ -50,11 +49,7 @@ function SignInScreen(props){
       user.password = password;
 
       const authenticatedUser = await AuthenticationAPI.signIn(user);
-      props.setCurrentUserId(authenticatedUser.id)
-      const messagingToken = new MessagingToken();
-      messagingToken.owner = authenticatedUser;
-      messagingToken.token = await firebase.messaging().getToken();
-      await NotificationAPI.storeToken(messagingToken)
+      props.setCurrentUserId(authenticatedUser.id);
       goto("Splash");
     }catch(err){
       handleError(err.message);
@@ -63,38 +58,30 @@ function SignInScreen(props){
   
 
   return (
-    <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
-      <Image style={styles.logo} source={Logo}/>
-      <View style={styles.contentWrapper}>
-        <Paragraph style={styles.title}>
-          {t("loginLabel")}
-        </Paragraph>
-        <View style={styles.formWrapper}>
-          <TextInput
-            placeholder="Email" textContentType="emailAddress" autoCapitalize="none"
-            value={email} onChangeText={handleEmailChange} style={{ paddingVertical: 16, marginBottom: 8 }}/>
-          <TextInput
-            placeholder="Password" textContentType="password"
-            secureTextEntry={true} value={password} style={{ paddingVertical: 16 }}
-            onChangeText={handlePasswordChange}/>
-          <Button onPress={handleLoginpress} isLoading={isLoading} disabled={isLoading} text={t('login')} style={{ marginBottom: 4 }}/>
-          <Button onPress={handleCreateAccountPress} text={t("createAccount")} outlined/>
-          <Paragraph style={{ fontWeight: '500', textAlign: 'center' }}>
+    <React.Fragment>
+      <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
+        <Image style={styles.logo} source={Logo}/>
+        <View style={styles.contentWrapper}>
+          <Paragraph style={styles.title}>
+            {t("loginLabel")}
           </Paragraph>
+          <View style={styles.formWrapper}>
+            <TextInput
+              placeholder="Email" textContentType="emailAddress" autoCapitalize="none"
+              value={email} onChangeText={handleEmailChange} style={{ paddingVertical: 16, marginBottom: 8 }}/>
+            <TextInput
+              placeholder="Password" textContentType="password"
+              secureTextEntry={true} value={password} style={{ paddingVertical: 16 }}
+              onChangeText={handlePasswordChange}/>
+            <Button onPress={handleLoginpress} isLoading={isLoading} disabled={isLoading} text={t('login')} style={{ marginBottom: 4 }}/>
+            <Button onPress={handleCreateAccountPress} text={t("createAccount")} outlined/>
+            <Paragraph style={{ fontWeight: '500', textAlign: 'center' }}>
+            </Paragraph>
+          </View>
         </View>
-      </View>
-      <Portal>
-        <Dialog visible={!!errorMessage} onDismiss={handleErrorDialogDismiss}>
-          <Dialog.Title>Ops!</Dialog.Title>
-          <Dialog.Content>
-            <Paragraph>{errorMessage}</Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <MaterialButton onPress={handleErrorDialogDismiss}>{t("understand")}</MaterialButton>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+      <CustomSnackbar isError={true} message={errorMessage} onDismiss={handleErrorDialogDismiss}/>
+    </React.Fragment>
   );
 }
 export default withTranslation()(withCurrentUser(SignInScreen));
