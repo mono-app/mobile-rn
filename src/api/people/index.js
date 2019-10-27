@@ -42,7 +42,8 @@ export default class PeopleAPI{
         isCompleteSetup: user.isCompleteSetup,
         phoneNumber: {
           value: user.phoneNumber.number, isVerified: user.phoneNumber.isVerified
-        }
+        },
+        creationTime: firebase.firestore.FieldValue.serverTimestamp()
       })
     });
     return user;
