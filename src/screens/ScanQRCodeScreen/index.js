@@ -20,7 +20,7 @@ class ScanQRCodeSCreen extends React.PureComponent{
     const peopleId = e.data;
     try{
       if(peopleId!==this.props.currentUser.id){
-        await new FriendsAPI().setFriends(this.props.currentUser.id, peopleId, { id: "QRCode", value: "QR Code" });
+        await FriendsAPI.acceptRequest(this.props.currentUser.id, peopleId, { id: "QRCode", value: "QR Code" });
         this.props.navigation.dispatch(StackActions.replace({ routeName: "PeopleInformation", params: {
           peopleId, source: { id: "QRCode", value: "QR Code" }
         }}))

@@ -143,6 +143,51 @@ export default class FriendsAPI{
     })
   }
 
+  // static getFriendsWithRealTimeUpdate(peopleId, callback){
+    //   const db = firebase.firestore();
+    //   const userCollection = new UserCollection();
+    //   const friendListCollection = new FriendListCollection();
+    //   const peopleCollection = new PeopleCollection();
+    //   const userDocument = new Document(peopleId);
+  
+    //   const friendListRef = db.collection(friendListCollection.getName()).where("friends","array-contains", userDocument.getId()).onSnapshot((querySnapshot)=> {
+    //     if(!querySnapshot.empty) {
+    //       const friendList = querySnapshot.docChanges()
+    //       const filteredFriendList = friendList.filter(documentSnapshot => {
+    //         const data = documentSnapshot.data()
+    //         return (!data.status || (data.status && data.status !== "blocked" && data.status !== "blocked-by" &&  data.status !== "hide"))
+    //       })
+    //        const promises = filteredFriendList.map((documentSnapshot) => {
+    //         const userDocument = new Document(documentSnapshot.id);
+    //         const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+    //         return userRef.get();
+    //       })
+    //       const friends = await Promise.all(promises);
+  
+    //       //filter if friend is exist in users
+    //       const filteredFriends = friends.filter(documentSnapshot=>{
+    //         return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
+    //       })
+  
+    //       const normalizedFriends = filteredFriends.map((documentSnapshot) => {
+    //         return FriendsAPI.normalizeFriend(documentSnapshot);
+    //       });
+  
+    //       Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (filteredFriendList, normalizedFriends));
+    //       callback(normalizedFriends)
+    //     }else callback([]);
+    //   })
+  
+  
+  
+    //   const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+    //   const peopleRef = friendListRef.collection(peopleCollection.getName());
+    //   return peopleRef.onSnapshot(async (querySnapshot) => {
+      
+        
+    //   })
+    // }
+
   static async getBlockedUsers(peopleId){
     const db = firebase.firestore();
     const friendListCollection = new FriendListCollection();
@@ -250,43 +295,12 @@ export default class FriendsAPI{
         peopleFriendListRef.set({ friends: firebase.firestore.FieldValue.arrayUnion(userDocument.getId()) }, { merge: true }),
         userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
         peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
-        FriendsAPI.cancelRequest(friendId, peopleId)
       ];
+      if(source.id!=="QRCode"){
+        promises.push(FriendsAPI.cancelRequest(friendId, peopleId))
+      }
       await Promise.all(promises);
     })
-  }
-
-  async setFriends(peopleId, friendId, source){
-    // used for add new friend from barcode scan (auto become friend without friendRequest)
-    try{
-      const db = firebase.firestore();
-      const friendListCollection = new FriendListCollection();
-      const peopleCollection = new PeopleCollection();
-      const userDocument = new Document(peopleId);
-      const peopleDocument = new Document(friendId);
-
-
-      const userFriendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
-      const peopleFriendListRef = db.collection(friendListCollection.getName()).doc(peopleDocument.getId());
-      const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
-      const peoplePeopleRef = peopleFriendListRef.collection(peopleCollection.getName()).doc(userDocument.getId());
-
-      const userPeopleSnapshot = await userPeopleRef.get()
-      const peoplePeopleSnapshot = await peoplePeopleRef.get()
-      // check if already friends or not
-      if(!userPeopleSnapshot.exists || !peoplePeopleSnapshot.exists){
-        const promises = [ 
-          userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
-          peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
-        ];
-        await Promise.all(promises);
-      }
-
-      return Promise.resolve(true);
-    }catch(err){
-      console.log(err);
-      return Promise.resolve(false);
-    }
   }
 
   /**

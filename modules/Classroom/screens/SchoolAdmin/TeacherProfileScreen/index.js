@@ -156,7 +156,6 @@ class TeacherProfileScreen extends React.PureComponent {
     this.handleNamePress = this.handleNamePress.bind(this);
     this.handleAddressPress = this.handleAddressPress.bind(this);
     this.handlePhonePress = this.handlePhonePress.bind(this);
-    this.handleEmailPress = this.handleEmailPress.bind(this);
     this.handleNIKPress = this.handleNIKPress.bind(this);
     this.handleGenderPress = this.handleGenderPress.bind(this);
   }

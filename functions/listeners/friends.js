@@ -9,16 +9,7 @@ Friends.triggerNewFriendRequest = functions.region("asia-east2").firestore.docum
 
   // this trigger for auto increment totalFriends in friends collection
   const db = admin.firestore();
-  const userFriendListRef = db.collection("friendList").doc(receiverId)
-  const userFriendListSnapshot = await userFriendListRef.get();
-
-  if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
-    await userFriendListRef.update({ totalFriends: admin.firestore.FieldValue.increment(1) })
-  }else{
-    await userFriendListRef.set({ totalFriends: 1 })
-  }
-
-
+ 
   // get requestor details to be sent by the bot
   const requestorRef = await db.collection("users").doc(requestorId).get();
   const requestor = requestorRef.data();
@@ -41,7 +32,7 @@ Friends.addFriendTrigger = functions.region("asia-east2").firestore.document("/f
   const { friendListId, peopleId } = context.params;
   
   const db = admin.firestore();
-  
+
   // add showsTo in moments collection
   const momentQuerySnapshot = await db.collection("moments").where("posterId","==",friendListId).get()
   momentQuerySnapshot.docs.map( async documentSnapshot => {
@@ -57,17 +48,11 @@ Friends.deleteFriendTrigger = functions.region("asia-east2").firestore.document(
   
   const db = admin.firestore();
   const userFriendListRef = db.collection("friendList").doc(friendListId)
-   
-  const userFriendListSnapshot = await userFriendListRef.get();
+  await userFriendListRef.update({friends: admin.firestore.FieldValue.arrayRemove(peopleId)})
 
-  if(userFriendListSnapshot.data() && userFriendListSnapshot.data().totalFriends){
-    await userFriendListRef.update({ totalFriends: admin.firestore.FieldValue.increment(-1) })
-  }
-  
   // remove showsTo in moments collection
   const momentQuerySnapshot = await db.collection("moments").where("posterId","==",friendListId).get()
   momentQuerySnapshot.docs.map( async documentSnapshot => {
-    
     await documentSnapshot.ref.update({showsTo: admin.firestore.FieldValue.arrayRemove(peopleId)})
   })
 
@@ -112,13 +97,11 @@ Friends.triggerBlockFriends = functions.region("asia-east2").firestore.document(
   const userFriendListRef = db.collection("friendList").doc(blockId)
   const blockedByRef = userFriendListRef.collection("blockedBy").doc(friendListId) 
   const blockedBySnapshot = await blockedByRef.get()
-
   // set blockedBy
   if(!blockedBySnapshot.exists){
     await blockedByRef.set({creationTime: admin.firestore.FieldValue.serverTimestamp()})
   }
 
-  // set blocked to opponent friendList
   const blockedUserFriendListRef = db.collection("friendList").doc(blockId)
   const peopleRef = blockedUserFriendListRef.collection("people").doc(friendListId)
   peopleRef.update({status:"blocked-by"})
@@ -133,7 +116,6 @@ Friends.triggerBlockFriends = functions.region("asia-east2").firestore.document(
     roomDocRef.update({blocked: true})
   }
 
-
   return Promise.resolve(true);
 })
 
@@ -143,14 +125,12 @@ Friends.triggerUnblockFriends = functions.region("asia-east2").firestore.documen
   const db = admin.firestore();
   const userFriendListRef = db.collection("friendList").doc(blockId)
   const blockedByRef = userFriendListRef.collection("blockedBy").doc(friendListId) 
-
   const blockedBySnapshot = await blockedByRef.get()
-
   if(blockedBySnapshot.exists){
     await blockedByRef.delete()
   }
 
-  // set blocked to opponent friendList
+  // set status to opponent friendList
   const blockedUserFriendListRef = db.collection("friendList").doc(blockId)
   const peopleRef = blockedUserFriendListRef.collection("people").doc(friendListId)
   peopleRef.update({status:"friend"})

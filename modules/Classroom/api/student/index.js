@@ -15,30 +15,26 @@ export default class StudentAPI{
    * @param {String} studentEmail 
    * @param {Object} data 
    */
-  static async addStudent(schoolId, studentEmail, studentName){
+  static async addStudent(school, student){
     try{
-      const school = {}
-      school.id = schoolId
-      new Email(studentEmail)
-      const student = await PeopleAPI.getDetailByEmail(studentEmail, true)
-      if((await StudentAPI.isExistById(school, student))) throw new CustomError("student/email-already-in-user","Email already in used")
+      student.id = (await PeopleAPI.getDetailByEmail(student.email, true)).id
+      if((await StudentAPI.isExistById(school, student.id))) throw new CustomError("student/email-already-in-user","Email already in used")
 
       await Database.insert(async (db)=> {
         const schoolsCollection = new SchoolsCollection();
         const studentsCollection = new StudentsCollection();
-        const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+        const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(school.id);
         const studentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(student.id);
-        studentRef.set({name: studentName, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+        studentRef.set({name: student.name, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
       })
-
     }catch(err){ 
       if(err.code==="user/not-found") {
         await Database.insert(async (db)=> {
           const schoolsCollection = new SchoolsCollection();
           const tempStudentsCollection = new TempStudentsCollection();
-          const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-          const tempStudentRef = schoolsDocumentRef.collection(tempStudentsCollection.getName()).doc(studentEmail);
-          tempStudentRef.set({name: studentName, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+          const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(school.id);
+          const tempStudentRef = schoolsDocumentRef.collection(tempStudentsCollection.getName()).doc(student.email);
+          tempStudentRef.set({name: student.email, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
         })
       }else throw err
     }
@@ -213,12 +209,12 @@ export default class StudentAPI{
     return Promise.resolve(studentsSnapshot.exists);
   }
 
-  static async isExistById(school, student){
+  static async isExistById(school, studentId){
     const result = await Database.get(async (db) => {
       const schoolCollection = new SchoolsCollection()
       const studentsCollection = new StudentsCollection()
       const schoolRef = db.collection(schoolCollection.getName()).doc(school.id)
-      const studentRef = schoolRef.collection(studentsCollection.getName()).doc(student.id)
+      const studentRef = schoolRef.collection(studentsCollection.getName()).doc(studentId)
       const studentSnapshot = await studentRef.get()
       return studentSnapshot.exists
     } ,true)

@@ -8,6 +8,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import TeacherAPI from "modules/Classroom/api/teacher";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
+import School from "src/entities/school";
+import Teacher from "src/entities/teacher";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -33,10 +35,11 @@ class AddTeacherScreen extends React.PureComponent {
     if(this.state.teacherEmail.trim().length>0 && this.state.teacherName.trim().length>0){
       this.setState({ isLoading: true });
       try{
-        await TeacherAPI.addTeacher(this.props.currentSchool.id, this.state.teacherEmail, this.state.teacherName)
+        const school = new School(this.props.currentSchool.id)
+        const teacher = new Teacher(this.state.teacherEmail, this.state.teacherName)
+        await TeacherAPI.addTeacher(school, teacher)
         this.setState({ isLoading: false, teacherEmail: "", teacherName:"", isError: false, snackbarMessage: this.props.t("addTeacherSuccess")});
       }catch(err){
-        console.log(err.stack)
         this.setState({ isLoading: false, isError: true, snackbarMessage: err.message });
       }
     }

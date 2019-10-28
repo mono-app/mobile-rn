@@ -85,12 +85,13 @@ function ChatBottomTextInput(props){
     Logger.log("ChatBottomTextInput#sessionId", sessionId);
     Logger.log("ChatBottomTextInput#token", token);
 
-    if(sessionId === null) handleRoomUpdate()
-    if(token === null) initLiveVoice();
+    // if(sessionId === null) handleRoomUpdate()
+    // if(token === null) initLiveVoice();
     return function cleanup(){
 
     }
-  }, [sessionId, token]);
+  }, []);
+//}, [sessionId, token]);
 
 
   const sessionEventHandler = {
@@ -101,7 +102,7 @@ function ChatBottomTextInput(props){
 
   return (
     <SafeAreaView style={styles.container}>
-      {(sessionId !== null && token !== null)?(
+      {/* {(sessionId !== null && token !== null)?(
         <OTSession apiKey={TB_API_KEY} sessionId={sessionId} token={token} eventHandlers={sessionEventHandler} style={{ display: "flex", flexDirection: "row" }}>
           <MicButton style={{ marginRight: 8 }} isLoading={!isConnected}/> 
           <SpeakerButton style={{ marginRight: 8 }} isLoading={!isConnected}/>
@@ -111,7 +112,7 @@ function ChatBottomTextInput(props){
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
         </React.Fragment>
-      )}
+      )} */}
       <TextInput ref={txtInput} style={styles.textInput} autoFocus multiline value={message} maxLength={4000} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable || !canSend} onPress={handleSendPress}/>
     </SafeAreaView>

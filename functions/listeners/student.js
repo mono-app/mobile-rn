@@ -8,7 +8,7 @@ Student.addStudentTrigger = functions.region("asia-east2").firestore.document("/
   const db = admin.firestore();
   const userMappingRef = db.collection("userMapping").doc(studentId);
   const userMappingSchoolRef = userMappingRef.collection("schools").doc(schoolId);
-  userMappingSchoolRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role: "student" });
+  userMappingSchoolRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), role: "student" });
 })
 
 Student.newTempStudentTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/tempStudents/{studentEmail}").onCreate(async (documentSnapshot, context) => {
