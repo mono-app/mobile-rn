@@ -24,10 +24,11 @@ export default class Database{
     const database = Database.chooseDatabase(false);
     await database.action(async () => {
       const collection = database.collections.get(Model.table);
-      const batchOperation = changes.updated.map((entity) => {
-        return collection.prepareCreate((model) => entity.injectModel(model));
+      changes.updated.forEach((entity) => {
+        // we have to check user is created or not
+        database.batch(collection.prepareCreate((model) => entity.injectModel(model)));
+
       })
-      database.batch(batchOperation);
     })
   }
 }

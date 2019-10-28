@@ -3,6 +3,7 @@ import { tableSchema } from "@nozbe/watermelondb";
 export default tableSchema({
   name: "users", 
   columns: [
+    { name: "firebase_id", type: "string" },
     { name: "email", type: "string" },
     { name: "is_complete_setup", type: "boolean" },
     { name: "is_login", type: "boolean" },

@@ -53,7 +53,7 @@ export default class User{
    * @param {Model} model 
    */
   injectModel(model){
-    model._raw.id = this.id;
+    model.firebaseId = this.id;
     model.email = this.email;
     model.isCompleteSetup = this.isCompleteSetup;
   }

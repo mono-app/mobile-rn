@@ -7,6 +7,7 @@ export default class User extends Model{
     statuses: { type: "has_many", foreignKey: "user_id" }
   }
 
+  @field("firebase_id") firebaseId
   @field("email") email
   @field("is_complete_setup") isCompleteSetup
   @immutableRelation("application_informations", "application_information_id") applicationInformation

@@ -10,8 +10,15 @@ function FriendListListener(){
 
   const handleChanges = async (changes) => {
     try{
-      console.log(changes);
       await Database.synchronize(UserModel, changes);
+      // coba dilihat datanya, pasti happy
+      Database.get(async(db)=>{
+        const userCollection = db.collections.get('users')
+        const users = await userCollection.query().fetch()
+        console.log("loadloadloadload")
+        console.log(users)
+      })
+
     }catch(err){ console.log(err.stack) }
   }
 
