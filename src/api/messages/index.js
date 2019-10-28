@@ -44,19 +44,20 @@ export default class MessagesAPI{
     const messagesRef = MessagesAPI.getMessageReference(roomId);
     const filteredMessagesRef = messagesRef.orderBy("sentTime", "desc").limit(limit);
     return filteredMessagesRef.onSnapshot((querySnapshot) => {
-      let lastDocumentSnapshot = null;
+      // let lastDocumentSnapshot = null;
+      callback(MessagesAPI.normalizeMessages(querySnapshot));
 
-      const addedMessages = [];
-      const modifiedMessages = [];
-      querySnapshot.docChanges.forEach((changes) => {
-        if(changes.type === "added") {
-          lastDocumentSnapshot = changes.doc;
-          addedMessages.push(MessagesAPI.normalizeMessage(changes.doc))
-        }else if(changes.type === "modified"){
-          modifiedMessages.push(MessagesAPI.normalizeMessage(changes.doc))
-        }else return null;
-      });
-      callback({ addedMessages, modifiedMessages }, lastDocumentSnapshot);
+      // const addedMessages = [];
+      // const modifiedMessages = [];
+      // querySnapshot.docChanges.forEach((changes) => {
+      //   if(changes.type === "added") {
+      //     lastDocumentSnapshot = changes.doc;
+      //     addedMessages.push(MessagesAPI.normalizeMessage(changes.doc))
+      //   }else if(changes.type === "modified"){
+      //     modifiedMessages.push(MessagesAPI.normalizeMessage(changes.doc))
+      //   }else return null;
+      // });
+      // callback({ addedMessages, modifiedMessages }, lastDocumentSnapshot);
     })
   }
 
