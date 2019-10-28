@@ -1,6 +1,7 @@
 import firebase from "react-native-firebase";
 import Logger from "src/api/logger";
 import PeopleAPI from "src/api/people";
+import Database from "src/api/database";
 import { FriendRequestCollection, FriendListCollection, PeopleCollection, UserCollection, BlockedCollection, HideCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
@@ -223,7 +224,7 @@ export default class FriendsAPI{
    * @param {string} friendId - the one that being rejected
    */
   async rejectRequest(peopleId, friendId){
-    const result = await this.cancelRequest(friendId, peopleId)
+    const result = await FriendsAPI.cancelRequest(friendId, peopleId)
     return Promise.resolve(result);
   }
 
@@ -233,10 +234,8 @@ export default class FriendsAPI{
    * @param {string} friendId - the one that being accepted
    * @param {Object} source - where do you get the contact? { id: <string>, value: <string> }
    */
-  async acceptRequest(peopleId, friendId, source){
-   
-    try{
-      const db = firebase.firestore();
+  static async acceptRequest(peopleId, friendId, source){
+    await Database.insert(async (db) => {
       const friendListCollection = new FriendListCollection();
       const peopleCollection = new PeopleCollection();
       const userDocument = new Document(peopleId);
@@ -245,21 +244,16 @@ export default class FriendsAPI{
       const peopleFriendListRef = db.collection(friendListCollection.getName()).doc(peopleDocument.getId());
       const userPeopleRef = userFriendListRef.collection(peopleCollection.getName()).doc(peopleDocument.getId());
       const peoplePeopleRef = peopleFriendListRef.collection(peopleCollection.getName()).doc(userDocument.getId());
-      
-      
+
       const promises = [ 
+        userFriendListRef.set({ friends: firebase.firestore.FieldValue.arrayUnion(peopleDocument.getId()) }, { merge: true }),
+        peopleFriendListRef.set({ friends: firebase.firestore.FieldValue.arrayUnion(userDocument.getId()) }, { merge: true }),
         userPeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
-        peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source })
+        peoplePeopleRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), source }),
+        FriendsAPI.cancelRequest(friendId, peopleId)
       ];
-
-      promises.push(this.cancelRequest(friendId, peopleId))
-
       await Promise.all(promises);
-      return Promise.resolve(true);
-    }catch(err){
-      console.log(err);
-      return Promise.resolve(false);
-    }
+    })
   }
 
   async setFriends(peopleId, friendId, source){
@@ -300,7 +294,7 @@ export default class FriendsAPI{
    * @param {string} peopleId - the one that cancelling
    * @param {string} friendId - the one that being cancelled
    */
-  async cancelRequest(peopleId, friendId){
+  static async cancelRequest(peopleId, friendId){
     try{
       const db = firebase.firestore();
       const friendRequestCollection = new FriendRequestCollection();

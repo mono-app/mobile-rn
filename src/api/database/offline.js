@@ -10,6 +10,7 @@ import ApplicationInformationsSchema from "src/schemas/applicationInformations";
 import ProfilePicturesSchema from "src/schemas/profilePictures";
 import PhoneNumbersSchema from "src/schemas/phoneNumbers";
 import StatusesSchema from "src/schemas/statuses";
+import FriendsSchema from "src/schemas/friends";
 
 import User from "src/models/user";
 import PersonalInformation from "src/models/personalInformation";
@@ -17,6 +18,7 @@ import ApplicationInformation from "src/models/applicationInformation";
 import ProfilePicture from "src/models/profilePicture";
 import PhoneNumber from "src/models/phoneNumber";
 import Status from "src/models/status";
+import Friend from "src/models/friend";
 
 class OfflineDatabase{
   // _database:  Database
@@ -27,10 +29,10 @@ class OfflineDatabase{
 
   static initialize(){
     const schema = appSchema({
-      version: 1,
+      version: 2,
       tables: [
         UsersSchema, PersonalInformationsSchema, ApplicationInformationsSchema,
-        ProfilePicturesSchema, PhoneNumbersSchema, StatusesSchema
+        ProfilePicturesSchema, PhoneNumbersSchema, StatusesSchema, FriendsSchema
       ]
     });
   
@@ -39,7 +41,7 @@ class OfflineDatabase{
       adapter, actionsEnabled: true,
       modelClasses: [ 
         User, PersonalInformation, ApplicationInformation, ProfilePicture, PhoneNumber,
-        Status
+        Status, Friend
       ]
     })
     OfflineDatabase._database = database;

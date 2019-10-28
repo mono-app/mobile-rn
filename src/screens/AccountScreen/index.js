@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
+
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
@@ -83,7 +84,7 @@ function AccountScreen(props){
           <View style={styles.menu}>
             <Text style={{ fontWeight: "500" }}>Mono ID</Text>
             <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-              <Text>{applicationInformation.id}</Text>
+              <Text>{applicationInformation.monoId}</Text>
             </View>
           </View>
           <View style={styles.menu}>

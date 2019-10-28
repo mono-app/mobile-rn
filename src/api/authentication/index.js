@@ -6,12 +6,9 @@ import UserMappingAPI from "src/api/usermapping";
 
 class AuthenticationAPI{
   static async initializeSession(){
-    const currentUser = firebase.auth().currentUser;
-    if(currentUser){
-      const user = await PeopleAPI.getDetailById(currentUser.uid, true);
-      if(user.isCompleteSetup) return user;
-      else throw new CustomError("auth/need-setup", "You need to setup your account first");
-    }else throw new CustomError("auth/not-found", "Session cannot be found. Initialize failed");
+    const user = await PeopleAPI.getCurrentUser();
+    if(user.isCompleteSetup) return user;
+    else throw new CustomError("auth/need-setup", "You need to setup your account first");
   }
 
   /**

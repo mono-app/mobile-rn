@@ -20,7 +20,7 @@ class ActionButton extends React.PureComponent{
 
   handleCancelRequestPress = async () => {
     if(this._isMounted) this.setState({ isLoading: true });
-    await new FriendsAPI().cancelRequest(this.props.currentUser.id, this.props.peopleId);
+    await FriendsAPI.cancelRequest(this.props.currentUser.id, this.props.peopleId);
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }
@@ -34,7 +34,7 @@ class ActionButton extends React.PureComponent{
 
   handleAcceptRequestPress = async () => {
     if(this._isMounted) this.setState({ isLoading: true });
-    await new FriendsAPI().acceptRequest(this.props.currentUser.id, this.props.peopleId, this.props.source);
+    await FriendsAPI.acceptRequest(this.props.currentUser.id, this.props.peopleId, this.props.source);
     if(this.props.onComplete) await this.props.onComplete();
     if(this._isMounted) this.setState({ isLoading: false });
   }

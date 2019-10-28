@@ -1,5 +1,5 @@
 import { Model, Q } from "@nozbe/watermelondb";
-import { readonly, field, date, immutableRelation, children, action } from "@nozbe/watermelondb/decorators";
+import { readonly, field, date, immutableRelation, children, action, lazy } from "@nozbe/watermelondb/decorators";
 
 export default class User extends Model{
   static table = "users";
@@ -18,25 +18,7 @@ export default class User extends Model{
   @readonly @date("created_at") createdAt
   @readonly  @date("updated_at") updatedAt
 
-  @action async createUser(newUser){   
-    await this.batch(
-      this.prepareUpdate((user) => {
-        user.id = newUser.id;
-        user.email = newUser.email;
-        user.isCompleteSetup = false;
-      }),
-      this.collections.get("phone_numbers").create((phoneNumber) => {
-        phoneNumber.number = newUser.phoneNumber.number;
-        phoneNumber.isVerified = newUser.phoneNumber.isVerified
-        phoneNumber.user.set(this);
-        this.phoneNumber.set(phoneNumber);
-      })
-    )
-  }
-
-  @action async updatePhone(phoneNumber){
-    
-  }
+  @lazy friends = this.collection.get("users").query(Q.on("friends", "following_user_id", this.id));
 
   @action async getLatestStatus(){
     const statuses = await this.statuses.fetch();

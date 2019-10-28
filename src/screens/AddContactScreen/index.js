@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
+
 import AppHeader from "src/components/AppHeader";
 import MonoIDSearch from "src/screens/AddContactScreen/MonoIDSearch";
 import { Text } from "react-native-paper";
@@ -27,7 +28,7 @@ function AddContactScreen(props){
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <MonoIDSearch currentUser={currentUser}/>
       <View style={{ marginBottom: 16, flex: 1, alignItems: "center" }}>
-        <Text style={{ color: "#5E8864" }}>Mono ID: {currentUser.applicationInformation.id}</Text>
+        <Text style={{ color: "#5E8864" }}>Mono ID: {currentUser.applicationInformation.monoId}</Text>
       </View>
       <View>
         <TouchableOpacity style={styles.menuContainer} onPress={handleScanQRCodePress}>
