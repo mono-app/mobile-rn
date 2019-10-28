@@ -8,6 +8,7 @@ import Container from "src/components/Container";
 import Button from "src/components/Button";
 import CustomSnackbar from "src/components/CustomSnackbar";
 import PersonalInformationCard from "src/screens/AccountSetupScreen/PersonalInformationCard";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { View } from "react-native";
 
 function PersonalInformationSetupScreen(props){
@@ -39,13 +40,15 @@ function PersonalInformationSetupScreen(props){
   }
 
   return (
-    <Container style={{ }}>
-      <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
-      <View style={styles.content}>
-        <PersonalInformationCard t={props.t} ref={personalInformationCard} defaultGivenName={defaultGivenName} defaultFamilyName={defaultFamilyName} defaultGender={defaultGender}/>
-        <Button style={{ marginTop: 8 }} text={props.t("save")} onPress={handleSavePress}/>
-      </View>
-      <CustomSnackbar isError={true} message={snackbarMessage} onDismiss={handleDismiss} />
+    <Container>
+      <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ flex:1 }}>
+        <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
+        <View style={styles.content}>
+          <PersonalInformationCard t={props.t} ref={personalInformationCard} defaultGivenName={defaultGivenName} defaultFamilyName={defaultFamilyName} defaultGender={defaultGender}/>
+          <Button style={{ marginTop: 8 }} text={props.t("save")} onPress={handleSavePress}/>
+        </View>
+        <CustomSnackbar isError={true} message={snackbarMessage} onDismiss={handleDismiss} />
+      </KeyboardAwareScrollView>
     </Container>
   );
 }

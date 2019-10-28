@@ -225,7 +225,7 @@ class AddDiscussionScreen extends React.PureComponent {
             title={this.props.t("createNewDiscussion")}
             style={{ backgroundColor: "white" }}
           />
-        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{ flex:1 }}>
           <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>
                   {this.subject}

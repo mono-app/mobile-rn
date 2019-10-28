@@ -57,7 +57,7 @@ class SignUpScreen extends React.PureComponent{
             <View style={{marginBottom: 128}}>
               <TextInput
                 placeholder="Email" textContentType="emailAddress" style={{ marginBottom: 8, paddingVertical: 16 }}
-                value={this.state.email} onChangeText={this.handleEmailChange} autoCapitalize="none"/>
+                keyboardType="email-address" value={this.state.email} onChangeText={this.handleEmailChange} autoCapitalize="none"/>
               <TextInput
                 placeholder="Password" textContentType="password" style={{ marginBottom: 8, paddingVertical: 16 }}
                 secureTextEntry={true} value={this.state.password} onChangeText={this.handlePasswordChange}/>

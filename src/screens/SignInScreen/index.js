@@ -67,7 +67,7 @@ function SignInScreen(props){
           </Paragraph>
           <View style={styles.formWrapper}>
             <TextInput
-              placeholder="Email" textContentType="emailAddress" autoCapitalize="none"
+              placeholder="Email" textContentType="emailAddress" autoCapitalize="none" keyboardType="email-address"
               value={email} onChangeText={handleEmailChange} style={{ paddingVertical: 16, marginBottom: 8 }}/>
             <TextInput
               placeholder="Password" textContentType="password"
