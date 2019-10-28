@@ -48,6 +48,16 @@ export default class User{
     return this;
   }
 
+  /**
+   * 
+   * @param {Model} model 
+   */
+  injectModel(model){
+    model._raw.id = this.id;
+    model.email = this.email;
+    model.isCompleteSetup = this.isCompleteSetup;
+  }
+
   get email(){ return this._email.address }
   set email(value){ this._email = new Email(value) }
 

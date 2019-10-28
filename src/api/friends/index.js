@@ -2,10 +2,36 @@ import firebase from "react-native-firebase";
 import Logger from "src/api/logger";
 import PeopleAPI from "src/api/people";
 import Database from "src/api/database";
+import User from "src/entities/user";
 import { FriendRequestCollection, FriendListCollection, PeopleCollection, UserCollection, BlockedCollection, HideCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
 export default class FriendsAPI{
+
+  /**
+   * 
+   * @param {User} user 
+   * @param {function} callback
+   */
+  static listenFriendList(user, callback){
+    return Database.listen((database) => {
+      const friendListCollection = new FriendListCollection();
+      const query = database.collection(friendListCollection.getName()).where("friends", "array-contains", user.id);
+      return query.onSnapshot(async (querySnapshot) => {
+        const updated = [];
+        const deleted = [];
+
+        const promises = querySnapshot.docChanges.map(async (changes) => {
+          const user = await PeopleAPI.getDetailById(changes.doc.id, true);
+          if(changes.type === "added" || changes.type === "modified") updated.push(user);
+          if(changes.type === "removed") deleted.push(user);
+        });
+
+        await Promise.all(promises);
+        callback({ updated, deleted });
+      })
+    })
+  }
 
   static normalizeFriend(documentSnapshot){
     return { id: documentSnapshot.id, ...documentSnapshot.data() }

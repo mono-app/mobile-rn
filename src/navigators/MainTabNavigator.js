@@ -9,10 +9,12 @@ import HomeTabNavigator from "./HomeTabNavigator.js";
 import ContactTabNavigator from "./ContactTabNavigator";
 import SettingTabNavigator from "./SettingTabNavigator.js";
 import AppTabNavigator from "./AppTabNavigator";
-import { default as MomentTabNavigator } from "modules/Moments/navigators/MainNavigator";
-import { CurrentRoomsProvider } from "src/api/rooms/CurrentRooms";
-import NotificationListener from "src/components/NotificationListener"
 import InAppNotifications from "src/components/InAppNotifications";
+import { CurrentRoomsProvider } from "src/api/rooms/CurrentRooms";
+import { default as MomentTabNavigator } from "modules/Moments/navigators/MainNavigator";
+
+import NotificationListener from "src/components/NotificationListener"
+import FriendListListener from "src/components/FriendListListener";
 
 const MainTabNavigator = createBottomTabNavigator({
   HomeTab: HomeTabNavigator,
@@ -61,7 +63,10 @@ export default class MainNavigator extends React.PureComponent {
     return(
     <CurrentRoomsProvider>
       <MainTabNavigator navigation={this.props.navigation}/>
+      
       <NotificationListener/>
+      <FriendListListener/>
+
       <InAppNotifications type="friend-request"/>
     </CurrentRoomsProvider>
     )
