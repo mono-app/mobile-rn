@@ -74,8 +74,16 @@ export class TeachersCollection extends Collection{
   constructor(){ super("teachers"); }
 }
 
+export class TempTeachersCollection extends Collection{
+  constructor(){ super("tempTeachers"); }
+}
+
 export class StudentsCollection extends Collection{
   constructor(){ super("students"); }
+}
+
+export class TempStudentsCollection extends Collection{
+  constructor(){ super("tempStudents"); }
 }
 
 export class TasksCollection extends Collection{

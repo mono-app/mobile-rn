@@ -52,7 +52,13 @@ function SignInScreen(props){
       props.setCurrentUserId(authenticatedUser.id);
       goto("Splash");
     }catch(err){
-      handleError(err.message);
+      if(err.code==="auth/invalid-email") handleError(props.t("wrongEmailFormat"))
+      if(err.code==="email/not-valid") handleError(props.t("wrongEmailFormat"))
+      else if (err.code==="password/weak") handleError(props.t("minPassChar"))
+      else if (err.code==="auth/user-not-found") handleError(props.t("userNotRegistered"))
+      else if (err.code==="auth/wrong-password") handleError(props.t("wrongPassword"))
+      else handleError(err.message);
+      
     }finally{ setIsLoading(false) }
   }
   

@@ -27,19 +27,14 @@ function PeopleListItem(props){
 
   const fetchStatus = async () => {
     const status = await StatusAPI.getLatestStatus(id);
-    if(status && _isMounted.current) {
-      setStatus(status.content)
-    }        
+    if(status && _isMounted.current) setStatus(status.content)
     if(_isMounted.current) setFetching(false)
   }
 
   const fetchData = async () => {
-    PeopleAPI.getDetailWithRealTimeUpdate(id, (data)=>{
-      if(_isMounted.current) {
-        setPeople(data)
-        setFetching(false)
-      }
-    });
+    const data = await PeopleAPI.getDetail(id)
+    if(_isMounted.current) setPeople(data)
+    setFetching(false)
   }
 
   React.useEffect(() => {

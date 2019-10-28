@@ -1,10 +1,11 @@
 import firebase from "react-native-firebase";
 
-import { StudentsCollection, SchoolsCollection, UserMappingCollection, ClassesCollection, UserCollection } from "src/api/database/collection";
+import { StudentsCollection, SchoolsCollection, UserMappingCollection, ClassesCollection, UserCollection, TempStudentsCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import PeopleAPI from "src/api/people";
-import User from "src/entities/user";
+import Email from "src/entities/email";
 import Database from "src/api/database";
+import CustomError from "src/entities/error";
 
 export default class StudentAPI{
 
@@ -14,24 +15,33 @@ export default class StudentAPI{
    * @param {String} studentEmail 
    * @param {Object} data 
    */
-  static async addStudent(schoolId, studentEmail, data){
-    const user = new User()
-    user.create(studentEmail, "123123", "123123")
+  static async addStudent(schoolId, studentEmail, studentName){
     try{
-      await PeopleAPI.createUser(user)
+      const school = {}
+      school.id = schoolId
+      new Email(studentEmail)
+      const student = await PeopleAPI.getDetailByEmail(studentEmail, true)
+      if((await StudentAPI.isExistById(school, student))) throw new CustomError("student/email-already-in-user","Email already in used")
+
+      await Database.insert(async (db)=> {
+        const schoolsCollection = new SchoolsCollection();
+        const studentsCollection = new StudentsCollection();
+        const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+        const studentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(student.id);
+        studentRef.set({name: studentName, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+      })
+
     }catch(err){ 
-      if(err.code === "auth/email-already-in-use"){
-        user.id = (await PeopleAPI.getDetailByEmail(user.email, true)).id
+      if(err.code==="user/not-found") {
+        await Database.insert(async (db)=> {
+          const schoolsCollection = new SchoolsCollection();
+          const tempStudentsCollection = new TempStudentsCollection();
+          const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
+          const tempStudentRef = schoolsDocumentRef.collection(tempStudentsCollection.getName()).doc(studentEmail);
+          tempStudentRef.set({name: studentName, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+        })
       }else throw err
     }
-    
-    await Database.insert(async (db)=> {
-      const studentsCollection = new StudentsCollection();
-      const schoolsCollection = new SchoolsCollection();
-      const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-      const schoolStudentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(user.id);
-      await schoolStudentRef.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), ...data });
-    })
 
     return Promise.resolve(true)
   }
@@ -201,6 +211,18 @@ export default class StudentAPI{
     const studentsSnapshot = await studentsDocumentRef.get();
 
     return Promise.resolve(studentsSnapshot.exists);
+  }
+
+  static async isExistById(school, student){
+    const result = await Database.get(async (db) => {
+      const schoolCollection = new SchoolsCollection()
+      const studentsCollection = new StudentsCollection()
+      const schoolRef = db.collection(schoolCollection.getName()).doc(school.id)
+      const studentRef = schoolRef.collection(studentsCollection.getName()).doc(student.id)
+      const studentSnapshot = await studentRef.get()
+      return studentSnapshot.exists
+    } ,true)
+    return result
   }
 
 }

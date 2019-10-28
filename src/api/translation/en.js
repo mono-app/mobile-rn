@@ -1,5 +1,6 @@
 const translate = {
   emailNotRegistered: 'Email not registered',
+  userNotRegistered: 'User not registered',
   wrongPassword: 'Wrong Password',
   pleaseFillEmPass: 'Please fill your email and password',
   loginLabel: 'Fill your Email and Password then press login',
