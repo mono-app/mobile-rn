@@ -9,7 +9,6 @@ import { IconButton } from "react-native-paper";
 import { OTPublisher } from "opentok-react-native";
 
 function MicButton(props){
-  const { isLoading } = props;
   const { colors } = props.theme;
   const [ isActive, setIsActive ] = React.useState(false);
   const [ isConnecting, setIsConnecting ] = React.useState(true);
@@ -43,21 +42,19 @@ function MicButton(props){
 
   return (
     <React.Fragment>
-      <OTPublisher 
-        eventHandlers={publisherEventHandlers}
-        properties={{ publishAudio: isActive, publishVideo: false, videoTrack: false }}/>
-      {isConnecting || isLoading?(
-        <ActivityIndicator size="small" color={colors.disabled} style={[ styles.default, props.style ]}/>
-      ):(
-        <IconButton 
-          style={[ styles.default, props.style ]} icon={iconName} size={24} 
-          color={iconColor} onPress={handlePress}/>
-      )}
+      {isActive?
+        <OTPublisher 
+          eventHandlers={publisherEventHandlers}
+          properties={{ publishAudio: isActive, publishVideo: false, videoTrack: false }}/>
+      :null}
+      <IconButton 
+        style={[ styles.default, props.style ]} icon={iconName} size={24} 
+        color={iconColor} onPress={handlePress}/>
     </React.Fragment>
   )
 }
 MicButton.propTypes = { 
-  style: PropTypes.object, isLoading: PropTypes.bool.isRequired
+  style: PropTypes.object
 }
 MicButton.defaultProps = { style: {} }
 export default withTheme(MicButton);

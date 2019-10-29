@@ -20,8 +20,8 @@ function ChatBottomTextInput(props){
   const [ message, setMessage ] = React.useState("");
   const [ sessionId, setSessionId ] = React.useState(room.liveVoice === undefined? null: room.liveVoice.session);
   const [ token, setToken ] = React.useState(null);
-  const [ isConnected, setIsConnected ] = React.useState(false);
   const [ canSend, setCanSend ] = React.useState(true);
+  const [ streams, setStreams ] = React.useState([])
 
   const txtInput = React.useRef(null);
 
@@ -39,7 +39,6 @@ function ChatBottomTextInput(props){
   });
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
-  const handleSessionConnected = () => setIsConnected(true);
   const handleMessageChange = (newMessage) => setMessage(newMessage)
   const handleSendPress = () => {
     setCanSend(false);
@@ -60,9 +59,7 @@ function ChatBottomTextInput(props){
     const currentRoom = await RoomsAPI.getDetail(room.id)
     if(currentRoom.liveVoice && currentRoom.liveVoice.session) setSessionId(currentRoom.liveVoice.session);
     else {
-      setTimeout(async()=>{
-        handleRoomUpdate()
-      }, 1000);
+      setTimeout(async () => await handleRoomUpdate(), 1000);
     }
   };
 
@@ -80,6 +77,17 @@ function ChatBottomTextInput(props){
     if(!jsonResult.error) setToken(jsonResult.result);
   }
 
+  const handleStreamCreated = event => {
+    setStreams(...streams, [event.streamId])
+  }
+
+  const handleStreamDestroyed = event => {
+    const cloneStreams = JSON.parse(JSON.stringify(streams))
+    const streamId = [event.streamId]
+    delete(cloneStreams[streamId])
+    setStreams(cloneStreams)
+  }
+
   React.useEffect(() => {
     if(room.id === undefined) return;
     Logger.log("ChatBottomTextInput#sessionId", sessionId);
@@ -94,7 +102,8 @@ function ChatBottomTextInput(props){
 
 
   const sessionEventHandler = {
-    sessionConnected: handleSessionConnected,
+    streamCreated : handleStreamCreated,
+    streamDestroyed: handleStreamDestroyed,
     error: handleError,
     otrnError: handleError
   }
@@ -103,8 +112,8 @@ function ChatBottomTextInput(props){
     <SafeAreaView style={styles.container}>
       {(sessionId !== null && token !== null)?(
         <OTSession apiKey={TB_API_KEY} sessionId={sessionId} token={token} eventHandlers={sessionEventHandler} style={{ display: "flex", flexDirection: "row" }}>
-          <MicButton style={{ marginRight: 8 }} isLoading={!isConnected}/> 
-          <SpeakerButton style={{ marginRight: 8 }} isLoading={!isConnected}/>
+          <MicButton style={{ marginRight: 8 }}/> 
+          <SpeakerButton style={{ marginRight: 8 }} streams={streams}/>
         </OTSession>
       ):(
         <React.Fragment>
