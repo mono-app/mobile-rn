@@ -1,6 +1,8 @@
 import CustomError from "src/entities/error";
 
-export default class Otp{
+export default class Otp{  
+  // code: string
+
   /**
    * 
    * @param {string} code 

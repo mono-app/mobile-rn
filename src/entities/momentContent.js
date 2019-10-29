@@ -2,18 +2,20 @@ import Image from "src/entities/image";
 import CustomError from "src/entities/error";
 
 export default class MomentContent{
+  // _message: string
+  // _images: Array<Image>
 
   /**
    * 
    * @param {string} message 
-   * @param {Array} images 
+   * @param {Array<Image>} images 
    */
   constructor(message, images){
     this.message = message
     this.images = (images)?images:[]
   }
 
-  get message() { return this._s }
+  get message() { return this._message }
   set message(value) { this._message = value }
 
   get images() { return this._images }

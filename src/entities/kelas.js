@@ -1,4 +1,9 @@
 export default class Kelas{
+  // _subject: string
+  // _semester: string
+  // _room: string
+  // _academicYear: string
+  // _isArchive: string
 
   /**
    * 

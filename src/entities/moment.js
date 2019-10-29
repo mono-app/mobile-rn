@@ -2,7 +2,14 @@ import CustomError from "./error";
 import MomentContent from "./momentContent";
 
 export default class moment{
+  // _content: MomentContent
+  // _posterId: string
 
+  /**
+   * 
+   * @param {MomentContent} content 
+   * @param {string} posterId 
+   */
   constructor(content, posterId){
     this.content = content
     this.posterId = posterId

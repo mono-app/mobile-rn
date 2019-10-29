@@ -1,4 +1,6 @@
 export default class Image{
+  // _downloadUrl: string
+  // _storagePath: string
 
   /**
    * 

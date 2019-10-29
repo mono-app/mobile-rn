@@ -1,6 +1,7 @@
 import CustomError from "src/entities/error";
 
 export default class Name {
+  // _value: string
 
   /**
    * 
@@ -10,10 +11,10 @@ export default class Name {
     this.value = name
   }
 
-  get value() { return this._name.trim() }
+  get value() { return this._value.trim() }
   set value(value) {
     if(!isValidName(value)) throw new CustomError("name-must-be-char", "Name must be character");
-    this._name = value
+    this._value = value
   }
 }
 
