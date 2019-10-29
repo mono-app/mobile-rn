@@ -8,7 +8,7 @@ Teacher.addTeacherTrigger = functions.region("asia-east2").firestore.document("/
   const db = admin.firestore();
   const userMappingRef = db.collection("userMapping").doc(teacherId);
   const userMappingSchoolRef = userMappingRef.collection("schools").doc(schoolId);
-  userMappingSchoolRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), role: "teachers" });
+  userMappingSchoolRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), role: "teacher" });
 })
 
 Teacher.newTempTeacherTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/tempTeachers/{teacherEmail}").onCreate(async (documentSnapshot, context) => {
