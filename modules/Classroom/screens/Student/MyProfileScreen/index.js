@@ -211,10 +211,10 @@ class MyProfileScreen extends React.PureComponent {
               fieldValue={this.props.currentStudent.address}/>
             <PeopleInformationContainer
               fieldName={this.props.t("phoneNo")}
-              fieldValue={this.props.currentStudent.phoneNumber.value}/>
+              fieldValue={(this.props.currentUser.phoneNumber.value==="000000")?"-":this.props.currentUser.phoneNumber.value}/>
             <PeopleInformationContainer
               fieldName="Email"
-              fieldValue={this.props.currentStudent.email}/>
+              fieldValue={this.props.currentUser.email}/>
             <PeopleInformationContainer
               fieldName={this.props.t("gender")}
               fieldValue={this.props.currentStudent.gender}/>

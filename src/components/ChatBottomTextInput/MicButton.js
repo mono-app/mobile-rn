@@ -42,11 +42,9 @@ function MicButton(props){
 
   return (
     <React.Fragment>
-      {isActive?
-        <OTPublisher 
-          eventHandlers={publisherEventHandlers}
-          properties={{ publishAudio: isActive, publishVideo: false, videoTrack: false }}/>
-      :null}
+      <OTPublisher 
+        eventHandlers={publisherEventHandlers}
+        properties={{ publishAudio: isActive, publishVideo: false, videoTrack: false }}/>
       <IconButton 
         style={[ styles.default, props.style ]} icon={iconName} size={24} 
         color={iconColor} onPress={handlePress}/>
