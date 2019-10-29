@@ -1,6 +1,10 @@
 import Email from "src/entities/email";
 import Password from"src/entities/password";
 import CustomError from "src/entities/error";
+import ApplicationInformation from "src/entities/applicationInformation";
+import Image from "src/entities/image"
+import PersonalInformation from "src/entities/personalInformation";
+import PhoneNumber from "src/entities/phoneNumber";
 
 export default class User{
   // _email: Email;
@@ -8,6 +12,8 @@ export default class User{
   // id: string;
   // isCompleteSetup: boolean;
   // phoneNumber: PhoneNumber
+  // personalInformation: PersonalInformation
+  // applicationInformation: ApplicationInformation
 
   /**
    * 
@@ -45,6 +51,22 @@ export default class User{
     this.id = documentSnapshot.id;
     this.email = data.email;
     this.isCompleteSetup = data.isCompleteSetup;
+    this.phoneNumber = new PhoneNumber(data.phoneNumber.value) 
+
+    const monoId = data.applicationInformation.monoId
+    const nickName = data.applicationInformation.nickName
+    const applicationInformation = new ApplicationInformation(monoId, nickName)
+    if(data.applicationInformation.profilePicture) {
+      const downloadUrl = data.applicationInformation.profilePicture.downloadUrl
+      const storagePath = data.applicationInformation.profilePicture.storagePath
+      applicationInformation.profilePicture = new Image(downloadUrl, storagePath)
+    }
+    this.applicationInformation = applicationInformation
+
+    const givenName = data.personalInformation.givenName
+    const familyName = data.personalInformation.familyName
+    const gender = data.personalInformation.gender
+    this.personalInformation = new PersonalInformation(givenName, familyName, gender)
     return this;
   }
 

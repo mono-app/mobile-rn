@@ -17,6 +17,7 @@ export default class PhoneNumber{
 }
 
 function normalizePhoneNumber(number, countryCode, countryNumber){
+  if(number==="000000") return number 
   let result = number.toString()
   if(result.length <= 2) throw new CustomError("phone-number/not-valid", "Phone number is not valid");
 

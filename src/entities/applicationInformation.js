@@ -1,8 +1,10 @@
 import CustomError from "src/entities/error";
+import Image from "./image";
 
 export default class ApplicationInformation{
   // _monoId: string
   // _nickName: string
+  // _profilePicture: Image
 
   /**
    * 
@@ -27,6 +29,12 @@ export default class ApplicationInformation{
     if(!value) throw new CustomError("application-information/nick-name-not-valid", "Nickname is not valid");
     if(!value.trim()) throw new CustomError("application-information/nick-name-not-valid", "Nickname is not valid");
     this._nickName = value;
+  }
+
+  get profilePicture(){ return this._profilePicture }
+  set profilePicture(value){
+    if(!(value instanceof Image)) throw new CustomError("profile-pic-not-valid", "Profile picture must be Image object");
+    this._profilePicture = value
   }
 
   get data(){
