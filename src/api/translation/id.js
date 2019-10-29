@@ -34,7 +34,7 @@ const translate = {
   monoIdDesc: "Mono ID adalah ID unik yang bisa kamu gunakan untuk identitas kamu.",
   nickName: "Nama Panggilan",
   personalData: "Data Pribadi",
-  personalDataDesc: "Mono berjanji untuk mejaga kerahasiaan data pribadi kamu",
+  personalDataDesc: "Mono berjanji untuk menjaga kerahasiaan data pribadi kamu",
   perfect: "Sempurna",
   accountPrepare: "Persiapan Akun",
   personalInfo: "Informasi Pribadi",
