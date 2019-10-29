@@ -182,7 +182,8 @@ export default class StudentAPI{
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
     const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(userId);
     const documentSnapshot = await studentsDocumentRef.get();
-    const data = { id: documentSnapshot.id, ...documentSnapshot.data() };
+    const user = await PeopleAPI.getDetailById(userId, true)
+    const data = { id: documentSnapshot.id, ...documentSnapshot.data(), email: user.email, phoneNumber: user.phoneNumber.number };
 
     return Promise.resolve(data);
   }

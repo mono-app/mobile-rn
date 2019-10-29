@@ -1,11 +1,11 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
 import ClassAPI from "modules/Classroom/api/class";
 import CircleAvatar from "src/components/Avatar/Circle";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
@@ -68,41 +68,6 @@ class TeacherProfileScreen extends React.PureComponent {
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
 
-  handlePhonePress = e => {
-    const payload = {
-      schoolId: this.props.currentSchool.id,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherId,
-      databaseFieldName: "phone", 
-      fieldValue: this.state.teacher.phone,
-      fieldTitle: this.props.t("editPhone"),
-      isNumber: true,
-      onRefresh: (data) => {
-        const newClass = JSON.parse(JSON.stringify(this.state.teacher));
-        newClass.phone = data;
-        this.setState({teacher: newClass})
-      }
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
-
-  // handleEmailPress = e => {
-  //   const payload = {
-  //     schoolId: this.props.currentSchool.id,
-  //     databaseCollection: "teachers",
-  //     databaseDocumentId: this.teacherId,
-  //     databaseFieldName: "email", 
-  //     fieldValue: this.state.teacher.id,
-  //     fieldTitle: this.props.t("editEmail"),
-  //     onRefresh: (data) => {
-  //       const newClass = JSON.parse(JSON.stringify(this.state.teacher));
-  //       newClass.email = data;
-  //       this.setState({teacher: newClass})
-  //     } 
-  //   }
-  //   this.props.navigation.navigate(`EditSingleField`, payload);
-  // }
-
   handleNIKPress = e => {
     const payload = {
       schoolId: this.props.currentSchool.id,
@@ -155,7 +120,6 @@ class TeacherProfileScreen extends React.PureComponent {
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.handleNamePress = this.handleNamePress.bind(this);
     this.handleAddressPress = this.handleAddressPress.bind(this);
-    this.handlePhonePress = this.handlePhonePress.bind(this);
     this.handleNIKPress = this.handleNIKPress.bind(this);
     this.handleGenderPress = this.handleGenderPress.bind(this);
   }
@@ -220,28 +184,28 @@ class TeacherProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.handlePhonePress}>
+              <TouchableOpacity disabled={true}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text style={styles.label}>{this.props.t("phoneNo")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.phone}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                      <Text>{this.state.teacher.phoneNumber}</Text>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#fff" }}/>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              {/* <TouchableOpacity onPress={this.handleEmailPress}>
+              <TouchableOpacity disabled={true}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text style={styles.label}>Email</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.id}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                      <Text>{this.state.teacher.email}</Text>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#fff" }}/>
                     </View>
                   </View>
                 </View>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
               <TouchableOpacity onPress={this.handleNIKPress}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
