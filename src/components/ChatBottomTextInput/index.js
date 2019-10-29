@@ -22,6 +22,7 @@ function ChatBottomTextInput(props){
   const [ token, setToken ] = React.useState(null);
   const [ canSend, setCanSend ] = React.useState(true);
   const [ streams, setStreams ] = React.useState([])
+  const [ isConnected, setIsConnected ] = React.useState(false);
 
   const txtInput = React.useRef(null);
 
@@ -39,6 +40,7 @@ function ChatBottomTextInput(props){
   });
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
+  const handleSessionConnected = () => setIsConnected(true);
   const handleMessageChange = (newMessage) => setMessage(newMessage)
   const handleSendPress = () => {
     setCanSend(false);
@@ -102,6 +104,7 @@ function ChatBottomTextInput(props){
 
 
   const sessionEventHandler = {
+    sessionConnected: handleSessionConnected,
     streamCreated : handleStreamCreated,
     streamDestroyed: handleStreamDestroyed,
     error: handleError,
@@ -116,10 +119,11 @@ function ChatBottomTextInput(props){
           <SpeakerButton style={{ marginRight: 8 }} streams={streams}/>
         </OTSession>
       ):(
+        (!isConnected)?
         <React.Fragment>
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
           <ActivityIndicator size="small" color={colors.disabled} style={{ marginRight: 8 }}/>
-        </React.Fragment>
+        </React.Fragment>:null
       )}
       <TextInput ref={txtInput} style={styles.textInput} autoFocus multiline value={message} maxLength={4000} placeholder="Tuliskan pesan..." onChangeText={handleMessageChange} />
       <IconButton icon="send" size={24} color={colors.primary} style={{ flex: 0 }} disabled={!props.editable || !canSend} onPress={handleSendPress}/>
