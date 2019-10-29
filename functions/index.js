@@ -12,6 +12,7 @@ const Teacher = require("./listeners/teacher");
 const Tasks = require("./listeners/tasks");
 const Moments = require("./listeners/moments");
 const Room = require("./listeners/room");
+const Users = require("./listeners/users");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -57,3 +58,6 @@ exports.triggerDeletedTask = Tasks.triggerDeletedTask
 
 exports.triggerNewMoment = Moments.triggerNewMoment
 exports.sendNotificationForNewMomentComment = Moments.sendNotificationForNewMomentComment
+
+exports.triggerChangeNickname = Users.triggerChangeNickname
+exports.triggerNewStatus = Users.triggerNewStatus
