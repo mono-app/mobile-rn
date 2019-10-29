@@ -1,7 +1,7 @@
 import firebase from "react-native-firebase";
 import uuid from "uuid/v4";
 import StorageAPI from "src/api/storage";
-import { MomentsCollection, FansCollection, CommentsCollection } from "src/api/database/collection";
+import { MomentsCollection, FansCollection, CommentsCollection, FriendListCollection, PeopleCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import Database from "src/api/database";
 
@@ -93,14 +93,22 @@ export default class MomentAPI{
     results.forEach((result, index) => {
       content.images[index].downloadUrl = result;
     })
-    
-
-    const momentCollection = new MomentsCollection();
-    const payload = {
-      posterId, content, privacy: "friends",
-      postTime: firebase.firestore.FieldValue.serverTimestamp()
-    }
+ 
     await Database.insert(async(db)=>{
+      const friendListCollection = new FriendListCollection()
+      const peopleCollection = new PeopleCollection()
+      const friendListRef = db.collection(friendListCollection.getName()).doc(posterId);
+      const querySnapshot = await friendListRef.collection(peopleCollection.getName()).get()
+      const friendIdList = querySnapshot.docs.map(documentSnapshot => {
+        return documentSnapshot.id
+      })
+      friendIdList.push(posterId)
+      const momentCollection = new MomentsCollection();
+      const payload = {
+        posterId, content, privacy: "friends",
+        showsTo: friendIdList,
+        postTime: firebase.firestore.FieldValue.serverTimestamp()
+      }
       const momentRef = db.collection(momentCollection.getName()).doc()
       await momentRef.set(payload)
     })

@@ -20,7 +20,13 @@ function Header(props){
     }
   });
   
-  const handleAddMomentPress = () => props.navigation.navigate("AddMoment");
+  const handleAddMomentPress = () => { 
+    const payload = {
+      onComplete: props.onRefresh
+    }
+    props.navigation.navigate("AddMoment", payload);
+  }
+
   const handleQuickCameraPress = () => {
     const options = { mediaType: 'photo' };
     ImagePicker.launchCamera(options, (response) => {

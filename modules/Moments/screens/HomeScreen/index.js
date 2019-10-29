@@ -83,7 +83,7 @@ function HomeScreen(props){
   Logger.log("Moment.HomeScreen", "re-render");
   return(
     <SafeAreaView style={styles.container}>
-      <Header/>
+      <Header onRefresh={handleRefresh}/>
       <FlatList
         data={moments}  keyExtractor={(item) => item.id}
         onRefresh={handleRefresh}  refreshing={isRefreshing} 

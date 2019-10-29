@@ -43,6 +43,7 @@ function AddMomentScreen(props){
           setContent("");
           setIsSubmitting(false)
         }
+        props.navigation.state.params.onComplete()
         props.navigation.goBack();
       }
     }catch(err){
