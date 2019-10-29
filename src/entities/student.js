@@ -1,6 +1,6 @@
 import Email from "src/entities/email";
 import Name from "src/entities/name";
-import User from "./user";
+import User from "src/entities/user";
 
 export default class Student extends User{
   // ni: string
