@@ -53,20 +53,21 @@ export default class User{
     this.isCompleteSetup = data.isCompleteSetup;
     this.phoneNumber = new PhoneNumber(data.phoneNumber.value) 
 
-    const monoId = data.applicationInformation.monoId
-    const nickName = data.applicationInformation.nickName
-    const applicationInformation = new ApplicationInformation(monoId, nickName)
-    if(data.applicationInformation.profilePicture) {
-      const downloadUrl = data.applicationInformation.profilePicture.downloadUrl
-      const storagePath = data.applicationInformation.profilePicture.storagePath
-      applicationInformation.profilePicture = new Image(downloadUrl, storagePath)
+    if(data.isCompleteSetup){
+      const monoId = data.applicationInformation.monoId
+      const nickName = data.applicationInformation.nickName
+      const applicationInformation = new ApplicationInformation(monoId, nickName)
+      if(data.applicationInformation.profilePicture) {
+        const downloadUrl = data.applicationInformation.profilePicture.downloadUrl
+        const storagePath = data.applicationInformation.profilePicture.storagePath
+        applicationInformation.profilePicture = new Image(downloadUrl, storagePath)
+      }
+      this.applicationInformation = applicationInformation
+      const givenName = data.personalInformation.givenName
+      const familyName = data.personalInformation.familyName
+      const gender = data.personalInformation.gender
+      this.personalInformation = new PersonalInformation(givenName, familyName, gender)
     }
-    this.applicationInformation = applicationInformation
-
-    const givenName = data.personalInformation.givenName
-    const familyName = data.personalInformation.familyName
-    const gender = data.personalInformation.gender
-    this.personalInformation = new PersonalInformation(givenName, familyName, gender)
     return this;
   }
 
