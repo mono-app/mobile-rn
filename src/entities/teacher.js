@@ -3,6 +3,11 @@ import Name from "src/entities/name";
 
 export default class Teacher{
 
+  /**
+   * 
+   * @param {string} email 
+   * @param {string} name 
+   */
   constructor(email, name){
     this.email = email
     this.name = name

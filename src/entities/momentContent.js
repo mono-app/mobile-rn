@@ -3,6 +3,11 @@ import CustomError from "src/entities/error";
 
 export default class MomentContent{
 
+  /**
+   * 
+   * @param {string} message 
+   * @param {Array} images 
+   */
   constructor(message, images){
     this.message = message
     this.images = (images)?images:[]

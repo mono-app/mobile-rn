@@ -8,9 +8,10 @@ import AppHeader from "src/components/AppHeader";
 import { View, FlatList } from "react-native";
 import MySearchbar from "src/components/MySearchbar"
 import { withTranslation } from 'react-i18next';
+import { setState } from "expect/build/jestMatchersObject";
 
 function ContactScreen(props){
-  const { currentUser } = props;
+  const { currentUser,blockedUserList,blockedByUserList,hiddenUserList } = props;
   const [ peopleList, setPeopleList ] = React.useState([]);
   const [ filteredPeopleList, setFilteredPeopleList ] = React.useState([]);
   const friendsListener = React.useRef(null);
@@ -23,8 +24,7 @@ function ContactScreen(props){
   const fetchData = () => {
     setRefreshing(true)
     friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.id, (friends) => {
-      setPeopleList(friends);
-      setFilteredPeopleList(friends)
+      setFriendList(friends)
       setRefreshing(false)
     })
   }
@@ -32,8 +32,11 @@ function ContactScreen(props){
   const handleSearchPress = (searchText) => {
     setFilteredPeopleList([])
 
-    const clonedPeopleList = JSON.parse(JSON.stringify(peopleList))
+    let clonedPeopleList = JSON.parse(JSON.stringify(peopleList))
     const newSearchText = JSON.parse(JSON.stringify(searchText)) 
+    clonedPeopleList = clonedPeopleList.filter((people) => {
+      return (!blockedUserList.includes(people.id) && !blockedByUserList.includes(people.id) && !hiddenUserList.includes(people.id))
+    })
     if(searchText){
       const filteredPeopleList = clonedPeopleList.filter((people) => {
         return (people && people.applicationInformation && people.applicationInformation.nickName.toLowerCase().indexOf(newSearchText.toLowerCase())) >= 0
@@ -41,6 +44,18 @@ function ContactScreen(props){
       setFilteredPeopleList(filteredPeopleList)
     } else {
       setFilteredPeopleList(clonedPeopleList)
+    }
+
+  }
+
+  const setFriendList = (peopleList1) => {
+    if(peopleList1.length>0){
+      const clonedFilteredPeopleList = JSON.parse(JSON.stringify(peopleList1))
+      const filterPeopleList2 = clonedFilteredPeopleList.filter((people) => {
+        return (!blockedUserList.includes(people.id) && !blockedByUserList.includes(people.id) && !hiddenUserList.includes(people.id))
+      })
+      setPeopleList(peopleList1)
+      setFilteredPeopleList(filterPeopleList2)
     }
   }
 
@@ -50,6 +65,10 @@ function ContactScreen(props){
       if(friendsListener.current) friendsListener.current();
     }
   }, [])
+
+  React.useEffect(() => {
+    setFriendList(peopleList)
+  }, [blockedUserList, blockedByUserList, hiddenUserList])
   
   return(
     <View style={{ flex: 1 }}>

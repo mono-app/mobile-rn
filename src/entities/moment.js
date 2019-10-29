@@ -3,15 +3,15 @@ import MomentContent from "./momentContent";
 
 export default class moment{
 
-  constructor(momentContent, posterId){
-    this.momentContent = momentContent
+  constructor(content, posterId){
+    this.content = content
     this.posterId = posterId
   }
 
-  get momentContent() { return this._momentContent }
-  set momentContent(value) { 
+  get content() { return this._content }
+  set content(value) { 
     if(!(value instanceof MomentContent)) throw new CustomError("wrong-value-type","Value type must be MomentContent Entity")
-    this._momentContent = value 
+    this._content = value 
   }
 
   get posterId() { return this._posterId }

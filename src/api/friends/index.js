@@ -105,88 +105,76 @@ export default class FriendsAPI{
    * @param {function} callback - a callback function that accepts array of friends as its parameters
    * @returns {function} - unsubscribe function from the listener
    */
-  static getFriendsWithRealTimeUpdate(peopleId, callback){
-    const db = firebase.firestore();
-    const userCollection = new UserCollection();
-    const friendListCollection = new FriendListCollection();
-    const peopleCollection = new PeopleCollection();
-    const userDocument = new Document(peopleId);
-    const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
-    const peopleRef = friendListRef.collection(peopleCollection.getName());
-    return peopleRef.onSnapshot(async (querySnapshot) => {
-    
-      if(!querySnapshot.empty) {
-        const friendList = querySnapshot.docs
-        const filteredFriendList = friendList.filter(documentSnapshot => {
-          const data = documentSnapshot.data()
-          return (!data.status || (data.status && data.status !== "blocked" && data.status !== "blocked-by" &&  data.status !== "hide"))
-        })
-         const promises = filteredFriendList.map((documentSnapshot) => {
-          const userDocument = new Document(documentSnapshot.id);
-          const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-          return userRef.get();
-        })
-        const friends = await Promise.all(promises);
-
-        //filter if friend is exist in users
-        const filteredFriends = friends.filter(documentSnapshot=>{
-          return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
-        })
-
-        const normalizedFriends = filteredFriends.map((documentSnapshot) => {
-          return FriendsAPI.normalizeFriend(documentSnapshot);
-        });
-
-        Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (filteredFriendList, normalizedFriends));
-        callback(normalizedFriends)
-      }else callback([]);
-    })
-  }
-
   // static getFriendsWithRealTimeUpdate(peopleId, callback){
-    //   const db = firebase.firestore();
-    //   const userCollection = new UserCollection();
-    //   const friendListCollection = new FriendListCollection();
-    //   const peopleCollection = new PeopleCollection();
-    //   const userDocument = new Document(peopleId);
+  //   const db = firebase.firestore();
+  //   const userCollection = new UserCollection();
+  //   const friendListCollection = new FriendListCollection();
+  //   const peopleCollection = new PeopleCollection();
+  //   const userDocument = new Document(peopleId);
+  //   const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
+  //   const peopleRef = friendListRef.collection(peopleCollection.getName());
+  //   return peopleRef.onSnapshot(async (querySnapshot) => {
+    
+  //     if(!querySnapshot.empty) {
+  //       const friendList = querySnapshot.docs
+  //       const filteredFriendList = friendList.filter(documentSnapshot => {
+  //         const data = documentSnapshot.data()
+  //         return (!data.status || (data.status && data.status !== "blocked" && data.status !== "blocked-by" &&  data.status !== "hide"))
+  //       })
+  //        const promises = filteredFriendList.map((documentSnapshot) => {
+  //         const userDocument = new Document(documentSnapshot.id);
+  //         const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+  //         return userRef.get();
+  //       })
+  //       const friends = await Promise.all(promises);
+
+  //       //filter if friend is exist in users
+  //       const filteredFriends = friends.filter(documentSnapshot=>{
+  //         return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
+  //       })
+
+  //       const normalizedFriends = filteredFriends.map((documentSnapshot) => {
+  //         return FriendsAPI.normalizeFriend(documentSnapshot);
+  //       });
+
+  //       Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (filteredFriendList, normalizedFriends));
+  //       callback(normalizedFriends)
+  //     }else callback([]);
+  //   })
+  // }
+
+  static getFriendsWithRealTimeUpdate(peopleId, callback){
+      const db = firebase.firestore();
+      const userCollection = new UserCollection();
+      const friendListCollection = new FriendListCollection();
+      const peopleCollection = new PeopleCollection();
+      const userDocument = new Document(peopleId);
   
-    //   const friendListRef = db.collection(friendListCollection.getName()).where("friends","array-contains", userDocument.getId()).onSnapshot((querySnapshot)=> {
-    //     if(!querySnapshot.empty) {
-    //       const friendList = querySnapshot.docChanges()
-    //       const filteredFriendList = friendList.filter(documentSnapshot => {
-    //         const data = documentSnapshot.data()
-    //         return (!data.status || (data.status && data.status !== "blocked" && data.status !== "blocked-by" &&  data.status !== "hide"))
-    //       })
-    //        const promises = filteredFriendList.map((documentSnapshot) => {
-    //         const userDocument = new Document(documentSnapshot.id);
-    //         const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-    //         return userRef.get();
-    //       })
-    //       const friends = await Promise.all(promises);
+      const friendListRef = db.collection(friendListCollection.getName()).where("friends","array-contains", userDocument.getId())
+      friendListRef.onSnapshot(async (querySnapshot)=> {
+        if(!querySnapshot.empty) {
+          const friendList = querySnapshot.docs
+          
+          const promises = friendList.map((documentSnapshot) => {
+            const userDocument = new Document(documentSnapshot.id);
+            const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+            return userRef.get();
+          })
+          const friends = await Promise.all(promises);
   
-    //       //filter if friend is exist in users
-    //       const filteredFriends = friends.filter(documentSnapshot=>{
-    //         return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
-    //       })
+          //filter if friend is exist in users
+          const filteredFriends = friends.filter(documentSnapshot=>{
+            return (documentSnapshot.data() && documentSnapshot.data().isCompleteSetup)
+          })
   
-    //       const normalizedFriends = filteredFriends.map((documentSnapshot) => {
-    //         return FriendsAPI.normalizeFriend(documentSnapshot);
-    //       });
+          const normalizedFriends = filteredFriends.map((documentSnapshot) => {
+            return FriendsAPI.normalizeFriend(documentSnapshot);
+          });
   
-    //       Logger.log("FriendsAPI.getFriendsWithRealTimeUpdate", (filteredFriendList, normalizedFriends));
-    //       callback(normalizedFriends)
-    //     }else callback([]);
-    //   })
-  
-  
-  
-    //   const friendListRef = db.collection(friendListCollection.getName()).doc(userDocument.getId());
-    //   const peopleRef = friendListRef.collection(peopleCollection.getName());
-    //   return peopleRef.onSnapshot(async (querySnapshot) => {
-      
-        
-    //   })
-    // }
+          callback(normalizedFriends)
+        }else callback([]);
+      })
+    }
 
   static async getBlockedUsers(peopleId){
     const db = firebase.firestore();

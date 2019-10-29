@@ -5,6 +5,11 @@ export default class PhoneNumber{
   // number: string
   // isVerified: boolean
 
+  /**
+   * 
+   * @param {string} number 
+   * @param {boolean} isVerified 
+   */
   constructor(number, isVerified){
     this.number = normalizePhoneNumber(number, "ID", "62");
     this.isVerified = isVerified;

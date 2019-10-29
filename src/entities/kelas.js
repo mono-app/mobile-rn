@@ -1,5 +1,13 @@
-export default class Class_{
+export default class Kelas{
 
+  /**
+   * 
+   * @param {string} subject 
+   * @param {string} semester 
+   * @param {string} room 
+   * @param {string} academicYear 
+   * @param {string} isArchive 
+   */
   constructor(subject, semester, room, academicYear, isArchive){
     this.subject = subject
     this.semester = semester

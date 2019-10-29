@@ -1,6 +1,10 @@
 import CustomError from "src/entities/error";
 
 export default class QueryParameter{
+  /**
+   * 
+   * @param {string} parameters 
+   */
   constructor(parameters){
     this.parameters = parameters;
   }

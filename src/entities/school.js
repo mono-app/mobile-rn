@@ -1,5 +1,9 @@
 export default class School{
 
+  /**
+   * 
+   * @param {string} id 
+   */
   constructor(id){
     this._id = id
   }

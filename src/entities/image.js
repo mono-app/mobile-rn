@@ -1,5 +1,10 @@
 export default class Image{
 
+  /**
+   * 
+   * @param {string} downloadUrl 
+   * @param {string} storagePath 
+   */
   constructor(downloadUrl, storagePath){
     this.downloadUrl = downloadUrl
     this.storagePath = storagePath

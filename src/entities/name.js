@@ -2,6 +2,10 @@ import CustomError from "src/entities/error";
 
 export default class Name {
 
+  /**
+   * 
+   * @param {string} name 
+   */
   constructor(name){
     this.value = name
   }
