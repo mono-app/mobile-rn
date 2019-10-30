@@ -62,11 +62,11 @@ export default class User{
         const storagePath = data.applicationInformation.profilePicture.storagePath
         applicationInformation.profilePicture = new Image(downloadUrl, storagePath)
       }
-      this.applicationInformation = applicationInformation
+      this.applicationInformation = applicationInformation.data
       const givenName = data.personalInformation.givenName
       const familyName = data.personalInformation.familyName
       const gender = data.personalInformation.gender
-      this.personalInformation = new PersonalInformation(givenName, familyName, gender)
+      this.personalInformation = new PersonalInformation(givenName, familyName, gender).data
     }
     return this;
   }
@@ -76,7 +76,6 @@ export default class User{
 
   get password(){ return this._password.value }
   set password(value){ this._password = new Password(value) }
-
   
   get data(){
     const transformedData = {}

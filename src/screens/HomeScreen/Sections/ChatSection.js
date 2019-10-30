@@ -19,6 +19,11 @@ function ChatSection(props){
       props.navigation.navigate("Chat", { room });
     }
   }
+
+  const handleOnLongPress = (room) => {
+    console.log("onLongPress Triggered")
+    console.log(room)
+  }
   
   return (
     <FlatList
@@ -28,7 +33,7 @@ function ChatSection(props){
       const marginTop = (index === 0)? 8: 4;
       const marginBottom = (index === currentRooms.length)? 8: 4;
       
-      return <PrivateRoom room={item} onPress={handleRoomPress} style={{ marginTop, marginBottom }}/>
+      return <PrivateRoom room={item} onPress={handleRoomPress} onLongPress={handleOnLongPress} style={{ marginTop, marginBottom }}/>
         
       }}/>
   )

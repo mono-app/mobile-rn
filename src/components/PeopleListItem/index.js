@@ -10,7 +10,7 @@ import ContentLoader from 'rn-content-loader'
 import {Rect} from 'react-native-svg'
 
 function PeopleListItem(props){
-  const { id } = props;
+  const { id, user } = props;
   const [ status, setStatus ] = React.useState("");
   const [ people, setPeople ] = React.useState("");
   const [ isFetching, setFetching ] = React.useState(true);
@@ -32,9 +32,13 @@ function PeopleListItem(props){
   }
 
   const fetchData = async () => {
-    const data = await PeopleAPI.getDetail(id)
-    if(_isMounted.current) setPeople(data)
-    setFetching(false)
+    if(user && user.applicationInformation && user.applicationInformation.nickName){       
+      if(_isMounted.current) setPeople(user)
+    }else{
+      const data = await PeopleAPI.getDetail(id)
+      if(_isMounted.current) setPeople(data)
+    }
+    if(_isMounted.current) setFetching(false)
   }
 
   React.useEffect(() => {
@@ -42,6 +46,7 @@ function PeopleListItem(props){
     if(props.distance===undefined) fetchStatus();
     else if(_isMounted.current) setStatus("jarak < "+props.distance+" meters");
     fetchData();
+    console.log("aaa", props.onPress)
     return () => {
       if(_isMounted.current) _isMounted.current = false
     }
@@ -50,10 +55,10 @@ function PeopleListItem(props){
   Logger.log("PeopleListItem", people);
   let profilePicture = "https://picsum.photos/200/200/?random"
   let nickName = ""
-  if(people){
-    if(people.profilePicture) profilePicture = people.profilePicture
-    if(people.applicationInformation&& people.applicationInformation.nickName) nickName = people.applicationInformation.nickName
-
+  if(people && people.applicationInformation){
+    if(people.applicationInformation.profilePicture && people.applicationInformation.profilePicture.downloadUrl) 
+      profilePicture = people.applicationInformation.profilePicture.downloadUrl
+    if(people.applicationInformation.nickName) nickName = people.applicationInformation.nickName
   }
 
   if(isFetching){
@@ -64,7 +69,7 @@ function PeopleListItem(props){
     )
   }else{
     return(
-      <TouchableOpacity  onPress={handlePress}>
+      <TouchableOpacity onPress={handlePress} disabled={!props.onPress}>
         <View style={styles.userContainer}>
           <CircleAvatar size={48} uri={profilePicture} style={{ marginRight: 16 }}/>
           <View style={{flex:1}}>
@@ -72,13 +77,12 @@ function PeopleListItem(props){
             <Paragraph style={{ color: "#5E8864" }} numberOfLines={1}>{status}</Paragraph>
           </View>
         </View>
-
       </TouchableOpacity>
     )
   }
 
 }
-PeopleListItem.propTypes = { onPress: PropTypes.func.isRequired }
-PeopleListItem.defaultProps = { onPress: () => {} }
+PeopleListItem.propTypes = { }
+PeopleListItem.defaultProps = { }
 
 export default PeopleListItem;

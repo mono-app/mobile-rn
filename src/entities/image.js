@@ -1,6 +1,6 @@
 export default class Image{
-  // _downloadUrl: string
-  // _storagePath: string
+  // downloadUrl: string
+  // storagePath: string
 
   /**
    * 
@@ -11,11 +11,5 @@ export default class Image{
     this.downloadUrl = downloadUrl
     this.storagePath = storagePath
   }
-
-  get downloadUrl() { return this._downloadUrl }
-  set downloadUrl(value) { this._downloadUrl = value }
-
-  get storagePath() { return this._storagePath }
-  set storagePath(value) { this._storagePath = value }
   
 }

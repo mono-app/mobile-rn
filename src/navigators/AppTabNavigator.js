@@ -8,6 +8,7 @@ import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
 import ChatScreen from "src/screens/ChatScreen";
 import GroupChatScreen from "src/screens/GroupChatScreen";
+import GroupChatDetailsScreen from "src/screens/GroupChatDetailsScreen";
 import AddDiscussionScreen from "modules/Classroom/screens/AddDiscussionScreen"
 import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
 // import PeopleNearbyScreen from "src/screens/PeopleNearbyScreen";
@@ -20,6 +21,7 @@ export default AppTabNavigator =  createStackNavigator({
   // News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
   IntroductionClassroom: { screen: IntroductionClassroomScreen, navigationOptions: { header: null} },
   Chat: { screen: ChatScreen, navigationOptions: { header: null} },
+  GroupChatDetails: { screen: GroupChatDetailsScreen, navigationOptions: { header: null} },
   GroupChat: { screen: GroupChatScreen, navigationOptions: { header: null} },
   AddDiscussion: {screen: AddDiscussionScreen, navigationOptions: { header: null}},
   Discussions: {screen: DiscussionsScreen, navigationOptions: { header: null}},

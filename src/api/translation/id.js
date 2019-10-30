@@ -2,6 +2,7 @@ const translate = {
   emailNotRegistered: 'Email tidak terdaftar',
   userNotRegistered: 'User tidak terdaftar',
   wrongPassword: 'Password Salah',
+  participant: 'Partisipan',
   pleaseFillEmPass: 'Tolong isi email dan password',
   loginLabel: 'Masukan alamat Email dan Password anda kemudian tekan Masuk',
   login: 'Masuk',

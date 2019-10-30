@@ -16,9 +16,9 @@ function ChatHeaderGroup(props){
   return(
     <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
       {props.navigation?( <Appbar.BackAction onPress={handleBackPress}/> ): null}
-      <TouchableOpacity onPress={props.onUserHeaderPress}>
+      <TouchableOpacity onPress={props.onPress}>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
-            <CircleAvatar size={40} uri={profilePicture} style={{ marginRight: 8 }}/>
+            <CircleAvatar size={40} local={require('assets/logoclassroom.png')} style={{ marginRight: 8 }}/>
             <View>
               <Subheading style={{ fontWeight: "bold", marginBottom: 0 }}>{title} </Subheading>
               <View style={{flexDirection:"row"}}>

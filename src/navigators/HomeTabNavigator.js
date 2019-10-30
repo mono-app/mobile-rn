@@ -7,6 +7,7 @@ import PeopleSearchResult from "src/screens/PeopleSearchResult";
 import FriendRequestListScreen from "src/screens/FriendRequestListScreen";
 import ChatScreen from "src/screens/ChatScreen";
 import InboundOnlyChatScreen from "src/screens/InboundOnlyChatScreen";
+import GroupChatDetailsScreen from "src/screens/GroupChatDetailsScreen";
 import GroupChatScreen from "src/screens/GroupChatScreen";
 import NotificationBotScreen from "src/screens/NotificationBotScreen";
 import MyQRScreen from "src/screens/MyQRScreen";
@@ -25,7 +26,8 @@ export default HomeTabNavigator = createStackNavigator({
   Chat: { screen: ChatScreen },
   InboundOnlyChat: { screen: InboundOnlyChatScreen },
   NotificationBot: { screen: NotificationBotScreen },
-  GroupChat: { screen: GroupChatScreen },
+  GroupChat: { screen: GroupChatScreen, navigationOptions: { header: null } },
+  GroupChatDetails: { screen: GroupChatDetailsScreen, navigationOptions: { header: null } },
   MyQR: { screen: MyQRScreen , navigationOptions: { header: null } },
   EditSingleField: { screen: EditSingleFieldScreen },
   ...DiscussionClassroomNotifNavigatorObj,

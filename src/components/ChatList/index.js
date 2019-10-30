@@ -14,7 +14,7 @@ import MessagesAPI from "src/api/messages";
 import AsyncStorage from '@react-native-community/async-storage';
 
 function ChatList(props){
-  const { currentUser, navigation, room, isBot } = props;
+  const { currentUser, navigation, room } = props;
   const SelectedBubble = room.audiences.length > 2? ChatBubbleWithPhoto: ChatBubble;
   
   const [ bgColor, setBgColor ] = React.useState("#fff");
@@ -167,5 +167,5 @@ ChatList.propTypes = {
   style: PropTypes.shape(), 
   room: PropTypes.shape().isRequired,
 };
-ChatList.defaultProps = { onReachTop: () => {}, style: {}, isBot: false }
+ChatList.defaultProps = { style: {}, isBot: false }
 export default withNavigation(withCurrentUser(ChatList));

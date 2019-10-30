@@ -26,6 +26,8 @@ function PrivateRoom(props){
 
   const handleRoomPress = () => props.onPress(room);
 
+  const handleOnLongPress = () => { if(props.onLongPress) props.onLongPress(room) }
+
   React.useEffect(() => {
     if(_isMounted.current) setIsLoading(true);
     const fetchData = async () => {
@@ -58,7 +60,7 @@ function PrivateRoom(props){
   if(!isLoading){
     try{
       return(
-        <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress}>
+        <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress} onLongPress={handleOnLongPress}>
           <View style={{ marginRight: 16 }}>
               {(props.room.type==="group-chat")? 
                 <CircleAvatar size={50} uri="https://picsum.photos/200/200/?random"/>
