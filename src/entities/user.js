@@ -76,4 +76,14 @@ export default class User{
 
   get password(){ return this._password.value }
   set password(value){ this._password = new Password(value) }
+
+  
+  get data(){
+    const transformedData = {}
+    Object.keys(this).map((prop) => {
+      const newProp = (prop.indexOf("_") === 0)? prop.substring(1): prop;
+      transformedData[newProp] = this[prop];
+    })
+    return transformedData;
+  }
 }

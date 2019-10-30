@@ -37,6 +37,14 @@ export default class Kelas{
   set isArchive(value) { this._isArchive = value }
   
 
+  get data(){
+    const transformedData = {}
+    Object.keys(this).map((prop) => {
+      const newProp = (prop.indexOf("_") === 0)? prop.substring(1): prop;
+      transformedData[newProp] = this[prop];
+    })
+    return transformedData;
+  }
 
 
 }
