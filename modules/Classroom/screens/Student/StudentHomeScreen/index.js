@@ -97,7 +97,7 @@ class StudentHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <ScrollView>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, paddingBottom: 32}}>
             <View style={styles.logo}>
               <CircleAvatar size={100} uri={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }/>
               <Tooltip

@@ -142,7 +142,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <ScrollView>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, paddingBottom: 32}}>
             <View style={styles.logo}>
               <SquareAvatar size={100} uri={ this.props.schoolProfilePicture }/>
               <TouchableOpacity onPress={this.changeSchoolProfilePicture}>

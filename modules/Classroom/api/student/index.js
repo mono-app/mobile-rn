@@ -152,7 +152,6 @@ export default class StudentAPI{
       const student = await StudentAPI.getDetail(schoolId, snap.id)
       return Promise.resolve({...student, finalScore: snap.data().finalScore})
     });
-
     
     const studentDocuments = await Promise.all(arrayOfPromise);
     studentDocuments.sort((a, b) => ((a.name && b.name)&&a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)

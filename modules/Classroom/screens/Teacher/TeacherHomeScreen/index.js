@@ -92,7 +92,7 @@ class TeacherHomeScreen extends React.PureComponent {
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
         <ScrollView>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, paddingBottom: 32}}>
             <View style={styles.logo}>
               <CircleAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random" }/>
               <Tooltip
