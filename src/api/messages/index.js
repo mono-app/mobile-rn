@@ -1,7 +1,7 @@
 import firebase from "react-native-firebase";
 import moment from "moment";
 import Logger from "src/api/logger";
-
+import uuid from "uuid/v4"
 import { RoomsCollection, MessagesCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 
@@ -77,12 +77,12 @@ export default class MessagesAPI{
       
       if(currentDate === null) currentDate = messageSentTime;
       if(currentDate !== messageSentTime) {
-        clonnedMessages.push({ type: "date-separator", details: {value: currentDate} });
+        clonnedMessages.push({ id: uuid(), type: "date-separator", details: {value: currentDate} });
       }
       clonnedMessages.push(message);
       currentDate = messageSentTime;
     });
-    clonnedMessages.push({ type: "date-separator", details: {value: currentDate} });
+    clonnedMessages.push({ id: uuid(), type: "date-separator", details: {value: currentDate} });
     return clonnedMessages
   }
 

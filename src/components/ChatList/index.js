@@ -22,42 +22,44 @@ function ChatList(props){
 
   const messagesListener = React.useRef(null);
   const lastMessageSnapshot = React.useRef(null);
-  // const listHeight = React.useRef(0);
-  // const isLoadingNewMessage = React.useRef(false);
+  const listHeight = React.useRef(0);
+  const isLoadingNewMessage = React.useRef(false);
+  const _isMounted = React.useRef(true)
 
 
   const styles = StyleSheet.create({
     container: { flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }
   })
 
-  // const handleListContentSizeChange = (_, contentHeight) => listHeight.current = contentHeight
-  // const handleReachTop = async () => {
-  //   Logger.log("ChatScreen.handleChatListReactTop", `Getting new messages ${isLoadingNewMessage}`)
-  //   if(!isLoadingNewMessage){
-  //     try{
-  //       isLoadingNewMessage.current = true;
-  //       const newData = await MessagesAPI.getNext(lastMessageSnapshot, room.id);
-  //       const combinedMessages = messages.concat(newData.messages);
-  //       Logger.log("ChatScreen.handleChatListReachTop#combineMessages", combinedMessages);
-  //       Logger.log("ChatScreen.handleChatListReachTop#newData", newData);
-  //       if(_isMounted.current){
-  //         lastMessageSnapshot.current = newData.lastDocumentSnapshot;
-  //         setMessages(MessagesAPI.appendDateSeparator(combinedMessages));
-  //       }
-  //     }catch(err){
-  //       Logger.log("ChatScreen.handleChatListReachTop#err", err);
-  //     }finally{ 
-  //       isLoadingNewMessage.current = false;
-  //     }
-  //   }
-  // }
+  const handleListContentSizeChange = (_, contentHeight) => listHeight.current = contentHeight
+  const handleReachTop = async () => {
+    Logger.log("ChatScreen.handleChatListReactTop", `Getting new messages ${isLoadingNewMessage.current}`)
+    if(!isLoadingNewMessage.current){
+      try{
+        isLoadingNewMessage.current = true;
+        const newData = await MessagesAPI.getNext(lastMessageSnapshot.current, room.id);
+        //Logger.log("ChatScreen.handleChatListReachTop#newData", newData);
+        if(_isMounted.current){
+          lastMessageSnapshot.current = newData.lastDocumentSnapshot;
+          
+          setMessages((oldMessages) => {
+            return MessagesAPI.appendDateSeparator([...oldMessages, ...newData.messages])
+          });
+        }
+      }catch(err){
+        Logger.log("ChatScreen.handleChatListReachTop#err", err);
+      }finally{ 
+        isLoadingNewMessage.current = false;
+      }
+    }
+  }
 
-  // const handleListScroll = (e) => {
-  //   const currentPosition = e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
-  //   const threshold = 100;
-  //   Logger.log("ChatList.handleListScroll#currentPosition", currentPosition);
-  //   if(currentPosition >= (listHeight.current - threshold)) handleReachTop();
-  // }
+  const handleListScroll = (e) => {
+    const currentPosition = e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
+    const threshold = 1000;
+    Logger.log("ChatList.handleListScroll#currentPosition", currentPosition);
+    if(currentPosition >= (listHeight.current - threshold)) handleReachTop();
+  }
 
   const handleDiscussionPress = async (item) => {
     const schoolId = item.details.discussion.schoolId
@@ -98,21 +100,17 @@ function ChatList(props){
     if(color) setBgColor(color)
   }
 
-  const fetchArchived = async () => {
-    const messages = await MessagesAPI.getMessages(room.id);
-    messages.shift();
-    setMessages((oldMessages) => [...oldMessages, ...messages]);
-  }
-
   const fetchMessages = async () => {
     if(!messagesListener.current){
       messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, ({ addedMessages, modifiedMessages }, snapshot) => {
         lastMessageSnapshot.current = snapshot;
         if(addedMessages.length > 0){
           MessagesAPI.markAsRead(room.id, currentUser.id)
-          setMessages((oldMessages) => [...addedMessages, ...oldMessages]);
+          setMessages((oldMessages) => {
+            return MessagesAPI.appendDateSeparator([...addedMessages, ...oldMessages])
+          });
         }
-      })
+      }, 25)
     }
   }
 
@@ -146,20 +144,21 @@ function ChatList(props){
   
   React.useEffect(() => {
     initializeBackground();
-    fetchArchived();
     fetchMessages();
     return function cleanup(){ 
+      _isMounted.current = false
       if(messagesListener.current) messagesListener.current();
     }
   }, [ room.id ]);
 
-  // onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
+  
   return (
     <FlatList 
       style={[ styles.container, props.style,{backgroundColor: bgColor} ]} keyExtractor={keyExtractor}
+      onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
       data={messages} extraData={messages} removeClippedSubviews={true} inverted
-      maxToRenderPerBatch={1} updateCellsBatchingPeriod={5000}
-      initialNumToRender={10} windowSize={2}
+      maxToRenderPerBatch={25}
+      initialNumToRender={25} 
       renderItem={renderItem}/>
   )
 }
