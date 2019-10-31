@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
 
 function ChatList(props){
-  const { navigation, room, attachedMessages } = props;
+  const { navigation, room } = props;
   const firebaseCurrentUser = firebase.auth().currentUser
   const [ bgColor, setBgColor ] = React.useState("#fff");
   const [ messages, setMessages ] = React.useState([]);
@@ -22,11 +22,15 @@ function ChatList(props){
   const listHeight = React.useRef(0);
   const isLoadingNewMessage = React.useRef(false);
   const _isMounted = React.useRef(true)
-
+  const flatListRef = React.useRef(null)
 
   const styles = StyleSheet.create({
     container: { flexGrow: 1, paddingLeft: 16, paddingRight: 16, marginVertical: 4 }
   })
+
+  const scrollToBottom = () => {
+    flatListRef.current.scrollToOffset({ animated: false, offset: 0 });
+  }
 
   const handleListContentSizeChange = (_, contentHeight) => listHeight.current = contentHeight
   const handleReachTop = async () => {
@@ -59,7 +63,7 @@ function ChatList(props){
   }
 
   const handleLongPress = (message) => {
-    console.log("ON LONG PRESS TRIGGERRED")
+    props.onLongPressItem(message)
   }
 
   const handleOnPress = (message) => {
@@ -144,16 +148,9 @@ function ChatList(props){
         </View>
       )
     }else{
-      return <ChatBubble type={room.type} style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} attachedMessages={attachedMessages} 
+      return <ChatBubble type={room.type} style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle}
       onPress={handleOnPress} onLongPress={handleLongPress} clickable={isClickable} message={item} roomId={room.id}/>
     }
-    // }else if(room.type==="group-chat"){
-    //     return <ChatBubbleGroup style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} attachedMessages={attachedMessages} onPress={handleOnPress} onLongPress={handleLongPress} clickable={isClickable} message={item} roomId={room.id}/>
-    // }else if(room.type==="chat"){
-    //     return <ChatBubblePrivate style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
-    // }else if(room.type==="bot"){
-    //     return <ChatBubbleBot style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
-    // }
   }
   
   React.useEffect(() => {
@@ -168,18 +165,21 @@ function ChatList(props){
   
   return (
     <FlatList 
+      keyboardShouldPersistTaps={'handled'}
       style={[ styles.container, props.style,{backgroundColor: bgColor} ]} keyExtractor={keyExtractor}
       onScroll={handleListScroll} onContentSizeChange={handleListContentSizeChange}
       data={messages} extraData={messages} removeClippedSubviews={true} inverted
       maxToRenderPerBatch={25}
       initialNumToRender={25} 
+      ref={i => flatListRef.current = i}
       renderItem={renderItem}/>
   )
 }
 
 ChatList.propTypes = { 
   style: PropTypes.shape(), 
+  onLongPressItem: PropTypes.func,
   room: PropTypes.shape().isRequired,
 };
-ChatList.defaultProps = { style: {}, isBot: false }
+ChatList.defaultProps = { style: {}, isBot: false, onLongPressItem: () => {} }
 export default withNavigation(ChatList);

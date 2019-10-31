@@ -5,7 +5,7 @@ import MessagesAPI from "src/api/messages";
 import PeopleAPI from "src/api/people";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { AppState, Platform } from "react-native";
-
+import ChatLongPressDialog from "src/components/ChatLongPressDialog"
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatList from "src/components/ChatList";
 import ChatHeader from "src/components/ChatHeader";
@@ -13,19 +13,22 @@ import { KeyboardAvoidingView } from "react-native";
 
 function ChatScreen(props){
   const { currentUser, navigation } = props;
-
   const room = navigation.getParam("room", null);
-
   const [ headerTitle, setHeaderTitle ] = React.useState("");
   const [ peopleId, setPeopleId ] = React.useState("");
   const [ isFriend, setFriend ] = React.useState(true);
   const [ isUserRegistered, setUserRegistered ] = React.useState(false);
   const [ headerProfilePicture, setHeaderProfilePicture ] = React.useState("");
-  const [ attachedMessages, setAttachedMessages ] = React.useState([]);
+  const [ showLongPressDialog, setShowLongPressDialog ] = React.useState(false);
+  const [ selectedMessage, setSelectedMessage ] = React.useState({});
+  const [ messageToReply, setMessageToReply ] = React.useState(null);
   
   const _isMounted = React.useRef(true);
 
-  const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.id, message);
+  const handleSendPress = (message, replyMessage) => {
+    MessagesAPI.sendMessage(room.id, currentUser.id, message, "text", null, replyMessage);
+    setMessageToReply(null)
+  }
   const handleAppStateChange = (nextAppState) => {
     if(nextAppState === "active"){
       RoomsAPI.setInRoomStatus(room.id, currentUser.id,true)
@@ -40,8 +43,17 @@ function ChatScreen(props){
     if(isUserRegistered) props.navigation.navigate("PeopleInformation", { peopleId: peopleId });
   }
 
-  const handleLongPress = (message) => {
-    setAttachedMessages((old)=> [...old, message])
+  handleDismissLPDialog = () => {
+    setShowLongPressDialog(false)
+  }
+
+  const handleOnLongPress = (message) => {
+    setSelectedMessage(message)
+    setShowLongPressDialog(true)
+  }
+
+  const handleReplyPress = (message) => {
+    setMessageToReply(message)
   }
 
   const fetchPeople = () => {
@@ -85,12 +97,12 @@ function ChatScreen(props){
   return (
     <KeyboardAvoidingView keyboardShouldPersistTaps={'handled'} behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeader 
-        attachedMessages={attachedMessages}
         navigation={navigation} title={headerTitle} room={room} currentUser={currentUser}
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}
         onUserHeaderPress={handleUserHeaderPress} isFriend={isFriend}/>
-      <ChatList room={room} onLongPress={handleLongPress} attachedMessages={attachedMessages}/>
-      <ChatBottomTextInput room={room} editable={isUserRegistered} onSendPress={handleSendPress}/>
+      <ChatList room={room} onLongPressItem={handleOnLongPress} />
+      <ChatBottomTextInput room={room} editable={isUserRegistered} onSendPress={handleSendPress} replyMessage={messageToReply}/>
+      <ChatLongPressDialog visible={showLongPressDialog} onDismiss={handleDismissLPDialog} message={selectedMessage} onReplyPress={handleReplyPress} />
     </KeyboardAvoidingView>
   )
 }

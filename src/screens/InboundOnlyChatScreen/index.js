@@ -28,7 +28,7 @@ function InboundOnlyChatScreen(props){
       <ChatHeaderBot
         navigation={navigation} title={bot.displayName} subtitle="Bot"
         profilePicture={bot.profilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
-      <ChatList navigation={props.navigation} room={room} isBot={true}/>
+      <ChatList room={room} isBot={true}/>
     </KeyboardAvoidingView>
   )
 };

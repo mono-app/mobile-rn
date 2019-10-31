@@ -6,7 +6,7 @@ import { Text, Caption, IconButton } from "react-native-paper";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 
 function Bot(props){
-  const { theme, clickable, bubbleStyle, message, attachedMessages, enabledMore, isClicked, sentTimeString, sender } = props;
+  const { theme, clickable, bubbleStyle, message, enabledMore, isClicked, sentTimeString, sender } = props;
   const maxContentLength = 100
 
   const myBubble = StyleSheet.create({
@@ -70,7 +70,6 @@ function Bot(props){
   )
 }
 
-Bot.defaultProps = { bubbleStyle: "myBubble" }
 Bot.propTypes = { 
   sender: PropTypes.object.isRequired,
   isClicked: PropTypes.bool.isRequired,
@@ -80,5 +79,5 @@ Bot.propTypes = {
   message: PropTypes.object.isRequired,
   sentTimeString: PropTypes.string.isRequired,
 }
-Bot.defaultProps = { onPress: () => {}, clickable: false, isClicked: false, onEnableMore: () => {} }
+Bot.defaultProps = { bubbleStyle: "myBubble" , onPress: () => {}, clickable: false, isClicked: false, onEnableMore: () => {} }
 export default withTheme(Bot);

@@ -133,11 +133,11 @@ export default class MessagesAPI{
    * @param {string} message
    * @returns {Promise} `true` if insert is successful, throw an error if result is not success
    */
-  static sendMessage(roomId, senderId, message, type="text", details={}){
+  static sendMessage(roomId, senderId, message, type="text", details={}, replyTo=null){
     const localSentTime = firebase.firestore.Timestamp.fromMillis(new moment().valueOf())
     const sentTime = firebase.firestore.FieldValue.serverTimestamp();
     const payload = { 
-      senderId, content: message, sentTime, readBy: {}, localSentTime, type, details
+      senderId, content: message, sentTime, readBy: {}, localSentTime, type, details, replyTo
     }
     const db = firebase.firestore();
     const batch = db.batch();

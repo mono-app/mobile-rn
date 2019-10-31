@@ -7,7 +7,7 @@ import { Appbar, Subheading, Caption } from "react-native-paper";
 import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
 
 function ChatHeaderGroup(props){
-  const { title, subtitle, profilePicture } = props;
+  const { title, subtitle } = props;
 
   const styles = StyleSheet.create({ default: { elevation: 4 }})
 

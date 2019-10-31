@@ -5,21 +5,42 @@ import MessagesAPI from "src/api/messages";
 import ChatList from "src/components/ChatList";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatHeaderGroup from "src/components/ChatHeaderGroup";
-import { KeyboardAvoidingView } from "react-native";
+import { Platform, KeyboardAvoidingView } from "react-native";
 import ClassAPI from "modules/Classroom/api/class";
+import ChatLongPressDialog from "src/components/ChatLongPressDialog"
 
 function GroupChatScreen(props){
   const { currentUser } = props;
   const room = props.navigation.getParam("room", null);
   const _isMounted = React.useRef(true);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
+  const [ showLongPressDialog, setShowLongPressDialog ] = React.useState(false);
+  const [ selectedMessage, setSelectedMessage ] = React.useState({});
+  const [ messageToReply, setMessageToReply ] = React.useState(null);
   const subtitle = "Classroom Group"
 
-  const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.id, message);
-
+  const handleSendPress = (message, replyMessage) => {
+    MessagesAPI.sendMessage(room.id, currentUser.id, message, "text", null, replyMessage);
+    setMessageToReply(null)
+  }
+  
   handleGroupHeaderPress = () => {
     const payload = { room: room, title: headerTitle, subtitle }
     props.navigation.navigate("GroupChatDetails", payload)
+  }
+
+  
+  handleDismissLPDialog = () => {
+    setShowLongPressDialog(false)
+  }
+
+  const handleOnLongPress = (message) => {
+    setSelectedMessage(message)
+    setShowLongPressDialog(true)
+  }
+
+  const handleReplyPress = (message) => {
+    setMessageToReply(message)
   }
 
   const fetchPeople = async () => {   
@@ -35,14 +56,13 @@ function GroupChatScreen(props){
   }, []);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}>
+    <KeyboardAvoidingView keyboardShouldPersistTaps={'handled'} behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeaderGroup 
         navigation={props.navigation} title={headerTitle} subtitle={subtitle} onPress={handleGroupHeaderPress}
         style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
-      <ChatList navigation={props.navigation} room={room}/>
-      <ChatBottomTextInput room={room}
-        editable={true}
-        onSendPress={handleSendPress}/>
+      <ChatList room={room} onLongPressItem={handleOnLongPress} />
+      <ChatBottomTextInput room={room} editable={true} onSendPress={handleSendPress} replyMessage={messageToReply}/>
+      <ChatLongPressDialog visible={showLongPressDialog} onDismiss={handleDismissLPDialog} message={selectedMessage} onReplyPress={handleReplyPress} />
     </KeyboardAvoidingView>
   )
 }

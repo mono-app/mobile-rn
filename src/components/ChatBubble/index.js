@@ -10,7 +10,7 @@ import ChatBubbleBot from "src/components/ChatBubble/Bot";
 import { View } from "react-native";
 
 function ChatBubble(props){
-  const { clickable, bubbleStyle, message, roomId, attachedMessages, type } = props;
+  const { clickable, bubbleStyle, message, roomId, type } = props;
   const { content, sentTime, isSent, senderId } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
   const [ enabledMore, setEnableMore ] = React.useState("");
@@ -19,19 +19,15 @@ function ChatBubble(props){
   const maxContentLength = 100
 
   const handleOnPress = (message) => {
-    if(attachedMessages.length===0){
-      if(clickable) {
-        MessageAPI.setMessageStatusClicked(roomId, message.id)
-        setClicked(true)
-        props.onPress(message);
-      }
-    }else{
-      
+    if(clickable) {
+      MessageAPI.setMessageStatusClicked(roomId, message.id)
+      setClicked(true)
+      props.onPress(message);
     }
   }
   
   const handleOnEnableMorePress = (val) => setEnableMore(val)
-  const handleLongPress = () => props.onLongPress(message)
+  const handleLongPress = (message) => props.onLongPress(message)
   
   const fetchSender = async () => {
     Logger.log("ChatBubbleGroup.fetchSender#senderId", senderId);
@@ -60,26 +56,26 @@ function ChatBubble(props){
         onLongPress={handleLongPress} clickable={clickable} sender={sender} message={message} onPressEnableMore={handleOnEnableMorePress} isClicked={isClicked} />
       : (type==="chat")? 
         <ChatBubblePrivate bubbleStyle={bubbleStyle} onPress={handleOnPress} enabledMore={enabledMore} sentTimeString={sentTimeString}
-        onLongPress={handleLongPress} clickable={clickable} sender={sender} message={message} onPressEnableMore={handleOnEnableMorePress} isClicked={isClicked} />
+        onLongPress={handleLongPress} clickable={clickable} message={message} onPressEnableMore={handleOnEnableMorePress} isClicked={isClicked} />
       : (type==="bot")? 
-        <ChatBubbleBot bubbleStyle={bubbleStyle} onPress={handleOnPress} enabledMore={enabledMore} sentTimeString={sentTimeString}
-            onLongPress={handleLongPress} clickable={clickable} sender={sender} message={message} onPressEnableMore={handleOnEnableMorePress} isClicked={isClicked} />
+        <ChatBubblePrivate bubbleStyle={bubbleStyle} onPress={handleOnPress} enabledMore={enabledMore} sentTimeString={sentTimeString}
+            onLongPress={handleLongPress} clickable={clickable} message={message} onPressEnableMore={handleOnEnableMorePress} isClicked={isClicked} />
       :null
       }
     </View>
   )
 }
 
-ChatBubble.defaultProps = { bubbleStyle: "myBubble" }
 ChatBubble.propTypes = { 
   type: PropTypes.string.isRequired,
   onPress: PropTypes.func, clickable: PropTypes.bool,
   bubbleStyle: PropTypes.string.isRequired,
+  onLongPress: PropTypes.func,
   message: PropTypes.shape({
     content: PropTypes.string.isRequired, 
     sentTime: PropTypes.any.isRequired,
     isSent: PropTypes.bool.isRequired
   }).isRequired
 }
-ChatBubble.defaultProps = { onPress: () => {}, clickable: false, attachedMessages: [] }
+ChatBubble.defaultProps = { onPress: () => {}, clickable: false, bubbleStyle: "myBubble" }
 export default ChatBubble;
