@@ -3,16 +3,17 @@ import FriendsAPI from "src/api/friends";
 import RoomsAPI from "src/api/rooms";
 import MessagesAPI from "src/api/messages";
 import PeopleAPI from "src/api/people";
-import { withCurrentUser } from "src/api/people/CurrentUser";
 import { AppState, Platform } from "react-native";
 import ChatLongPressDialog from "src/components/ChatLongPressDialog"
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatList from "src/components/ChatList";
 import ChatHeader from "src/components/ChatHeader";
 import { KeyboardAvoidingView } from "react-native";
+import firebase from 'react-native-firebase';
 
 function ChatScreen(props){
-  const { currentUser, navigation } = props;
+  const { navigation } = props;
+  const firebaseCurrentUser = firebase.auth().currentUser
   const room = navigation.getParam("room", null);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
   const [ peopleId, setPeopleId ] = React.useState("");
@@ -26,16 +27,16 @@ function ChatScreen(props){
   const _isMounted = React.useRef(true);
 
   const handleSendPress = (message, replyMessage) => {
-    MessagesAPI.sendMessage(room.id, currentUser.id, message, "text", null, replyMessage);
+    MessagesAPI.sendMessage(room.id, firebaseCurrentUser.uid, message, "text", null, replyMessage);
     setMessageToReply(null)
   }
   const handleAppStateChange = (nextAppState) => {
     if(nextAppState === "active"){
-      RoomsAPI.setInRoomStatus(room.id, currentUser.id,true)
+      RoomsAPI.setInRoomStatus(room.id, firebaseCurrentUser.uid,true)
     }else if(nextAppState === "background"){
-      RoomsAPI.setInRoomStatus(room.id, currentUser.id,false)
+      RoomsAPI.setInRoomStatus(room.id, firebaseCurrentUser.uid,false)
     }else if(nextAppState === "inactive"){
-      RoomsAPI.setInRoomStatus(room.id, currentUser.id,false)
+      RoomsAPI.setInRoomStatus(room.id, firebaseCurrentUser.uid,false)
     }
   }
 
@@ -57,7 +58,7 @@ function ChatScreen(props){
   }
 
   const fetchPeople = () => {
-    const audienceId = room.audiences.filter((audience) => audience !== currentUser.id)[0];
+    const audienceId = room.audiences.filter((audience) => audience !== firebaseCurrentUser.uid)[0];
     if( _isMounted.current) setPeopleId(audienceId)
 
     PeopleAPI.getDetail(audienceId).then( (audienceData)=>{
@@ -77,19 +78,19 @@ function ChatScreen(props){
       if(_isMounted.current) setHeaderProfilePicture(tempHeaderProfilePicture);
     })
 
-    FriendsAPI.isFriends(currentUser.id, audienceId).then( isFriend => {
+    FriendsAPI.isFriends(firebaseCurrentUser.uid, audienceId).then( isFriend => {
       if( _isMounted.current) setFriend(isFriend)
     })
   }
  
   React.useEffect(() => {
     AppState.addEventListener("change", handleAppStateChange);
-    RoomsAPI.setInRoomStatus(room.id, currentUser.id,true)
+    RoomsAPI.setInRoomStatus(room.id, firebaseCurrentUser.uid,true)
     fetchPeople();
   
     return function cleanup(){
       _isMounted.current = false
-      RoomsAPI.setInRoomStatus(room.id, currentUser.id,false)
+      RoomsAPI.setInRoomStatus(room.id, firebaseCurrentUser.uid,false)
       AppState.removeEventListener("change", handleAppStateChange) 
     }
   }, []);
@@ -97,7 +98,7 @@ function ChatScreen(props){
   return (
     <KeyboardAvoidingView keyboardShouldPersistTaps={'handled'} behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeader 
-        navigation={navigation} title={headerTitle} room={room} currentUser={currentUser}
+        navigation={navigation} title={headerTitle} room={room}
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}
         onUserHeaderPress={handleUserHeaderPress} isFriend={isFriend}/>
       <ChatList room={room} onLongPressItem={handleOnLongPress} />
@@ -108,4 +109,4 @@ function ChatScreen(props){
 }
 
 ChatScreen.navigationOptions = { header: null }
-export default withCurrentUser(ChatScreen);
+export default ChatScreen

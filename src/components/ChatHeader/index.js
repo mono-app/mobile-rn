@@ -6,9 +6,12 @@ import { View } from "react-native";
 import { Appbar, Subheading, Caption } from "react-native-paper";
 import PeopleAPI from "src/api/people";
 import RoomsAPI from "src/api/rooms"
+import firebase from 'react-native-firebase';
 
 function ChatHeader(props){
-  const { title, profilePicture, room, currentUser } = props;
+  const { title, profilePicture, room } = props;
+  const firebaseCurrentUser = firebase.auth().currentUser
+
   const [ audienceStatus, setAudienceStatus ] = React.useState("");
   const [ isInRoom, setInRoom ] = React.useState(false);
   const _isMounted = React.useRef(true);
@@ -21,7 +24,7 @@ function ChatHeader(props){
 
   const initUserInRoom = () => {
     inRoomListener.current = RoomsAPI.getInRoomWithRealTimeUpdate(room.id, userInRoomList => {
-      const audiences = room.audiences.filter((audience) => audience !== currentUser.id);
+      const audiences = room.audiences.filter((audience) => audience !== firebaseCurrentUser.uid);
    
       if(userInRoomList && userInRoomList.length>0 && userInRoomList.includes(audiences[0])){
         if( _isMounted.current) setInRoom(true)
@@ -30,7 +33,7 @@ function ChatHeader(props){
   };
 
   const initAudience = () => {
-    const audiences = room.audiences.filter((audience) => audience !== currentUser.id);
+    const audiences = room.audiences.filter((audience) => audience !== firebaseCurrentUser.uid);
     audienceListener.current = PeopleAPI.getDetailWithRealTimeUpdate(audiences[0], (audienceData)=>{
       const tempAudienceStatus = (audienceData && audienceData.lastOnline && audienceData.lastOnline.status)? audienceData.lastOnline.status: "offline";
       if(_isMounted.current) setAudienceStatus(tempAudienceStatus)
@@ -73,5 +76,5 @@ ChatHeader.propTypes = {
   navigation: PropTypes.any, 
   style: PropTypes.object,
 }
-ChatHeader.defaultProps = { navigation: null, title: null, style: null }
+ChatHeader.defaultProps = { onUserHeaderPress: ()=>{}, navigation: null, title: null, style: null }
 export default ChatHeader

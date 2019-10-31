@@ -79,5 +79,5 @@ Bot.propTypes = {
   message: PropTypes.object.isRequired,
   sentTimeString: PropTypes.string.isRequired,
 }
-Bot.defaultProps = { bubbleStyle: "myBubble" , onPress: () => {}, clickable: false, isClicked: false, onEnableMore: () => {} }
+Bot.defaultProps = { bubbleStyle: "myBubble" , onPress: () => {}, onLongPress: () => {}, clickable: false, isClicked: false, onPressEnableMore: () => {} }
 export default withTheme(Bot);

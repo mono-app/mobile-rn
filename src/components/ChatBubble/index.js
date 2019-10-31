@@ -77,5 +77,5 @@ ChatBubble.propTypes = {
     isSent: PropTypes.bool.isRequired
   }).isRequired
 }
-ChatBubble.defaultProps = { onPress: () => {}, clickable: false, bubbleStyle: "myBubble" }
+ChatBubble.defaultProps = { onPress: () => {}, onLongPress: () => {}, clickable: false, bubbleStyle: "myBubble" }
 export default ChatBubble;

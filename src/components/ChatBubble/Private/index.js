@@ -87,5 +87,5 @@ Private.propTypes = {
   message: PropTypes.object.isRequired,
   sentTimeString: PropTypes.string.isRequired,
 }
-Private.defaultProps = { onPress: () => {}, clickable: false, isClicked: false, onPressEnableMore: () => {} }
+Private.defaultProps = { onPress: () => {}, onLongPress: () => {}, clickable: false, isClicked: false, onPressEnableMore: () => {} }
 export default withTheme(Private);

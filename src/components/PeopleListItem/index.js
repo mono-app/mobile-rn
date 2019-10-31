@@ -24,6 +24,7 @@ function PeopleListItem(props){
   })
   
   const handlePress = () => props.onPress(people);
+  const handleLongPress = () => props.onLongPress(people);
 
   const fetchStatus = async () => {
     const status = await StatusAPI.getLatestStatus(id);
@@ -46,7 +47,6 @@ function PeopleListItem(props){
     if(props.distance===undefined) fetchStatus();
     else if(_isMounted.current) setStatus("jarak < "+props.distance+" meters");
     fetchData();
-    console.log("aaa", props.onPress)
     return () => {
       if(_isMounted.current) _isMounted.current = false
     }
@@ -69,7 +69,7 @@ function PeopleListItem(props){
     )
   }else{
     return(
-      <TouchableOpacity onPress={handlePress} disabled={!props.onPress}>
+      <TouchableOpacity onPress={handlePress} disabled={!props.onPress} onLongPress={handleLongPress}>
         <View style={styles.userContainer}>
           <CircleAvatar size={48} uri={profilePicture} style={{ marginRight: 16 }}/>
           <View style={{flex:1}}>
@@ -83,6 +83,6 @@ function PeopleListItem(props){
 
 }
 PeopleListItem.propTypes = { }
-PeopleListItem.defaultProps = { }
+PeopleListItem.defaultProps = { onLongPress: ()=>{} }
 
 export default PeopleListItem;

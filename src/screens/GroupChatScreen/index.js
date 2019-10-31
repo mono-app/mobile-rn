@@ -8,9 +8,10 @@ import ChatHeaderGroup from "src/components/ChatHeaderGroup";
 import { Platform, KeyboardAvoidingView } from "react-native";
 import ClassAPI from "modules/Classroom/api/class";
 import ChatLongPressDialog from "src/components/ChatLongPressDialog"
+import firebase from 'react-native-firebase';
 
 function GroupChatScreen(props){
-  const { currentUser } = props;
+  const firebaseCurrentUser = firebase.auth().currentUser
   const room = props.navigation.getParam("room", null);
   const _isMounted = React.useRef(true);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
@@ -20,10 +21,10 @@ function GroupChatScreen(props){
   const subtitle = "Classroom Group"
 
   const handleSendPress = (message, replyMessage) => {
-    MessagesAPI.sendMessage(room.id, currentUser.id, message, "text", null, replyMessage);
+    MessagesAPI.sendMessage(room.id, firebaseCurrentUser.uid, message, "text", null, replyMessage);
     setMessageToReply(null)
   }
-  
+
   handleGroupHeaderPress = () => {
     const payload = { room: room, title: headerTitle, subtitle }
     props.navigation.navigate("GroupChatDetails", payload)

@@ -82,6 +82,7 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
       let type= "-"
       let title = ""
       const body = messageDocument.content
+      const priority = (messageDocument.replyTo)? "high" : "normal"
       if(roomType==="bot"){
         if(roomDocument.bot==="BirthdayReminder"){
           type = "birthday-reminder"
@@ -96,7 +97,7 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
       }
       message = {
         token: audienceData.tokenInformation.messagingToken,
-        android: { notification: {channelId: "message-notification"} },
+        android: { notification: {channelId: "message-notification"}, priority },
         data: {
           type,
           roomId: roomId,

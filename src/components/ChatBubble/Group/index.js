@@ -38,5 +38,5 @@ Group.propTypes = {
   message: PropTypes.object.isRequired,
   sentTimeString: PropTypes.string.isRequired,
 }
-Group.defaultProps = { onPress: () => {}, clickable: false, isClicked: false, onPressEnableMore: () => {} }
+Group.defaultProps = { onPress: () => {}, onLongPress: () => {}, clickable: false, isClicked: false, onPressEnableMore: () => {} }
 export default Group;

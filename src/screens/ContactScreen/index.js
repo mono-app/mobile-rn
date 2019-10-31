@@ -1,6 +1,7 @@
 import React from "react";
 import FriendsAPI from "src/api/friends";
 import { withCurrentUser } from "src/api/people/CurrentUser";
+import firebase from 'react-native-firebase';
 
 import PeopleListItem from "src/components/PeopleListItem";
 import HeadlineTitle from "src/components/HeadlineTitle";
@@ -8,14 +9,18 @@ import AppHeader from "src/components/AppHeader";
 import { View, FlatList } from "react-native";
 import MySearchbar from "src/components/MySearchbar"
 import { withTranslation } from 'react-i18next';
-import { setState } from "expect/build/jestMatchersObject";
+import HideBlockContactDialog from "src/components/HideBlockContactDialog"
 
 function ContactScreen(props){
-  const { currentUser,blockedUserList,blockedByUserList,hiddenUserList } = props;
+  const { blockedUserList,blockedByUserList,hiddenUserList } = props;
+  const firebaseCurrentUser = firebase.auth().currentUser
+
   const [ peopleList, setPeopleList ] = React.useState([]);
   const [ filteredPeopleList, setFilteredPeopleList ] = React.useState([]);
   const friendsListener = React.useRef(null);
   const [ isRefreshing, setRefreshing ] = React.useState(true);
+  const [ showHideBlockDialog, setShowHideBlockDialog ] = React.useState(false)
+  const [ selectedPeople, setSelectedPeople ] = React.useState(null)
 
   const handleContactPress = (people) => {
     props.navigation.navigate("PeopleInformation", { peopleId: people.id });
@@ -23,7 +28,7 @@ function ContactScreen(props){
 
   const fetchData = () => {
     setRefreshing(true)
-    friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(currentUser.id, (friends) => {
+    friendsListener.current = FriendsAPI.getFriendsWithRealTimeUpdate(firebaseCurrentUser.uid, (friends) => {
       setFriendList(friends)
       setRefreshing(false)
     })
@@ -42,10 +47,15 @@ function ContactScreen(props){
         return (people && people.applicationInformation && people.applicationInformation.nickName.toLowerCase().indexOf(newSearchText.toLowerCase())) >= 0
       })
       setFilteredPeopleList(filteredPeopleList)
-    } else {
-      setFilteredPeopleList(clonedPeopleList)
-    }
+    } else setFilteredPeopleList(clonedPeopleList)
+  }
 
+  const handleDismissHideBlock = () => setShowHideBlockDialog(false)
+  
+
+  const handleLongPress = (people) => {
+    setSelectedPeople(people)
+    setShowHideBlockDialog(true)
   }
 
   const setFriendList = (peopleList1) => {
@@ -86,8 +96,9 @@ function ContactScreen(props){
         refreshing={isRefreshing} 
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => {
-          return <PeopleListItem key={index} id={item.id} onPress={handleContactPress} />
+          return <PeopleListItem key={index} id={item.id} onPress={handleContactPress} onLongPress={handleLongPress}/>
         }}/>
+        <HideBlockContactDialog visible={showHideBlockDialog} onDismiss={handleDismissHideBlock} people={selectedPeople}/>
     </View>
   )
 }
