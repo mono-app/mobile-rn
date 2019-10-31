@@ -14,6 +14,7 @@ import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
 // import PeopleNearbyScreen from "src/screens/PeopleNearbyScreen";
 import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import IntroductionClassroomScreen from "modules/Classroom/screens/IntroductionScreen";
+import ForwardChatScreen from "src/screens/ForwardChatScreen";
 
 export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen, navigationOptions: { header: null } },
@@ -23,6 +24,7 @@ export default AppTabNavigator =  createStackNavigator({
   Chat: { screen: ChatScreen, navigationOptions: { header: null} },
   GroupChatDetails: { screen: GroupChatDetailsScreen, navigationOptions: { header: null} },
   GroupChat: { screen: GroupChatScreen, navigationOptions: { header: null} },
+  ForwardChat: {screen: ForwardChatScreen, navigationOptions: { header: null }},
   AddDiscussion: {screen: AddDiscussionScreen, navigationOptions: { header: null}},
   Discussions: {screen: DiscussionsScreen, navigationOptions: { header: null}},
   // PeopleNearby: { screen: PeopleNearbyScreen },

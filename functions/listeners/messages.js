@@ -21,7 +21,8 @@ Messages.triggerNewMessage = functions.region("asia-east2").firestore.document("
   await roomDocRef.update({
     "lastMessage.message": message.content,
     "lastMessage.sentTime": message.sentTime,
-    readBy: readByPayload
+    readBy: readByPayload,
+    hideBy: []
   })
 })
 
@@ -71,13 +72,20 @@ Messages.sendNotificationForNewMessage = functions.region("asia-east2").firestor
     }
   });
 
+  // filter audience who will get notified
+  const filteredAudiences = audiencesData.filter(audienceData => {
+    if(!(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken)) return false
+    if(blockedUserList.includes(audienceData.id)) return false
+    if(blockedByUserList.includes(audienceData.id)) return false
+    if(roomDocument.mutedBy && roomDocument.mutedBy.includes(audienceData.id)) return false
+    return true
+  })
+
   let tempTokenArray = []
 
   // send notification to all audiences except sender
-  const messagePromises = audiencesData.map(audienceData => {
-    if(audienceData && audienceData.tokenInformation && audienceData.tokenInformation.messagingToken && 
-      !tempTokenArray.includes(audienceData.tokenInformation.messagingToken) && !blockedUserList.includes(audienceData.id) && 
-      !blockedByUserList.includes(audienceData.id)){
+  const messagePromises = filteredAudiences.map(audienceData => {
+    if(!tempTokenArray.includes(audienceData.tokenInformation.messagingToken)){
       let message = {}
       let type= "-"
       let title = ""

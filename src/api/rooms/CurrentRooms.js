@@ -44,6 +44,7 @@ export class CurrentRoomsProvider extends React.PureComponent{
       clearNotifBadge: this.handleClearNotifBadge,
     }
     this.currentRoomsListener = null
+    this.firebaseCurrentUser = firebase.auth().currentUser
     this.handleSetCurrentRooms = this.handleSetCurrentRooms.bind(this)
     this.handleGetRoomDetails = this.handleGetRoomDetails.bind(this)
     this.handleSetRoomNotif = this.handleSetRoomNotif.bind(this)
@@ -110,9 +111,8 @@ export class CurrentRoomsProvider extends React.PureComponent{
   }
 
   componentDidMount(){
-    const currentUserId = firebase.auth().currentUser.uid;
-    this.currentRoomsListener = RoomsAPI.getRoomsWithRealtimeUpdate(currentUserId, (rooms) => {
-      this.handleSetCurrentRooms(rooms, currentUserId)
+    this.currentRoomsListener = RoomsAPI.getRoomsWithRealtimeUpdate(this.firebaseCurrentUser.uid, (rooms) => {
+      this.handleSetCurrentRooms(rooms, this.firebaseCurrentUser.uid)
     });
   }
 

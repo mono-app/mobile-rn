@@ -140,7 +140,7 @@ function ChatList(props){
   const keyExtractor = (item) => item.id
   const renderItem = ({ item }) => {
     const bubbleStyle = (firebaseCurrentUser.uid !== item.senderId)? "peopleBubble": "myBubble";
-    const isClickable = !(item.type === "text" || item.type === "date-separator" || item.type === "lets-start-chat")
+    const isClickable = !(item.type === "text" || item.type === "date-separator" || item.type === "lets-start-chat" || item.type === "forwarded")
     if(item.type === "date-separator" || item.type === "lets-start-chat"){
       return (
         <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>

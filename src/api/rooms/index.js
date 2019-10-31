@@ -4,6 +4,7 @@ import { RoomsCollection, InRoomCollection } from "src/api/database/collection";
 import { GetDocument } from "src/api/database/query";
 import StudentAPI from "modules/Classroom/api/student";
 import TeacherAPI from "modules/Classroom/api/teacher";
+import Database from "../database";
 
 export default class RoomsAPI{
   constructor(){
@@ -26,6 +27,7 @@ export default class RoomsAPI{
       })
 
       const filteredRooms = rooms.filter((item)=>{
+        if(item.hideBy && item.hideBy.includes(userId)) return false
         return (!item.blocked && !item.hidden && item.lastMessage && item.lastMessage.sentTime)
       })
 
@@ -156,6 +158,34 @@ export default class RoomsAPI{
     }
     return Promise.resolve(true)
   }
+
+  static async mutedRoom(roomId, userId){
+    await Database.update(async (db)=>{
+      const roomsCollection = new RoomsCollection()
+      const roomRef = db.collection(roomsCollection.getName()).doc(roomId)
+      await roomRef.update({mutedBy: firebase.firestore.FieldValue.arrayUnion(userId)})
+    })
+    return Promise.resolve(true)
+  }
+
+  static async unmutedRoom(roomId, userId){
+    await Database.update(async (db)=>{
+      const roomsCollection = new RoomsCollection()
+      const roomRef = db.collection(roomsCollection.getName()).doc(roomId)
+      await roomRef.update({mutedBy: firebase.firestore.FieldValue.arrayRemove(userId)})
+    })
+    return Promise.resolve(true)
+  }
+
+  static async hideRoom(roomId, userId){
+    await Database.update(async (db)=>{
+      const roomsCollection = new RoomsCollection()
+      const roomRef = db.collection(roomsCollection.getName()).doc(roomId)
+      await roomRef.update({hideBy: firebase.firestore.FieldValue.arrayUnion(userId)})
+    })
+    return Promise.resolve(true)
+  }
+
 }
 
 

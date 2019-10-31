@@ -9,13 +9,17 @@ function Private(props){
   const { theme, clickable, bubbleStyle, message, enabledMore, isClicked, sentTimeString } = props;
   const maxContentLength = 100
 
+  const generalStyles = StyleSheet.create({
+    forwarded: {paddingHorizontal:8,fontWeight:"bold", fontStyle:"italic", color:"#rgba(0, 0, 0, .4)"}
+  })
+
   const myBubble = StyleSheet.create({
     container: { display: "flex", flexGrow: 1, flexShrink: 1, position: "relative", flexDirection: "row-reverse", alignItems: "center" },
     section: {
       maxWidth: "90%", backgroundColor: props.theme.colors.primary, paddingHorizontal: 8, paddingVertical: 8,
       borderRadius: 16, borderBottomEndRadius: 0, display: "flex", flexDirection: "row"
     },
-    empty: { color: props.theme.colors.primary },
+    empty: { color:"rgba(0, 0, 0, 0)" },
     contentColor: { color: "rgba(255, 255, 255, 1)" },
     metadataColor: { color: "rgba(255, 255, 255, .56)" },
     metadata: {
@@ -32,7 +36,7 @@ function Private(props){
       borderRadius: 16, borderBottomStartRadius: 0, display: "flex", flexDirection: "row",
       borderColor: "rgba(0, 0, 0, .8)", borderWidth: 1
     },
-    empty: { color: "white" },
+    empty: { color:"rgba(0, 0, 0, 0)" },
     contentColor: { color: "rgba(0, 0, 0, 1)" },
     metadataColor: { color: "rgba(0, 0, 0, .56)" },
     metadata: {
@@ -58,9 +62,10 @@ function Private(props){
               <Text style={{color: "rgba(0, 0, 0, .6)"}}>{message.replyTo.content}</Text>
             </View>
               : null}
+            {(message.type==="forwarded")?<Text style={generalStyles.forwarded}>Forwarded</Text>: null}
             <Text style={[styles.contentColor, {paddingHorizontal: 8}]} >
               {(enabledMore)? shortnerContent(): message.content}
-              <Text style={[ styles.empty, (!isClicked && clickable)?{color:"#0EAD69"}:{} ]}>±±±±±±±±±±±</Text>     
+              <Text style={styles.empty}>±±±±±±±±±±±</Text>     
             </Text>
           </View>
           <View style={[styles.metadata, {paddingHorizontal: 8}]}>

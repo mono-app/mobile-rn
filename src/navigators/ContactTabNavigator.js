@@ -6,10 +6,12 @@ import ChatScreen from "src/screens/ChatScreen";
 import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj"
 import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj"
+import ForwardChatScreen from "src/screens/ForwardChatScreen";
 
 export default ContactTabNavigator =  createStackNavigator({
   ContactHome: { screen: ContactScreen, navigationOptions: { header: null } },
   Chat: { screen: ChatScreen },
+  ForwardChat: {screen: ForwardChatScreen, navigationOptions: { header: null }},
   PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   ...DiscussionClassroomNotifNavigatorObj,
   ...MomentNavigatorObj

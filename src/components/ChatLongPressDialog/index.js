@@ -3,10 +3,11 @@ import { Clipboard, TouchableOpacity, View } from "react-native";
 import { Dialog, Portal, Subheading } from "react-native-paper";
 import Toast from 'react-native-easy-toast'
 import PropTypes from "prop-types";
-import PeopleAPI from "../../api/people";
+import PeopleAPI from "src/api/people";
+import { withNavigation } from "react-navigation";
 
 function ChatLongPressDialog(props){
-  const { visible, message } = props
+  const { visible, message, navigation } = props
   const toastRef = React.useRef(null);
 
   const handleCopyPress = async () => {
@@ -25,7 +26,8 @@ function ChatLongPressDialog(props){
   }
 
   const handleFowardPress = () => {
-    
+    payload = { message }
+    navigation.navigate("ForwardChat", payload)
     props.onDismiss()
   }
 
@@ -44,7 +46,7 @@ function ChatLongPressDialog(props){
           </TouchableOpacity>
           <View style={{margin: 8}}/>
           <TouchableOpacity onPress={handleFowardPress}>
-            <Subheading>Foward</Subheading>
+            <Subheading>Forward</Subheading>
           </TouchableOpacity>
         </Dialog.Content>
       </Dialog>
@@ -58,4 +60,4 @@ ChatLongPressDialog.propTypes = {
   message: PropTypes.object.isRequired
 }
 ChatLongPressDialog.defaultProps = { message: {} , visible: false }
-export default ChatLongPressDialog;
+export default withNavigation(ChatLongPressDialog)

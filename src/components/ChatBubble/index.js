@@ -6,7 +6,6 @@ import PeopleAPI from "src/api/people";
 import Logger from "src/api/logger";
 import ChatBubbleGroup from "src/components/ChatBubble/Group";
 import ChatBubblePrivate from "src/components/ChatBubble/Private";
-import ChatBubbleBot from "src/components/ChatBubble/Bot";
 import { View } from "react-native";
 
 function ChatBubble(props){
@@ -39,7 +38,7 @@ function ChatBubble(props){
   React.useEffect(() => {
     setClicked(message.isClicked===true)
     if(isSent) setSentTimeString(new moment.unix(sentTime.seconds).format("HH:mmA"));
-    if(content.length>maxContentLength) setEnableMore(true)
+    if((content&&content.length)>maxContentLength) setEnableMore(true)
     else setEnableMore(false)
   }, [isSent, sentTime])
 

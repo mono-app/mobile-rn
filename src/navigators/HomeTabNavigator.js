@@ -15,6 +15,7 @@ import ScanQRCodeSCreen from "src/screens/ScanQRCodeScreen";
 import EditSingleFieldScreen from "src/screens/EditSingleFieldScreen";
 import DiscussionClassroomNotifNavigatorObj from "modules/Classroom/navigators/DiscussionClassroomNotifNavigatorObj";
 import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
+import ForwardChatScreen from "src/screens/ForwardChatScreen";
 
 export default HomeTabNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -23,6 +24,7 @@ export default HomeTabNavigator = createStackNavigator({
   PeopleSearchResult: { screen: PeopleSearchResult },
   PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   FriendRequestList: { screen: FriendRequestListScreen },
+  ForwardChat: {screen: ForwardChatScreen, navigationOptions: { header: null }},
   Chat: { screen: ChatScreen },
   InboundOnlyChat: { screen: InboundOnlyChatScreen },
   NotificationBot: { screen: NotificationBotScreen },
