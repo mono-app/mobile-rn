@@ -4,23 +4,19 @@ import Logger from "src/api/logger";
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import Key from "src/helper/key"
 import { StyleSheet } from "react-native";
-import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
 import ChatBubble from "src/components/ChatBubble";
-import ChatBubbleGroup from "src/components/ChatBubble/Group";
-import ChatBubblePrivate from "src/components/ChatBubble/Private";
-import ChatBubbleBot from "src/components/ChatBubble/Bot";
 import { FlatList, View } from "react-native";
 import { Chip } from "react-native-paper";
 import MessagesAPI from "src/api/messages";
 import AsyncStorage from '@react-native-community/async-storage';
+import firebase from 'react-native-firebase';
 
 function ChatList(props){
-  const { currentUser, navigation, room } = props;
-  
+  const { navigation, room, attachedMessages } = props;
+  const firebaseCurrentUser = firebase.auth().currentUser
   const [ bgColor, setBgColor ] = React.useState("#fff");
   const [ messages, setMessages ] = React.useState([]);
-
   const messagesListener = React.useRef(null);
   const lastMessageSnapshot = React.useRef(null);
   const listHeight = React.useRef(0);
@@ -62,21 +58,25 @@ function ChatList(props){
     if(currentPosition >= (listHeight.current - threshold)) handleReachTop();
   }
 
-  const handleOnPress = (item) => {
-    if(item.type === "discussion-share"){
-      handleDiscussionPress(item)
-    }else if(item.type === "new-discussion"){
-      handleDiscussionPress(item)
-    }else if(item.type === "new-discussion-comment"){
-      handleDiscussionPress(item)
-    }else if(item.type === "moment-share"){
-      handleMomentPress(item)
-    }if(item.type === "moment-comment"){
-      handleMomentCommentPress(item)
-    }else if(item.type === "setup-birthday"){
-      handleSetupBirthdayPress(item)
-    }else if(item.type === "friend-request"){
-      handleFriendRequestPress(item)
+  const handleLongPress = (message) => {
+    console.log("ON LONG PRESS TRIGGERRED")
+  }
+
+  const handleOnPress = (message) => {
+    if(message.type === "discussion-share"){
+      handleDiscussionPress(message)
+    }else if(message.type === "new-discussion"){
+      handleDiscussionPress(message)
+    }else if(message.type === "new-discussion-comment"){
+      handleDiscussionPress(message)
+    }else if(message.type === "moment-share"){
+      handleMomentPress(message)
+    }if(message.type === "moment-comment"){
+      handleMomentCommentPress(message)
+    }else if(message.type === "setup-birthday"){
+      handleSetupBirthdayPress(message)
+    }else if(message.type === "friend-request"){
+      handleFriendRequestPress(message)
     }
   }
 
@@ -86,7 +86,7 @@ function ChatList(props){
     const taskId = item.details.discussion.taskId
     const discussionId = item.details.discussion.id
    
-    const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, currentUser.id)
+    const discussion = await DiscussionAPI.getDetail(schoolId, classId, taskId, discussionId, firebaseCurrentUser.uid)
     
     payload = { isFromNotification: false, schoolId, classId, taskId, discussion }
     props.navigation.navigate("DiscussionComment", payload)
@@ -124,7 +124,7 @@ function ChatList(props){
       messagesListener.current = MessagesAPI.getMessagesWithRealTimeUpdate(room.id, ({ addedMessages, modifiedMessages }, snapshot) => {
         lastMessageSnapshot.current = snapshot;
         if(addedMessages.length > 0){
-          MessagesAPI.markAsRead(room.id, currentUser.id)
+          MessagesAPI.markAsRead(room.id, firebaseCurrentUser.uid)
           setMessages((oldMessages) => {
             return MessagesAPI.appendDateSeparator([...addedMessages, ...oldMessages])
           });
@@ -135,7 +135,7 @@ function ChatList(props){
 
   const keyExtractor = (item) => item.id
   const renderItem = ({ item }) => {
-    const bubbleStyle = (currentUser.id !== item.senderId)? "peopleBubble": "myBubble";
+    const bubbleStyle = (firebaseCurrentUser.uid !== item.senderId)? "peopleBubble": "myBubble";
     const isClickable = !(item.type === "text" || item.type === "date-separator" || item.type === "lets-start-chat")
     if(item.type === "date-separator" || item.type === "lets-start-chat"){
       return (
@@ -143,14 +143,17 @@ function ChatList(props){
           <Chip>{item.details.value}</Chip>
         </View>
       )
-    }else if(room.type==="group-chat"){
-        return <ChatBubbleGroup style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
-    }else if(room.type==="chat"){
-        return <ChatBubblePrivate style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
-    }else if(room.type==="bot"){
-        return <ChatBubbleBot style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
+    }else{
+      return <ChatBubble type={room.type} style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} attachedMessages={attachedMessages} 
+      onPress={handleOnPress} onLongPress={handleLongPress} clickable={isClickable} message={item} roomId={room.id}/>
     }
-  
+    // }else if(room.type==="group-chat"){
+    //     return <ChatBubbleGroup style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} attachedMessages={attachedMessages} onPress={handleOnPress} onLongPress={handleLongPress} clickable={isClickable} message={item} roomId={room.id}/>
+    // }else if(room.type==="chat"){
+    //     return <ChatBubblePrivate style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
+    // }else if(room.type==="bot"){
+    //     return <ChatBubbleBot style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
+    // }
   }
   
   React.useEffect(() => {
@@ -179,4 +182,4 @@ ChatList.propTypes = {
   room: PropTypes.shape().isRequired,
 };
 ChatList.defaultProps = { style: {}, isBot: false }
-export default withNavigation(withCurrentUser(ChatList));
+export default withNavigation(ChatList);

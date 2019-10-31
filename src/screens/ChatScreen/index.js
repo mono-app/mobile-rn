@@ -21,6 +21,7 @@ function ChatScreen(props){
   const [ isFriend, setFriend ] = React.useState(true);
   const [ isUserRegistered, setUserRegistered ] = React.useState(false);
   const [ headerProfilePicture, setHeaderProfilePicture ] = React.useState("");
+  const [ attachedMessages, setAttachedMessages ] = React.useState([]);
   
   const _isMounted = React.useRef(true);
 
@@ -37,6 +38,10 @@ function ChatScreen(props){
 
   const handleUserHeaderPress = () => {
     if(isUserRegistered) props.navigation.navigate("PeopleInformation", { peopleId: peopleId });
+  }
+
+  const handleLongPress = (message) => {
+    setAttachedMessages((old)=> [...old, message])
   }
 
   const fetchPeople = () => {
@@ -80,10 +85,11 @@ function ChatScreen(props){
   return (
     <KeyboardAvoidingView keyboardShouldPersistTaps={'handled'} behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeader 
+        attachedMessages={attachedMessages}
         navigation={navigation} title={headerTitle} room={room} currentUser={currentUser}
         profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}
         onUserHeaderPress={handleUserHeaderPress} isFriend={isFriend}/>
-      <ChatList room={room}/>
+      <ChatList room={room} onLongPress={handleLongPress} attachedMessages={attachedMessages}/>
       <ChatBottomTextInput room={room} editable={isUserRegistered} onSendPress={handleSendPress}/>
     </KeyboardAvoidingView>
   )

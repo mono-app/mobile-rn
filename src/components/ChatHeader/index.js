@@ -8,7 +8,7 @@ import PeopleAPI from "src/api/people";
 import RoomsAPI from "src/api/rooms"
 
 function ChatHeader(props){
-  const { title, profilePicture, room, currentUser } = props;
+  const { title, profilePicture, room, currentUser, attachedMessages } = props;
   const [ audienceStatus, setAudienceStatus ] = React.useState("");
   const [ isInRoom, setInRoom ] = React.useState(false);
   const _isMounted = React.useRef(true);
@@ -47,6 +47,17 @@ function ChatHeader(props){
       if(inRoomListener.current) inRoomListener.current();
     }
   }, []);
+
+  if(attachedMessages.length>0)(
+    <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
+      <View>
+        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent:"flex-end", flexGrow: 1 }}>
+          <Caption>aaa</Caption>
+          <Caption>bbb</Caption>
+        </View>
+      </View>
+    </Appbar.Header>
+  )
 
   return(
     <Appbar.Header theme={{ colors: {primary: "white"} }} style={[ styles.default, props.style ]}>
