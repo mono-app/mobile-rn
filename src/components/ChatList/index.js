@@ -7,7 +7,9 @@ import { StyleSheet } from "react-native";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withNavigation } from "react-navigation";
 import ChatBubble from "src/components/ChatBubble";
-import ChatBubbleWithPhoto from "src/components/ChatBubbleWithPhoto";
+import ChatBubbleGroup from "src/components/ChatBubble/Group";
+import ChatBubblePrivate from "src/components/ChatBubble/Private";
+import ChatBubbleBot from "src/components/ChatBubble/Bot";
 import { FlatList, View } from "react-native";
 import { Chip } from "react-native-paper";
 import MessagesAPI from "src/api/messages";
@@ -15,7 +17,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 function ChatList(props){
   const { currentUser, navigation, room } = props;
-  const SelectedBubble = room.audiences.length > 2? ChatBubbleWithPhoto: ChatBubble;
   
   const [ bgColor, setBgColor ] = React.useState("#fff");
   const [ messages, setMessages ] = React.useState([]);
@@ -59,6 +60,24 @@ function ChatList(props){
     const threshold = 1000;
     Logger.log("ChatList.handleListScroll#currentPosition", currentPosition);
     if(currentPosition >= (listHeight.current - threshold)) handleReachTop();
+  }
+
+  const handleOnPress = (item) => {
+    if(item.type === "discussion-share"){
+      handleDiscussionPress(item)
+    }else if(item.type === "new-discussion"){
+      handleDiscussionPress(item)
+    }else if(item.type === "new-discussion-comment"){
+      handleDiscussionPress(item)
+    }else if(item.type === "moment-share"){
+      handleMomentPress(item)
+    }if(item.type === "moment-comment"){
+      handleMomentCommentPress(item)
+    }else if(item.type === "setup-birthday"){
+      handleSetupBirthdayPress(item)
+    }else if(item.type === "friend-request"){
+      handleFriendRequestPress(item)
+    }
   }
 
   const handleDiscussionPress = async (item) => {
@@ -117,29 +136,21 @@ function ChatList(props){
   const keyExtractor = (item) => item.id
   const renderItem = ({ item }) => {
     const bubbleStyle = (currentUser.id !== item.senderId)? "peopleBubble": "myBubble";
-    if(item.type === "text") {
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} message={item}/>
-    }else if(item.type === "discussion-share"){
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
-    }else if(item.type === "new-discussion"){
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
-    }else if(item.type === "new-discussion-comment"){
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleDiscussionPress} message={item} roomId={room.id}/>
-    }else if(item.type === "moment-share"){
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleMomentPress} message={item} roomId={room.id}/>
-    }else if(item.type === "moment-comment"){
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleMomentCommentPress} message={item} roomId={room.id}/>
-    }else if(item.type === "setup-birthday"){
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleSetupBirthdayPress} message={item} roomId={room.id}/>
-    }else if(item.type === "friend-request"){
-      return <SelectedBubble style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} clickable={true} onPress={handleFriendRequestPress} message={item} roomId={room.id}/>
-    }else if(item.type === "date-separator" || item.type === "lets-start-chat"){
+    const isClickable = !(item.type === "text" || item.type === "date-separator" || item.type === "lets-start-chat")
+    if(item.type === "date-separator" || item.type === "lets-start-chat"){
       return (
         <View style={{ display: "flex", flexGrow: 1, alignItems: "center", paddingVertical: 8, paddingHorizontal: 16 }}>
           <Chip>{item.details.value}</Chip>
         </View>
       )
+    }else if(room.type==="group-chat"){
+        return <ChatBubbleGroup style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
+    }else if(room.type==="chat"){
+        return <ChatBubblePrivate style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
+    }else if(room.type==="bot"){
+        return <ChatBubbleBot style={{ marginBottom: 8, marginTop: 4 }} bubbleStyle={bubbleStyle} onPress={handleOnPress} clickable={isClickable} message={item} roomId={room.id}/>
     }
+  
   }
   
   React.useEffect(() => {

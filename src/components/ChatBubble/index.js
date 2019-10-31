@@ -69,37 +69,20 @@ function ChatBubble(props){
   
   return (
     <View style={[ styles.container, props.style]}>
-        {(clickable)? 
-        <TouchableOpacity style={[styles.section, (!isClicked)?{backgroundColor:"#0EAD69"}:{}]} onPress={handlePress}>
-          <Text style={styles.contentColor} >
-            {(enabledMore)? shortnerContent(): content}
-            <Text style={[styles.empty, (!isClicked)?{color:"#0EAD69"}:{} ]}>±±±±±±±±±±±</Text>     
-          </Text>
-          <View style={styles.metadata}>
-            <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
-            {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
-          </View>
-        </TouchableOpacity>
-        : 
-        <TouchableWithoutFeedback>
-          <View style={[styles.section]}>
-            <Text style={[styles.contentColor]} >
-              {(enabledMore)? shortnerContent(): content}
-              <Text style={styles.empty}>±±±±±±±±±±±</Text>     
-            </Text>
-            <View style={[styles.metadata]}>
-              <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
-              {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-        }
-       
-
+      <TouchableOpacity style={[styles.section, (!isClicked)?{backgroundColor:"#0EAD69"}:{}]} onPress={handlePress} disabled={!clickable}>
+        <Text style={styles.contentColor} >
+          {(enabledMore)? shortnerContent(): content}
+          <Text style={[styles.empty, (!isClicked)?{color:"#0EAD69"}:{} ]}>±±±±±±±±±±±</Text>     
+        </Text>
+        <View style={styles.metadata}>
+          <Caption style={[{ marginRight: 4 }, styles.metadataColor]}>{sentTimeString}</Caption>
+          {bubbleStyle === "myBubble"?<MaterialIcons name="done-all" size={16} style={styles.metadataColor}/>: null}
+        </View>
+      </TouchableOpacity>
+     
       {(enabledMore)? 
           <IconButton icon="zoom-out-map" color={theme.colors.placeholder} onPress={handleContentMore}/>
       : null}
-      
 
       {clickable && bubbleStyle !== "myBubble"?(
         <IconButton icon="share" color={theme.colors.placeholder} onPress={handlePress}/>
