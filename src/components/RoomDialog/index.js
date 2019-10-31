@@ -52,7 +52,7 @@ function RoomDialog(props){
 }
 
 RoomDialog.propTypes = { 
-  visible: PropTypes.object.isRequired,
+  visible: PropTypes.bool.isRequired,
   selectedRoom: PropTypes.object.isRequired
 }
 RoomDialog.defaultProps = { selectedRoom: {} , visible: false }

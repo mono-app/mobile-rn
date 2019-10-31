@@ -42,7 +42,7 @@ function HideBlockContactDialog(props){
 }
 
 HideBlockContactDialog.propTypes = { 
-  visible: PropTypes.object.isRequired,
+  visible: PropTypes.bool.isRequired,
 }
 HideBlockContactDialog.defaultProps = { message: {} , visible: false }
 export default HideBlockContactDialog;

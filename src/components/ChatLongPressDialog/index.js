@@ -56,7 +56,7 @@ function ChatLongPressDialog(props){
 }
 
 ChatLongPressDialog.propTypes = { 
-  visible: PropTypes.object.isRequired,
+  visible: PropTypes.bool.isRequired,
   message: PropTypes.object.isRequired
 }
 ChatLongPressDialog.defaultProps = { message: {} , visible: false }
