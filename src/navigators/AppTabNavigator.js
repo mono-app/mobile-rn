@@ -15,12 +15,14 @@ import DiscussionsScreen from "modules/Classroom/screens/DiscussionsScreen"
 import PeopleInformationScreen from "src/screens/PeopleInformationScreen";
 import IntroductionClassroomScreen from "modules/Classroom/screens/IntroductionScreen";
 import ForwardChatScreen from "src/screens/ForwardChatScreen";
+import ContactSupportScreen from "src/screens/ContactSupportScreen";
 
 export default AppTabNavigator =  createStackNavigator({
   Home: { screen: AppListScreen, navigationOptions: { header: null } },
   Classroom: { screen: ClassroomNavigator, navigationOptions: { header: null }},
   // News: { screen: NewsNavigator, navigationOptions: { headerTitle: "News" }},
   IntroductionClassroom: { screen: IntroductionClassroomScreen, navigationOptions: { header: null} },
+  ContactSupport: { screen: ContactSupportScreen, navigationOptions: { header: null} },
   Chat: { screen: ChatScreen, navigationOptions: { header: null} },
   GroupChatDetails: { screen: GroupChatDetailsScreen, navigationOptions: { header: null} },
   GroupChat: { screen: GroupChatScreen, navigationOptions: { header: null} },

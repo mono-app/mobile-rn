@@ -248,7 +248,7 @@ class AddDiscussionScreen extends React.PureComponent {
             <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
               <Text style={styles.label}>{this.props.t("description")}</Text>
               <TextInput
-                style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
+                style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top", maxHeight: 80 }}
                 value={this.state.description}
                 multiline={true}
                 numberOfLines = {5}

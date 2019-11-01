@@ -134,3 +134,6 @@ export class InRoomCollection extends Collection{
   constructor(){ super("inRoom"); }
 }
 
+export class ContactSupportCollection extends Collection{
+  constructor(){ super("contactSupport"); }
+}

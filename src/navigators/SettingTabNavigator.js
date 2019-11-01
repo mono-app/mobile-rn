@@ -15,6 +15,8 @@ import MomentNavigatorObj from "modules/Moments/navigators/MomentNavigatorObj";
 import ChatSettingsScreen from "src/screens/ChatSettingsScreen"
 import GeneralSettingsScreen from "src/screens/GeneralSettingsScreen"
 import ChatSolidColorPickerScreen from "src/screens/ChatSolidColorPickerScreen"
+import ContactSupportScreen from "src/screens/ContactSupportScreen";
+import HelpScreen from "src/screens/HelpScreen";
 
 export default SettingTabNavigator = createStackNavigator({
   Home: { screen: SettingsScreen },
@@ -25,8 +27,10 @@ export default SettingTabNavigator = createStackNavigator({
   BlockedUsers: {screen: BlockedUsersScreen, navigationOptions: { header: null }},
   HiddenUsers: {screen: HiddenUsersScreen, navigationOptions: { header: null }},
   MyQR: { screen: MyQRScreen, navigationOptions: { header: null }},
+  Help: { screen: HelpScreen, navigationOptions: { header: null }},
   ChatSolidColorPicker: { screen: ChatSolidColorPickerScreen, navigationOptions: { header: null } },
   ScanQRCode: { screen: ScanQRCodeScreen, navigationOptions: { header: null }},
+  ContactSupport: { screen: ContactSupportScreen, navigationOptions: { header: null} },
   PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null }},
   EditSingleField: { screen: EditSingleFieldScreen, navigationOptions: { header: null } },
   StatusChange: { screen: StatusChangeScreen, navigationOptions: { header: null } },

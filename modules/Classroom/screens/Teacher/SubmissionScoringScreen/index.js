@@ -83,7 +83,7 @@ class SubmissionScoringScreen extends React.PureComponent {
                 </View>
                 <View style={{ marginHorizontal: 16 }}>
                   <TextInput
-                    style={{ backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
+                    style={{ backgroundColor: "#E8EEE8", textAlignVertical: "top", maxHeight: 80 }}
                     placeholder=""
                     multiline={true}
                     numberOfLines = {5}

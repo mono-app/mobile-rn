@@ -397,7 +397,7 @@ class DiscussionCommentScreen extends React.PureComponent {
               <View style={{flexDirection:"row", alignItems:"center"}}>
                 <CircleAvatar size={30} uri={HelperAPI.getDefaultProfilePic()}/>
                 <TextInput
-                  style={{ flex:1, marginBottom: 0, marginLeft:8 }}
+                  style={{ flex:1, marginBottom: 0, marginLeft:8, maxHeight: 80 }}
                   onChangeText={this.handleCommentChange}
                   value={this.state.comment}
                   multiline={true}
