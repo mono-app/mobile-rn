@@ -10,6 +10,7 @@ import ChatList from "src/components/ChatList";
 import ChatHeader from "src/components/ChatHeader";
 import { KeyboardAvoidingView } from "react-native";
 import firebase from 'react-native-firebase';
+import HelperAPI from "src/api/helper";
 
 function ChatScreen(props){
   const { navigation } = props;
@@ -63,7 +64,7 @@ function ChatScreen(props){
 
     PeopleAPI.getDetail(audienceId).then( (audienceData)=>{
       let tempHeaderTitle = ""
-      let tempHeaderProfilePicture = "https://picsum.photos/200/200/?random"
+      let tempHeaderProfilePicture = HelperAPI.getDefaultProfilePic()
       if(audienceData){
         if(audienceData.applicationInformation){
           if( _isMounted.current) setUserRegistered(true)

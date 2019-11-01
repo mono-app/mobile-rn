@@ -22,6 +22,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser"
 import ImagePicker from 'react-native-image-picker';
 import ImageCompress from "src/api/ImageCompress"
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -333,7 +334,7 @@ class DiscussionCommentScreen extends React.PureComponent {
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>         
           <Card style={{ elevation: 1, marginTop: 8}}>
               <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-                <CircleAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={40} uri={HelperAPI.getDefaultProfilePic()}/>
                 <View style={{ marginLeft: 16 }}>
                   <Text style={{ fontWeight: "700" }}>{this.state.posterName}</Text>
                   <Caption style={{ marginTop: 0 }}>{creationDate} | {this.props.t("time2")} {creationTime} WIB</Caption>
@@ -394,7 +395,7 @@ class DiscussionCommentScreen extends React.PureComponent {
           </Card>
             <Card style={{marginHorizontal: 8,marginTop:8, padding:8}}>
               <View style={{flexDirection:"row", alignItems:"center"}}>
-                <CircleAvatar size={30} uri={"https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={30} uri={HelperAPI.getDefaultProfilePic()}/>
                 <TextInput
                   style={{ flex:1, marginBottom: 0, marginLeft:8 }}
                   onChangeText={this.handleCommentChange}

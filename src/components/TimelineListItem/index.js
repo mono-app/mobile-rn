@@ -6,6 +6,7 @@ import { default as MaterialCommunityIcons } from "react-native-vector-icons/Mat
 import DiscussionAPI from "modules/Classroom/api/discussion";
 import FastImage from "react-native-fast-image";
 import CircleAvatar from "src/components/Avatar/Circle";
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { posterId: null, discussion: {}, isLoading: true, poster: null, isLiked: false, totalFans: 0, totalComments: 0 }
 
@@ -49,7 +50,7 @@ export default class TimelineListItem extends React.Component{
       newPoster = {};
       newPoster.applicationInformation = {};
       newPoster.applicationInformation.nickName = "";
-      newPoster.applicationInformation.profilePicture = "https://picsum.photos/200/200/?random";
+      newPoster.applicationInformation.profilePicture = HelperAPI.getDefaultProfilePic();
     }
 
     return(

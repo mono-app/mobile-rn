@@ -9,6 +9,7 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import UnreadCountBadge from "src/screens/HomeScreen/UnreadCountBadge";
 import { Text, Caption } from "react-native-paper";
 import { View, TouchableOpacity } from 'react-native';
+import HelperAPI from "src/api/helper";
 
 function PrivateRoom(props){
   const { currentUser, room } = props; 
@@ -63,9 +64,9 @@ function PrivateRoom(props){
         <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress} onLongPress={handleOnLongPress}>
           <View style={{ marginRight: 16 }}>
               {(props.room.type==="group-chat")? 
-                <CircleAvatar size={50} uri="https://picsum.photos/200/200/?random"/>
+                <CircleAvatar size={50} uri={HelperAPI.getDefaultProfilePic()}/>
               : 
-                <CircleAvatar size={50} uri={(people.profilePicture)? people.profilePicture: "https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={50} uri={(people.profilePicture)? people.profilePicture: HelperAPI.getDefaultProfilePic()}/>
               }
             </View>
           <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>

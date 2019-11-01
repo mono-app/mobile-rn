@@ -20,12 +20,13 @@ import ImageCompress from "src/api/ImageCompress"
 import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
 import Key from "src/helper/key"
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
   status:"", 
   totalClass: 0,
-  profilePicture: "https://picsum.photos/200/200/?random",
+  profilePicture: HelperAPI.getDefaultProfilePic(),
   isUploadingImage: false
 }
 

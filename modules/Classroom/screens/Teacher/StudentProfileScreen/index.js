@@ -13,6 +13,7 @@ import Button from "src/components/Button";
 import { withCurrentTeacher } from "modules/Classroom/api/teacher/CurrentTeacher";
 import { PersonalRoomsAPI } from "src/api/rooms";
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
@@ -20,7 +21,7 @@ const INITIAL_STATE = {
   student: {}, 
   status: "", 
   totalClass:0,  
-  profilePicture: "https://picsum.photos/200/200/?random"
+  profilePicture: HelperAPI.getDefaultProfilePic()
 }
 
 class StudentProfileScreen extends React.PureComponent {

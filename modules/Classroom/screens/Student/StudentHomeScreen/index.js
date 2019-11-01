@@ -11,12 +11,14 @@ import { withTranslation } from 'react-i18next';
 import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
 import Key from "src/helper/key"
 import Tooltip from 'react-native-walkthrough-tooltip';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = {
   isLoading: false,
-  profilePicture: "https://picsum.photos/200/200/?random",
+  profilePicture: HelperAPI.getDefaultProfilePic(),
   schoolId: "",
 };
+
 class StudentHomeScreen extends React.PureComponent {
   static navigationOptions = () => {
     return { header: null };

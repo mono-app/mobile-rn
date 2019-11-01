@@ -11,6 +11,7 @@ import Key from "src/helper/key"
 import Tooltip from 'react-native-walkthrough-tooltip';
 import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -94,7 +95,7 @@ class TeacherHomeScreen extends React.PureComponent {
         <ScrollView>
           <View style={{flex: 1, paddingBottom: 32}}>
             <View style={styles.logo}>
-              <CircleAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random" }/>
+              <CircleAvatar size={100} uri={(this.props.currentTeacher.profilePicture)? this.props.currentTeacher.profilePicture.downloadUrl: HelperAPI.getDefaultProfilePic() }/>
               <Tooltip
               isVisible={this.props.showTutorialProfile}
               placement="bottom"

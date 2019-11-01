@@ -9,6 +9,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { isLoadingProfile: true, teacher: null, totalActiveClass: 0 }
 
@@ -159,7 +160,7 @@ class TeacherProfileScreen extends React.PureComponent {
 
             <View style={styles.profileContainer}>
               <Text style={{  fontSize: 16 }}></Text>
-              <CircleAvatar size={100} uri="https://picsum.photos/200/200/?random"/>
+              <CircleAvatar size={100} uri={HelperAPI.getDefaultProfilePic()}/>
             </View>
             <View>
               <TouchableOpacity onPress={this.handleNamePress}>

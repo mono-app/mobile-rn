@@ -8,6 +8,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph, Caption } from "react-native-paper";
 import ContentLoader from 'rn-content-loader'
 import {Rect} from 'react-native-svg'
+import HelperAPI from "src/api/helper";
 
 function PeopleListItem(props){
   const { id, user } = props;
@@ -53,7 +54,7 @@ function PeopleListItem(props){
   }, [])
 
   Logger.log("PeopleListItem", people);
-  let profilePicture = "https://picsum.photos/200/200/?random"
+  let profilePicture = HelperAPI.getDefaultProfilePic()
   let nickName = ""
   if(people && people.applicationInformation){
     if(people.applicationInformation.profilePicture && people.applicationInformation.profilePicture.downloadUrl) 

@@ -12,6 +12,7 @@ import CustomError from "src/entities/error";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { getDistance } from 'geolib';
+import HelperAPI from "src/api/helper";
 
 export default class PeopleAPI{
   constructor(currentUserId=null){
@@ -61,7 +62,7 @@ export default class PeopleAPI{
       if(newPeople.isCompleteSetup) {
         if(newPeople.applicationInformation.profilePicture !== undefined){
           newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
-        }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
+        }else newPeople.profilePicture = HelperAPI.getDefaultProfilePic()
       }
     }
     

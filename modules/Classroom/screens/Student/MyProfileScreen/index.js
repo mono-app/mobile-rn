@@ -20,15 +20,15 @@ import ImageCompress from "src/api/ImageCompress"
 import { withTranslation } from 'react-i18next';
 import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
 import Key from "src/helper/key"
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { isLoadingProfile: true, 
   status:"", 
   totalActiveClass: 0, 
   totalArchiveClass: 0,
   isUploadingImage: false,
-  profilePicture: "https://picsum.photos/200/200/?random"
+  profilePicture: HelperAPI.getDefaultProfilePic()
 }
-
 
 class MyProfileScreen extends React.PureComponent {
   static navigationOptions = () => {

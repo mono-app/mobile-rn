@@ -1,3 +1,4 @@
+import uuid from "uuid/v4"
 
 export default class HelperAPI{
 
@@ -24,6 +25,10 @@ export default class HelperAPI{
       return false;
 
     return true;
+  }
+
+  static getDefaultProfilePic(){
+    return "https://api.adorable.io/avatars/285/"+uuid()+".png"
   }
 
 }

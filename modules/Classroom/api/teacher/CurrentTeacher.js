@@ -44,11 +44,7 @@ export class CurrentTeacherProvider extends React.PureComponent{
           teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
         }
         this.setState({ teacher });
-          
-        // if(teacher.profilePicture !== undefined){
-        //   teacher.profilePicture = JSON.parse(JSON.stringify(teacher.profilePicture.downloadUrl));
-        // }else teacher.profilePicture = "https://picsum.photos/200/200/?random";
-        
+     
       }
     });
   };

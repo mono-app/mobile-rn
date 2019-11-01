@@ -7,13 +7,14 @@ import Logger from "src/api/logger";
 import ChatBubbleGroup from "src/components/ChatBubble/Group";
 import ChatBubblePrivate from "src/components/ChatBubble/Private";
 import { View } from "react-native";
+import HelperAPI from "src/api/helper";
 
 function ChatBubble(props){
   const { clickable, bubbleStyle, message, roomId, type } = props;
   const { content, sentTime, isSent, senderId } = props.message;
   const [ sentTimeString, setSentTimeString ] = React.useState("");
   const [ enabledMore, setEnableMore ] = React.useState("");
-  const [ sender, setSender ] = React.useState({ profilePicture: "https://picsum.photos/200/200/?random", applicationInformation: { nickName: "" } });
+  const [ sender, setSender ] = React.useState({ profilePicture: HelperAPI.getDefaultProfilePic(), applicationInformation: { nickName: "" } });
   const [ isClicked, setClicked ] = React.useState(true);
   const maxContentLength = 100
 

@@ -48,11 +48,7 @@ export class CurrentStudentProvider extends React.PureComponent{
         }
         if(this._isMounted)
           this.setState({ student });
-          
-        // if(student.profilePicture !== undefined){
-        //   student.profilePicture = JSON.parse(JSON.stringify(student.profilePicture.downloadUrl));
-        // }else student.profilePicture = "https://picsum.photos/200/200/?random";
-        
+      
       }
     });
   };

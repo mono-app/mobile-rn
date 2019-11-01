@@ -9,8 +9,9 @@ import { ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
-const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0, profilePicture: "https://picsum.photos/200/200/?random"}
+const INITIAL_STATE = { isLoadingProfile: true, student: null, totalActiveClass: 0, profilePicture: HelperAPI.getDefaultProfilePic()}
 
 class StudentProfileScreen extends React.PureComponent {
   static navigationOptions = () => {
