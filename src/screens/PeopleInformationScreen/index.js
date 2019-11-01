@@ -46,6 +46,12 @@ function PeopleInformationScreen(props){
       if(_isMounted.current) setPeopleFriendStatus("myself");
     }
   }
+
+  const handleProfilePicturePress = async () => {
+    const images = [{downloadUrl: people.profilePicture}]
+    const payload = { index: 0, images }
+    props.navigation.navigate("GallerySwiper", payload);
+  }
   
   React.useEffect(() => {
     fetchPeopleInformation();
@@ -71,13 +77,13 @@ function PeopleInformationScreen(props){
     <ScrollView style={{ flex: 1 }}>
       <AppHeader navigation={props.navigation} style={{ backgroundColor: "transparent" }}/>
       <UserProfileHeader
+        onProfilePicturePress={handleProfilePicturePress}
         style={{ marginLeft: 16, marginRight: 16, marginTop: 8 }}
         profilePicture={people.profilePicture}
         title={people.applicationInformation.nickName}
         subtitle={status}/>
       <View style={{ marginTop: 16, marginBottom: 16 }}>
-        <PeopleInformationContainer fieldName="Mono ID" fieldValue={people.applicationInformation.id}/>
-        <PeopleInformationContainer fieldName={props.t("source")} fieldValue={source.value}/>
+        <PeopleInformationContainer fieldName="Mono ID" fieldValue={people.applicationInformation.monoId}/>
         <PeopleInformationContainer fieldName={props.t("joinDate")} fieldValue={joinedFrom}/>
       </View>
       <ActionButton 

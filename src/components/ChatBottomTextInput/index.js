@@ -22,6 +22,7 @@ function ChatBottomTextInput(props){
   const [ streams, setStreams ] = React.useState([])
   const [ isConnected, setIsConnected ] = React.useState(false);
   const [ messageToReply, setMessageToReply ] = React.useState(null);
+  const _isMounted = React.useRef(true);
 
   const txtInput = React.useRef(null);
 
@@ -43,17 +44,19 @@ function ChatBottomTextInput(props){
   });
 
   const handleError = (err) => Logger.log("ChatBottomTextInput.handleError#err", err);
-  const handleSessionConnected = () => setIsConnected(true);
-  const handleMessageChange = (newMessage) => setMessage(newMessage)
+  const handleSessionConnected = () => {if(_isMounted.current) setIsConnected(true);}
+  const handleMessageChange = (newMessage) => {if(_isMounted.current) setMessage(newMessage)}
   const handleSendPress = () => {
-    setCanSend(false);
-    setMessage("")
+    if(_isMounted.current){
+      setCanSend(false);
+      setMessage("")
+    }
     txtInput.current.clear();
     if(message.trim() && props.editable){
       props.onSendPress(message, messageToReply);
     }
   
-    setCanSend(true)
+    if(_isMounted.current) setCanSend(true)
   };
 
   const handleRoomUpdate = async () => {
@@ -61,7 +64,7 @@ function ChatBottomTextInput(props){
     const currentRoom = await RoomsAPI.getDetail(room.id)
     if(currentRoom.liveVoice && currentRoom.liveVoice.session) setSessionId(currentRoom.liveVoice.session);
     else {
-      setTimeout(async () => await handleRoomUpdate(), 1000);
+      if(_isMounted.current) setTimeout(async () => await handleRoomUpdate(), 1000);
     }
   };
 
@@ -76,25 +79,26 @@ function ChatBottomTextInput(props){
       })
     })).json();
     Logger.log("ChatBottomTextInput.initLiveVoice#jsonResult", jsonResult);
-    if(!jsonResult.error) setToken(jsonResult.result);
+    if(!jsonResult.error && _isMounted.current) setToken(jsonResult.result);
   }
 
   const handleStreamCreated = event => {
-    setStreams(...streams, [event.streamId])
+    if(_isMounted.current) setStreams(...streams, [event.streamId])
   }
 
   const handleStreamDestroyed = event => {
     const cloneStreams = JSON.parse(JSON.stringify(streams))
     const streamId = [event.streamId]
     delete(cloneStreams[streamId])
-    setStreams(cloneStreams)
+    if(_isMounted.current) setStreams(cloneStreams)
   }
 
   const handleCancelReplyMessage = () => {
-    setMessageToReply(null)
+    if(_isMounted.current) setMessageToReply(null)
   }
 
   React.useEffect(() => {
+    _isMounted.current = true
     if(room.id === undefined) return;
     Logger.log("ChatBottomTextInput#sessionId", sessionId);
     Logger.log("ChatBottomTextInput#token", token);
@@ -102,7 +106,7 @@ function ChatBottomTextInput(props){
     if(sessionId === null) handleRoomUpdate()
     if(token === null) initLiveVoice();
     return function cleanup(){
-
+      _isMounted.current = false
     }
   }, [sessionId, token]);
 
