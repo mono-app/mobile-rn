@@ -1,5 +1,6 @@
 import libphonenumber from 'libphonenumber-js';
 import CustomError from "src/entities/error";
+import VerifyPhoneAPI from "src/api/verifyphone"
 
 export default class PhoneNumber{
   // number: string
@@ -14,10 +15,15 @@ export default class PhoneNumber{
     this.number = normalizePhoneNumber(number, "ID", "62");
     this.isVerified = isVerified;
   }
+
+  async isAvailable() {
+    const result = await VerifyPhoneAPI.isAvailable(this.number)
+    if(!result) throw new CustomError("phone-number/already-used", "Phone number already in use");
+    return true
+  }
 }
 
 function normalizePhoneNumber(number, countryCode, countryNumber){
-  if(number==="000000") return "-" 
   let result = number.toString()
   if(result.length <= 2) throw new CustomError("phone-number/not-valid", "Phone number is not valid");
 

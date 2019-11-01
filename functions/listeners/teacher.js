@@ -27,7 +27,7 @@ Teacher.newTempTeacherTrigger = functions.region("asia-east2").firestore.documen
     email: teacherEmail,
     isCompleteSetup: false,
     phoneNumber: {
-      value: "000000", isVerified: false
+      value: "62000000000", isVerified: false
     },
     creationTime: admin.firestore.FieldValue.serverTimestamp()
   })
