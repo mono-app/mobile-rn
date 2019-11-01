@@ -30,15 +30,19 @@ class VerifyPhoneScreen extends React.PureComponent{
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
   handleOTPChange = (otp) => this.setState({otp, isInsertingOTP: true});
   handleErrorDismiss = () => this.setState({ errorMessage: null });
-  handleError = (err) => this.setState({ errorMessage: err.message });
+  handleError = (message) => this.setState({ errorMessage: message });
   handleAskOTP = async () => {
     this.setState({ isVerificationLoading: true })
     try{
       const phoneNumber = new PhoneNumber(this.state.phoneNumber, false);
-      const { requestId } = await VerifyPhoneAPI.sendCode(phoneNumber, true);
+      await phoneNumber.isAvailable()
+      const { requestId } = await VerifyPhoneAPI.sendCode(phoneNumber, false);
       this.setState({ isAskingOTP: true, otpRequestId: requestId });
     }catch(err){
-      this.handleError(err);
+      if(err.code==="verify/unknown") this.handleError(this.props.t("otpTooMuchRequest"))
+      else if(err.code==="phone-number/already-used") this.handleError(this.props.t("phoneAlreadyUsed"))
+      else if(err.code==="phone-number/not-valid") this.handleError(this.props.t("invalidPhone"))
+      else this.handleError(err.message);
     }finally{
       this.setState({ isVerificationLoading: false });
     }
@@ -48,12 +52,16 @@ class VerifyPhoneScreen extends React.PureComponent{
     this.setState({ isVerificationLoading: true })
     try{
       const otp = new Otp(this.state.otp);
-      await VerifyPhoneAPI.checkCode(this.state.otprequestId, otp, true);
+      await VerifyPhoneAPI.checkCode(this.state.otpRequestId, otp, false);
       this.user.phoneNumber = new PhoneNumber(this.state.phoneNumber, false);
       await PeopleAPI.createUser(this.user);
       this.gotoSplash();
     }catch(err){
-      this.handleError(err);
+      if(err.code==="otp/empty-code") this.handleError(this.props.t("otpEmpty"));
+      else if(err.code==="verify/incorrect-otp") this.handleError(this.props.t("wrongVerificationCode"));
+      else if(err.code==="verify/wrong-many-times") this.handleError(this.props.t("wrontManyOtp"));
+      else if(err.code==="verify/unable-process") this.handleError(this.props.t("unableProcessOtp"));
+      else this.handleError(err.message);
     }finally{
       this.setState({ isVerificationLoading: false });
     }
@@ -119,11 +127,9 @@ class VerifyPhoneScreen extends React.PureComponent{
           </Portal>
         </KeyboardAwareScrollView>
 
-        <SafeAreaView>
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
             <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
           </TouchableOpacity>
-        </SafeAreaView>
 
         <CustomSnackbar isError={true} message={this.state.errorMessage} onDismiss={this.handleErrorDismiss}/>
 

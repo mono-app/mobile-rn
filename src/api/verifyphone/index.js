@@ -40,13 +40,16 @@ export default class VerifyPhoneAPI{
     if(skip) return Promise.resolve(true);
 
     const params = new QueryParameter({ 
-      api_key: NEXMO_API_SECRET, api_secret: NEXMO_API_SECRET, request_id: requestId, code: otp.code 
+      api_key: NEXMO_API_KEY, api_secret: NEXMO_API_SECRET, request_id: requestId, code: otp.code 
     });
     const response = await fetch(`https://api.nexmo.com/verify/check/json?${params.encoded}`);
     const responseJson = await response.json();
-
     if(responseJson && responseJson.status==="0") return Promise.resolve(true);
-    else throw new CustomError("verify/incorrect-otp", "Provided otp is not correct");
+    else if(responseJson && responseJson.status==="16") throw new CustomError("verify/incorrect-otp", "Provided otp is not correct");
+    else if(responseJson && responseJson.status==="17") throw new CustomError("verify/wrong-many-times", "You input wrong code many times");
+    else if(responseJson && responseJson.status==="6") throw new CustomError("verify/unable-process", "Unable to process request, please re sign up");
+    else if(responseJson) throw new CustomError("verify/unknown-code", "An unknown error has occured errCode:"+responseJson.status);
+    throw new CustomError("verify/unknown", "An unknown error has occured");
   }
 
   /**

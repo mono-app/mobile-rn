@@ -34,7 +34,7 @@ export default class StudentAPI{
           const tempStudentsCollection = new TempStudentsCollection();
           const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(school.id);
           const tempStudentRef = schoolsDocumentRef.collection(tempStudentsCollection.getName()).doc(student.email);
-          tempStudentRef.set({name: student.email, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+          tempStudentRef.set({name: student.name, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
         })
       }else throw err
     }

@@ -26,7 +26,7 @@ class SignUpScreen extends React.PureComponent{
   handleEmailChange = email => this.setState({email});
   handlePasswordChange = password => this.setState({password});
   handleVerifyPasswordChange = verifyPassword => this.setState({verifyPassword});
-  handleError = (err) => this.setState({ errorMessage: err.message });
+  handleError = (message) => this.setState({ errorMessage: message });
   handleContinuePress = async () => {
     this.setState({ isLoading:true })
     try{
@@ -35,7 +35,7 @@ class SignUpScreen extends React.PureComponent{
       await PeopleAPI.ensureUniqueEmail(user.email);
       this.props.navigation.navigate("VerifyPhone", { user: user });
     }catch(err){
-      this.handleError(err);
+      this.handleError(err.message);
     }finally{
       this.setState({ isLoading: false });
     }
@@ -51,29 +51,27 @@ class SignUpScreen extends React.PureComponent{
   render(){
     return(
       <React.Fragment>
-        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={styles.container} contentContainerStyle={{alignItems: "stretch", justifyContent: "center", }}>
+          <View>
             <Title>{this.props.t("signUpLabel")}</Title>
-            <Paragraph style={{ marginBottom: 16 }}>{this.props.t("signUpLabelDesc")}</Paragraph>
-            <View style={{marginBottom: 128}}>
-              <TextInput
-                placeholder="Email" textContentType="emailAddress" style={{ marginBottom: 8, paddingVertical: 16 }}
-                keyboardType="email-address" value={this.state.email} onChangeText={this.handleEmailChange} autoCapitalize="none"/>
-              <TextInput
-                placeholder="Password" textContentType="password" style={{ marginBottom: 8, paddingVertical: 16 }}
-                secureTextEntry={true} value={this.state.password} onChangeText={this.handlePasswordChange}/>
-              <TextInput
-                placeholder={this.props.t("repeatPass")} textContentType="password" style={{ paddingVertical: 16 }}
-                secureTextEntry={true} value={this.state.verifyPassword} onChangeText={this.handleVerifyPasswordChange}/>
-              <Button text={this.props.t("next")} onPress={this.handleContinuePress} isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
-            </View>
-        </KeyboardAwareScrollView>
-
-        <SafeAreaView>
+              <Paragraph style={{ marginBottom: 16 }}>{this.props.t("signUpLabelDesc")}</Paragraph>
+              <View style={{marginBottom: 128}}>
+                <TextInput
+                  placeholder="Email" textContentType="emailAddress" style={{ marginBottom: 8, paddingVertical: 16 }}
+                  keyboardType="email-address" value={this.state.email} onChangeText={this.handleEmailChange} autoCapitalize="none"/>
+                <TextInput
+                  placeholder="Password" textContentType="password" style={{ marginBottom: 8, paddingVertical: 16 }}
+                  secureTextEntry={true} value={this.state.password} onChangeText={this.handlePasswordChange}/>
+                <TextInput
+                  placeholder={this.props.t("repeatPass")} textContentType="password" style={{ paddingVertical: 16 }}
+                  secureTextEntry={true} value={this.state.verifyPassword} onChangeText={this.handleVerifyPasswordChange}/>
+                <Button text={this.props.t("next")} onPress={this.handleContinuePress} isLoading={this.state.isLoading} disabled={this.state.isLoading}/>
+              </View>
+          </View>
           <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
             <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
           </TouchableOpacity>  
-        </SafeAreaView>
-
+        </KeyboardAwareScrollView>
         <CustomSnackbar isError={true} message={this.state.errorMessage} onDismiss={this.handleDismiss}/>
       </React.Fragment>
     )
@@ -81,8 +79,8 @@ class SignUpScreen extends React.PureComponent{
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 32, alignItems: "stretch", justifyContent: "center", flex: 1, paddingTop: 128 },
-  backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
+  container: { paddingHorizontal: 32, flex: 1, paddingTop: 128 },
+  backToSignInContainer: { position: "absolute", bottom: 0, left: 0, right: 0 }
 })
 
 export default withTranslation()(SignUpScreen)
