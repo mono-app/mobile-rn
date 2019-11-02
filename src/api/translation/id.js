@@ -5,6 +5,7 @@ const translate = {
   privacy: "Privasi",
   general: "Pengaturan Umum",
   help: "Bantuan",
+  peopleNearby: 'Sekitar Saya',
   contactSupport: "Pusat Bantuan",
   emailNotRegistered: 'Email tidak terdaftar',
   userNotRegistered: 'User tidak terdaftar',

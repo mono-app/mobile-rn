@@ -16,7 +16,7 @@ export default class ImageCompress{
         }
         looping++
         try{
-          const resp = await ImageResizer.createResizedImage(uriAfterCompress, 1280 ,720 , "JPEG", 90-looping, 0, null)
+          const resp = await ImageResizer.createResizedImage(uriAfterCompress, 1280 ,1280 , "JPEG", 90-looping, 0, null)
           response = resp
           sizeAfterCompress = resp.size
           uriAfterCompress = resp.uri
@@ -28,7 +28,7 @@ export default class ImageCompress{
       }
 
     }else{
-      const resp = await ImageResizer.createResizedImage(uri, 1280 ,720 , "JPEG", 100, 0, null)
+      const resp = await ImageResizer.createResizedImage(uri, 1280 ,1280 , "JPEG", 100, 0, null)
       response = resp
     }
     return Promise.resolve(response)
