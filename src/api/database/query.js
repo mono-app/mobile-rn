@@ -1,4 +1,4 @@
-import { Database } from "./index";
+import Database from "./index";
 
 class Query{
   /**

@@ -1,98 +1,61 @@
 import React from "react";
 import firebase from "react-native-firebase";
-import { View, ActivityIndicator } from "react-native";
-import { StackActions, NavigationActions} from "react-navigation";
+import AuthenticationAPI from "src/api/authentication";
+import NotificationAPI from "src/api/notification";
 import NavigatorAPI from "src/api/navigator";
-import { withCurrentUser } from "src/api/people/CurrentUser";
-import PeopleAPI from "src/api/people"
+import PeopleAPI from "src/api/people";
+import MessagingToken from "src/entities/messagingToken";
+import { withCurrentUser } from "src/api/people/CurrentUser"
+
+import CustomSnackbar from "src/components/CustomSnackbar";
+import { View, ActivityIndicator } from "react-native";
 
 function SplashScreen(props){
-  const init = async () => {
-    // handle notification
+  const { navigation } = props;
+  const [ errorMessage, setErrorMessage ] = React.useState(null);
+
+  const handleDismiss = () => setErrorMessage(null);
+
+  const goto = (routeName) => {
+    const navigator = new NavigatorAPI(navigation);
+    navigator.resetTo(routeName);
+  }
+
+  const redirect = async () => {
     try{
-      const isNotificationEnabled = await firebase.messaging().hasPermission();
-      if(!isNotificationEnabled) await firebase.messaging().requestPermission();
+      // await firebase.auth().signOut();
+      await AuthenticationAPI.initializeSession();
+      if(firebase.auth().currentUser) props.setCurrentUserId(firebase.auth().currentUser.uid);
 
-      // Creating notification channel for Android
-      const channel = new firebase.notifications.Android.Channel('message-notification', 'Message Notification', firebase.notifications.Android.Importance.Max)
-      firebase.notifications().android.createChannel(channel);
-      firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('discussion-notification', 'Discussion Notification', firebase.notifications.Android.Importance.Max));
-      firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('friendrequest-notification', 'Friend Request Notification', firebase.notifications.Android.Importance.Max));
-      firebase.notifications().android.createChannel(new firebase.notifications.Android.Channel('moment-notification', 'Moment Notification', firebase.notifications.Android.Importance.Max));
+      // save messaging token
+      const tokenOwner = await PeopleAPI.getCurrentUser();
+      const token = await NotificationAPI.generateToken();
+      const messagingToken = new MessagingToken(token, tokenOwner);
+      await NotificationAPI.storeToken(messagingToken);
 
-    }catch(err){ console.log("User reject notification", err); }
-
-    const firebaseUser = firebase.auth().currentUser;
-    if(firebaseUser !== null) {
-      props.setCurrentUserEmail(firebaseUser.email, props.navigation);
-      const fcmToken = await firebase.messaging().getToken();
-      if (fcmToken) {
-        try{
-          await PeopleAPI.storeMessagingToken(firebaseUser.email,fcmToken)
-        }catch{
-          firebase.auth().signOut();
-          props.navigation.dispatch(StackActions.reset({
-            index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
-            key: null
-          }))
-        }
-      }
-    }
-    else {
-      props.navigation.dispatch(StackActions.reset({
-        index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
-        key: null
-      }))
+      goto("MainTabNavigator");
+    }catch(err){
+      if(err.code === "auth/need-setup") goto("AccountSetup");
+      else if(err.code === "auth/not-found") goto("SignIn");
+      else if(err.code === "user/not-logged-in") goto("SignIn")
+      else setErrorMessage(err.message);
     }
   }
 
- 
-
   React.useEffect(() => {
-    init();
-  }, []);
-
-  // assuming user is signed in, then navigate to MainTabNavigator or AccountSetup
-  // withCurrentUser will fetch user data, and useEffect will be triggered if props.currentUser.isCompleteSetup change
-  React.useEffect(() => {
-
-    const doLogout =async ()=> {
-      const result = await PeopleAPI.updateUserForLogout(props.currentUser.email)
-      if(result){
-        firebase.auth().signOut();
-        props.navigation.dispatch(StackActions.reset({
-          index: 0, actions: [ NavigationActions.navigate({ routeName: "SignIn" }) ],
-          key: null
-        }))
-      }else{
-        doLogout()
-      }
-    }
-    if(props.isLoggedIn) {
-      if(props.currentUser.phoneNumber !== undefined && props.currentUser.isCompleteSetup !== undefined){
-        let routeNameForReset = "MainTabNavigator";
-        if(props.currentUser.phoneNumber && props.currentUser.phoneNumber.isVerified){
-          if(props.currentUser.isCompleteSetup){
-            routeNameForReset = "MainTabNavigator"
-          } else {
-            routeNameForReset = "AccountSetup"
-          }
-
-          const navigator = new NavigatorAPI(props.navigation);
-          navigator.resetTo(routeNameForReset);  
-        }else{
-          doLogout()
-        }
-      }
-    }
-
-  }, [props.currentUser.isCompleteSetup, props.isLoggedIn])
+    NotificationAPI.initialize();
+    redirect();
+  }, [])
 
   return(
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ActivityIndicator size="large" animating={true} color="#0EAD69"/>
-    </View>
+    <React.Fragment>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" animating={true} color="#0EAD69"/>
+      </View>
+
+      <CustomSnackbar isError={true} message={errorMessage} onDismiss={handleDismiss}/>
+    </React.Fragment>
   )
 }
 
-export default withCurrentUser(SplashScreen)
+export default withCurrentUser(SplashScreen);

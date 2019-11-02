@@ -28,7 +28,7 @@ class StudentListScreen extends React.PureComponent {
 
   handleStudentPress = people => {
     const payload = {
-      studentEmail: people.id
+      studentId: people.id
     }
     this.props.navigation.navigate("StudentProfile", payload);
   }

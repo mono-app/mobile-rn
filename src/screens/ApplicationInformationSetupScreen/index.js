@@ -1,72 +1,59 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { 
-  Dialog, Paragraph, Portal, 
-  Button as MaterialButton 
-} from "react-native-paper";
+import PeopleAPI from "src/api/people";
+import ApplicationInformation from "src/entities/applicationInformation";
+import { StyleSheet } from "react-native";
+
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
 import Button from "src/components/Button";
 import ApplicationInformationCard from "src/screens/AccountSetupScreen/ApplicationInformationCard";
-import PeopleAPI from "src/api/people";
+import CustomSnackbar from "src/components/CustomSnackbar";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { View } from "react-native";
 import { withTranslation } from 'react-i18next';
 
 function ApplicationInformationSetupScreen(props){
   const { navigation } = props;
+
   const onFinish = navigation.getParam("onFinish", () => {});
-  const applicationInformationCard = React.useRef(null);
-  const [isError, setError] = React.useState(false);
+  const defaultMonoId = navigation.getParam("defaultMonoId", "");
+  const defaultNickName = navigation.getParam("defaultNickName", "");
+
   const [isLoading, setLoading] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState("");
-  const defaultId = navigation.getParam("defaultId","")
-  const defaultNickName = navigation.getParam("defaultNickName","")
+  const [errorMessage, setErrorMessage] = React.useState(null);
+  
+  const applicationInformationCard = React.useRef(null);  
 
   const styles = StyleSheet.create({
     content: { padding: 16, flex: 1, backgroundColor: "#E8EEE8", color: "black" },
   })
 
+  const handleDismiss = () => setErrorMessage(null);
+  const handleError = (message) => setErrorMessage(message);
   const handleSavePress = async () => {
     setLoading(true)
-
-    let data = JSON.parse(JSON.stringify(applicationInformationCard.current.getState()))
-    data.id = data.id.trim()
-    data.nickName = data.nickName.trim()
-    if(data.id && data.nickName){
-      const isAvailable = await PeopleAPI.isMonoIdAvailable(data.id)
-      if(isAvailable){
-        onFinish(data);
-        navigation.goBack();
-      }else{
-        setErrorMessage(props.t("monoIdAlreadyUsed"))
-        setError(true)
-      }
-    }
-    setLoading(false)
-  }
-
-  const handleErrorDialogDismiss = () => {
-    setError(false)
-    setErrorMessage("")
-  }
+    try{
+      const data = applicationInformationCard.current.getState();
+      const applicationInformation = new ApplicationInformation(data.monoId, data.nickName);
+      await PeopleAPI.ensureUniqueMonoId(applicationInformation.monoId);
+      onFinish(applicationInformation);
+      navigation.goBack();
+    }catch(err){
+      console.log(err);
+      handleError(err.message);
+    }finally{ setLoading(false) }
+  } 
 
   return (
-    <Container style={{ }}>
-      <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
-      <View style={styles.content}>
-        <ApplicationInformationCard t={props.t} ref={applicationInformationCard} defaultId={defaultId} defaultNickName={defaultNickName}/>
-        <Button style={{ marginTop: 8 }} text={props.t("save")} isLoading={isLoading} disabled={isLoading} onPress={handleSavePress}/>
-      </View>
-      <Portal>
-        <Dialog visible={isError} onDismiss={handleErrorDialogDismiss}>
-          <Dialog.Title>Ops!</Dialog.Title>
-          <Dialog.Content>
-            <Paragraph>{errorMessage}</Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <MaterialButton onPress={handleErrorDialogDismiss}>{props.t("understand")}</MaterialButton>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+    <Container>
+      <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ flex:1 }}>
+        <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
+        <View style={styles.content}>
+          <ApplicationInformationCard t={props.t} ref={applicationInformationCard} defaultMonoId={defaultMonoId} defaultNickName={defaultNickName}/>
+          <Button style={{ marginTop: 8 }} text={props.t("save")} isLoading={isLoading} disabled={isLoading} onPress={handleSavePress}/>
+        </View>
+        <CustomSnackbar isError={true} message={errorMessage} onDismiss={handleDismiss}/>
+      </KeyboardAwareScrollView>
     </Container>
   );
 }

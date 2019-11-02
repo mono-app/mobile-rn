@@ -181,7 +181,7 @@ class AddTaskScreen extends React.PureComponent {
             <View style={{ marginTop: 16 }}>
               <Text style={styles.label}>{this.props.t("taskDetails")}</Text>
               <TextInput
-                style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
+                style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top", maxHeight: 80 }}
                 value={this.state.taskDetail}
                 multiline={true}
                 numberOfLines = {4}

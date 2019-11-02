@@ -36,8 +36,8 @@ class TaskSubmissionScreen extends React.PureComponent {
   loadFiles = async () => {
     if(this._isMounted)
       this.setState({ fileList: [], isRefreshing: true });
-    const currentUserEmail = this.props.currentStudent.email
-    const fileList = await FileAPI.getStudentSubmissionFiles(this.props.currentSchool.id, this.classId, this.taskId, currentUserEmail);
+    const currentUserId = this.props.currentStudent.id
+    const fileList = await FileAPI.getStudentSubmissionFiles(this.props.currentSchool.id, this.classId, this.taskId, currentUserId);
     if(this._isMounted)
       this.setState({ isRefreshing: false, fileList, filteredFileList: fileList  });
   }
@@ -85,9 +85,9 @@ class TaskSubmissionScreen extends React.PureComponent {
 
   onDeletePress = async () => {
     this.setState({isRefreshing: true})
-    const currentUserEmail = this.props.currentStudent.email
+    const currentUserId = this.props.currentStudent.id
 
-    await FileAPI.deleteStudentSubmissionFile(this.props.currentSchool.id,this.classId,this.taskId,currentUserEmail, this.state.selectedFile);
+    await FileAPI.deleteStudentSubmissionFile(this.props.currentSchool.id,this.classId,this.taskId,currentUserId, this.state.selectedFile);
     this.deleteDialog.toggleShow()
     await this.loadFiles();
     this.setState({isRefreshing: false})

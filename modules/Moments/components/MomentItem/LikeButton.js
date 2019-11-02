@@ -11,7 +11,7 @@ function LikeButton(props){
   const { moment, currentUser } = props;
   const totalFans = (moment.totalFans)? moment.totalFans: 0;
 
-  const handleLikePress = () => MomentAPI.toggleLike(moment.id, currentUser.email);
+  const handleLikePress = () => MomentAPI.toggleLike(moment.id, currentUser.id);
   
   return(
     <TouchableOpacity style={ props.style } onPress={handleLikePress}>

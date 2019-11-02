@@ -1,37 +1,46 @@
 import firebase from "react-native-firebase";
-
+import Email from "src/entities/email";
 import {
   TeachersCollection,
   SchoolsCollection,
   ClassesCollection,
-  UserMappingCollection
+  UserMappingCollection,
+  TempTeachersCollection
 } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
+import Database from "src/api/database";
+import PeopleAPI from "src/api/people";
+import CustomError from "src/entities/error";
 
 export default class TeacherAPI {
-  static async addTeacher(schoolId, teacherEmail, data) {
-    try {
-      const db = firebase.firestore();
-      const teachersCollection = new TeachersCollection();
-      const schoolsCollection = new SchoolsCollection();
-      const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-      const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(teacherEmail);
-      await teachersDocumentRef.set({creationTime: firebase.firestore.FieldValue.serverTimestamp(), isActive: false, ...data});
+  static async addTeacher(school, teacher) {
+    try{
+      teacher.id = (await PeopleAPI.getDetailByEmail(teacher.email, true)).id
+      if((await TeacherAPI.isExistById(school, teacher.id))) throw new CustomError("teacher/email-already-in-user","Email already in used")
 
-       // insert to userMapping
-       const userMappingCollection = new UserMappingCollection();
-       const userMappingDocumentRef = db.collection(userMappingCollection.getName()).doc(teacherEmail);
-       const schoolsDocumentRef2 = userMappingDocumentRef.collection(schoolsCollection.getName()).doc(schoolId);
-       await schoolsDocumentRef2.set({ creationTime: firebase.firestore.FieldValue.serverTimestamp(), role:"teacher" });
- 
-      return Promise.resolve(true);
-    } catch (err) {
-      console.log(err);
-      return Promise.resolve(false);
+      await Database.insert(async (db)=> {
+        const schoolsCollection = new SchoolsCollection();
+        const teachersCollection = new TeachersCollection();
+        const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(school.id);
+        const teacherRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(teacher.id);
+        teacherRef.set({name: teacher.name, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+      })
+    }catch(err){ 
+      if(err.code==="user/not-found") {
+        await Database.insert(async (db)=> {
+          const schoolsCollection = new SchoolsCollection();
+          const tempTeachersCollection = new TempTeachersCollection();
+          const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(school.id);
+          const tempTeacherRef = schoolsDocumentRef.collection(tempTeachersCollection.getName()).doc(teacher.email);
+          tempTeacherRef.set({name: teacher.name, creationTime: firebase.firestore.FieldValue.serverTimestamp()})
+        })
+      }else throw err
     }
+
+    return Promise.resolve(true)
   }
 
-  static async addTeacherClass(teacherEmail, schoolId, classId){
+  static async addTeacherClass(teacherId, schoolId, classId){
     try {
       const db = firebase.firestore();
       
@@ -40,7 +49,7 @@ export default class TeacherAPI {
       const schoolsCollection = new SchoolsCollection()
       const teachersCollection = new TeachersCollection()
       const schoolDocument = new Document(schoolId);
-      const teacherDocument = new Document(teacherEmail);
+      const teacherDocument = new Document(teacherId);
       const classDocument = new Document(classId);
 
       await db.collection(schoolsCollection.getName())
@@ -115,26 +124,40 @@ export default class TeacherAPI {
     return Promise.resolve(true)
   }
 
-  static async getDetail(schoolId, email, source = "default") {
+  static async getDetail(schoolId, userId, source = "default") {
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const teachersCollection = new TeachersCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(email);
+    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userId);
     const teachersSnapshot = await teachersDocumentRef.get({ source });
-    const data = { id: teachersSnapshot.id, ...teachersSnapshot.data() };
+    const user = await PeopleAPI.getDetailById(userId, true)
+    const data = { id: teachersSnapshot.id, ...teachersSnapshot.data(), email: user.email, phoneNumber: user.phoneNumber.number };
 
     return Promise.resolve(data);
   }
 
-  static async isTeacher(schoolId, userEmail){
+  static async isTeacher(schoolId, userId){
     const db = new firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const teachersCollection = new TeachersCollection();
     const schoolsDocumentRef = db.collection(schoolsCollection.getName()).doc(schoolId);
-    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userEmail);
+    const teachersDocumentRef = schoolsDocumentRef.collection(teachersCollection.getName()).doc(userId);
     const teachersSnapshot = await teachersDocumentRef.get();
 
     return Promise.resolve(teachersSnapshot.exists);
   }
+
+  static async isExistById(school, teacherId){
+    const result = await Database.get(async (db) => {
+      const schoolCollection = new SchoolsCollection()
+      const teachersCollection = new TeachersCollection()
+      const schoolRef = db.collection(schoolCollection.getName()).doc(school.id)
+      const teacherRef = schoolRef.collection(teachersCollection.getName()).doc(teacherId)
+      const teachersSnapshot = await teacherRef.get()
+      return teachersSnapshot.exists
+    } ,true)
+    return result
+  }
+
 }

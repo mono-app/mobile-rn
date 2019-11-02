@@ -17,12 +17,12 @@ class ScanQRCodeSCreen extends React.PureComponent{
 
   handleViewMyQRCodePress = () => this.props.navigation.navigate("MyQR");
   handleQRCodeScannerRead = async e => {
-    const peopleEmail = e.data;
+    const peopleId = e.data;
     try{
-      if(peopleEmail!==this.props.currentUser.email){
-        await new FriendsAPI().setFriends(this.props.currentUser.email, peopleEmail, { id: "QRCode", value: "QR Code" });
+      if(peopleId!==this.props.currentUser.id){
+        await FriendsAPI.acceptRequest(this.props.currentUser.id, peopleId, { id: "QRCode", value: "QR Code" });
         this.props.navigation.dispatch(StackActions.replace({ routeName: "PeopleInformation", params: {
-          peopleEmail, source: { id: "QRCode", value: "QR Code" }
+          peopleId, source: { id: "QRCode", value: "QR Code" }
         }}))
       }
     }catch{

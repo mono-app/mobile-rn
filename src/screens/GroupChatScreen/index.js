@@ -1,74 +1,69 @@
 import React from "react";
-import Logger from "src/api/logger";
 import { withTheme } from "react-native-paper";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import MessagesAPI from "src/api/messages";
 import ChatList from "src/components/ChatList";
 import ChatBottomTextInput from "src/components/ChatBottomTextInput";
 import ChatHeaderGroup from "src/components/ChatHeaderGroup";
-import { KeyboardAvoidingView } from "react-native";
+import { Platform, KeyboardAvoidingView } from "react-native";
 import ClassAPI from "modules/Classroom/api/class";
+import ChatLongPressDialog from "src/components/ChatLongPressDialog"
+import firebase from 'react-native-firebase';
 
 function GroupChatScreen(props){
-  const { currentUser } = props;
+  const firebaseCurrentUser = firebase.auth().currentUser
   const room = props.navigation.getParam("room", null);
   const _isMounted = React.useRef(true);
-  const [ messages, setMessages ] = React.useState([]);
   const [ headerTitle, setHeaderTitle ] = React.useState("");
-  const [ headerProfilePicture, setHeaderProfilePicture ] = React.useState("");
-  const [ isLoadingNewMessage, setIsLoadingNewMessage ] = React.useState(false);
-  const [ lastMessageSnapshot, setLastMessageSnapshot ] = React.useState(null);
+  const [ showLongPressDialog, setShowLongPressDialog ] = React.useState(false);
+  const [ selectedMessage, setSelectedMessage ] = React.useState({});
+  const [ messageToReply, setMessageToReply ] = React.useState(null);
+  const subtitle = "Classroom Group"
 
-  const handleSendPress = (message) => MessagesAPI.sendMessage(room.id, currentUser.email, message);
-  const handleChatListReachTop = async () => {
-    Logger.log("GroupChatScreen.handleChatListReactTop", `Getting new messages ${isLoadingNewMessage}`)
-    if(!isLoadingNewMessage){
-      try{
-        if(_isMounted.current)
-          setIsLoadingNewMessage(true);
-        const newData = await MessagesAPI.getNext(lastMessageSnapshot, room.id);
-        const combinedMessages = messages.concat(newData.messages);
-        Logger.log("GroupChatScreen.handleChatListReachTop#combineMessages", combinedMessages);
-        Logger.log("GroupChatScreen.handleChatListReachTop#newData", newData);
-        if(_isMounted.current){
-          setMessages(combinedMessages);
-          setLastMessageSnapshot(newData.lastDocumentSnapshot);
-        }
-        
-      }catch(err){
-        Logger.log("GroupChatScreen.handleChatListReachTop#err", err);
-      }finally{ 
-        if( _isMounted.current)
-          setIsLoadingNewMessage(false) 
-      }
-    }
+  const handleSendPress = (message, replyMessage) => {
+    MessagesAPI.sendMessage(room.id, firebaseCurrentUser.uid, message, "text", null, replyMessage);
+    setMessageToReply(null)
+  }
+
+  handleGroupHeaderPress = () => {
+    const payload = { room: room, title: headerTitle, subtitle }
+    props.navigation.navigate("GroupChatDetails", payload)
+  }
+
+  
+  handleDismissLPDialog = () => {
+    setShowLongPressDialog(false)
+  }
+
+  const handleOnLongPress = (message) => {
+    setSelectedMessage(message)
+    setShowLongPressDialog(true)
+  }
+
+  const handleReplyPress = (message) => {
+    setMessageToReply(message)
   }
 
   const fetchPeople = async () => {   
     const class_ = await ClassAPI.getDetail(room.school.id,room.school.classId)
-
-    setHeaderProfilePicture("https://picsum.photos/200/200/?random")           
     setHeaderTitle(class_.room+" | Semester "+ class_.semester +" | "+ class_.subject);
   }
  
   React.useEffect(() => {
     fetchPeople();
-  
     return function cleanup(){
       _isMounted.current = false
     }
   }, []);
 
-
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}>
+    <KeyboardAvoidingView keyboardShouldPersistTaps={'handled'} behavior={Platform.OS === "ios"? "padding": null} style={{ flex: 1 }}>
       <ChatHeaderGroup 
-        navigation={props.navigation} title={headerTitle} subtitle={"Online"}
-        profilePicture={headerProfilePicture} style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8", }}/>
-      <ChatList messages={messages} onReachTop={handleChatListReachTop} navigation={props.navigation} room={room}/>
-      <ChatBottomTextInput room={room}
-        editable={true}
-        onSendPress={handleSendPress}/>
+        navigation={props.navigation} title={headerTitle} subtitle={subtitle} onPress={handleGroupHeaderPress}
+        style={{ elevation: 0, borderBottomWidth: 1, borderColor: "#E8EEE8" }}/>
+      <ChatList room={room} onLongPressItem={handleOnLongPress} />
+      <ChatBottomTextInput room={room} editable={true} onSendPress={handleSendPress} replyMessage={messageToReply}/>
+      <ChatLongPressDialog visible={showLongPressDialog} onDismiss={handleDismissLPDialog} message={selectedMessage} onReplyPress={handleReplyPress} />
     </KeyboardAvoidingView>
   )
 }

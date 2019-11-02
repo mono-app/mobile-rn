@@ -10,7 +10,7 @@ const INITIAL_STATE = { name: "", isFetching: false, finalScore: "", noInduk: ""
 
 /**
  * @param {string} name 
- * @param {string} email
+ * @param {string} userId
  */
 export default class MassScoringListItem extends React.PureComponent{
   constructor(props){

@@ -3,7 +3,6 @@ import Contacts from 'react-native-contacts';
 import Permissions from "react-native-permissions";
 import UserMappingAPI from 'src/api/usermapping';
 import { StyleSheet } from 'react-native';
-import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTutorial } from "src/api/Tutorial";
 
 import FriendRequestNotification from "src/screens/HomeScreen/Notifications/FriendRequest"
@@ -13,9 +12,12 @@ import ChatMenuSwitch from 'src/screens/HomeScreen/ChatMenuSwitch';
 import ChatSection from "src/screens/HomeScreen/Sections/ChatSection";
 import NotificationSection from "src/screens/HomeScreen/Sections/NotificationSection";
 import { View, Platform } from 'react-native';
+import firebase from 'react-native-firebase';
 
 function HomeScreen(props){
   const [ selectedMenu, setSelectedMenu ] = React.useState(null);
+  const firebaseCurrentUser = firebase.auth().currentUser
+ 
   const styles = StyleSheet.create({
     container: { flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }
   });
@@ -37,13 +39,13 @@ function HomeScreen(props){
             phoneNumbers.push(phoneNumber.number)
           })
         })
-        if(accessToken && props.currentUser.email && phoneNumbers.length>0){
+        if(accessToken && firebaseCurrentUser.uid && phoneNumbers.length>0){
           const headers= {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           }
           const body= JSON.stringify({
-            userId: props.currentUser.email,
+            userId: firebaseCurrentUser.uid,
             phonenumbers: phoneNumbers,
           })
 
@@ -100,4 +102,4 @@ function HomeScreen(props){
 }
 
 HomeScreen.navigationOptions = { header: null };
-export default withTutorial(withCurrentUser(HomeScreen))
+export default withTutorial(HomeScreen)

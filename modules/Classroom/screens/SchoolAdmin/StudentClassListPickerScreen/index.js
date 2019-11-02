@@ -32,7 +32,7 @@ class StudentClassListPickerScreen extends React.PureComponent {
 
   handleClassPress = class_ => {
     const classId = class_.id;
-    StudentAPI.addStudentClass(this.studentEmail, this.props.currentSchool.id, classId).then(() => {
+    StudentAPI.addStudentClass(this.studentId, this.props.currentSchool.id, classId).then(() => {
       const { navigation } = this.props;
       navigation.state.params.onRefresh();
       navigation.goBack();
@@ -60,7 +60,7 @@ class StudentClassListPickerScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
-    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
+    this.studentId = this.props.navigation.getParam("studentId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);

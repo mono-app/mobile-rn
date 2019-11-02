@@ -14,7 +14,7 @@ function StatusInputCard(props){
   handleStatusChange = (status) => setStatus(status.replace("  "," "));
   handleSavePress = async () => {
     setIsLoading(true);
-    await StatusAPI.postStatus(currentUser.email, status)
+    await StatusAPI.postStatus(currentUser.id, status)
     setStatus("");
     setIsLoading(false);
     if(props.onSaved) props.onSaved();

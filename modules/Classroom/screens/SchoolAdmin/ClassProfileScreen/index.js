@@ -14,6 +14,8 @@ import ClassAPI from "modules/Classroom/api/class";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
+import FastImage from "react-native-fast-image";
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { isLoadingProfile: true, class: null };
 
@@ -171,7 +173,7 @@ class ClassProfileScreen extends React.PureComponent {
             <Subheading style={{ marginLeft: 16 }}>{this.state.class.room} | {this.state.class.academicYear} | {this.props.t("semester")} {this.state.class.semester}</Subheading>
             <View style={styles.profileContainer}>
               <Text style={{  fontSize: 16 }}></Text>
-              <Image source={require('assets/logoclassroom.png')} style={{width: 150, height: 150}} />
+              <FastImage source={{uri: HelperAPI.getClassroomLogo()}} style={{width: 150, height: 150}} />
             </View>
             <View>
               <TouchableOpacity onPress={this.handleSubjectPress}>

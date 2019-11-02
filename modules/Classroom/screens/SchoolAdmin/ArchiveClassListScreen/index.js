@@ -40,7 +40,7 @@ class ArchiveClassListScreen extends React.PureComponent {
 
   handleAddClassPress = () => {
     const payload = {
-      teacherEmail: this.teacherEmail,
+      teacherId: this.teacherId,
       onRefresh: this.loadClasses
     }
     this.props.navigation.navigate("ArchiveClassListPicker",  payload);

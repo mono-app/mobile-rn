@@ -5,7 +5,7 @@ import AppHeader from "src/components/AppHeader";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import Toast from 'react-native-easy-toast'
 import Key from 'src/helper/key'
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 function ChatSolidColorPickerScreen(props){
   const { currentUser } = props;

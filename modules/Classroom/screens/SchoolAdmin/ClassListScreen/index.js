@@ -57,7 +57,7 @@ class ClassListScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", "");
+    this.teacherId = this.props.navigation.getParam("teacherId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleSearchPress = this.handleSearchPress.bind(this);

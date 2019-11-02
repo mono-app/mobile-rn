@@ -12,6 +12,7 @@ const Teacher = require("./listeners/teacher");
 const Tasks = require("./listeners/tasks");
 const Moments = require("./listeners/moments");
 const Room = require("./listeners/room");
+const Users = require("./listeners/users");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -43,13 +44,19 @@ exports.triggerNewDiscussionComment = Discussions.triggerNewDiscussionComment
 
 exports.addStudentClassTrigger = Student.addStudentClassTrigger;
 exports.deletedStudentClassTrigger = Student.deletedStudentClassTrigger;
+exports.addStudentTrigger = Student.addStudentTrigger;
+exports.newTempStudentTrigger = Student.newTempStudentTrigger;
 
 exports.addTeacherClassTrigger = Teacher.addTeacherClassTrigger;
 exports.deletedTeacherClassTrigger = Teacher.deletedTeacherClassTrigger;
+exports.addTeacherTrigger = Teacher.addTeacherTrigger;
+exports.newTempTeacherTrigger = Teacher.newTempTeacherTrigger;
 
 exports.triggerNewTask = Tasks.triggerNewTask
 exports.triggerUpdatedTask = Tasks.triggerUpdatedTask
 exports.triggerDeletedTask = Tasks.triggerDeletedTask
 
-exports.triggerNewMoment = Moments.triggerNewMoment
 exports.sendNotificationForNewMomentComment = Moments.sendNotificationForNewMomentComment
+
+exports.triggerChangeNickname = Users.triggerChangeNickname
+exports.triggerNewStatus = Users.triggerNewStatus

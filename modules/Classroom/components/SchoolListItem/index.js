@@ -5,11 +5,12 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Paragraph } from "react-native-paper";
 import SchoolAdminAPI from "modules/Classroom/api/schooladmin"
 import SquareAvatar from "src/components/Avatar/Square";
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { 
   school: {}, 
   isFetching: false,
-  defaultProfilePic: "https://picsum.photos/200/200/?random",
+  defaultProfilePic: HelperAPI.getClassroomLogo(),
   userName: "" 
 }
 
@@ -26,8 +27,8 @@ export default class SchoolListItem extends React.Component{
 
   async componentDidMount(){
     this.setState({ isFetching: true });
-    const { school, currentUserEmail } = this.props;
-    const schoolAdmin = await SchoolAdminAPI.getDetail(school.id, currentUserEmail )
+    const { school, currentUserId } = this.props;
+    const schoolAdmin = await SchoolAdminAPI.getDetail(school.id, currentUserId )
     this.setState({isFetching:false, school, userName: schoolAdmin.name})
   }
 

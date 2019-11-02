@@ -60,9 +60,9 @@ export default class MainNavigator extends React.PureComponent {
   render(){
     return(
     <CurrentRoomsProvider>
-        <MainTabNavigator navigation={this.props.navigation}/>
-        <NotificationListener/>
-        <InAppNotifications type="friend-request"/>
+      <MainTabNavigator navigation={this.props.navigation}/>
+      <NotificationListener/>
+      <InAppNotifications type="friend-request"/>
     </CurrentRoomsProvider>
     )
   }

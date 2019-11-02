@@ -5,15 +5,16 @@ import { Text, Caption, Paragraph } from "react-native-paper";
 import ImageListItem from "src/components/ImageListItem"
 import CircleAvatar from "src/components/Avatar/Circle";
 import SchoolAPI from "modules/Classroom/api/school";
+import Helper from "src/api/helper"
 
-const INITIAL_STATE = { posterName: "", comment: {}, isLoading: true, profilePicture: "https://picsum.photos/200/200/?random" }
+const INITIAL_STATE = { posterName: "", comment: {}, isLoading: true, profilePicture: Helper.getDefaultProfilePic() }
 
 export default class DiscussionCommentListItem extends React.Component{
 
   refreshDetail = async () => {
     this.setState({ isLoading: true });
     const { comment, schoolId } = this.props;
-    SchoolAPI.getUserDetails(schoolId, comment.posterEmail).then(people=>{
+    SchoolAPI.getUserDetails(schoolId, comment.posterId).then(people=>{
       this.setState({posterName: people.name})
       if(people.profilePicture && people.profilePicture.downloadUrl) this.setState({profilePicture: people.profilePicture.downloadUrl})
     })

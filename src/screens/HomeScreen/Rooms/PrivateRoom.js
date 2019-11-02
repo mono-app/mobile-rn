@@ -9,6 +9,7 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import UnreadCountBadge from "src/screens/HomeScreen/UnreadCountBadge";
 import { Text, Caption } from "react-native-paper";
 import { View, TouchableOpacity } from 'react-native';
+import HelperAPI from "src/api/helper";
 
 function PrivateRoom(props){
   const { currentUser, room } = props; 
@@ -26,11 +27,13 @@ function PrivateRoom(props){
 
   const handleRoomPress = () => props.onPress(room);
 
+  const handleOnLongPress = () => { if(props.onLongPress) props.onLongPress(room) }
+
   React.useEffect(() => {
     if(_isMounted.current) setIsLoading(true);
     const fetchData = async () => {
       const { audiences, type, school } = props.room;
-      const realAudience = audiences.filter((audience) => audience !== currentUser.email)[0];
+      const realAudience = audiences.filter((audience) => audience !== currentUser.id)[0];
       if(type==="group-chat"){
         const classData = await ClassAPI.getDetail(school.id,school.classId)
         if(_isMounted.current) setClass(classData)
@@ -58,12 +61,12 @@ function PrivateRoom(props){
   if(!isLoading){
     try{
       return(
-        <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress}>
+        <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress} onLongPress={handleOnLongPress}>
           <View style={{ marginRight: 16 }}>
               {(props.room.type==="group-chat")? 
-                <CircleAvatar size={50} uri="https://picsum.photos/200/200/?random"/>
+                <CircleAvatar size={50} uri={HelperAPI.getClassroomLogo()}/>
               : 
-                <CircleAvatar size={50} uri={(people.profilePicture)? people.profilePicture: "https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={50} uri={(people.profilePicture)? people.profilePicture: HelperAPI.getDefaultProfilePic()}/>
               }
             </View>
           <View style={{ display: "flex", flexDirection: "column", width: 0, flexGrow: 1 }}>
@@ -79,7 +82,7 @@ function PrivateRoom(props){
               <Caption style={{ width: 0, flexGrow: 1, marginRight: 16 }} numberOfLines={1}>
                 {room.lastMessage.message}
               </Caption>
-              <UnreadCountBadge roomId={room.id} isActive={(room.readBy && room.readBy[currentUser.email]===false)}/>
+              <UnreadCountBadge roomId={room.id} isActive={(room.readBy && room.readBy[currentUser.id]===false)}/>
             </View>
           </View>
         </TouchableOpacity>

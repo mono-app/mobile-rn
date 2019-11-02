@@ -39,13 +39,13 @@ function MomentItem(props){
   const handleProfilePress = () => props.onProfilePress(people)
   
   const fetchPeople = () => {
-    PeopleAPI.getDetail(moment.posterEmail).then(peopleData=>{
+    PeopleAPI.getDetail(moment.posterId).then(peopleData=>{
       if(_isMounted.current) setPeople(peopleData);
     })
   }
 
   const fetchMoment = () => {
-    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, currentUser.email, (newMoment) => {
+    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(moment.id, currentUser.id, (newMoment) => {
       if(newMoment && newMoment.postTime){
        const creationDate = momentDate(newMoment.postTime.seconds * 1000).format("DD MMMM YYYY")
        const creationTime = momentDate(newMoment.postTime.seconds * 1000).format("HH:mm")
@@ -86,7 +86,7 @@ function MomentItem(props){
             </View>
           </View>
         </TouchableOpacity>
-        {(people.email === currentUser.email)? <VerticalMenu onDeleteMomentPress={handleDeleteMomentPress}/>:null}
+        {(people.id === currentUser.id)? <VerticalMenu onDeleteMomentPress={handleDeleteMomentPress}/>:null}
       </View>
       <View style={styles.textContainer}>
         <Text style={{ textAlign: "justify", lineHeight: 20 }}>{moment.content.message}</Text>

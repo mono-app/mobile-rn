@@ -25,7 +25,7 @@ class StudentClassListScreen extends React.PureComponent {
     if(this._isMounted){
       this.setState({classList: [], isRefreshing: true})
     }
-    const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentEmail);
+    const classList = await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.studentId);
     if(this._isMounted){
       this.setState({ classList, filteredClassList: classList, isRefreshing: false });
     }
@@ -38,7 +38,7 @@ class StudentClassListScreen extends React.PureComponent {
 
   handleAddClassPress = () => {
     const payload = {
-      studentEmail: this.studentEmail,
+      studentId: this.studentId,
       onRefresh: this.loadClasses
     }
     this.props.navigation.navigate("StudentClassListPicker",  payload);
@@ -64,7 +64,7 @@ class StudentClassListScreen extends React.PureComponent {
     super(props);
     this.state = INITIAL_STATE;
     this._isMounted = null
-    this.studentEmail = this.props.navigation.getParam("studentEmail", "");
+    this.studentId = this.props.navigation.getParam("studentId", "");
     this.loadClasses = this.loadClasses.bind(this);
     this.handleClassPress = this.handleClassPress.bind(this);
     this.handleAddClassPress = this.handleAddClassPress.bind(this);

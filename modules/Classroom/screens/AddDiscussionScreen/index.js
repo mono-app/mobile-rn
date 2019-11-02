@@ -45,9 +45,9 @@ class AddDiscussionScreen extends React.PureComponent {
   }
 
   handleSavePress = async () => {
-    const currentUserEmail = this.props.currentUser.email
+    const currentUserId = this.props.currentUser.id
     const data = {
-      posterEmail: currentUserEmail,
+      posterId: currentUserId,
       title: this.state.title.trim(),
       description: this.state.description.trim(),
       location: {...this.state.locationCoordinate},
@@ -225,7 +225,7 @@ class AddDiscussionScreen extends React.PureComponent {
             title={this.props.t("createNewDiscussion")}
             style={{ backgroundColor: "white" }}
           />
-        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{ flex:1 }}>
           <View style={styles.subjectContainer}>
                 <Text style={{fontWeight: "bold", fontSize: 18}}>
                   {this.subject}
@@ -241,6 +241,7 @@ class AddDiscussionScreen extends React.PureComponent {
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8" }}
                 value={this.state.title}
+                autoCorrect={false}
                 onChangeText={this.handleTitleChange}
               />
             </View>
@@ -248,9 +249,10 @@ class AddDiscussionScreen extends React.PureComponent {
             <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
               <Text style={styles.label}>{this.props.t("description")}</Text>
               <TextInput
-                style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top" }}
+                style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top", maxHeight: 80 }}
                 value={this.state.description}
                 multiline={true}
+                autoCorrect={false}
                 numberOfLines = {5}
                 onChangeText={this.handleDescriptionChange}
               />

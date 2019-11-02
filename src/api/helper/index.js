@@ -1,3 +1,4 @@
+import uuid from "uuid/v4"
 
 export default class HelperAPI{
 
@@ -26,4 +27,11 @@ export default class HelperAPI{
     return true;
   }
 
+  static getDefaultProfilePic(){
+    return "https://api.adorable.io/avatars/285/"+uuid()+".png"
+  }
+
+  static getClassroomLogo(){
+    return "https://firebasestorage.googleapis.com/v0/b/chat-app-fdf76.appspot.com/o/main%2Flogo%2Flogoclassroom.png?alt=media&token=f472a571-24c3-4bfa-8c44-e5f9417b7114"
+  }
 }

@@ -141,7 +141,7 @@ class EditTaskSingleFieldScreen extends React.PureComponent{
             </TouchableOpacity>
             :
             <TextInput
-              style={(this.isMultiline)?{textAlignVertical: "top" }:{}}
+              style={(this.isMultiline)?{textAlignVertical: "top", maxHeight: 80 }:{}}
               placeholder={placeholder}
               value={this.state.defaultValue}
               multiline={this.isMultiline}

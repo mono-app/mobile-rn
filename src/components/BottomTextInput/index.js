@@ -40,6 +40,7 @@ export default class BottomTextInput extends React.PureComponent{
               placeholder="Type a message" 
               style={{ flex: 1, maxHeight: 100 }}
               multiline={true}
+              autoCorrect={false}
               value={this.state.message}
               onChangeText={this.handleMessageChange}/>
             <IconButton icon="send" size={24} color="#0EAD69" style={{ flex: 0, alignSelf:"center" }} onPress={this.handleSendPress}/>

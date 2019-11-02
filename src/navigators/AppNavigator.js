@@ -22,4 +22,3 @@ export default createStackNavigator({
   VerifyPhone: { screen: VerifyPhoneScreen },
   MainTabNavigator: { screen: MainTabNavigator, navigationOptions: { header: null }}
 }, { initialRouteName: "Splash", defaultNavigationOptions: { header: null } });
-

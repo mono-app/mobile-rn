@@ -9,11 +9,10 @@ import { IconButton } from "react-native-paper";
 import { OTSubscriber } from "opentok-react-native";
 
 function SpeakerButton(props){
-  const { isLoading } = props;
+  const { streams } = props;
   const { colors } = props.theme;
   const [ isActive, setIsActive ] = React.useState(false);
-  const [ showSubscriber, setShowSubscriber ] = React.useState(false);
-  
+  const [ streamProperties, setStreamProperties] = React.useState({})
   const iconName = (isActive)? "volume-up": "volume-off";
   const iconColor = (isActive)? colors.primary: colors.disabled;
 
@@ -23,18 +22,24 @@ function SpeakerButton(props){
 
   const handleError = (err) => Logger.log("SpeakerButton.handleError#err", err);
   const handlePress = () => {
-    setShowSubscriber(!showSubscriber);
     setIsActive(!isActive);
   }
 
   const subscriberEventHandlers = { error: handleError, otrnError: handleError }
 
-  if(isLoading) return <ActivityIndicator size="small" color={colors.disabled} style={[ styles.default, props.style ]}/>
+  React.useEffect(()=>{
+    let properties = {}
+    streams.forEach(streamId => {
+      properties = {...properties, [streamId]: {subscribeToAudio: isActive, subscribeToVideo: false}} 
+    })
+    setStreamProperties(properties)
+  }, [streams, isActive])
+
   return (
     <React.Fragment>
-      {showSubscriber?(
-        <OTSubscriber eventHandlers={subscriberEventHandlers} properties={{ subscribeToVideo: false, subscribeToAudio: true }}/>
-      ):null}
+      <OTSubscriber eventHandlers={subscriberEventHandlers} properties={{ subscribeToVideo: false, subscribeToAudio: true }}
+        streamProperties={streamProperties}
+      />
       <IconButton 
         style={[ styles.default, props.style ]} icon={iconName} size={24} 
         color={iconColor} onPress={handlePress}/>

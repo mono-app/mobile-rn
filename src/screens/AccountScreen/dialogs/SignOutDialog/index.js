@@ -8,8 +8,10 @@ import { withTranslation } from 'react-i18next';
 
 function SignOutDialog(props){
   const handleSignOutPress = async () => {
-    const result = await PeopleAPI.updateUserForLogout(props.currentUser.email)
+    const result = await PeopleAPI.updateUserForLogout(props.currentUser.id)
     if(result){
+      const firebaseUser = firebase.auth().currentUser;
+      await PeopleAPI.setOnlineStatus(firebaseUser.uid, "Offline");
       firebase.auth().signOut();
       props.navigation.dispatch(StackActions.reset({
         index: 0, actions: [ NavigationActions.navigate({ routeName: "Splash" }) ],

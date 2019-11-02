@@ -1,14 +1,15 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ActivityIndicator, Dialog, Text, Caption } from "react-native-paper";
 import AppHeader from "src/components/AppHeader";
 import TeacherAPI from "modules/Classroom/api/teacher";
 import ClassAPI from "modules/Classroom/api/class";
 import CircleAvatar from "src/components/Avatar/Circle";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { isLoadingProfile: true, teacher: null, totalActiveClass: 0 }
 
@@ -24,11 +25,11 @@ class TeacherProfileScreen extends React.PureComponent {
       this.setState({ isLoadingProfile: true });
     }
 
-    const teacher = await TeacherAPI.getDetail(this.props.currentSchool.id, this.teacherEmail);
+    const teacher = await TeacherAPI.getDetail(this.props.currentSchool.id, this.teacherId);
     if(teacher.gender){
       teacher.gender = teacher.gender.charAt(0).toUpperCase() + teacher.gender.slice(1)
     }
-    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.teacherEmail)).length;
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.teacherId)).length;
     if(this._isMounted){
       this.setState({ isLoadingProfile: false, teacher, totalActiveClass });
     }
@@ -38,7 +39,7 @@ class TeacherProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "name", 
       fieldValue: this.state.teacher.name,
       fieldTitle: this.props.t("editTeacherName"),
@@ -55,7 +56,7 @@ class TeacherProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "address", 
       fieldValue: this.state.teacher.address,
       fieldTitle: this.props.t("editAddress"),
@@ -68,46 +69,11 @@ class TeacherProfileScreen extends React.PureComponent {
     this.props.navigation.navigate(`EditSingleField`, payload);
   }
 
-  handlePhonePress = e => {
-    const payload = {
-      schoolId: this.props.currentSchool.id,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "phone", 
-      fieldValue: this.state.teacher.phone,
-      fieldTitle: this.props.t("editPhone"),
-      isNumber: true,
-      onRefresh: (data) => {
-        const newClass = JSON.parse(JSON.stringify(this.state.teacher));
-        newClass.phone = data;
-        this.setState({teacher: newClass})
-      }
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
-
-  handleEmailPress = e => {
-    const payload = {
-      schoolId: this.props.currentSchool.id,
-      databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
-      databaseFieldName: "email", 
-      fieldValue: this.state.teacher.id,
-      fieldTitle: this.props.t("editEmail"),
-      onRefresh: (data) => {
-        const newClass = JSON.parse(JSON.stringify(this.state.teacher));
-        newClass.email = data;
-        this.setState({teacher: newClass})
-      } 
-    }
-    this.props.navigation.navigate(`EditSingleField`, payload);
-  }
-
   handleNIKPress = e => {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "nik", 
       fieldValue: this.state.teacher.nik,
       fieldTitle: this.props.t("editNik"),
@@ -125,7 +91,7 @@ class TeacherProfileScreen extends React.PureComponent {
     const payload = {
       schoolId: this.props.currentSchool.id,
       databaseCollection: "teachers",
-      databaseDocumentId: this.teacherEmail,
+      databaseDocumentId: this.teacherId,
       databaseFieldName: "gender", 
       fieldValue: this.state.teacher.gender,
       fieldTitle: this.props.t("editGender"),
@@ -141,7 +107,7 @@ class TeacherProfileScreen extends React.PureComponent {
 
   handleClassListPress = e => {
     const payload = {
-      teacherEmail: this.teacherEmail
+      teacherId: this.teacherId
     }
     this.props.navigation.navigate('TeacherClassList', payload);
   }
@@ -149,14 +115,12 @@ class TeacherProfileScreen extends React.PureComponent {
 
   constructor(props){
     super(props);
-    this.teacherEmail = this.props.navigation.getParam("teacherEmail", null);
+    this.teacherId = this.props.navigation.getParam("teacherId", null);
     this.state = INITIAL_STATE;
     this._isMounted = null
     this.loadPeopleInformation = this.loadPeopleInformation.bind(this);
     this.handleNamePress = this.handleNamePress.bind(this);
     this.handleAddressPress = this.handleAddressPress.bind(this);
-    this.handlePhonePress = this.handlePhonePress.bind(this);
-    this.handleEmailPress = this.handleEmailPress.bind(this);
     this.handleNIKPress = this.handleNIKPress.bind(this);
     this.handleGenderPress = this.handleGenderPress.bind(this);
   }
@@ -196,7 +160,7 @@ class TeacherProfileScreen extends React.PureComponent {
 
             <View style={styles.profileContainer}>
               <Text style={{  fontSize: 16 }}></Text>
-              <CircleAvatar size={100} uri="https://picsum.photos/200/200/?random"/>
+              <CircleAvatar size={100} uri={HelperAPI.getDefaultProfilePic()}/>
             </View>
             <View>
               <TouchableOpacity onPress={this.handleNamePress}>
@@ -221,24 +185,24 @@ class TeacherProfileScreen extends React.PureComponent {
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.handlePhonePress}>
+              <TouchableOpacity disabled={true}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text style={styles.label}>{this.props.t("phoneNo")}</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.phone}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                      <Text>{this.state.teacher.phoneNumber}</Text>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#fff" }}/>
                     </View>
                   </View>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleEmailPress}>
+              <TouchableOpacity disabled={true}>
                 <View style={styles.listItemContainer}>
                   <View style={styles.listDescriptionContainer}>
                     <Text style={styles.label}>Email</Text>
                     <View style={{flexDirection:"row",textAlign: "right"}}>
-                      <Text>{this.state.teacher.id}</Text>
-                      <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
+                      <Text>{this.state.teacher.email}</Text>
+                      <EvilIcons name="chevron-right" size={24} style={{ color: "#fff" }}/>
                     </View>
                   </View>
                 </View>

@@ -15,11 +15,11 @@ function ResultItem(props){
     }
   })
 
-  const handlePress = () => props.onPress(props.peopleEmail);
+  const handlePress = () => props.onPress(props.peopleId);
 
   React.useEffect(() => {
     const fetchStatus = async () => {
-      const latestStatus = await StatusAPI.getLatestStatus(props.peopleEmail);
+      const latestStatus = await StatusAPI.getLatestStatus(props.peopleId);
       setStatus(latestStatus.content);
     }
     fetchStatus();

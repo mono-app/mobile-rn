@@ -20,15 +20,15 @@ import ImageCompress from "src/api/ImageCompress"
 import { withTranslation } from 'react-i18next';
 import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
 import Key from "src/helper/key"
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { isLoadingProfile: true, 
   status:"", 
   totalActiveClass: 0, 
   totalArchiveClass: 0,
   isUploadingImage: false,
-  profilePicture: "https://picsum.photos/200/200/?random"
+  profilePicture: HelperAPI.getDefaultProfilePic()
 }
-
 
 class MyProfileScreen extends React.PureComponent {
   static navigationOptions = () => {
@@ -41,15 +41,15 @@ class MyProfileScreen extends React.PureComponent {
     if(this._isMounted)
       this.setState({ isLoadingProfile: true });
 
-    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
-    const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.email)).length;
+    const totalActiveClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentStudent.id)).length;
+    const totalArchiveClass = (await ClassAPI.getUserArchiveClasses(this.props.currentSchool.id, this.props.currentStudent.id)).length;
     if(this._isMounted)
       this.setState({ isLoadingProfile: false, totalActiveClass, totalArchiveClass });
    
   }
   
   loadStatus = async () => {
-    let status = await StatusAPI.getLatestStatus(this.props.currentStudent.email);
+    let status = await StatusAPI.getLatestStatus(this.props.currentStudent.id);
     if(!status){
       status = { content: this.props.t("writeStatusHere") };
     } 
@@ -73,7 +73,7 @@ class MyProfileScreen extends React.PureComponent {
       const compressedRes = await ImageCompress.compress(res.uri, res.size)
 
       const downloadUrl = await StorageAPI.uploadFile(storagePath, compressedRes.uri)
-      await StudentAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentStudent.email ,storagePath, downloadUrl)
+      await StudentAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentStudent.id ,storagePath, downloadUrl)
       
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -211,10 +211,10 @@ class MyProfileScreen extends React.PureComponent {
               fieldValue={this.props.currentStudent.address}/>
             <PeopleInformationContainer
               fieldName={this.props.t("phoneNo")}
-              fieldValue={this.props.currentStudent.phone}/>
+              fieldValue={(this.props.currentUser.phoneNumber.value==="000000")?"-":this.props.currentUser.phoneNumber.value}/>
             <PeopleInformationContainer
               fieldName="Email"
-              fieldValue={this.props.currentStudent.email}/>
+              fieldValue={this.props.currentUser.email}/>
             <PeopleInformationContainer
               fieldName={this.props.t("gender")}
               fieldValue={this.props.currentStudent.gender}/>

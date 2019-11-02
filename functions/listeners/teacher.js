@@ -3,6 +3,40 @@ const admin = require("firebase-admin");
 
 function Teacher(){}
 
+Teacher.addTeacherTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/teachers/{teacherId}").onCreate(async (documentSnapshot, context) => {
+  const { schoolId, teacherId } = context.params;
+  const db = admin.firestore();
+  const userMappingRef = db.collection("userMapping").doc(teacherId);
+  const userMappingSchoolRef = userMappingRef.collection("schools").doc(schoolId);
+  userMappingSchoolRef.set({ creationTime: admin.firestore.FieldValue.serverTimestamp(), role: "teacher" });
+})
+
+Teacher.newTempTeacherTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/tempTeachers/{teacherEmail}").onCreate(async (documentSnapshot, context) => {
+  const { schoolId, teacherEmail } = context.params;
+  const data = documentSnapshot.data()
+  const db = admin.firestore();
+  
+  const userRecord = await admin.auth().createUser({
+    email: teacherEmail,
+    emailVerified: false,
+    password: '123123',
+    disabled: false
+  })
+  const userRef = db.collection("users").doc(userRecord.uid)
+  await userRef.set({ 
+    email: teacherEmail,
+    isCompleteSetup: false,
+    phoneNumber: {
+      value: "62000000000", isVerified: false
+    },
+    creationTime: admin.firestore.FieldValue.serverTimestamp()
+  })
+  const schoolRef = db.collection("schools").doc(schoolId)
+  const teacherRef = schoolRef.collection("teachers").doc(userRecord.uid)
+  await teacherRef.set({name: data.name, creationTime: admin.firestore.FieldValue.serverTimestamp()})
+  await documentSnapshot.ref.delete()
+})
+
 Teacher.addTeacherClassTrigger = functions.region("asia-east2").firestore.document("/schools/{schoolId}/classes/{classId}/teachers/{teacherId}").onCreate(async (documentSnapshot, context) => {
   // this trigger for auto add room audiences rooms collection
   const { schoolId, classId, teacherId } = context.params;

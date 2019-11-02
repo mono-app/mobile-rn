@@ -2,6 +2,7 @@ import React from "react";
 import firebase from "react-native-firebase";
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { SchoolAdminsCollection, SchoolsCollection } from "src/api/database/collection";
+import HelperAPI from "src/api/helper";
 
 const CurrentSchoolAdminContext = React.createContext();
 export function withCurrentSchoolAdmin(Component){
@@ -9,8 +10,8 @@ export function withCurrentSchoolAdmin(Component){
     return (
       <CurrentSchoolAdminContext.Consumer>
         {(context) => <Component {...props} ref={ref}
-          setCurrentSchoolAdminEmail={context.setCurrentSchoolAdminEmail}
-          schoolProfilePicture={(context.school.profilePicture)? context.school.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random"}
+          setCurrentSchoolAdminId={context.setCurrentSchoolAdminId}
+          schoolProfilePicture={(context.school.profilePicture)? context.school.profilePicture.downloadUrl : HelperAPI.getClassroomLogo()}
           currentSchoolAdmin = {context.schoolAdmin}
           currentSchool = {context.school}
           />}
@@ -39,7 +40,7 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
   //   });
   // }
 
-  handleCurrentSchoolAdminEmail = async (schoolId, email) => {
+  handleCurrentSchoolAdminId = async (schoolId, userId) => {
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const schoolAdminsCollection = new SchoolAdminsCollection();
@@ -52,11 +53,11 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
       }
     });
 
-    const schoolAdminsDocumentRef = schoolsDocumentRef.collection(schoolAdminsCollection.getName()).doc(email);
+    const schoolAdminsDocumentRef = schoolsDocumentRef.collection(schoolAdminsCollection.getName()).doc(userId);
     this.userListener = schoolAdminsDocumentRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
         const schoolAdmin = documentSnapshot.data();
-        schoolAdmin.email = JSON.parse(JSON.stringify(documentSnapshot.id));
+        schoolAdmin.id = JSON.parse(JSON.stringify(documentSnapshot.id));
         this.setState({ schoolAdmin });
       }
     });
@@ -69,9 +70,9 @@ export class CurrentSchoolAdminProvider extends React.PureComponent{
       school: {}, 
       schoolAdmin: {}, 
       schoolProfilePicture: "",
-      setCurrentSchoolAdminEmail: this.handleCurrentSchoolAdminEmail,
+      setCurrentSchoolAdminId: this.handleCurrentSchoolAdminId,
     }
-    this.handleCurrentSchoolAdminEmail = this.handleCurrentSchoolAdminEmail.bind(this);
+    this.handleCurrentSchoolAdminId = this.handleCurrentSchoolAdminId.bind(this);
   }
 
  

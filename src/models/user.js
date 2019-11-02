@@ -1,5 +1,5 @@
 import { Model, Q } from "@nozbe/watermelondb";
-import { readonly, field, date, immutableRelation, children, action } from "@nozbe/watermelondb/decorators";
+import { readonly, field, date, immutableRelation, children, action, lazy } from "@nozbe/watermelondb/decorators";
 
 export default class User extends Model{
   static table = "users";
@@ -17,6 +17,8 @@ export default class User extends Model{
   @children("statuses") statuses
   @readonly @date("created_at") createdAt
   @readonly  @date("updated_at") updatedAt
+
+  @lazy friends = this.collection.get("users").query(Q.on("friends", "following_user_id", this.id));
 
   @action async getLatestStatus(){
     const statuses = await this.statuses.fetch();

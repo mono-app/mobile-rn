@@ -1,13 +1,17 @@
 import React from "react";
-import firebase from "react-native-firebase";
-import libphonenumber from 'libphonenumber-js';
-import VerifyPhoneAPI from "src/api/verifyphone"
-import { StackActions, NavigationEvents, NavigationActions } from "react-navigation";
-import { withCurrentUser } from "src/api/people/CurrentUser";
+import VerifyPhoneAPI from "src/api/verifyphone";
+import PeopleAPI from "src/api/people";
+import PhoneNumber from "src/entities/phoneNumber";
+import Otp from "src/entities/otp";
+import { StackActions, NavigationActions } from "react-navigation";
 import { withTranslation } from 'react-i18next';
+import { StyleSheet } from "react-native";
+
 import TextInput from "src/components/TextInput";
 import Button from "src/components/Button";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import CustomSnackbar from "src/components/CustomSnackbar";
+import { SafeAreaView } from "react-navigation";
+import { View, TouchableOpacity } from "react-native";
 import { Text, Portal, Dialog, Paragraph, Button as MaterialButton, Snackbar, Title } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -20,155 +24,67 @@ const INITIAL_STATE = {
 class VerifyPhoneScreen extends React.PureComponent{
   static navigationOptions = { header: null }
   
+  handleContinueClick = () => this.gotoSplash();
   handleDismissDialog = () => this.setState({showDialog: false});
   handleBackToSignIn = () => this.props.navigation.dispatch(StackActions.pop({n: 2}));
   handlePhoneNumberChange = phoneNumber => this.setState({phoneNumber});
-  handleOTPChange = otp => {this.setState({otp, isInsertingOTP: true});}
+  handleOTPChange = (otp) => this.setState({otp, isInsertingOTP: true});
+  handleErrorDismiss = () => this.setState({ errorMessage: null });
+  handleError = (message) => this.setState({ errorMessage: message });
   handleAskOTP = async () => {
-    this.setState({isVerificationLoading: true})
-    const phoneNum = this.validatePhoneNumber(this.state.phoneNumber,"ID","62")
-    if(!phoneNum) this.setState({ snackbarFailMessage: this.props.t("invalidPhone"), showSnackbarFailVerification:true })
-    else {
-      const isAvailable = await VerifyPhoneAPI.isAvailable(this.email, phoneNum)
-      if(isAvailable){
-        //const response = await VerifyPhoneAPI.sendCode(phoneNum)
-        const response = "fds"
-
-        if(response){
-          const otpRequestId = response
-          VerifyPhoneAPI.currentNexmoRequestId = otpRequestId
-          this.setState({ isAskingOTP: true, otpRequestId })
-        }
-      }else this.setState({ snackbarFailMessage: this.props.t("phoneAlreadyUsed"), showSnackbarFailVerification:true })
+    this.setState({ isVerificationLoading: true })
+    try{
+      const phoneNumber = new PhoneNumber(this.state.phoneNumber, false);
+      await phoneNumber.isAvailable()
+      const { requestId } = await VerifyPhoneAPI.sendCode(phoneNumber, false);
+      this.setState({ isAskingOTP: true, otpRequestId: requestId });
+    }catch(err){
+      if(err.code==="verify/unknown") this.handleError(this.props.t("otpTooMuchRequest"))
+      else if(err.code==="phone-number/already-used") this.handleError(this.props.t("phoneAlreadyUsed"))
+      else if(err.code==="phone-number/not-valid") this.handleError(this.props.t("invalidPhone"))
+      else this.handleError(err.message);
+    }finally{
+      this.setState({ isVerificationLoading: false });
     }
-    this.setState({isVerificationLoading: false})
-  }
-
-  validatePhoneNumber = (phoneNumber0, countryCode, numCode) => {
-    // numCode: 62
-    // countryCode: ID
-    let result = phoneNumber0.toString()
-    if(result.length<=2) return null
-    const phoneNumber1 = libphonenumber.parsePhoneNumberFromString(result, countryCode)
-    if(phoneNumber1 && phoneNumber1.isPossible()){
-      // check if there is `+` 
-      if(result.substring(0,1)==="+") result = result.substr(1);
-      if(!result.toLowerCase().match(/^[0-9]+$/)) return null;
-      // change 0 to numCode 
-      if(result.substring(0,1)==="0"){
-        result = result.substr(1);
-        result = numCode+""+result;
-      }
-      // if 2 first letter is not same with numCode, add the numCode at the beginning
-      if(result.substring(0,2)!==numCode) result = `${numCode}${result}`;
-      const phoneNumber2 = libphonenumber.parsePhoneNumberFromString(`+${result}`, countryCode);
-      if(phoneNumber2.isValid()) return result
-    }
-    return null
   }
 
   handleVerifyClick = async () => {
-    this.setState({isVerificationLoading: true})
-    //const response = await VerifyPhoneAPI.checkCode(this.state.otpRequestId,this.state.otp)
-    const response = true
-    if(response){
-      VerifyPhoneAPI.currentNexmoRequestId = null
-      // create user in database first
-      try{
-        const db = firebase.firestore();
-        const userDocumentRef = db.collection("users").doc(this.email)
-        const userSnapshot = await userDocumentRef.get()
-        
-        if(userSnapshot.exists){
-          try{
-            await userDocumentRef.update({
-              phoneNumber: { value: this.state.phoneNumber, isVerified: true }
-            })
-            this.setState({ showDialog: true, isVerificationLoading: false })
-          }catch (err){
-            this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
-          }
-
-        }else{
-          try{
-            await firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-            await userDocumentRef.set({
-              phoneNumber: { value: this.state.phoneNumber, isVerified: true },
-              isCompleteSetup: false,
-              creationTime: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            this.setState({ showDialog: true, isVerificationLoading: false })
-          }catch(error){
-            var errorCode = error.code;
-            if(errorCode==="auth/email-already-in-use"){
-              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Email already in use"})
-            }else if(errorCode==="auth/invalid-email"){
-              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "invalid email"})
-            }else if(errorCode==="auth/operation-not-allowed"){
-              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Operation not allowed"})
-            }else if(errorCode==="auth/weak-password"){
-              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: "Weak password"})
-            }else{
-              this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
-            }
-          }
-        }
-      }catch (err){
-        this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("connectionProblem"), isVerificationLoading: false})
-      }
-
-     
-     
-    }else this.setState({showSnackbarFailVerification:true, snackbarFailMessage: this.props.t("wrongVerificationCode"), isVerificationLoading: false})
-    
-
+    this.setState({ isVerificationLoading: true })
+    try{
+      const otp = new Otp(this.state.otp);
+      await VerifyPhoneAPI.checkCode(this.state.otpRequestId, otp, false);
+      this.user.phoneNumber = new PhoneNumber(this.state.phoneNumber, false);
+      await PeopleAPI.createUser(this.user);
+      this.gotoSplash();
+    }catch(err){
+      if(err.code==="otp/empty-code") this.handleError(this.props.t("otpEmpty"));
+      else if(err.code==="verify/incorrect-otp") this.handleError(this.props.t("wrongVerificationCode"));
+      else if(err.code==="verify/wrong-many-times") this.handleError(this.props.t("wrontManyOtp"));
+      else if(err.code==="verify/unable-process") this.handleError(this.props.t("unableProcessOtp"));
+      else this.handleError(err.message);
+    }finally{
+      this.setState({ isVerificationLoading: false });
+    }
   }
 
-  handleContinueClick = () => {
-    this.props.navigation.dispatch(
-      StackActions.reset({
-        index: 0,
-        actions: [ NavigationActions.navigate({ routeName: 'Splash' }) ],
-      })
-    );
+  gotoSplash = () => {
+    this.props.navigation.dispatch(StackActions.reset({
+      index: 0, actions: [ NavigationActions.navigate({ routeName: "Splash" }) ]
+    }))
   }
 
-  handleScreenWillBlur = () => { if(this.authListener) this.authListener() }
-
-  handleScreenDidFocus = () => {
-    this.authListener = firebase.auth().onAuthStateChanged(user => {
-      if(this.props.currentUser.phoneNumber !== undefined && this.props.currentUser.isCompleteSetup !== undefined){
-        const db = firebase.firestore();
-        if(user && !this.props.currentUser.isCompleteSetup){
-          db.collection("users").doc(user.email).set({
-            isCompleteSetup: false,
-            phoneNumber: { value: this.state.phoneNumber, isVerified: false },
-            creationTime: firebase.firestore.FieldValue.serverTimestamp()
-          })
-        }else if(user && this.props.currentUser.isCompleteSetup){
-          db.collection("users").doc(user.email).update({
-            phoneNumber: { value: this.state.phoneNumber, isVerified: false },
-          })
-        }
-      }
-    })
-  }
 
   constructor(props){
     super(props);
     this.state = INITIAL_STATE;
-    this.email = this.props.navigation.getParam("email", null);
-    this.password = this.props.navigation.getParam("password", null);
-    this.authListener = null;
-    this.databaseListener = null;
+    this.user = this.props.navigation.getParam("user", null);
+    this.gotoSplash = this.gotoSplash.bind(this);
     this.handleBackToSignIn = this.handleBackToSignIn.bind(this);
     this.handlePhoneNumberChange = this.handlePhoneNumberChange.bind(this);
     this.handleOTPChange = this.handleOTPChange.bind(this);
     this.handleAskOTP = this.handleAskOTP.bind(this);
     this.handleContinueClick = this.handleContinueClick.bind(this);
-    this.handleScreenDidFocus = this.handleScreenDidFocus.bind(this);
-    this.handleScreenWillBlur = this.handleScreenWillBlur.bind(this);
-    this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
+    this.handleErrorDismiss = this.handleErrorDismiss.bind(this);
   }
 
   componentDidUpdate(){
@@ -179,28 +95,25 @@ class VerifyPhoneScreen extends React.PureComponent{
     return(
       <React.Fragment>
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={styles.container}>
-          <NavigationEvents onDidFocus={this.handleScreenDidFocus} onwillBlue={this.handleScreenWillBlur}/>
           <Title style={{ fontWeight: "500", fontSize: 24, marginBottom: 4 }}>{this.props.t("phoneVerifyLabel")}</Title>
           <Paragraph style={{ marginBottom: 16 }}>{this.props.t('phoneVerifyDescLabel')}</Paragraph>
           <View style={{flexDirection:"row"}}>
-          <TextInput style={{ marginRight: 8 }} value="+62" editable={false}/>
-          <TextInput 
-          style={{flex:1}}
-            placeholder={this.props.t("example")+": 81215288888"} textContentType="telephoneNumber" keyboardType="number-pad"
-            editable={!this.state.isAskingOTP} value={this.state.phoneNumber}
-            onChangeText={this.handlePhoneNumberChange}/>
-            </View>
+            <TextInput style={{ marginRight: 8 }} value="+62" editable={false}/>
+            <TextInput 
+              style={{ flex: 1 }} placeholder={this.props.t("example")+": 81215288888"} 
+              textContentType="telephoneNumber" keyboardType="number-pad"
+              editable={!this.state.isAskingOTP} value={this.state.phoneNumber}
+              onChangeText={this.handlePhoneNumberChange}/>
+          </View>
           {(this.state.isAskingOTP)?(
-            <View>
+            <React.Fragment>
               <TextInput
                 placeholder={this.props.t("verificationCode")} keyboardType="number-pad"
                 value={this.state.otp} onChangeText={this.handleOTPChange} autoFocus/>
               <Button onPress={this.handleVerifyClick} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("verify")}/>
-            </View>
+            </React.Fragment>
           ):(<Button onPress={this.handleAskOTP} isLoading={this.state.isVerificationLoading} disabled={this.state.isVerificationLoading} text={(this.state.isVerificationLoading)?"":this.props.t("askVerificationCode")}/>)}
-          <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
-            <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
-          </TouchableOpacity>
+
           <Portal>
             <Dialog visible={this.state.showDialog}>
               <Dialog.Title>{this.props.t("success")}</Dialog.Title>
@@ -213,13 +126,14 @@ class VerifyPhoneScreen extends React.PureComponent{
             </Dialog>
           </Portal>
         </KeyboardAwareScrollView>
-        <Snackbar
-          visible={this.state.showSnackbarFailVerification}
-          onDismiss={() => this.setState({ showSnackbarFailVerification: false })}
-          style={{ backgroundColor:"#EF6F6C" }} duration={Snackbar.DURATION_SHORT}>
-          {this.state.snackbarFailMessage}
-        </Snackbar>
-     </React.Fragment>
+
+          <TouchableOpacity style={styles.backToSignInContainer} onPress={this.handleBackToSignIn}>
+            <Text style={{ textAlign: "center", color: "#0EAD69", fontWeight: "500" }}>{this.props.t("backSignIn")}</Text>
+          </TouchableOpacity>
+
+        <CustomSnackbar isError={true} message={this.state.errorMessage} onDismiss={this.handleErrorDismiss}/>
+
+      </React.Fragment>
     )
   }
 }
@@ -229,4 +143,4 @@ const styles = StyleSheet.create({
   backToSignInContainer: { position: "absolute", bottom: 32, left: 0, right: 0 }
 })
 
-export default withTranslation()(withCurrentUser(VerifyPhoneScreen))
+export default withTranslation()(VerifyPhoneScreen)

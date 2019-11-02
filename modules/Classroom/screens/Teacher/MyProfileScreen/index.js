@@ -20,12 +20,13 @@ import ImageCompress from "src/api/ImageCompress"
 import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
 import Key from "src/helper/key"
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { 
   isLoadingProfile: true, 
   status:"", 
   totalClass: 0,
-  profilePicture: "https://picsum.photos/200/200/?random",
+  profilePicture: HelperAPI.getDefaultProfilePic(),
   isUploadingImage: false
 }
 
@@ -40,7 +41,7 @@ class MyProfileScreen extends React.PureComponent {
     if(this._isMounted)
       this.setState({ isLoadingProfile: true });
 
-    const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.email)).length;
+    const totalClass = (await ClassAPI.getUserActiveClasses(this.props.currentSchool.id, this.props.currentTeacher.id)).length;
    
     if(this._isMounted)
      this.setState({ isLoadingProfile: false, totalClass });
@@ -48,7 +49,7 @@ class MyProfileScreen extends React.PureComponent {
 
   
   loadStatus = async () => {
-    let status = await StatusAPI.getLatestStatus(this.props.currentUser.email);
+    let status = await StatusAPI.getLatestStatus(this.props.currentUser.id);
     if(!status) status = { content: this.props.t("writeStatusHere") };
     if(this._isMounted)
       this.setState({ status: status.content });
@@ -87,7 +88,7 @@ class MyProfileScreen extends React.PureComponent {
       const compressedRes = await ImageCompress.compress(res.uri, res.size)
 
       const downloadUrl = await StorageAPI.uploadFile(storagePath, compressedRes.uri)
-      await TeacherAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentTeacher.email ,storagePath, downloadUrl)
+      await TeacherAPI.updateProfilePicture(this.props.currentSchool.id, this.props.currentTeacher.id ,storagePath, downloadUrl)
           
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -209,10 +210,10 @@ class MyProfileScreen extends React.PureComponent {
               fieldValue={this.props.currentTeacher.address}/>
             <PeopleInformationContainer
               fieldName={this.props.t("phoneNo")}
-              fieldValue={this.props.currentTeacher.phone}/>
+              fieldValue={(this.props.currentUser.phoneNumber.value==="000000")?"-":this.props.currentUser.phoneNumber.value}/>
             <PeopleInformationContainer
               fieldName="Email"
-              fieldValue={this.props.currentTeacher.email}/>
+              fieldValue={this.props.currentUser.email}/>
             <PeopleInformationContainer
               fieldName={this.props.t("gender")}
               fieldValue={this.props.currentTeacher.gender}/>

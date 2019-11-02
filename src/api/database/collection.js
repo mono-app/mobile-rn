@@ -1,4 +1,4 @@
-import { Database } from "./index";
+import Database from "./index";
 
 export class Collection{
   /**
@@ -74,8 +74,16 @@ export class TeachersCollection extends Collection{
   constructor(){ super("teachers"); }
 }
 
+export class TempTeachersCollection extends Collection{
+  constructor(){ super("tempTeachers"); }
+}
+
 export class StudentsCollection extends Collection{
   constructor(){ super("students"); }
+}
+
+export class TempStudentsCollection extends Collection{
+  constructor(){ super("tempStudents"); }
 }
 
 export class TasksCollection extends Collection{
@@ -126,3 +134,6 @@ export class InRoomCollection extends Collection{
   constructor(){ super("inRoom"); }
 }
 
+export class ContactSupportCollection extends Collection{
+  constructor(){ super("contactSupport"); }
+}

@@ -15,6 +15,7 @@ import { ActivityIndicator, View, FlatList, StyleSheet } from "react-native";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import { default as MaterialIcons } from "react-native-vector-icons/MaterialIcons";
 import { default as EvilIcons } from "react-native-vector-icons/EvilIcons";
+import { withTranslation } from 'react-i18next';
 
 function SettingsScreen(props){
   const [ status, setStatus ] = React.useState("");
@@ -38,7 +39,7 @@ function SettingsScreen(props){
       const result = await StorageAPI.openGallery(false);
       setUploadingImage(true)
       const compressedRes = await ImageCompress.compress(result.uri, result.size)
-      await PeopleAPI.changeProfilePicture(currentUser.email, compressedRes.uri);
+      await PeopleAPI.changeProfilePicture(currentUser.id, compressedRes.uri);
       setUploadingImage(false)
     }catch(err){ Logger.log("SettingsScreen.handleProfilePicutrePress#err", err) }
   }
@@ -46,7 +47,7 @@ function SettingsScreen(props){
   React.useEffect(() => {
     const fetchData = async () => {
       Logger.log("SettingsScreen", "get latest status");
-      const data  = await StatusAPI.getLatestStatus(currentUser.email);
+      const data  = await StatusAPI.getLatestStatus(currentUser.id);
       if(data && data.content) setStatus(data.content);
     }
     fetchData();
@@ -77,12 +78,12 @@ function SettingsScreen(props){
         <View>
           <FlatList
             data={[
-              {title: "Show my QR Code", icon: <FontAwesome name="qrcode" size={24}/>, navigateTo: "MyQR"},
-              {title: "Account", icon: <MaterialIcons name="vpn-key" size={24}/>, navigateTo: "Account"},
-              {title: "Chats", icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "ChatSettings"},
-              {title: "Privacy", icon: <MaterialIcons name="lock" size={24}/>, navigateTo: "Privacy"},
-              {title: "General", icon: <MaterialIcons name="settings" size={24}/>, navigateTo: "GeneralSettings"},
-              {title: "Help", icon: <FontAwesome name="question-circle" size={24}/>, navigateTo: "Help"}
+              {title: props.t("showMyQrCode"), icon: <FontAwesome name="qrcode" size={24}/>, navigateTo: "MyQR"},
+              {title: props.t("account"), icon: <MaterialIcons name="vpn-key" size={24}/>, navigateTo: "Account"},
+              {title: props.t("chat"), icon: <MaterialIcons name="chat" size={24}/>, navigateTo: "ChatSettings"},
+              {title: props.t("privacy"), icon: <MaterialIcons name="lock" size={24}/>, navigateTo: "Privacy"},
+              {title: props.t("general"), icon: <MaterialIcons name="settings" size={24}/>, navigateTo: "GeneralSettings"},
+              {title: props.t("help"), icon: <FontAwesome name="question-circle" size={24}/>, navigateTo: "Help"}
             ]}
             renderItem={({ item, index }) => {
               return (
@@ -95,4 +96,4 @@ function SettingsScreen(props){
   )
 }
 SettingsScreen.navigationOptions = { header: null }
-export default withTutorial(withCurrentUser(SettingsScreen));
+export default withTranslation()(withTutorial(withCurrentUser(SettingsScreen)));

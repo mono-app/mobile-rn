@@ -26,7 +26,7 @@ class SplashScreen extends React.PureComponent {
   loadSchools = async () => {
     this.setState({schoolList: []});
 
-    const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.email);
+    const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.id);
     this.setState({schoolCount: schoolList.length, schoolList, filteredSchoolList: schoolList})
     if(schoolList.length==1){
       this.redirectScreen(schoolList[0])
@@ -42,7 +42,7 @@ class SplashScreen extends React.PureComponent {
     const clonedSchoolId = JSON.parse(JSON.stringify(school.id))
     SchoolAPI.currentSchoolId = clonedSchoolId
 
-    const userRole = await SchoolAPI.getUserRole(school.id, this.props.currentUser.email);
+    const userRole = await SchoolAPI.getUserRole(school.id, this.props.currentUser.id);
 
     if(userRole==="schooladmin"){
       this.props.navigation.navigate("SchoolAdmin");
@@ -89,7 +89,7 @@ class SplashScreen extends React.PureComponent {
   }
 
   async componentDidMount(){
-    const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.email);
+    const schoolList = await SchoolAPI.getUserSchools(this.props.currentUser.id);
     if(schoolList.length>0){
       this.loadSchools();
     }else{
@@ -143,7 +143,7 @@ class SplashScreen extends React.PureComponent {
                 return (
                   <SchoolListItem 
                     onPress={() => this.handleSchoolPress(item)}
-                    currentUserEmail={this.props.currentUser.email} school={item}/>
+                    currentUserId={this.props.currentUser.id} school={item}/>
                 )
               }}
             />

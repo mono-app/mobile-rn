@@ -10,7 +10,7 @@ export function withCurrentStudent(Component){
     return (
       <CurrentStudentContext.Consumer>
         {(context) => <Component {...props} ref={ref}
-          setCurrentStudentEmail={context.setCurrentStudentEmail}
+          setCurrentStudentId={context.setCurrentStudentId}
           currentStudent = {context.student}
           currentSchool = {context.school}
           />}
@@ -26,7 +26,7 @@ export class CurrentStudentProvider extends React.PureComponent{
     return { header: null };
   };
 
-  handleCurrentStudentEmail = async (schoolId, email) => {
+  handleCurrentStudentId = async (schoolId, userId) => {
     const db = firebase.firestore();
     const schoolsCollection = new SchoolsCollection();
     const studentsCollection = new StudentsCollection();
@@ -36,23 +36,19 @@ export class CurrentStudentProvider extends React.PureComponent{
     const school = { id: documentSnapshot.id, ...documentSnapshot.data() };
     this.setState({ school });
 
-    const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(email);
+    const studentsDocumentRef = schoolsDocumentRef.collection(studentsCollection.getName()).doc(userId);
 
     this.userListener = studentsDocumentRef.onSnapshot((documentSnapshot) => {
       if(documentSnapshot.exists){
         const student = documentSnapshot.data();
-        student.email = JSON.parse(JSON.stringify(documentSnapshot.id));
+        student.id = JSON.parse(JSON.stringify(documentSnapshot.id));
 
         if(student.gender){
           student.gender = student.gender.charAt(0).toUpperCase() + student.gender.slice(1)
         }
         if(this._isMounted)
           this.setState({ student });
-          
-        // if(student.profilePicture !== undefined){
-        //   student.profilePicture = JSON.parse(JSON.stringify(student.profilePicture.downloadUrl));
-        // }else student.profilePicture = "https://picsum.photos/200/200/?random";
-        
+      
       }
     });
   };
@@ -64,9 +60,9 @@ export class CurrentStudentProvider extends React.PureComponent{
     this.state = { 
       school: {}, 
       student: {}, 
-      setCurrentStudentEmail: this.handleCurrentStudentEmail 
+      setCurrentStudentId: this.handleCurrentStudentId 
     }
-    this.handleCurrentStudentEmail = this.handleCurrentStudentEmail.bind(this);
+    this.handleCurrentStudentId = this.handleCurrentStudentId.bind(this);
   }
 
   componentDidMount(){

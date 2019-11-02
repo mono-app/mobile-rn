@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { ActivityIndicator, Caption, Dialog, Text, Title, withTheme, Subheading } from "react-native-paper";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
 import CircleAvatar from "src/components/Avatar/Circle";
@@ -11,12 +11,14 @@ import { withTranslation } from 'react-i18next';
 import { withTutorialClassroom } from "modules/Classroom/api/TutorialClassroom";
 import Key from "src/helper/key"
 import Tooltip from 'react-native-walkthrough-tooltip';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = {
   isLoading: false,
-  profilePicture: "https://picsum.photos/200/200/?random",
+  profilePicture: HelperAPI.getDefaultProfilePic(),
   schoolId: "",
 };
+
 class StudentHomeScreen extends React.PureComponent {
   static navigationOptions = () => {
     return { header: null };
@@ -25,7 +27,7 @@ class StudentHomeScreen extends React.PureComponent {
   handleStudentProfilePress = () => {
     payload = {
       schoolId: this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
+      studentId: this.props.currentStudent.id
     }
     this.props.navigation.navigate("MyProfile", payload);
   }
@@ -33,7 +35,7 @@ class StudentHomeScreen extends React.PureComponent {
   handleClassListPress = () => {
     payload = {
       schoolId: this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
+      studentId: this.props.currentStudent.id
     }
     this.props.navigation.navigate("MyClass", payload);
   }
@@ -41,7 +43,7 @@ class StudentHomeScreen extends React.PureComponent {
   handleAnnouncementPress = () => {
     payload = {
       schoolId : this.props.currentSchool.id,
-      studentEmail: this.props.currentStudent.email
+      studentId: this.props.currentStudent.id
     }
     this.props.navigation.navigate("Announcement", payload);
   }
@@ -69,7 +71,7 @@ class StudentHomeScreen extends React.PureComponent {
     this._isMounted = true
     if(this._isMounted)
      this.setState({isLoading: true})
-    await this.props.setCurrentStudentEmail(this.state.schoolId, this.props.currentUser.email)
+    await this.props.setCurrentStudentId(this.state.schoolId, this.props.currentUser.id)
     if(this._isMounted)
       this.setState({isLoading: false})
     this.props.classroomTutorial.show(Key.KEY_TUTORIAL_CLASSROOM_PROFILE)
@@ -96,56 +98,60 @@ class StudentHomeScreen extends React.PureComponent {
     return (
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
-        <View style={styles.logo}>
-          <CircleAvatar size={100} uri={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }/>
-          <Tooltip
-          isVisible={this.props.showTutorialProfile}
-          placement="bottom"
-          showChildInTooltip={true}
-          content={<Text>{this.props.t("tutorialSeeProfile")}</Text>}
-          onClose={() => this.props.classroomTutorial.close()}>
-            <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
-              <Text style={{ color: this.props.theme.colors.primary }}>{this.props.t("seeProfile")}</Text>
-            </TouchableOpacity>
-          </Tooltip>
-          <Title style={{marginTop: 22}}>
-            {this.props.t("welcomeComa")}
-          </Title>
-          <Subheading>{this.props.currentStudent.name}</Subheading>
-        </View>
+        <ScrollView>
+          <View style={{flex: 1, paddingBottom: 32}}>
+            <View style={styles.logo}>
+              <CircleAvatar size={100} uri={(this.props.currentStudent.profilePicture)? this.props.currentStudent.profilePicture.downloadUrl : this.state.profilePicture }/>
+              <Tooltip
+              isVisible={this.props.showTutorialProfile}
+              placement="bottom"
+              showChildInTooltip={true}
+              content={<Text>{this.props.t("tutorialSeeProfile")}</Text>}
+              onClose={() => this.props.classroomTutorial.close()}>
+                <TouchableOpacity onPress={this.handleStudentProfilePress} style={{marginTop:16}}>
+                  <Text style={{ color: this.props.theme.colors.primary }}>{this.props.t("seeProfile")}</Text>
+                </TouchableOpacity>
+              </Tooltip>
+              <Title style={{marginTop: 22}}>
+                {this.props.t("welcomeComa")}
+              </Title>
+              <Subheading>{this.props.currentStudent.name}</Subheading>
+            </View>
 
-        <View style={{marginBottom: 64}}/>
+            <View style={{marginBottom: 64}}/>
 
-        <View style={{display:"flex"}}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={this.handleClassListPress} style={{ alignItems: "center"}}>
-                <View style={styles.button} >
-                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                    <FontAwesome name="list" style={{color: "#fff"}} size={24} />
-                  </View>
-                </View>
-                <Text>{this.props.t("myClass")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.handleAnnouncementPress} style={{ alignItems: "center"}}>
-                <View style={styles.button} >
-                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                    <FontAwesome name="comment" style={{color: "#fff"}} size={24} />
-                  </View>
-                </View>
-                <Text> {this.props.t("announcement")} </Text>
-            </TouchableOpacity>
+            <View style={{display:"flex"}}>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={this.handleClassListPress} style={{ alignItems: "center"}}>
+                    <View style={styles.button} >
+                      <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                        <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                      </View>
+                    </View>
+                    <Text>{this.props.t("myClass")}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.handleAnnouncementPress} style={{ alignItems: "center"}}>
+                    <View style={styles.button} >
+                      <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                        <FontAwesome name="comment" style={{color: "#fff"}} size={24} />
+                      </View>
+                    </View>
+                    <Text> {this.props.t("announcement")} </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={this.handleMyDiscussionsPress} style={{ alignItems: "center"}}>
+                    <View style={styles.button} >
+                      <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                        <FontAwesome name="list" style={{color: "#fff"}} size={24} />
+                      </View>
+                    </View>
+                    <Text>{this.props.t("myDiscussion")}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={this.handleMyDiscussionsPress} style={{ alignItems: "center"}}>
-                <View style={styles.button} >
-                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                    <FontAwesome name="list" style={{color: "#fff"}} size={24} />
-                  </View>
-                </View>
-                <Text>{this.props.t("myDiscussion")}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        </ScrollView>
       </View>
     );
   }

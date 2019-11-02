@@ -108,8 +108,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         renderscriptTargetApi 23
         renderscriptSupportModeEnabled true
-        versionCode 14
-        versionName "14.0"
+        versionCode 19
+        versionName "19.0"
         multiDexEnabled true
     }
     signingConfigs {

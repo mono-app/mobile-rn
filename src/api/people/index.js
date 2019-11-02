@@ -2,13 +2,21 @@ import firebase from "react-native-firebase";
 import uuid from "uuid/v4";
 import geohash from 'ngeohash'
 import StorageAPI from "src/api/storage";
+import Logger from "src/api/logger";
+import Database from "src/api/database";
+import User from "src/entities/user";
+import Email from "src/entities/email";
+import ApplicationInformation from "src/entities/applicationInformation";
+import PersonalInformation from "src/entities/personalInformation";
+import CustomError from "src/entities/error";
 import { UserCollection, FriendListCollection, BlockedByCollection } from "src/api/database/collection";
 import { Document } from "src/api/database/document";
 import { getDistance } from 'geolib';
+import HelperAPI from "src/api/helper";
 
 export default class PeopleAPI{
-  constructor(currentUserEmail=null){
-    this.currentUserEmail = currentUserEmail;
+  constructor(currentUserId=null){
+    this.currentUserId = currentUserId;
   }
 
   static async normalize(user){
@@ -20,17 +28,41 @@ export default class PeopleAPI{
 
   /**
    * 
+   * @param {User} user 
+   */
+  static async createUser(user){
+    if(!user.phoneNumber) throw new CustomError("user/no-phone-number", "You must provide phone number when creating");
+
+    const userCredential = await firebase.auth().createUserWithEmailAndPassword(user.email, user.password);
+    user.id = userCredential.user.uid;
+
+    await Database.insert(async (database) => {
+      const userRef = database.collection("users").doc(user.id);
+      await userRef.set({ 
+        email: user.email,
+        isCompleteSetup: user.isCompleteSetup,
+        phoneNumber: {
+          value: user.phoneNumber.number, isVerified: user.phoneNumber.isVerified
+        },
+        creationTime: firebase.firestore.FieldValue.serverTimestamp()
+      })
+    });
+    return user;
+  }
+
+  /**
+   * 
    * @param {DocumentSnapshot} documentSnapshot 
    */
   static normalizePeople(documentSnapshot){
     const newPeople = documentSnapshot.data();
     if(documentSnapshot.exists) {
-      newPeople.email = JSON.parse(JSON.stringify(documentSnapshot.id));
+      newPeople.id = JSON.parse(JSON.stringify(documentSnapshot.id));
 
       if(newPeople.isCompleteSetup) {
         if(newPeople.applicationInformation.profilePicture !== undefined){
           newPeople.profilePicture = JSON.parse(JSON.stringify(newPeople.applicationInformation.profilePicture.downloadUrl));
-        }else newPeople.profilePicture = "https://picsum.photos/200/200/?random";
+        }else newPeople.profilePicture = HelperAPI.getDefaultProfilePic()
       }
     }
     
@@ -42,11 +74,11 @@ export default class PeopleAPI{
    * 
    * @param {String} monoId 
    */
-  static async getByMonoId(currentUserEmail, monoId){
+  static async getByMonoId(currentUserId, monoId){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
     const collectionRef = db.collection(userCollection.getName());
-    const queryPath = new firebase.firestore.FieldPath("applicationInformation", "id");
+    const queryPath = new firebase.firestore.FieldPath("applicationInformation", "monoId");
     const userQuery = collectionRef.orderBy(queryPath,"asc").startAt(monoId).endAt(monoId+"~");
     const querySnapshot = await userQuery.get();
     
@@ -55,7 +87,7 @@ export default class PeopleAPI{
     });
     const friendListCollection = new FriendListCollection()
     const blockedByCollection = new BlockedByCollection()
-    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserEmail)
+    const friendListDocRef = db.collection(friendListCollection.getName()).doc(currentUserId)
     const peopleQuerySnapshot = await friendListDocRef.collection(blockedByCollection.getName()).get()
 
     const blockedByDocList = peopleQuerySnapshot.docs
@@ -64,41 +96,123 @@ export default class PeopleAPI{
 
     // is user blocked?
     const filteredPeople = normalizedPeople.filter(data => {
-      return !blockedByIdList.includes(data.email)
+      return !blockedByIdList.includes(data.id)
     })
 
     return Promise.resolve(filteredPeople);
   }
 
-  static async isExists(email){
-    const db = firebase.firestore();
-    const userCollection = new UserCollection();
-    const userRef = db.collection(userCollection.getName()).doc(email);
-    const documentSnapshot = await userRef.get();
-    return Promise.resolve(documentSnapshot.exists);
-  }
-
-  static async isMonoIdAvailable(monoId){
-    const db = firebase.firestore();
-    const userCollection = new UserCollection();
-    const userQuerySnapshot = await db.collection(userCollection.getName()).where("applicationInformation.id","==",monoId).get();
-    return Promise.resolve(userQuerySnapshot.empty);
-  }
-
-  static async storeMessagingToken(peopleEmail, messagingToken){
-    const db = firebase.firestore();
-    const usersCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
-    const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
-    await userRef.update({ "tokenInformation.messagingToken": messagingToken, isLogin: true });
+  /**
+   * 
+   * @param {boolean} online 
+   */
+  static async getCurrentUser(online=true){
+    const user = firebase.auth().currentUser;
+    if(!user) throw new CustomError("user/not-logged-in", "Your are not logged in. Cannot perform any action");
+    else return await PeopleAPI.getDetailById(user.uid, online);
   }
 
   /**
    * 
-   * @param {String} peopleEmail 
+   * @param {User} user 
+   * @param {ApplicationInformation} applicationInfo 
+   * @param {PersonalInformation} personalInformation
+   */
+  static async setupApplication(user, applicationInformation, personalInformation){
+    if(typeof(user) !== "object") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(typeof(applicationInformation) !== "object") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(typeof(personalInformation) !== "object") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!(user instanceof User)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!(applicationInformation instanceof ApplicationInformation)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!(personalInformation instanceof PersonalInformation)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(!user.id) throw new CustomError("user/programmer", "Ops! Something went wrong");
+                 
+    await Database.update( async (db) => {
+      const usersCollection = new UserCollection();
+      const userDocument = new Document(user.id);
+      await db.collection(usersCollection.getName()).doc(userDocument.getId()).update({
+        personalInformation: personalInformation.data, 
+        applicationInformation: applicationInformation.data, 
+        isCompleteSetup: true
+      });
+    });
+    return Promise.resolve(true)
+  }
+
+  /**
+   * 
+   * @param {Email} email 
+   */
+  static async isEmailExists(email, online=true){
+    if(typeof(email) === "string") email = new Email(email);
+    else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Ops! Something went wrong");
+ 
+    try{
+      await PeopleAPI.getDetailByEmail(email, online);
+      return Promise.resolve(true);
+    }catch(err){
+      if(err.code === "user/not-found") return Promise.resolve(false);
+      else throw err;
+    }
+  }
+
+  /**
+   * 
+   * @param {string} monoId 
+   */
+  static async isMonoIdExists(monoId, online=true){
+    try{
+      await PeopleAPI.getDetailByMonoId(monoId, online);
+      return Promise.resolve(true);
+    }catch(err){
+      if(err.code === "user/not-found") return Promise.resolve(false);
+      else throw err;
+    }
+  }
+
+  static async getDetail(id){
+    if(id){
+      const userCollection = new UserCollection();
+      const userDocument = new Document(id);
+      const db = firebase.firestore();
+      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
+      const documentSnapshot = await userRef.get();
+      if(documentSnapshot.exists){
+        const userData = PeopleAPI.normalizePeople(documentSnapshot);
+        return Promise.resolve(userData);
+      }else return Promise.resolve(null);
+    }else return Promise.resolve(null);
+  }
+
+  /**
+   * 
+   * @param {Email} email 
+   */
+  static async ensureUniqueEmail(email, online=true){
+    if(typeof(email) === "string") email = new Email(email);
+    else if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programming", "Ops! Something went wrong");
+
+    const isEmailExists = await PeopleAPI.isEmailExists(email, online);
+    if(isEmailExists) throw new CustomError("user/duplicate", "Please choose another email address");
+    else return Promise.resolve(true);
+  }
+
+  /**
+   * 
+   * @param {string} monoId}
+   */
+  static async ensureUniqueMonoId(monoId, online=true){
+    const isMonoIdExists = await PeopleAPI.isMonoIdExists(monoId, online);
+    if(isMonoIdExists) throw new CustomError("user/duplicate-mono-id", "Please choose another Mono ID");
+    else return Promise.resolve(true);
+  }
+
+  /**
+   * 
+   * @param {String} peopleId 
    * @param {String} storagePath - Firebase Storage Path
    */
-  static async changeProfilePicture(peopleEmail, imagePath){
+  static async changeProfilePicture(peopleId, imagePath){
     let profilePictureUrl = null;
     const storagePath = `/main/profilePicture/${uuid()}.png`;
     return StorageAPI.uploadFile(storagePath, imagePath).then((downloadUrl) => {
@@ -107,7 +221,7 @@ export default class PeopleAPI{
       const batch = db.batch();
 
       const userCollection = new UserCollection();
-      const userDocument = new Document(peopleEmail);
+      const userDocument = new Document(peopleId);
       const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
       batch.update(userRef, { "applicationInformation.profilePicture": {storagePath, downloadUrl} })
       batch.update(userRef, { "statistic.totalProfilePictureChanged": firebase.firestore.FieldValue.increment(1) });
@@ -117,38 +231,120 @@ export default class PeopleAPI{
 
   /**
    * 
-   * @param {String} email 
-   * @param {String} source - default value `default`, available value `cache`, `server`, `default`
-   * @returns {Promise} - object of user in firebase, or null if cannot find
+   * @param {string} monoId 
+   * @param {string} online 
    */
-  static async getDetail(email=null, source="default"){
-    if(email){
-      const userCollection = new UserCollection();
-      const userDocument = new Document(email);
-      const db = firebase.firestore();
-      const userRef = db.collection(userCollection.getName()).doc(userDocument.getId());
-      const documentSnapshot = await userRef.get({ source });
-      if(documentSnapshot.exists){
-        const userData = PeopleAPI.normalizePeople(documentSnapshot);
-        return Promise.resolve(userData);
-      }else return Promise.resolve(null);
-    }else return Promise.resolve(null);
+  static async getDetailByMonoId(monoId, online=false){
+    if(typeof(monoId) !== "string") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(online) return await PeopleAPI.getDetailOnlineByMonoId(monoId);
+    else return await PeopleAPI.getDetailOfflineByMonoId(monoId);
   }
 
-  static getDetailWithRealTimeUpdate(email, callback){
+  /**
+   * 
+   * @param {string} monoId 
+   */
+  static async getDetailOnlineByMonoId(monoId){
+    return await Database.get(async (database) => {
+      const usersCollection = new UserCollection();
+      const userSnapshot = await database.collection(usersCollection.getName()).where("applicationInformation.monoId", "==", monoId).get();
+      if(userSnapshot.size === 0) throw new CustomError("user/not-found", "User not found");
+      else return new User().fromSnapshot(userSnapshot.docs[0]);
+    }, true);
+  }
+
+  /**
+   * 
+   * @param {*} monoId 
+   */
+  static async getDetailOfflineByMonoId(monoId){
+
+  }
+
+  /**
+   * 
+   * @param {string} id 
+   * @param {boolean} online 
+   */
+  static async getDetailById(id, online=false){
+    if(typeof(id) !== "string") throw new CustomError("user/programmer", "Ops! Something went wrong");
+    if(online) return await PeopleAPI.getDetailOnlineById(id);
+    else return await PeopleAPI.getDetailOfflineById(id);
+  }
+
+  /**
+   * 
+   * @param {string} id 
+   */
+  static async getDetailOnlineById(id){
+    return await Database.get(async (database) => {
+      const usersCollection = new UserCollection();
+      const userDocument = new Document(id);
+      const userSnapshot = await database.collection(usersCollection.getName()).doc(userDocument.getId()).get();
+      return new User().fromSnapshot(userSnapshot);
+    }, true);
+  }
+
+  /**
+   * 
+   * @param {string} id 
+   */
+  static async getDetailOfflineById(id){}
+
+  /**
+   * 
+   * @param {Email} email 
+   * @param {boolean} online 
+   */
+  static async getDetailByEmail(email, online=false){
+    if(typeof(email) === "string") email = new Email(email);
+    if(online) return await PeopleAPI.getDetailOnlineByEmail(email);
+    else return await PeopleAPI.getDetailOfflineByEmail(email);
+  }
+
+  /**
+   * 
+   * @param {Email} email 
+   */
+  static async getDetailOnlineByEmail(email){
+    if(typeof(email) === "string") email = new Email(email);
+    if(typeof(email) === "object" && !(email instanceof Email)) throw new CustomError("user/programmer", "Ops! Something went wrong");
+    
+    return await Database.get(async (database) => {
+      const usersCollection = new UserCollection();
+      const userSnapshot = await database.collection(usersCollection.getName()).where("email", "==", email.address).get();
+      if(userSnapshot.size === 0) throw new CustomError("user/not-found", "User not found");
+      else return new User().fromSnapshot(userSnapshot.docs[0]);
+    }, true)
+  }
+
+  /**
+   * 
+   * @param {Email} email 
+   */
+  static async getDetailOfflineByEmail(email){
+    return null;
+  }
+
+  /**
+   * 
+   * @param {string} userId 
+   * @param {callback} callback 
+   */
+  static getDetailWithRealTimeUpdate(userId, callback){
     const db = firebase.firestore();
     const userCollection = new UserCollection();
-    const userRef = db.collection(userCollection.getName()).doc(email);
+    const userRef = db.collection(userCollection.getName()).doc(userId);
     return userRef.onSnapshot((documentSnapshot)=>{
       const data = PeopleAPI.normalizePeople(documentSnapshot)
       callback(data)
     })
   }
 
-  static async setOnlineStatus(peopleEmail, status){
+  static async setOnlineStatus(userId, status){
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(userId);
     const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
     const batch = db.batch();
     batch.update(userRef, { "lastOnline.status": status });
@@ -157,10 +353,10 @@ export default class PeopleAPI{
     return Promise.resolve(true);
   }
 
-  static async updateCurrentLocation(peopleEmail, data){
+  static async updateCurrentLocation(userId, data){
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
-    const userDocument = new Document(peopleEmail);
+    const userDocument = new Document(userId);
     const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
     const latitude = data.coords.latitude
     const longitude = data.coords.longitude
@@ -170,7 +366,7 @@ export default class PeopleAPI{
     return Promise.resolve(true);
   }
 
-  static async getNearbyPeoples(userEmail,latitude, longitude, distance){
+  static async getNearbyPeoples(userId,latitude, longitude, distance){
     // distance in meters
     const db = firebase.firestore();
     const usersCollection = new UserCollection();
@@ -188,7 +384,7 @@ export default class PeopleAPI{
     });
 
     const filteredUsersByDistance = userDocuments.filter((user)=>{
-      return (user.distance <= distance&& user.email !== userEmail)
+      return (user.distance <= distance&& user.id !== userId)
     })
     // sort from nearest
     filteredUsersByDistance.sort((a, b) => (a.distance < b.distance) ? 1 : -1)
@@ -203,13 +399,13 @@ export default class PeopleAPI{
     return Promise.resolve(result);
   }
 
-  static async updateUserForLogout(email){
+  static async updateUserForLogout(userId){
     // set messaging token to null
     // set user status to logout
     try{
       const db = firebase.firestore();
       const usersCollection = new UserCollection();
-      const userRef = db.collection(usersCollection.getName()).doc(email)
+      const userRef = db.collection(usersCollection.getName()).doc(userId)
       await userRef.update({tokenInformation: null, isLogin: false})
     }catch{
       return Promise.resolve(false)

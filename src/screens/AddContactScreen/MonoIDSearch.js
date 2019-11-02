@@ -19,7 +19,7 @@ function MonoIDSearch(props){
 
   const handleIdChange = (id) => setId(id);
   const handleSubmit = async () => {
-    const foundPeople = await PeopleAPI.getByMonoId(props.currentUser.email, id);
+    const foundPeople = await PeopleAPI.getByMonoId(props.currentUser.id, id);
     
     if(foundPeople.length > 0 ) {
       setId("");

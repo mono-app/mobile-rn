@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 import { withCurrentUser } from "src/api/people/CurrentUser";
 import { withTranslation } from 'react-i18next';
+
 import SignOutDialog from "src/screens/AccountScreen/dialogs/SignOutDialog";
 import AppHeader from "src/components/AppHeader";
 import Container from "src/components/Container";
@@ -27,7 +28,7 @@ function AccountScreen(props){
   const handleNickNamePress = () => {
     const payload = {
       databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
+      databaseDocumentId: currentUser.id,
       databaseFieldName: "applicationInformation.nickName", 
       fieldValue: applicationInformation.nickName,
       fieldTitle: props.t("nickName"),
@@ -38,7 +39,7 @@ function AccountScreen(props){
   const handleBirthdayPress = () => {
     const payload = {
       databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
+      databaseDocumentId: currentUser.id,
       databaseFieldName: "personalInformation.birthday",
       caption: "Format tanggal lahir: 22/12/2007",
       placeholder: "DD/MM/YYYY",
@@ -53,7 +54,7 @@ function AccountScreen(props){
   const handleGenderPress = () => {
     const payload = {
       databaseCollection: "users",
-      databaseDocumentId: currentUser.email,
+      databaseDocumentId: currentUser.id,
       databaseFieldName: "personalInformation.gender", 
       fieldValue: (personalInformation.gender)? personalInformation.gender: "male",
       fieldTitle: props.t("gender"),
@@ -67,7 +68,7 @@ function AccountScreen(props){
     <Container>
       <AppHeader navigation={navigation} style={{ backgroundColor: "#E8EEE8" }}/>
       <View style={styles.container}>
-        <SignOutDialog show={isSignOutDialogShown} onCancel={handleSignOutDialogCancel}/>
+        <SignOutDialog navigation={props.navigation} show={isSignOutDialogShown} onCancel={handleSignOutDialogCancel}/>
 
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={handleNickNamePress}>
@@ -83,7 +84,7 @@ function AccountScreen(props){
           <View style={styles.menu}>
             <Text style={{ fontWeight: "500" }}>Mono ID</Text>
             <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-              <Text>{applicationInformation.id}</Text>
+              <Text>{applicationInformation.monoId}</Text>
             </View>
           </View>
           <View style={styles.menu}>
@@ -100,7 +101,7 @@ function AccountScreen(props){
               <Text style={{ fontWeight: "500" }}>{props.t("gender")}</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 {personalInformation.gender?(
-                  <Text>{personalInformation.gender === "male"? "Pria": "Wanita"}</Text>
+                  <Text>{personalInformation.gender === "male"? props.t("male"): props.t("female")}</Text>
                 ):null}
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>

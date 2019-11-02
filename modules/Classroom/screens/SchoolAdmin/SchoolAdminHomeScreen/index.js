@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform, ScrollView } from "react-native";
 import { ActivityIndicator, Caption, Dialog, Text} from "react-native-paper";
 import Permissions from "react-native-permissions";
 import { default as FontAwesome } from "react-native-vector-icons/FontAwesome";
@@ -13,10 +13,11 @@ import { withCurrentUser } from "src/api/people/CurrentUser"
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import ImageCompress from "src/api/ImageCompress"
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = {
   isLoading: false,
-  profilePicture: "https://picsum.photos/200/200/?random",
+  profilePicture: HelperAPI.getClassroomLogo(),
   schoolId: "",
   school: {},
   userName: ""
@@ -114,7 +115,7 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     if(this._isMounted){
       this.setState({isLoading: true})
     }
-    await this.props.setCurrentSchoolAdminEmail(this.state.schoolId, this.props.currentUser.email)
+    await this.props.setCurrentSchoolAdminId(this.state.schoolId, this.props.currentUser.id)
     if(this._isMounted){
       this.setState({isLoading: false})
     }
@@ -141,46 +142,49 @@ class SchoolAdminHomeScreen extends React.PureComponent {
     return (
       <View style={styles.groupContainer}>
         <Header navigation={this.props.navigation} title={this.props.currentSchool.name} />
-
-        <View style={styles.logo}>
-          <SquareAvatar size={100} uri={ this.props.schoolProfilePicture }/>
-          <TouchableOpacity onPress={this.changeSchoolProfilePicture}>
-            <Text style={{ fontWeight: "400", fontSize: 16, marginTop: 8, color:"#0ead69" }}>{this.props.t("changeSchoolPic")}</Text>
-          </TouchableOpacity>
-          <Text style={{ fontWeight: "700", marginTop: 16, fontSize: 20 }}>
-            {this.props.t("welcomeComa")}
-          </Text>
-          <Text style={{ fontWeight: "400", fontSize: 16 }}>{this.props.currentSchoolAdmin.name}</Text>
-        </View>
-
-        <View style={{marginBottom: 64}}/>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={this.handleAddPress} >
-            <View style={styles.button} >
-              <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
-              </View>
+        <ScrollView>
+          <View style={{flex: 1, paddingBottom: 32}}>
+            <View style={styles.logo}>
+              <SquareAvatar size={100} uri={ this.props.schoolProfilePicture }/>
+              <TouchableOpacity onPress={this.changeSchoolProfilePicture}>
+                <Text style={{ fontWeight: "400", fontSize: 16, marginTop: 8, color:"#0ead69" }}>{this.props.t("changeSchoolPic")}</Text>
+              </TouchableOpacity>
+              <Text style={{ fontWeight: "700", marginTop: 16, fontSize: 20 }}>
+                {this.props.t("welcomeComa")}
+              </Text>
+              <Text style={{ fontWeight: "400", fontSize: 16 }}>{this.props.currentSchoolAdmin.name}</Text>
             </View>
-            <Text style={{textAlign:"center"}}>{this.props.t("add")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleDataMasterPress}>
-            <View style={styles.button} >
-              <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                <FontAwesome name="cog" style={{color: "#fff"}} size={24} />
-              </View>
+
+            <View style={{marginBottom: 64}}/>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={this.handleAddPress} >
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="plus" style={{color: "#fff"}} size={24} />
+                  </View>
+                </View>
+                <Text style={{textAlign:"center"}}>{this.props.t("add")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleDataMasterPress}>
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="cog" style={{color: "#fff"}} size={24} />
+                  </View>
+                </View>
+                <Text style={{textAlign:"center"}}>{this.props.t("dataMaster")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleArchiveClass}>
+                <View style={styles.button} >
+                  <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome name="folder" style={{color: "#fff"}} size={24} />
+                  </View>
+                </View>
+                <Text style={{textAlign:"center"}}>{this.props.t("classArchive")}</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={{textAlign:"center"}}>{this.props.t("dataMaster")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleArchiveClass}>
-            <View style={styles.button} >
-              <View style={{flex:1, justifyContent:"center",alignItems:"center"}}>
-                <FontAwesome name="folder" style={{color: "#fff"}} size={24} />
-              </View>
-            </View>
-            <Text style={{textAlign:"center"}}>{this.props.t("classArchive")}</Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </ScrollView>
       </View>
     );
   }

@@ -22,6 +22,7 @@ import { withCurrentUser } from "src/api/people/CurrentUser"
 import ImagePicker from 'react-native-image-picker';
 import ImageCompress from "src/api/ImageCompress"
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = { 
   isLoading: true, 
@@ -45,9 +46,9 @@ class DiscussionCommentScreen extends React.PureComponent {
   loadDiscussion = async () => {
     if(this._isMounted)
       this.setState({ isLoading: true });
-    const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterEmail)
-    const currentUserEmail = this.props.currentUser.email
-    const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserEmail)
+    const student = await StudentAPI.getDetail(this.schoolId, this.discussion.posterId)
+    const currentUserId = this.props.currentUser.id
+    const currentStudent = await StudentAPI.getDetail(this.schoolId, currentUserId)
     const totalParticipant = await DiscussionAPI.getTotalParticipant(this.schoolId, this.classId, this.taskId, this.discussion.id);
     if(this._isMounted)
       this.setState({ isLoading: false, discussion: this.discussion,totalParticipant, posterName: student.name, dicussionNotification: currentStudent.dicussionNotification });
@@ -101,11 +102,11 @@ class DiscussionCommentScreen extends React.PureComponent {
     const comment = JSON.parse(JSON.stringify(this.state.comment)).trim()
     if(comment.length>0){
       if(this._isMounted) this.setState({ isSendingComment:true })
-      const currentUserEmail = this.props.currentUser.email
+      const currentUserId = this.props.currentUser.id
 
       data = {
         comment: this.state.comment,
-        posterEmail: currentUserEmail,
+        posterId: currentUserId,
         location: {...this.state.locationCoordinate},
         images: this.state.imagesPicked
       }
@@ -223,9 +224,9 @@ class DiscussionCommentScreen extends React.PureComponent {
     const isAllowNotification = this.checkNotifAllowed()
 
     if(isAllowNotification){
-      await StudentAPI.updateDiscussionNotification(this.props.currentUser.email,this.discussion.id, false);
+      await StudentAPI.updateDiscussionNotification(this.props.currentUser.id,this.discussion.id, false);
     }else{
-      await StudentAPI.updateDiscussionNotification(this.props.currentUser.email,this.discussion.id, true);
+      await StudentAPI.updateDiscussionNotification(this.props.currentUser.id,this.discussion.id, true);
     }
 
   }
@@ -333,7 +334,7 @@ class DiscussionCommentScreen extends React.PureComponent {
         <KeyboardAwareScrollView keyboardShouldPersistTaps={'handled'} style={{flex:1}}>         
           <Card style={{ elevation: 1, marginTop: 8}}>
               <View style={{ padding: 16, flexDirection: "row", alignItems: "flex-start" }}>
-                <CircleAvatar size={40} uri={"https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={40} uri={HelperAPI.getDefaultProfilePic()}/>
                 <View style={{ marginLeft: 16 }}>
                   <Text style={{ fontWeight: "700" }}>{this.state.posterName}</Text>
                   <Caption style={{ marginTop: 0 }}>{creationDate} | {this.props.t("time2")} {creationTime} WIB</Caption>
@@ -394,12 +395,13 @@ class DiscussionCommentScreen extends React.PureComponent {
           </Card>
             <Card style={{marginHorizontal: 8,marginTop:8, padding:8}}>
               <View style={{flexDirection:"row", alignItems:"center"}}>
-                <CircleAvatar size={30} uri={"https://picsum.photos/200/200/?random"}/>
+                <CircleAvatar size={30} uri={HelperAPI.getDefaultProfilePic()}/>
                 <TextInput
-                  style={{ flex:1, marginBottom: 0, marginLeft:8 }}
+                  style={{ flex:1, marginBottom: 0, marginLeft:8, maxHeight: 80 }}
                   onChangeText={this.handleCommentChange}
                   value={this.state.comment}
                   multiline={true}
+                  autoCorrect={false}
                   maxLength={500}
                   placeholder="Tuliskan komentar kamu di sini."
                 />         

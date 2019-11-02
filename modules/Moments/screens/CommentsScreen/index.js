@@ -41,7 +41,7 @@ function CommentsScreen(props){
     if(momentId && comment.length>0){
       const copiedComment = JSON.parse(JSON.stringify(comment));
       if(txtComment.current) txtComment.current.clear();
-      await CommentsAPI.postComment(momentId, copiedComment, currentUser.email);
+      await CommentsAPI.postComment(momentId, copiedComment, currentUser.id);
     }
   }
 
@@ -56,13 +56,13 @@ function CommentsScreen(props){
   };
 
   const handleProfilePress = (people) => {
-    const payload = { peopleEmail: people.email }
+    const payload = { peopleId: people.id }
     props.navigation.navigate("PeopleInformation", payload);
   }
 
   const loadData = async () =>{
     const moment = await MomentAPI.getDetail(momentId)
-    const people = await PeopleAPI.getDetail(moment.posterEmail)
+    const people = await PeopleAPI.getDetail(moment.posterId)
     if(_isMounted.current && moment){
       if(!moment.postTime) setMomentDeleted(true)
       setMoment(moment);
@@ -77,7 +77,7 @@ function CommentsScreen(props){
   }
 
   const listenForMoment = () => {
-    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(momentId, currentUser.email, (newMoment) => {
+    momentListener.current = MomentAPI.getDetailWithRealTimeUpdate(momentId, currentUser.id, (newMoment) => {
       Logger.log("CommentsScreen.listenForMoment#newMoment", newMoment);
       if(_isMounted.current) setMoment(newMoment);
     });

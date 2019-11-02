@@ -7,9 +7,9 @@ import { View, FlatList } from "react-native";
 function PeopleSearchResult(props){
   const people = props.navigation.getParam("people", []);
 
-  const handleResultItemPress = (email) => {
+  const handleResultItemPress = (id) => {
     props.navigation.navigate("PeopleInformation", {
-      peopleEmail: email, source: { id: "MonoID", value: "Mono ID" }
+      peopleId: id, source: { id: "MonoID", value: "Mono ID" }
     })
   }
 
@@ -18,11 +18,11 @@ function PeopleSearchResult(props){
       <AppHeader navigation={props.navigation} title="Hasil Pencarian" style={{ backgroundColor: "transparent" }}/>
       <FlatList 
       data={people} 
-      keyExtractor={(item) => item.email}
+      keyExtractor={(item) => item.id}
       renderItem={ ({ item, index }) => {
         return (
           <ResultItem
-            onPress={handleResultItemPress} peopleEmail={item.email} profilePicture={item.profilePicture}
+            onPress={handleResultItemPress} peopleId={item.id} profilePicture={item.profilePicture}
             name={item.applicationInformation.nickName} key={index}/>
         )
       }}/>

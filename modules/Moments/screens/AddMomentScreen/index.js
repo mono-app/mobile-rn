@@ -35,15 +35,21 @@ function AddMomentScreen(props){
     if(_isMounted.current) setContent(content) 
   }
   const handleSubmitMoment = async () => {
-    if(content.trim().length>0){
-      if(_isMounted.current) setIsSubmitting(true);
-      await MomentAPI.publishMoment(currentUser.email, { message: content, images });
-      if(_isMounted.current){
-        setContent("");
-        setIsSubmitting(false)
+    try{
+      if(content.trim().length>0){
+        if(_isMounted.current) setIsSubmitting(true);
+        await MomentAPI.publishMoment(currentUser.id, { message: content, images });
+        if(_isMounted.current){
+          setContent("");
+          setIsSubmitting(false)
+        }
+        props.navigation.state.params.onComplete()
+        props.navigation.goBack();
       }
-      props.navigation.goBack();
+    }catch(err){
+      throw err
     }
+    
   }
 
   const handleGalleryPress = async () => {
@@ -160,7 +166,7 @@ function AddMomentScreen(props){
 
       <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
         <TextInput
-          textAlignVertical="top" numberOfLines={4} fontSize={24}
+          textAlignVertical="top" numberOfLines={4} fontSize={24} autoCorrect={false}
           placeholder={props.t("addMomentAsk")} style={{ minHeight: 180, maxHeight: 240 }}
           value={content} onChangeText={handleContentChange} multiline/>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>

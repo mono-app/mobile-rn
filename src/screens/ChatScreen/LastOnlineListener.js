@@ -6,11 +6,11 @@ import { Document } from "src/api/database/document";
 
 export default class LastOnlineListener extends React.PureComponent{
   refreshData = () => {
-    const { peopleEmail } = this.props;
-    if(peopleEmail && this.listener === null){
+    const { peopleId } = this.props;
+    if(peopleId && this.listener === null){
       const db = firebase.firestore();
       const usersCollection = new UserCollection();
-      const userDocument = new Document(peopleEmail);
+      const userDocument = new Document(peopleId);
       const userRef = db.collection(usersCollection.getName()).doc(userDocument.getId());
       this.listener = userRef.onSnapshot({ includeMetadataChanges: true }, (documentSnapshot => {
         const lastOnline = documentSnapshot.data().lastOnline;
@@ -33,4 +33,4 @@ export default class LastOnlineListener extends React.PureComponent{
   render(){ return null }
 }
 
-LastOnlineListener.defaultProps = { peopleEmail: null, onChange: null }
+LastOnlineListener.defaultProps = { peopleId: null, onChange: null }
