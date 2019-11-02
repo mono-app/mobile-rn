@@ -8,6 +8,7 @@ import AppHeader from "src/components/AppHeader";
 import { View, FlatList, Platform } from "react-native";
 import Permissions from "react-native-permissions";
 import Geolocation from 'react-native-geolocation-service';
+import { withTranslation } from 'react-i18next';
 
 function PeopleNearbyScreen(props){
   const [ isPermissionGranted, setPermissionGranted ] = React.useState([false]);
@@ -70,22 +71,21 @@ function PeopleNearbyScreen(props){
   const getNearbyPeople = async (latitude, longitude) => {
     const peoples = await PeopleAPI.getNearbyPeoples(props.currentUser.id, latitude,longitude,25000)
     if(_isMounted.current) setPeopleList(peoples);
+  }
 
+  const init = async() => {
+    const result = await checkPermission()
+    if(_isMounted.current) setPermissionGranted(result)
+    if(!result){
+      await requestPermission();
+      return;
+    }
+    storeCurrentLocation()
   }
 
   React.useEffect(() => {
-    const init = async() => {
-      const result = await checkPermission()
-      if(_isMounted.current) setPermissionGranted(result)
-      if(!result){
-        await requestPermission();
-        return;
-      }
-      storeCurrentLocation()
-    
-    }
+    _isMounted.current = true
     init()
-
     return ()=>{
       _isMounted.current = false
     }
@@ -94,7 +94,7 @@ function PeopleNearbyScreen(props){
   return(
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <AppHeader style={{ backgroundColor: "transparent" }} navigation={props.navigation}/>
-      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Sekitar Saya</HeadlineTitle>
+      <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>{props.t("peopleNearby")}</HeadlineTitle>
       <FlatList
         style={{ backgroundColor: "white" }}
         data={peopleList}
@@ -107,4 +107,4 @@ function PeopleNearbyScreen(props){
   )
 }
 PeopleNearbyScreen.navigationOptions = { header: null }
-export default withCurrentUser(PeopleNearbyScreen);
+export default withTranslation()(withCurrentUser(PeopleNearbyScreen))

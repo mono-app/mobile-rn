@@ -5,6 +5,7 @@ const translate = {
   privacy: "Privacy",
   general: "General Settings",
   help: "Help",
+  peopleNearby: 'People Nearby',
   contactSupport: "Contact Support",
   emailNotRegistered: 'Email not registered',
   userNotRegistered: 'User not registered',

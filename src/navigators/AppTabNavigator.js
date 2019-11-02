@@ -29,7 +29,7 @@ export default AppTabNavigator =  createStackNavigator({
   ForwardChat: {screen: ForwardChatScreen, navigationOptions: { header: null }},
   AddDiscussion: {screen: AddDiscussionScreen, navigationOptions: { header: null}},
   Discussions: {screen: DiscussionsScreen, navigationOptions: { header: null}},
-  // PeopleNearby: { screen: PeopleNearbyScreen },
+  // PeopleNearby: { screen: PeopleNearbyScreen, navigationOptions: { header: null} },
   PeopleInformation: { screen: PeopleInformationScreen, navigationOptions: { header: null } },
   ...MomentNavigatorObj,
   ...DiscussionClassroomNotifNavigatorObj,
