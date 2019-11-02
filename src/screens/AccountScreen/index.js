@@ -101,7 +101,7 @@ function AccountScreen(props){
               <Text style={{ fontWeight: "500" }}>{props.t("gender")}</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 {personalInformation.gender?(
-                  <Text>{personalInformation.gender === "male"? "Pria": "Wanita"}</Text>
+                  <Text>{personalInformation.gender === "male"? props.t("male"): props.t("female")}</Text>
                 ):null}
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>

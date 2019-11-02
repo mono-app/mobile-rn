@@ -33,11 +33,11 @@ function HelpScreen(props){
     <Provider style={{ flex: 1, backgroundColor: "white" }}>
       <Portal>
         <AppHeader style={{ backgroundColor: "transparent" }} navigation={props.navigation}/>
-        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>Help</HeadlineTitle>
+        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>{props.t("help")}</HeadlineTitle>
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={handleContactSupportPress}>
             <View style={styles.menu}>
-              <Text style={{ fontWeight: "500" }}>Contact Support</Text>
+              <Text style={{ fontWeight: "500" }}>{props.t("contactSupport")}</Text>
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                 <EvilIcons name="chevron-right" size={24} style={{ color: "#5E8864" }}/>
               </View>

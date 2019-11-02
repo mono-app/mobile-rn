@@ -401,6 +401,7 @@ class DiscussionCommentScreen extends React.PureComponent {
                   onChangeText={this.handleCommentChange}
                   value={this.state.comment}
                   multiline={true}
+                  autoCorrect={false}
                   maxLength={500}
                   placeholder="Tuliskan komentar kamu di sini."
                 />         

@@ -166,7 +166,7 @@ function AddMomentScreen(props){
 
       <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
         <TextInput
-          textAlignVertical="top" numberOfLines={4} fontSize={24}
+          textAlignVertical="top" numberOfLines={4} fontSize={24} autoCorrect={false}
           placeholder={props.t("addMomentAsk")} style={{ minHeight: 180, maxHeight: 240 }}
           value={content} onChangeText={handleContentChange} multiline/>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>

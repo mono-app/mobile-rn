@@ -5,6 +5,7 @@ import CircleAvatar from "src/components/Avatar/Circle";
 import { View } from "react-native";
 import { Appbar, Subheading, Caption } from "react-native-paper";
 import { withCurrentRooms } from "src/api/rooms/CurrentRooms";
+import HelperAPI from "../../api/helper";
 
 function ChatHeaderGroup(props){
   const { title, subtitle } = props;
@@ -18,7 +19,7 @@ function ChatHeaderGroup(props){
       {props.navigation?( <Appbar.BackAction onPress={handleBackPress}/> ): null}
       <TouchableOpacity onPress={props.onPress}>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
-            <CircleAvatar size={40} local={require('assets/logoclassroom.png')} style={{ marginRight: 8 }}/>
+            <CircleAvatar size={40} uri={HelperAPI.getClassroomLogo()} style={{ marginRight: 8 }}/>
             <View>
               <Subheading style={{ fontWeight: "bold", marginBottom: 0 }}>{title} </Subheading>
               <View style={{flexDirection:"row"}}>

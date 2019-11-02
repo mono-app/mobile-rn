@@ -1,4 +1,11 @@
 const translate = {
+  showMyQrCode: 'Show my QR Code',
+  account: 'Account',
+  chat: 'Chat',
+  privacy: "Privacy",
+  general: "General Settings",
+  help: "Help",
+  contactSupport: "Contact Support",
   emailNotRegistered: 'Email not registered',
   userNotRegistered: 'User not registered',
   wrongPassword: 'Wrong Password',

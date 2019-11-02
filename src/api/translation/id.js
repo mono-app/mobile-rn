@@ -1,4 +1,11 @@
 const translate = {
+  showMyQrCode: 'Tunjukan QR Code Saya',
+  account: 'Akun',
+  chat: 'Pesan',
+  privacy: "Privasi",
+  general: "Pengaturan Umum",
+  help: "Bantuan",
+  contactSupport: "Pusat Bantuan",
   emailNotRegistered: 'Email tidak terdaftar',
   userNotRegistered: 'User tidak terdaftar',
   wrongPassword: 'Password Salah',

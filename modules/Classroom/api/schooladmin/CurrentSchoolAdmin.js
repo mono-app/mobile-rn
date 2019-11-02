@@ -2,6 +2,7 @@ import React from "react";
 import firebase from "react-native-firebase";
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { SchoolAdminsCollection, SchoolsCollection } from "src/api/database/collection";
+import HelperAPI from "src/api/helper";
 
 const CurrentSchoolAdminContext = React.createContext();
 export function withCurrentSchoolAdmin(Component){
@@ -10,7 +11,7 @@ export function withCurrentSchoolAdmin(Component){
       <CurrentSchoolAdminContext.Consumer>
         {(context) => <Component {...props} ref={ref}
           setCurrentSchoolAdminId={context.setCurrentSchoolAdminId}
-          schoolProfilePicture={(context.school.profilePicture)? context.school.profilePicture.downloadUrl : "https://picsum.photos/200/200/?random"}
+          schoolProfilePicture={(context.school.profilePicture)? context.school.profilePicture.downloadUrl : HelperAPI.getClassroomLogo()}
           currentSchoolAdmin = {context.schoolAdmin}
           currentSchool = {context.school}
           />}

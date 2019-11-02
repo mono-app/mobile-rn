@@ -13,10 +13,11 @@ import { withCurrentUser } from "src/api/people/CurrentUser"
 import { withCurrentSchoolAdmin } from "modules/Classroom/api/schooladmin/CurrentSchoolAdmin";
 import ImageCompress from "src/api/ImageCompress"
 import { withTranslation } from 'react-i18next';
+import HelperAPI from "src/api/helper";
 
 const INITIAL_STATE = {
   isLoading: false,
-  profilePicture: "https://picsum.photos/200/200/?random",
+  profilePicture: HelperAPI.getClassroomLogo(),
   schoolId: "",
   school: {},
   userName: ""

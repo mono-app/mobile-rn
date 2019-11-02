@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { View, Image, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
+import FastImage from "react-native-fast-image";
+import HelperAPI from "src/api/helper";
 
 function ClassProfileHeader(props){
 
@@ -12,7 +14,7 @@ function ClassProfileHeader(props){
 
   return(
     <View style={[ styles.profileContainer,props.style ]}>
-      <Image source={require('assets/logoclassroom.png')} style={{width: 70, height: 70, marginRight: 16}} />
+      <FastImage source={{uri: HelperAPI.getClassroomLogo()}} style={{width: 70, height: 70, marginRight: 16}} />
       <View style={styles.profileDescriptionContainer}>
           <Text style={{ fontSize: 18, fontWeight: "500", marginBottom: 4}}>{props.title}</Text>
           {(props.subtitle)?<Text style={{ fontSize: 12, lineHeight: 20}}>{props.subtitle}</Text>:null}

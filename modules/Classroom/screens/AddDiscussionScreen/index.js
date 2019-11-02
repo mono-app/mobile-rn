@@ -241,6 +241,7 @@ class AddDiscussionScreen extends React.PureComponent {
               <TextInput
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8" }}
                 value={this.state.title}
+                autoCorrect={false}
                 onChangeText={this.handleTitleChange}
               />
             </View>
@@ -251,6 +252,7 @@ class AddDiscussionScreen extends React.PureComponent {
                 style={{ marginTop: 16, backgroundColor: "#E8EEE8", textAlignVertical: "top", maxHeight: 80 }}
                 value={this.state.description}
                 multiline={true}
+                autoCorrect={false}
                 numberOfLines = {5}
                 onChangeText={this.handleDescriptionChange}
               />

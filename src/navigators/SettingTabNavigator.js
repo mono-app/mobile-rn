@@ -19,7 +19,7 @@ import ContactSupportScreen from "src/screens/ContactSupportScreen";
 import HelpScreen from "src/screens/HelpScreen";
 
 export default SettingTabNavigator = createStackNavigator({
-  Home: { screen: SettingsScreen },
+  Home: { screen: SettingsScreen, navigationOptions: { header: null } },
   Account: { screen: AccountScreen, navigationOptions: { header: null }},
   Privacy: {screen: PrivacyScreen, navigationOptions: { header: null }},
   ChatSettings: {screen: ChatSettingsScreen, navigationOptions: { header: null }},

@@ -17,7 +17,7 @@ class IntroductionScreen extends React.PureComponent {
     const user = await PeopleAPI.getDetailById(this.firebaseCurrentUser.uid, true)
     const payload = {
       email: user.data.email.address,
-      description: "Saya ingin mendaftarkan sekolah saya dengan Classroom"
+      description: "Saya ingin tahu lebih lanjut tentang classroom"
     }
     this.props.navigation.navigate("ContactSupport", payload)
   }

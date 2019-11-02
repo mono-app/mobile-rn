@@ -52,7 +52,7 @@ function GeneralSettingsScreen(props){
     <Provider style={{ flex: 1, backgroundColor: "white" }}>
       <Portal>
         <AppHeader style={{ backgroundColor: "transparent" }} navigation={props.navigation}/>
-        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>General</HeadlineTitle>
+        <HeadlineTitle style={{ marginLeft: 16, marginRight: 16 }}>{props.t("general")}</HeadlineTitle>
         <View style={styles.groupContainer}>
           <TouchableOpacity onPress={openLanguageModal}>
             <View style={styles.menu}>

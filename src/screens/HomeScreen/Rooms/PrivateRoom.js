@@ -64,7 +64,7 @@ function PrivateRoom(props){
         <TouchableOpacity style={[ styles.chatContainer, props.style ]} onPress={handleRoomPress} onLongPress={handleOnLongPress}>
           <View style={{ marginRight: 16 }}>
               {(props.room.type==="group-chat")? 
-                <CircleAvatar size={50} uri={HelperAPI.getDefaultProfilePic()}/>
+                <CircleAvatar size={50} uri={HelperAPI.getClassroomLogo()}/>
               : 
                 <CircleAvatar size={50} uri={(people.profilePicture)? people.profilePicture: HelperAPI.getDefaultProfilePic()}/>
               }
